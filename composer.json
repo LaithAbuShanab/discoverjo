@@ -10,10 +10,13 @@
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
+        "filament/spatie-laravel-translatable-plugin": "^3.2",
         "laravel/framework": "^11.31",
         "laravel/passport": "^12.0",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-medialibrary": "^11.11"
+        "spatie/laravel-medialibrary": "^11.11",
+        "spatie/laravel-sluggable": "^3.7",
+        "spatie/laravel-translatable": "^6.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -11,7 +11,7 @@ class RolePolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the admin can view any models.
+     * Determine whether the Admin can view any models.
      */
     public function viewAny(Admin $admin): bool
     {
@@ -19,7 +19,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can view the model.
+     * Determine whether the Admin can view the model.
      */
     public function view(Admin $admin, Role $role): bool
     {
@@ -27,7 +27,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can create models.
+     * Determine whether the Admin can create models.
      */
     public function create(Admin $admin): bool
     {
@@ -35,7 +35,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can update the model.
+     * Determine whether the Admin can update the model.
      */
     public function update(Admin $admin, Role $role): bool
     {
@@ -43,7 +43,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can delete the model.
+     * Determine whether the Admin can delete the model.
      */
     public function delete(Admin $admin, Role $role): bool
     {
@@ -51,7 +51,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can bulk delete.
+     * Determine whether the Admin can bulk delete.
      */
     public function deleteAny(Admin $admin): bool
     {
@@ -59,7 +59,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can permanently delete.
+     * Determine whether the Admin can permanently delete.
      */
     public function forceDelete(Admin $admin, Role $role): bool
     {
@@ -67,7 +67,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can permanently bulk delete.
+     * Determine whether the Admin can permanently bulk delete.
      */
     public function forceDeleteAny(Admin $admin): bool
     {
@@ -75,7 +75,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can restore.
+     * Determine whether the Admin can restore.
      */
     public function restore(Admin $admin, Role $role): bool
     {
@@ -83,7 +83,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can bulk restore.
+     * Determine whether the Admin can bulk restore.
      */
     public function restoreAny(Admin $admin): bool
     {
@@ -91,7 +91,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can replicate.
+     * Determine whether the Admin can replicate.
      */
     public function replicate(Admin $admin, Role $role): bool
     {
@@ -99,7 +99,7 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the admin can reorder.
+     * Determine whether the Admin can reorder.
      */
     public function reorder(Admin $admin): bool
     {

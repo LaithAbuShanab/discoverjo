@@ -1,55 +1,52 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
-use Filament\Resources\Concerns\Translatable;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\Concerns\Translatable;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-class CategoryResource extends Resource
+
+class ChildrenRelationManager extends RelationManager
 {
     use Translatable;
-    protected static ?string $model = Category::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'App sections';
 
 
-    public static function form(Form $form): Form
+    protected static string $relationship = 'Children';
+
+    public function getTranslatableLocales(): array
+    {
+        return ['en', 'ar'];
+    }
+
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-
                 Forms\Components\TextInput::make('name')
                     ->required(),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->disabled()
-                    ->maxLength(255),
                 Forms\Components\TextInput::make('priority')
                     ->required()
                     ->numeric(),
-                SpatieMediaLibraryFileUpload::make('image')->collection('main_category')->label('Image'),
+                SpatieMediaLibraryFileUpload::make('image')->collection('category_active')->label('Image Active'),
+                SpatieMediaLibraryFileUpload::make('image')->collection('category_inactive')->label('Image Inactive'),
 
 
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('name')
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('main_category')->conversion('main_category_app')->label('Image')->circular(),
+                SpatieMediaLibraryImageColumn::make('image')->collection('category_active')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
@@ -67,9 +64,13 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id',null)->orderBy('priority'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id','!=',null)->orderByDesc('priority'))
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+                Tables\Actions\LocaleSwitcher::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -82,19 +83,5 @@ class CategoryResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\ChildrenRelationManager::class,
-        ];
-    }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
-        ];
-    }
 }

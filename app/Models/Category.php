@@ -77,28 +77,29 @@ class Category extends Model implements HasMedia
         return $this->parent ? $this->parent->ancestors()->prepend($this->parent) : collect([$this]);
     }
 
-//    public function places()
-//    {
-//        return $this->hasManyThrough(
-//            Place::class,
-//            category::class,
-//            'category_id',
-//            'sub_category_id'
-//        );
-//    }
+    //    public function places()
+    //    {
+    //        return $this->hasManyThrough(
+    //            Place::class,
+    //            category::class,
+    //            'category_id',
+    //            'sub_category_id'
+    //        );
+    //    }
 
-    public function getSlugOptions() : SlugOptions
+    public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug')
-            ->usingLanguage('en');
+            ->generateSlugsFrom(function () {
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
     }
 
-//    public function getRouteKeyName()
-//    {
-//        return 'slug';
-//    }
+    //    public function getRouteKeyName()
+    //    {
+    //        return 'slug';
+    //    }
 
     public function places()
     {

@@ -77,16 +77,6 @@ class Category extends Model implements HasMedia
         return $this->parent ? $this->parent->ancestors()->prepend($this->parent) : collect([$this]);
     }
 
-    //    public function places()
-    //    {
-    //        return $this->hasManyThrough(
-    //            Place::class,
-    //            category::class,
-    //            'category_id',
-    //            'sub_category_id'
-    //        );
-    //    }
-
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -95,11 +85,6 @@ class Category extends Model implements HasMedia
             })
             ->saveSlugsTo('slug');
     }
-
-    //    public function getRouteKeyName()
-    //    {
-    //        return 'slug';
-    //    }
 
     public function places()
     {

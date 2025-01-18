@@ -2,28 +2,28 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Models\Category;
+use App\Filament\Resources\TagResource\Pages;
+use App\Filament\Resources\TagResource\RelationManagers;
+use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoryResource extends Resource
+class TagResource extends Resource
 {
     use Translatable;
 
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Tag::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -31,7 +31,7 @@ class CategoryResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('parent_id', null)->count();
+        return static::getModel()::count();
     }
 
     public static function getNavigationBadgeColor(): ?string
@@ -44,12 +44,12 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 Section::make('Basic Information')
-                    ->description('Provide the basic information about the category.')
+                    ->description('Provide the basic details for the tag.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
-                                    ->label('Category Name')
+                                    ->label('Tag Name')
                                     ->required()
                                     ->maxLength(255)
                                     ->reactive()
@@ -67,19 +67,22 @@ class CategoryResource extends Resource
                     ])
                     ->columns(1),
 
-                Section::make('Additional Details')
-                    ->description('Set the priority and upload an image for the category.')
+                Section::make('Tag Images')
+                    ->description('Upload images for the active and inactive states of the tag.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('priority')
-                                    ->label('Priority')
-                                    ->numeric()
+                                SpatieMediaLibraryFileUpload::make('tag_active_image')
+                                    ->label('Tag Active Image')
+                                    ->collection('tag_active')
+                                    ->conversion('tag_active_website')
                                     ->required(),
-                                SpatieMediaLibraryFileUpload::make('image')
-                                    ->label('Category Image')
-                                    ->collection('main_category')
-                                    ->conversion('main_category_website')
+
+                                SpatieMediaLibraryFileUpload::make('tag_inactive_image')
+                                    ->label('Tag Inactive Image')
+                                    ->collection('tag_inactive')
+                                    ->conversion('tag_inactive_website')
+                                    ->required(),
                             ]),
                     ])
                     ->columns(1),
@@ -91,31 +94,16 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('main_category')->label('Image')->circular(),
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    //                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('priority')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                SpatieMediaLibraryImageColumn::make('image')->collection('tag_active')->label('Image')->circular(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', null)->orderBy('priority'))
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -127,16 +115,16 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ChildrenRelationManager::class,
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
+            'index' => Pages\ListTags::route('/'),
+            'create' => Pages\CreateTag::route('/create'),
+            'edit' => Pages\EditTag::route('/{record}/edit'),
         ];
     }
 }

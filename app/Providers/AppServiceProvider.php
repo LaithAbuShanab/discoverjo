@@ -22,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(\App\Models\Admin::class, \App\Policies\AdminPolicy::class);
         Gate::policy(\App\Models\Category::class, \App\Policies\CategoryPolicy::class);
+        Gate::policy(\App\Models\Organizer::class, \App\Policies\OrganizerPolicy::class);
     }
 }

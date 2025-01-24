@@ -117,8 +117,9 @@ class PlaceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('phone_number')->searchable(),
+                Tables\Columns\TextColumn::make('slug')->searchable(),
                 RatingColumn::make('rating')->theme(RatingTheme::HalfStars)->sortable()->color('warning')->default(0.0),
                 Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()
                     ->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),

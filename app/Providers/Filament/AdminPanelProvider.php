@@ -65,6 +65,12 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->navigationGroups([
+                'App users',
+                'App sections',
+                'Discover Jordan',
+                'Event & Volunteering',
+            ])
             ->authGuard('admin');
     }
 }

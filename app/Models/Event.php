@@ -9,13 +9,37 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Event extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug;
 
     public $translatable = ['name', 'description', 'address'];
-    public $guarded = [];
+
+    public $fillable = [
+        'name',
+        'slug',
+        'description',
+        'address',
+        'region_id',
+        'start_datetime',
+        'end_datetime',
+        'status',
+        'price',
+        'link',
+        'attendance_number',
+    ];
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(function () {
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
+    }
 
     public function region()
     {

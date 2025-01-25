@@ -24,8 +24,22 @@ class OrganizerResource extends Resource
     use Translatable;
 
     protected static ?string $model = Organizer::class;
+
     protected static ?string $navigationGroup = 'Event & Volunteering';
+
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
 
     public static function form(Form $form): Form
     {
@@ -57,7 +71,7 @@ class OrganizerResource extends Resource
                     ->columns(1),
 
                 Section::make('Additional Details')
-                    ->description('Set the priority and upload an image for the category.')
+                    ->description('Set the priority and upload an image for the organizer.')
                     ->schema([
                         Grid::make(2)
                             ->schema([

@@ -13,7 +13,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Organizer extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations,HasSlug;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug;
 
     public $translatable = ['name'];
     public $guarded = [];
@@ -31,10 +31,10 @@ class Organizer extends Model implements HasMedia
             ->saveSlugsTo('slug');
     }
 
-//    public function volunteeringOrganizerables()
-//    {
-//        return $this->morphedByMany(Volunteering::class, 'organizerables');
-//    }
+    //    public function volunteeringOrganizerables()
+    //    {
+    //        return $this->morphedByMany(Volunteering::class, 'organizerables');
+    //    }
 
     public function registerMediaCollections(): void
     {
@@ -45,6 +45,4 @@ class Organizer extends Model implements HasMedia
                 $this->addMediaConversion('organizer_website')->width(250)->height(250)->format('webp')->nonQueued();;
             });
     }
-
-
 }

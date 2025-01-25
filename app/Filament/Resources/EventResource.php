@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\EventResource\Pages;
+use App\Filament\Resources\EventResource\RelationManagers;
+use App\Models\Event;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Resources\Concerns\Translatable;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class EventResource extends Resource
+{
+    use Translatable;
+
+    protected static ?string $model = Event::class;
+
+    protected static ?string $navigationGroup = 'Event & Volunteering';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Basic Information')
+                    ->description('Provide the basic information about the event.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Event Name')
+                                    ->unique()
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
+                                        if ($livewire->activeLocale === 'en') {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
+
+                                Forms\Components\TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->disabled()
+                                    ->maxLength(255),
+                            ]),
+                        Grid::make(1)
+                            ->schema([
+                                Forms\Components\Textarea::make('description')->required()->columnSpanFull(),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('address')
+                                    ->required(),
+                                Forms\Components\Select::make('region_id')
+                                    ->relationship('region', 'name')
+                                    ->required()
+                                    ->getOptionLabelFromRecordUsing(function ($record, $livewire) {
+                                        return $record->getTranslation('name', $livewire->activeLocale);
+                                    }),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\DateTimePicker::make('start_datetime')->required(),
+                                Forms\Components\DateTimePicker::make('end_datetime')->required(),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('price')->required()->numeric(),
+                                Forms\Components\TextInput::make('attendance_number')->required()->numeric(),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Toggle::make('status')->required()->inline(false),
+                                Forms\Components\TextInput::make('link')->required()->url(),
+                            ]),
+                        Grid::make(1)
+                            ->schema([
+                                Forms\Components\Select::make('organizer_id')
+                                    ->relationship('organizers', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn($record, $livewire) => $record->getTranslation('name', $livewire->activeLocale))
+                                    ->required()
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->columnSpanFull(),
+                            ])
+
+                    ])
+                    ->columns(1),
+
+                Section::make('Additional Details')
+                    ->description('Set the priority and upload an image for the event.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+
+                                SpatieMediaLibraryFileUpload::make('image')
+                                    ->label('Event Image')
+                                    ->collection('event')
+                                    ->conversion('event_website')
+                            ]),
+                    ])
+                    ->columns(1),
+            ])
+            ->columns(1);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                SpatieMediaLibraryImageColumn::make('image')->collection('event')->label('Image')->circular(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('start_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('end_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ToggleColumn::make('status'),
+                Tables\Columns\TextColumn::make('price')->money('JOD')->sortable(),
+                Tables\Columns\TextColumn::make('attendance_number')->numeric()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListEvents::route('/'),
+            'create' => Pages\CreateEvent::route('/create'),
+            'edit' => Pages\EditEvent::route('/{record}/edit'),
+        ];
+    }
+}

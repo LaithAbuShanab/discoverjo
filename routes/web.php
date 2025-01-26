@@ -8,10 +8,10 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Support\Str;
 Route::get('generate-slug', function () {
     // Get all places that do not have a slug
-    $placesWithoutSlug = \App\Models\Event::whereNull('slug')->orWhere('slug', '')->get();
+    $placesWithoutSlug = \App\Models\Slider::whereNull('slug')->orWhere('slug', '')->get();
 
     foreach ($placesWithoutSlug as $place) {
-        $place->slug = Str::slug($place->name);
+        $place->slug = Str::slug($place->title);
         $place->save();
     }
 

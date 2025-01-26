@@ -2,35 +2,31 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EventResource\Pages;
-use App\Filament\Resources\EventResource\RelationManagers;
-use App\Models\Event;
+use App\Filament\Resources\VolunteeringResource\Pages;
+use App\Filament\Resources\VolunteeringResource\RelationManagers;
+use App\Models\Volunteering;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Resources\Concerns\Translatable;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
-class EventResource extends Resource
+class VolunteeringResource extends Resource
 {
     use Translatable;
-
-    protected static ?string $model = Event::class;
-
-    protected static ?string $navigationGroup = 'Event & Volunteering';
-
-    protected static ?int $navigationSort = 2;
+    protected static ?string $model = Volunteering::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Event & Volunteering';
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -46,12 +42,12 @@ class EventResource extends Resource
         return $form
             ->schema([
                 Section::make('Basic Information')
-                    ->description('Provide the basic information about the event.')
+                    ->description('Provide the basic information about the volunteering.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
-                                    ->label('Event Name')
+                                    ->label('Volunteering Name')
                                     ->unique()
                                     ->required()
                                     ->maxLength(255)
@@ -99,7 +95,7 @@ class EventResource extends Resource
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('price')->required()->numeric(),
+                                Forms\Components\TextInput::make('hours_worked')->required()->numeric(),
                                 Forms\Components\TextInput::make('attendance_number')->required()->numeric(),
                             ]),
                         Grid::make(2)
@@ -123,15 +119,15 @@ class EventResource extends Resource
                     ->columns(1),
 
                 Section::make('Additional Details')
-                    ->description('Set the priority and upload an image for the event.')
+                    ->description('Set the priority and upload an image for the volunteering.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
 
                                 SpatieMediaLibraryFileUpload::make('image')
-                                    ->label('Event Image')
-                                    ->collection('event')
-                                    ->conversion('event_website')
+                                    ->label('volunteering Image')
+                                    ->collection('volunteering')
+                                    ->conversion('volunteering_website')
                             ]),
                     ])
                     ->columns(1),
@@ -143,14 +139,14 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('event')->label('Image')->circular(),
+                SpatieMediaLibraryImageColumn::make('image')->collection('volunteering')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),
                 Tables\Columns\TextColumn::make('start_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('end_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make('status'),
-                Tables\Columns\TextColumn::make('price')->money('JOD')->sortable(),
+                Tables\Columns\TextColumn::make('hours_worked')->sortable(),
                 Tables\Columns\TextColumn::make('attendance_number')->numeric()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -179,9 +175,9 @@ class EventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEvents::route('/'),
-            'create' => Pages\CreateEvent::route('/create'),
-            'edit' => Pages\EditEvent::route('/{record}/edit'),
+            'index' => Pages\ListVolunteerings::route('/'),
+            'create' => Pages\CreateVolunteering::route('/create'),
+            'edit' => Pages\EditVolunteering::route('/{record}/edit'),
         ];
     }
 }

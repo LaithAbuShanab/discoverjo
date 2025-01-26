@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class Volunteering extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations;
+    use HasFactory, InteractsWithMedia, HasTranslations,HasSlug;
 
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
@@ -49,5 +51,14 @@ class Volunteering extends Model implements HasMedia
     public function posts()
     {
         return $this->morphMany(Post::class, 'visitable');
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(function () {
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
     }
 }

@@ -23,40 +23,101 @@ class TripResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
+
+                // User Relationship
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'username')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('place_id')
+                    ->label('User'),
+
+                // Place Relationship
+                Forms\Components\Select::make('place_id')
+                    ->relationship('place', 'name')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('trip_type')
+                    ->label('Place'),
+
+                // Trip Type as a Select
+                Forms\Components\Select::make('trip_type')
                     ->required()
-                    ->numeric(),
+                    ->options([
+                        0 => 'Public',
+                        1 => 'Followers',
+                        2 => 'Specific Users',
+                    ])
+                    ->label('Trip Type'),
+
+                // Trip Name
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Trip Name'),
+
+                // Slug
                 Forms\Components\TextInput::make('slug')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Slug'),
+
+                // Description
                 Forms\Components\Textarea::make('description')
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Description'),
+
+                // Cost with Numeric Validation
                 Forms\Components\TextInput::make('cost')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
-                Forms\Components\Textarea::make('age_range')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('sex')
+                    ->prefix('JOD')
+                    ->label('Cost'),
+
+                Forms\Components\Fieldset::make('Age Range')
+                    ->schema([
+                        Forms\Components\TextInput::make('age_range.min')
+                            ->label('Minimum Age')
+                            ->required()
+                            ->numeric()
+                            ->minValue(0), // Ensure the value is non-negative
+
+                        Forms\Components\TextInput::make('age_range.max')
+                            ->label('Maximum Age')
+                            ->required()
+                            ->numeric()
+                            ->minValue(1), // Ensure the value is greater than zero
+                    ])
+                    ->columns(2)
+                    ->label('Age Range'),
+
+
+                // Sex (using Select for predefined options, e.g., Male/Female/Other)
+                Forms\Components\Select::make('sex')
                     ->required()
-                    ->numeric(),
+                    ->options([
+                        1 => 'Male',
+                        2 => 'Female',
+                    ])
+                    ->label('Sex'),
+
+                // Date and Time Picker
                 Forms\Components\DateTimePicker::make('date_time')
-                    ->required(),
-                Forms\Components\TextInput::make('attendance_number')
-                    ->numeric(),
-                Forms\Components\TextInput::make('status')
                     ->required()
+                    ->label('Date and Time'),
+
+                // Attendance Number
+                Forms\Components\TextInput::make('attendance_number')
                     ->numeric()
-                    ->default(1),
+                    ->label('Attendance Number'),
+
+                // Status as a Select
+                Forms\Components\Select::make('status')
+                    ->required()
+                    ->options([
+                        0 => 'Inactive',
+                        1 => 'Active',
+                        2 => 'Deleted by Creator',
+                        3 => 'Deleted by Admin',
+                    ])
+                    ->default(1)
+                    ->label('Status'),
             ]);
     }
 
@@ -64,6 +125,8 @@ class TripResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.username'),
@@ -116,6 +179,21 @@ class TripResource extends Resource
                     ->label('Status')
                     ->sortable()
                     ->searchable(),
+
+//                Tables\Columns\ToggleColumn::make('status')
+//                    ->label('Admin Deletion')
+//                    ->action(function ($record, $state) {
+//                        if ($record->status != 3 && $state) {
+//                            $record->update(['status' => 3]); // Change to Deleted by Admin
+//                        } elseif ($record->status == 3 && !$state) {
+//                            $record->update(['status' => 1]); // Change back to Active
+//                        }
+//                    })
+//                    ->onColor('warning') // Set color for the "on" state
+//                    ->offColor('secondary') // Set color for the "off" state
+//                    ->state(function ($record) {
+//                        return $record->status == 3; // Toggle is "on" when status is 3
+//                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -130,7 +208,8 @@ class TripResource extends Resource
             ])
             ->actions([
                 //process of delete should change the status
-                Tables\Actions\DeleteAction::make(),
+//                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -142,7 +221,7 @@ class TripResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\UsersTripRelationManager::class,
         ];
     }
 
@@ -150,6 +229,7 @@ class TripResource extends Resource
     {
         return [
             'index' => Pages\ListTrips::route('/'),
+            'view'=>Pages\ViewTrip::route('/{record}/view'),
 //            'create' => Pages\CreateTrip::route('/create'),
 //            'edit' => Pages\EditTrip::route('/{record}/edit'),
         ];

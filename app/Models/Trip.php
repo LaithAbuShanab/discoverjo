@@ -13,6 +13,9 @@ class Trip extends Model
     protected $guarded = [];
     protected $table = 'trips';
 
+    protected $casts = [
+        'age_range' => 'array',
+    ];
     public function place()
     {
         return $this->belongsTo(Place::class);

@@ -91,6 +91,8 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 SpatieMediaLibraryImageColumn::make('image')->collection('main_category')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),

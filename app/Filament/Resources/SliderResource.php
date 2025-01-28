@@ -104,6 +104,8 @@ class SliderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 SpatieMediaLibraryImageColumn::make('image')->collection('slider')->label('Image')->circular(),
 
                 Tables\Columns\TextColumn::make('title')

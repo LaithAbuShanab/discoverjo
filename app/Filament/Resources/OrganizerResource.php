@@ -91,6 +91,8 @@ class OrganizerResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 SpatieMediaLibraryImageColumn::make('image')->collection('organizer')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),

@@ -70,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                 'App sections',
                 'Discover Jordan',
                 'Event & Volunteering',
+                'Trips'
             ])
             ->authGuard('admin');
     }

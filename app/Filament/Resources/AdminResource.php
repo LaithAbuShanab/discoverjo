@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Pages\CreateRecord;
 
 class AdminResource extends Resource
 {
@@ -55,7 +56,7 @@ class AdminResource extends Resource
                                 Forms\Components\TextInput::make('password')
                                     ->label('Password')
                                     ->password()
-                                    ->required('create')
+                                    ->required(fn($livewire) => $livewire instanceof CreateRecord) // Required only on create
                                     ->revealable()
                                     ->maxLength(255)
                                     ->dehydrateStateUsing(fn($state) => bcrypt($state)),
@@ -74,7 +75,7 @@ class AdminResource extends Resource
                             ->relationship('roles', 'name')
                             ->columns(2)
                             ->searchable()
-                            ->required(),
+                            ->required(fn($livewire) => $livewire instanceof CreateRecord),
                     ])
                     ->columns(1),
             ])

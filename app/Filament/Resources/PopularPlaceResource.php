@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PopularPlaceResource\Pages;
-use App\Filament\Resources\PopularPlaceResource\RelationManagers;
 use App\Models\PopularPlace;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -24,7 +22,7 @@ class PopularPlaceResource extends Resource
 
     protected static ?string $model = PopularPlace::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     protected static ?string $navigationGroup = 'Discover Jordan';
 

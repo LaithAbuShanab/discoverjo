@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PlaceResource\Pages;
-use App\Filament\Resources\PlaceResource\RelationManagers;
 use App\Models\Place;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
@@ -23,8 +22,6 @@ use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\RatingTheme;
 use Filament\Resources\Concerns\Translatable;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PlaceResource extends Resource
 {
@@ -32,7 +29,7 @@ class PlaceResource extends Resource
 
     protected static ?string $model = Place::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
 
     protected static ?string $navigationGroup = 'Discover Jordan';
 

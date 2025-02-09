@@ -24,7 +24,7 @@ class TopTenResource extends Resource
 
     protected static ?string $model = TopTen::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
     protected static ?string $navigationGroup = 'Discover Jordan';
 

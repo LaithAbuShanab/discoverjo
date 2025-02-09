@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\VolunteeringResource\Pages;
-use App\Filament\Resources\VolunteeringResource\RelationManagers;
 use App\Models\Volunteering;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -15,8 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class VolunteeringResource extends Resource
@@ -24,7 +21,7 @@ class VolunteeringResource extends Resource
     use Translatable;
     protected static ?string $model = Volunteering::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-gif';
 
     protected static ?string $navigationGroup = 'Event & Volunteering';
     public static function getNavigationBadge(): ?string

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FeatureResource\Pages;
-use App\Filament\Resources\FeatureResource\RelationManagers;
 use App\Models\Feature;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -16,8 +15,6 @@ use Filament\Forms\Components\Section;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FeatureResource extends Resource
 {
@@ -25,7 +22,7 @@ class FeatureResource extends Resource
 
     protected static ?string $model = Feature::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-face-smile';
 
     protected static ?string $navigationGroup = 'App sections';
 

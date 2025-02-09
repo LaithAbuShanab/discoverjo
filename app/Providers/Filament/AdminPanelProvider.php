@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('')
             ->login()
+            ->brandName('Discover Jordan')
             ->colors([
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,

@@ -13,9 +13,6 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Str;
-use App\Filament\Resources\RegionResource\RelationManagers;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RegionResource extends Resource
 {
@@ -23,7 +20,7 @@ class RegionResource extends Resource
 
     protected static ?string $model = Region::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     protected static ?string $navigationGroup = 'App sections';
 

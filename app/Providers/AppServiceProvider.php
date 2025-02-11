@@ -28,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\App\Models\Trip::class, \App\Policies\TripPolicy::class);
         Gate::policy(\App\Models\User::class, \App\Policies\UserPolicy::class);
         Gate::policy(\App\Models\ContactUs::class, \App\Policies\ContactUsPolicy::class);
+        Gate::policy(\App\Models\SuggestionPlace::class, \App\Policies\SuggestionPlacePolicy::class);
     }
 }

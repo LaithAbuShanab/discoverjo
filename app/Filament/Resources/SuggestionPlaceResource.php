@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ContactUsResource\Pages;
-use App\Filament\Resources\ContactUsResource\RelationManagers;
-use App\Models\ContactUs;
+use App\Filament\Resources\SuggestionPlaceResource\Pages;
+use App\Filament\Resources\SuggestionPlaceResource\RelationManagers;
+use App\Models\SuggestionPlace;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
@@ -14,9 +14,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ContactUsResource extends Resource
+class SuggestionPlaceResource extends Resource
 {
-    protected static ?string $model = ContactUs::class;
+    protected static ?string $model = SuggestionPlace::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -24,25 +24,18 @@ class ContactUsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('place_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
+                Forms\Components\Textarea::make('address')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('subject')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('message')
-                    ->required()
-                    ->columnSpanFull(),
                 Forms\Components\Toggle::make('status')
                     ->required(),
-                SpatieMediaLibraryFileUpload::make('contact')
-                    ->collection('contact_app')
+                SpatieMediaLibraryFileUpload::make('suggestion_place')
+                    ->collection('suggestion_place_app')
                     ->columnSpanFull()
                     ->multiple()
                     ->required()
-
             ]);
     }
 
@@ -50,16 +43,14 @@ class ContactUsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('place_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('subject')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('address')
+                    ->searchable()
+                    ->limit(50),
                 Tables\Columns\ToggleColumn::make('status')
                     ->sortable(),
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('Media')->allCollections()->circular()->stacked()->limit(3)->limitedRemainingText(),
-
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -93,8 +84,9 @@ class ContactUsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContactUs::route('/'),
-            'view' => Pages\ViewContactUs::route('/{record}'),
+            'index' => Pages\ListSuggestionPlaces::route('/'),
+            'view' => Pages\ViewSuggestionPlace::route('/{record}'),
+
         ];
     }
 }

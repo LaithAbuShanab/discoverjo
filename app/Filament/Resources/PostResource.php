@@ -10,10 +10,9 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 
 class PostResource extends Resource
 {
@@ -21,60 +20,106 @@ class PostResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Post & Comment';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'username')
-                    ->required(),
+                // Section 1: User and Visitable Information
+                Section::make('User & Visitable Information')
+                    ->description('Select the user and specify the visitable details.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('user_id')
+                                    ->label('User')
+                                    ->relationship('user', 'username')
+                                    ->searchable()
+                                    ->required(),
 
-                Forms\Components\Select::make('visitable_type')
-                    ->label('Type')
-                    ->options([
-                        'App\Models\Trip' => 'Trip',
-                        'App\Models\Place' => 'Place',
-                        'App\Models\Event' => 'Event',
-                        'App\Models\Volunteering' => 'Volunteering',
+                                Forms\Components\Select::make('visitable_type')
+                                    ->label('Visitable Type')
+                                    ->options([
+                                        'App\Models\Trip' => 'Trip',
+                                        'App\Models\Place' => 'Place',
+                                        'App\Models\Event' => 'Event',
+                                        'App\Models\Volunteering' => 'Volunteering',
+                                    ])
+                                    ->searchable()
+                                    ->reactive()
+                                    ->required()
+                                    ->afterStateUpdated(fn(callable $set) => $set('visitable_id', null)),
+
+                                Forms\Components\Select::make('visitable_id')
+                                    ->label('Visitable Name')
+                                    ->options(
+                                        fn(callable $get) =>
+                                        $get('visitable_type') && class_exists($get('visitable_type'))
+                                            ? $get('visitable_type')::pluck('name', 'id')->toArray()
+                                            : []
+                                    )
+                                    ->searchable()
+                                    ->required()
+                                    ->reactive(),
+                            ]),
                     ])
-                    ->searchable()
-                    ->reactive() // Reacts when the user selects a type
-                    ->required()
-                    ->afterStateUpdated(fn (callable $set) => $set('visitable_id', null)), // Reset visitable_id when type changes
+                    ->columns(1),
 
-                Forms\Components\Select::make('visitable_id')
-                    ->label('Visitable Name')
-                    ->options(fn (callable $get) =>
-                    $get('visitable_type') && class_exists($get('visitable_type'))
-                        ? $get('visitable_type')::pluck('name', 'id')->toArray()
-                        : []
-                    )
-                    ->searchable()
-                    ->required()
-                    ->reactive(), // Updates when visitable_type changes
+                // Section 2: Post Details
+                Section::make('Post Details')
+                    ->description('Define privacy settings and post content.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('privacy')
+                                    ->label('Privacy')
+                                    ->options([
+                                        0 => 'Only me',
+                                        1 => 'Public',
+                                        2 => 'Followers',
+                                    ])
+                                    ->required(),
 
-                Forms\Components\Select::make('privacy')
-                    ->label('Privacy')
-                    ->options([
-                        0 => 'Only me',
-                        1 => 'Public',
-                        2 => 'Followers',
+                                Forms\Components\Toggle::make('seen_status')
+                                    ->label('Seen Status')
+                                    ->inline(false)
+                                    ->default(false),
+                            ]),
+                        Forms\Components\Textarea::make('content')
+                            ->label('Content')
+                            ->required()
+                            ->columnSpanFull(),
                     ])
-                    ->required(),
+                    ->columns(1),
 
-                Forms\Components\Toggle::make('seen_status')
-                    ->label('Seen Status')
-                    ->default(false),
-
-                Forms\Components\Textarea::make('content')
-                    ->required()
-                    ->columnSpanFull(),
-                SpatieMediaLibraryFileUpload::make('post')
-                    ->collection('post_app')
-                    ->columnSpanFull()
-                    ->multiple()
-                    ->required(),
-            ]);
+                // Section 3: Media Upload
+                Section::make('Media Upload')
+                    ->description('Attach images or videos to the post.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('post')
+                            ->label('Post Media')
+                            ->collection('post')
+                            ->multiple()
+                            ->required()
+                            ->columnSpanFull()
+                            ->panelLayout('grid')
+                    ])
+                    ->columns(1),
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -88,7 +133,7 @@ class PostResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('visitable_type')
                     ->label('Type')
-                    ->formatStateUsing(fn ($state) => class_basename($state)) // Extracts only the class name
+                    ->formatStateUsing(fn($state) => class_basename($state)) // Extracts only the class name
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('visitable_id')
@@ -136,7 +181,6 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -158,8 +202,6 @@ class PostResource extends Resource
         return [
             'index' => Pages\ListPosts::route('/'),
             'view' => Pages\ViewPost::route('/{record}'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
-
         ];
     }
 }

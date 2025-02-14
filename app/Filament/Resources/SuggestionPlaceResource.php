@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SuggestionPlaceResource\Pages;
-use App\Filament\Resources\SuggestionPlaceResource\RelationManagers;
 use App\Models\SuggestionPlace;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -11,8 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 
 class SuggestionPlaceResource extends Resource
 {
@@ -20,25 +19,64 @@ class SuggestionPlaceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Suggestion & Contact';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('place_name')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('address')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('status')
-                    ->required(),
-                SpatieMediaLibraryFileUpload::make('suggestion_place')
-                    ->collection('suggestion_place_app')
-                    ->columnSpanFull()
-                    ->multiple()
-                    ->required()
-            ]);
-    }
+                // Section 1: Place Information
+                Section::make('Place Information')
+                    ->description('Provide the details of the place.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('place_name')
+                                    ->label('Place Name')
+                                    ->required()
+                                    ->maxLength(255),
 
+                                Forms\Components\Textarea::make('address')
+                                    ->label('Address')
+                                    ->required()
+                                    ->maxLength(255),
+                            ]),
+                    ])
+                    ->columns(1),
+
+                // Section 2: Additional Options
+                Section::make('Additional Options')
+                    ->description('Set the status and upload images.')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Toggle::make('status')
+                                    ->label('Active Status')
+                                    ->required(),
+
+                                SpatieMediaLibraryFileUpload::make('suggestion_place')
+                                    ->label('Place Images')
+                                    ->collection('suggestion_place')
+                                    ->multiple()
+                                    ->required()
+                                    ->columnSpanFull()
+                                    ->panelLayout('grid')
+                            ]),
+                    ])
+                    ->columns(1),
+            ])
+            ->columns(1);
+    }
     public static function table(Table $table): Table
     {
         return $table

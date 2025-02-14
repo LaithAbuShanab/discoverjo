@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\PostResource\RelationManagers;
 
-use App\Filament\Resources\ReplyRelationManagerResource\RelationManagers\RepliesRelationManager;
+use App\Filament\Resources\CommentResource\RelationManagers\RepliesRelationManager;
+use App\Models\Comment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -49,9 +50,7 @@ class CommentsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\ViewAction::make()->url(fn (Comment $record) => route('filament.admin.resources.comments.view', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -60,10 +59,4 @@ class CommentsRelationManager extends RelationManager
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-
-        ];
-    }
 }

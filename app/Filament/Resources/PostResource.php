@@ -136,6 +136,7 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -157,6 +158,8 @@ class PostResource extends Resource
         return [
             'index' => Pages\ListPosts::route('/'),
             'view' => Pages\ViewPost::route('/{record}'),
+            'edit' => Pages\EditPost::route('/{record}/edit'),
+
         ];
     }
 }

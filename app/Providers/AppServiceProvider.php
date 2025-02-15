@@ -31,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\App\Models\SuggestionPlace::class, \App\Policies\SuggestionPlacePolicy::class);
         Gate::policy(\App\Models\Post::class, \App\Policies\PostPolicy::class);
         Gate::policy(\App\Models\Comment::class, \App\Policies\CommentPolicy::class);
+        Gate::policy(\App\Models\LegalDocument::class, \App\Policies\LegalDocumentPolicy::class);
     }
 }

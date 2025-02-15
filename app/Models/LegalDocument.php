@@ -8,10 +8,10 @@ use Spatie\Translatable\HasTranslations;
 
 class LegalDocument extends Model
 {
-    use HasFactory,HasTranslations;
-    public $translatable = ['title','content'];
+    use HasFactory, HasTranslations;
+    public $translatable = ['title', 'content'];
 
-    protected $guarded =[];
+    protected $guarded = [];
 
     public function terms()
     {

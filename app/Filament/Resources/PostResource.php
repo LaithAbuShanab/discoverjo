@@ -18,7 +18,7 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-up-on-square-stack';
 
     protected static ?string $navigationGroup = 'Post & Comment';
 
@@ -112,6 +112,7 @@ class PostResource extends Resource
                         SpatieMediaLibraryFileUpload::make('post')
                             ->label('Post Media')
                             ->collection('post')
+                            ->conversion('post_website')
                             ->multiple()
                             ->required()
                             ->columnSpanFull()

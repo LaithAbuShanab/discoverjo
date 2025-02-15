@@ -7,8 +7,6 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RepliesRelationManager extends RelationManager
 {
@@ -30,7 +28,14 @@ class RepliesRelationManager extends RelationManager
             ->recordTitleAttribute('content')
             ->columns([
                 Tables\Columns\TextColumn::make('user.username'),
-                Tables\Columns\TextColumn::make('content'),
+                Tables\Columns\TextColumn::make('content')->limit(120)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen($state) <= $column->getCharacterLimit()) {
+                            return null;
+                        }
+                        return $state;
+                    })
             ])
             ->filters([
                 //
@@ -38,10 +43,7 @@ class RepliesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
+            ->actions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

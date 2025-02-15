@@ -17,7 +17,7 @@ class CommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-command-line';
 
     protected static ?string $navigationGroup = 'Post & Comment';
 
@@ -48,6 +48,12 @@ class CommentResource extends Resource
                                     ->relationship('user', 'username')
                                     ->searchable()
                                     ->required(),
+
+                                Forms\Components\Select::make('post_id')
+                                    ->label('Post Type')
+                                    ->relationship('post', 'visitable_type')
+                                    ->searchable()
+                                    ->required(),
                             ]),
 
                     ])
@@ -60,7 +66,7 @@ class CommentResource extends Resource
                         Forms\Components\Textarea::make('content')
                             ->label('Content')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
                     ])
                     ->columns(1),
             ])
@@ -72,11 +78,10 @@ class CommentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.username')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('post.content')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->limit(50),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

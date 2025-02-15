@@ -74,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 'Trips',
                 'Suggestion & Contact',
                 'Post & Comment',
+                'Legal Documents'
             ])
             ->authGuard('admin');
     }

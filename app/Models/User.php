@@ -76,4 +76,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
                 }
             });
     }
+
+    public function plans()
+    {
+        return $this->morphMany('App\Models\Plan', 'creator');
+    }
 }

@@ -13,6 +13,11 @@ class PlanActivity extends Model
     public $translatable = ['activity_name', 'notes'];
     public $guarded = [];
 
+    protected $casts = [
+        'activity_name' => 'array',
+        'notes' => 'array',
+    ];
+
     public function plan()
     {
         return $this->belongsTo(Plan::class);

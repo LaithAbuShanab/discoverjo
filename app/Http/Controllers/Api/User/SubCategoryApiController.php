@@ -14,36 +14,35 @@ use Illuminate\Support\Facades\Validator;
 class SubCategoryApiController extends Controller
 {
 
-    protected $subCateogryApiUseCase;
-
-    public function __construct(SubCategoryApiUseCase $subCateogryApiUseCase) {
-
-        $this->subCateogryApiUseCase = $subCateogryApiUseCase;
-
+    public function __construct(protected SubCategoryApiUseCase $subCategoryApiUseCase)
+    {
+        $this->subCategoryApiUseCase = $subCategoryApiUseCase;
     }
+
     public function singleSubCategory(Request $request)
     {
-        $id = $request->subcategory_id;
-        $validator = Validator::make(['subcategory_id' => $id], [
-            'subcategory_id' => [
+        $slug = $request->subcategory_slug;
+        $validator = Validator::make(['subcategory_slug' => $slug], [
+            'subcategory_slug' => [
                 'required',
-                'exists:categories,id',
+                'exists:categories,slug',
                 function ($attribute, $value, $fail) {
-                    if (Category::where('id', $value)->whereNull('parent_id')->exists()) {
+                    if (Category::where('slug', $value)->whereNull('parent_id')->exists()) {
                         $fail(__('app.api.this-is-main-category'));
                     }
                 }
-            ],[
-                'subcategory_id.required'=>__('validation.api.subcategory-is-required'),
-                'subcategory_id.exists'=>__('validation.api.subcategory-does-not-exists'),
+            ],
+            [
+                'subcategory_slug.required' => __('validation.api.subcategory-is-required'),
+                'subcategory_slug.exists' => __('validation.api.subcategory-does-not-exists'),
             ]
         ]);
 
         if ($validator->fails()) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $validator->errors());
         }
-        try{
-            $subCategory = $this->subCateogryApiUseCase->singleSubCategory($id);
+        try {
+            $subCategory = $this->subCategoryApiUseCase->singleSubCategory($slug);
 
             return ApiResponse::sendResponse(200, __('app.api.places-of-subcategories-retrieved-successfully'), $subCategory);
         } catch (\Exception $e) {

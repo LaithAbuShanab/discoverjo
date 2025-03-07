@@ -28,6 +28,7 @@ class CategoryApiUseCase
     {
         return $this->categoryRepository->allPlacesByCategory($slug);
     }
+
     public function allSubcategories($data)
     {
         return $this->categoryRepository->allSubcategories($data);

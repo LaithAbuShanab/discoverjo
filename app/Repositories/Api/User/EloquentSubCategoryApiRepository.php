@@ -2,10 +2,7 @@
 
 namespace App\Repositories\Api\User;
 
-
-use App\Http\Resources\CategoryResource;
 use App\Http\Resources\PlaceResource;
-use App\Http\Resources\SinglePlaceResource;
 use App\Http\Resources\SingleSubCategoryResource;
 use App\Interfaces\Gateways\Api\User\SubCategoryApiRepositoryInterface;
 use App\Models\Category;
@@ -15,13 +12,15 @@ use App\Models\SubCategory;
 
 class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterface
 {
-    public function singleSubCategory($id)
+    public function singleSubCategory($slug)
     {
         // Fetch the child category by ID and ensure it's not a main category
-        $subCategory = Category::where('id', $id)
+        $subCategory = Category::where('slug', $slug)
             ->whereNotNull('parent_id')
             ->with('places')
             ->firstOrFail();
+
+        $id = $subCategory->id;
 
         // Retrieve user coordinates from the request
         $userLat = request()->query('lat', null);
@@ -43,8 +42,8 @@ class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterf
         // Convert pagination result to array and include pagination metadata
         $placesArray = $places->toArray();
         $pagination = [
-            'next_page_url' => $placesArray['next_page_url'] ? $placesArray['next_page_url'].'&lat='.$userLat.'&lng='.$userLng : null,
-            'prev_page_url' => $placesArray['prev_page_url'] ? $placesArray['prev_page_url'].'&lat='.$userLat.'&lng='.$userLng : null,
+            'next_page_url' => $placesArray['next_page_url'] ? $placesArray['next_page_url'] . '&lat=' . $userLat . '&lng=' . $userLng : null,
+            'prev_page_url' => $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . '&lng=' . $userLng : null,
             'total' => $placesArray['total'],
         ];
 

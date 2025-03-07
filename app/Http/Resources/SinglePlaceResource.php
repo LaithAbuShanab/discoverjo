@@ -25,7 +25,7 @@ class SinglePlaceResource extends JsonResource
             return [
                 'name' => $tag->name,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
-                'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
+                'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
         });
 
@@ -33,7 +33,7 @@ class SinglePlaceResource extends JsonResource
             return [
                 'name' => $subcategory->name,
                 'image_active' => $subcategory->getFirstMediaUrl('category_active', 'category_active_app'),
-                'image_inactive'=> $subcategory->getFirstMediaUrl('category_inactive', 'category_inactive_app'),
+                'image_inactive' => $subcategory->getFirstMediaUrl('category_inactive', 'category_inactive_app'),
             ];
         });
 
@@ -48,7 +48,7 @@ class SinglePlaceResource extends JsonResource
             return [
                 'name' => $feature->name,
                 'image_active' => $feature->getFirstMediaUrl('feature_active', 'feature_active_app'),
-                'image_inactive'=> $feature->getFirstMediaUrl('feature_inactive', 'feature_inactive_app'),
+                'image_inactive' => $feature->getFirstMediaUrl('feature_inactive', 'feature_inactive_app'),
             ];
         });
 
@@ -70,8 +70,8 @@ class SinglePlaceResource extends JsonResource
         $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => $this->name,
-//            'category' => $this->category->parent->name,
             'description' => $this->description,
             'image' => $this->getFirstMediaUrl('main_place', 'main_place_app'),
             'region' => $this->region->name,

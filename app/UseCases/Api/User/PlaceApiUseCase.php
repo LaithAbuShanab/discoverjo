@@ -14,9 +14,9 @@ class PlaceApiUseCase
         $this->placeApiRepository = $placeApiRepository;
     }
 
-    public function singlePlace($id)
+    public function singlePlace($slug)
     {
-        return $this->placeApiRepository->singlePlace($id);
+        return $this->placeApiRepository->singlePlace($slug);
     }
 
     public function createFavoritePlace($id)

@@ -33,20 +33,20 @@ class PlaceApiController extends Controller
 
     public function singlePlaces(Request $request)
     {
-        $id = $request->place_id;
+        $slug = $request->place_slug;
 
-        $validator = Validator::make(['place_id' => $id], [
-            'place_id' => 'required|exists:places,id',
+        $validator = Validator::make(['place_slug' => $slug], [
+            'place_slug' => 'required|exists:places,slug',
         ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
+            'place_slug.exists'=>__('validation.api.place-id-invalid'),
+            'place_slug.required'=>__('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_id']);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_slug']);
         }
         try {
-            $allPlaces = $this->placeApiUseCase->singlePlace($id);
+            $allPlaces = $this->placeApiUseCase->singlePlace($slug);
 
             return ApiResponse::sendResponse(200, __('app.place.api.place-retrieved-by-id-successfully'), $allPlaces);
         } catch (\Exception $e) {

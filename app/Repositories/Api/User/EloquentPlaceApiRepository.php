@@ -31,9 +31,9 @@ use Illuminate\Support\Facades\Notification;
 class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 {
 
-    public function singlePlace($id)
+    public function singlePlace($slug)
     {
-        $place = Place::where('id', $id)->first();
+        $place = Place::findBySlug($slug);
         return new SinglePlaceResource($place);
     }
 

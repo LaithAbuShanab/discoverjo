@@ -23,14 +23,14 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
     public function shuffleAllCategories()
     {
-        $eloquentCategories =Category::whereNull('parent_id')->get();
+        $eloquentCategories = Category::whereNull('parent_id')->get();
         $shuffledCategories = $eloquentCategories->shuffle();
         return AllCategoriesResource::collection($shuffledCategories);
     }
 
     public function allPlacesByCategory($slug)
     {
-        $category = Category::with('children')->where('slug',$slug);
+        $category = Category::with('children')->where('slug', $slug)->first();
 
         // Retrieve all subcategories
         $allSubcategories = $category->children()->whereHas('places')->get();
@@ -58,25 +58,25 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
 
         $placesArray = $places->toArray();
-        if($userLat &&$userLng ){
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['next_page_url'];
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['prev_page_url'];
-        }else{
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
+        if ($userLat && $userLng) {
+            $parameterNext = $placesArray['next_page_url'] ? $placesArray['next_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : $placesArray['next_page_url'];
+            $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : $placesArray['prev_page_url'];
+        } else {
+            $parameterNext = $placesArray['next_page_url'] ? $placesArray['next_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
+            $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
         }
 
         // Convert pagination result to array and include pagination metadata
 
         $pagination = [
-            'next_page_url'=>$parameterNext,
-            'prev_page_url'=>$parameterPrevious,
+            'next_page_url' => $parameterNext,
+            'prev_page_url' => $parameterPrevious,
             'total' => $placesArray['total'],
         ];
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'category'=>new AllCategoriesResource($category),
+            'category' => new AllCategoriesResource($category),
             'sub_categories' => CategoryResource::collection($allSubcategories),
             'places' => PlaceResource::collection($places),
             'pagination' => $pagination
@@ -99,6 +99,4 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
         return new ResourceCollection(AllCategoriesResource::collection($categories));
     }
-
-
 }

@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
-use App\Models\DeletedPost;
+use App\Models\DeleteCounter;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -186,9 +186,9 @@ class PostResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->action(function ($record) {
-                        DeletedPost::updateOrCreate(
+                        DeleteCounter::updateOrCreate(
                             ['user_id' => $record->user_id],
-                            ['number_of_deleted_post' => DB::raw('number_of_deleted_post + 1')]
+                            ['deleted_count' => DB::raw('deleted_count + 1')]
                         );
                         $record->delete();
                     }),

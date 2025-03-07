@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\CommentResource\RelationManagers;
 
+use App\Models\DeleteCounter;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 
 class RepliesRelationManager extends RelationManager
 {
@@ -43,7 +45,16 @@ class RepliesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->actions([])
+            ->actions([
+                Tables\Actions\DeleteAction::make()
+                    ->action(function ($record) {
+                        DeleteCounter::updateOrCreate(
+                            ['user_id' => $record->user_id],
+                            ['deleted_count' => DB::raw('deleted_count + 1')]
+                        );
+                        $record->delete();
+                    }),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

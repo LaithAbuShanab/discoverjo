@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CommentResource\Pages;
 use App\Filament\Resources\CommentResource\RelationManagers\RepliesRelationManager;
 use App\Models\Comment;
+use App\Models\DeleteCounter;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Illuminate\Support\Facades\DB;
 
 class CommentResource extends Resource
 {
@@ -96,6 +98,14 @@ class CommentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(function ($record) {
+                        DeleteCounter::updateOrCreate(
+                            ['user_id' => $record->user_id],
+                            ['deleted_count' => DB::raw('deleted_count + 1')]
+                        );
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -14,8 +14,11 @@
         "filament/widgets": "^3.2",
         "laravel/framework": "^11.31",
         "laravel/passport": "^12.0",
+        "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.9",
         "mokhosh/filament-rating": "^1.4",
+        "pusher/pusher-php-server": "^7.2",
+        "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.11",
         "spatie/laravel-sluggable": "^3.7",
         "spatie/laravel-translatable": "^6.9"
@@ -39,7 +42,11 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/Helpers/helpers.php",
+            "app/Helpers/ApiResponse.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [

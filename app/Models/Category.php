@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class Category extends Model implements HasMedia
@@ -20,6 +21,8 @@ class Category extends Model implements HasMedia
 
     public $translatable = ['name'];
     public $guarded = [];
+
+
 
     public function registerMediaCollections(): void
     {

@@ -26,6 +26,7 @@ class ReviewResource extends JsonResource
             'id' => $this->id,
             'username' => $this->user->username,
             'user_id'=>$this->user->id,
+            'user_slug'=>$this->user->slug,
             'avatar' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),
             'rating' => (int) $this->rating,

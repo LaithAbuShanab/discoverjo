@@ -41,7 +41,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'volunteering' => new ResourceCollection(VolunteeringResource::collection($eloquentVolunteerings)),
+            'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
             'pagination' => $pagination
         ];
     }
@@ -51,6 +51,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         $perPage = 15;
         $now = now()->setTimezone('Asia/Riyadh');
         $eloquentVolunteerings = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
+        //edit the status should has cron job
         Volunteering::where('status', '1')->whereNotIn('id', $eloquentVolunteerings->pluck('id'))->update(['status' => '0']);
         $volunteeringArray = $eloquentVolunteerings->toArray();
 
@@ -62,14 +63,14 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'volunteering' => new ResourceCollection(VolunteeringResource::collection($eloquentVolunteerings)),
+            'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
             'pagination' => $pagination
         ];
     }
 
-    public function volunteering($id)
+    public function volunteering($slug)
     {
-        $eloquentVolunteerings = Volunteering::where('id', $id)->first();
+        $eloquentVolunteerings = Volunteering::findBySlug($slug);
         return new SingleVolunteeringResource($eloquentVolunteerings);
     }
 
@@ -87,7 +88,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'volunteering' => new ResourceCollection(VolunteeringResource::collection($eloquentVolunteerings)),
+            'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
             'pagination' => $pagination
         ];
     }

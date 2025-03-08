@@ -17,12 +17,14 @@ class UserResource extends JsonResource
         if ($this->resource->getTable() == 'group_members') {
             return [
                 'id' => $this->user->id,
+                'slug'=>$this->user->slug,
                 'username' => $this->user->username,
                 'image' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
             ];
         } else {
             return [
                 'id' => $this->id,
+                'slug'=>$this->slug,
                 'username' => $this->username,
                 'email' => $this->email,
                 'image' => $this->getFirstMediaUrl('avatar', 'avatar_app'),

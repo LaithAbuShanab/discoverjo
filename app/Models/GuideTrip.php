@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class GuideTrip extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug;
     protected $guarded = [];
 
     public $translatable = ['name', 'description'];
@@ -22,7 +24,14 @@ class GuideTrip extends Model implements HasMedia
         'description' => 'json',
     ];
 
-
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(function () {
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
+    }
 
     public function registerMediaCollections(): void
     {

@@ -31,7 +31,7 @@ class StoreContactUsApiRequest extends FormRequest
             'subject' => 'nullable',
             'message' => 'required',
             "images" => ['nullable'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz|max:2048'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz|max:10000'],
         ];
     }
 

@@ -22,7 +22,9 @@ class TripResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'creator_id'=>$this->user_id,
+            'creator_slug'=>$this->user->slug,
             'conversation_id' => $this->conversation->id ?? null,
             'image' => $this->place->getFirstMediaUrl('main_place', 'main_place_app'),
             'date' => Carbon::parse($this->date_time)->format('Y-m-d'),

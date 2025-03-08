@@ -21,9 +21,11 @@ class CreatePlan extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['creator_type'] = auth()->user()->getMorphClass();
+        $data['creator_type'] = 'App\Models\Admin';
         $data['creator_id'] = auth()->user()->id;
 
         return $data;
     }
+
+
 }

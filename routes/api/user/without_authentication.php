@@ -35,6 +35,27 @@ Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])-
 Route::get('popular/places', [PopularPlaceApiController::class, 'topTenPlaces'])->name('popular.places');
 Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']);
 
+//////////////////////////////////////// event api //////////////////////////////////////////////////////////////////
+// this api for all event active and inactive order by start_time old to new
+Route::get('all/events', [EventApiController::class, 'index'])->name('events');
+Route::get('all/active/events', [EventApiController::class, 'activeEvents'])->name('active.events');
+Route::get('event/{event_slug}', [EventApiController::class, 'event'])->name('single.events');
+Route::get('date/events', [EventApiController::class, 'dateEvents'])->name('date.events');
+
+///////////////////////////////////volunteering api /////////////////////////////////////////////////////
+Route::get('all/volunteering', [VolunteeringApiController::class, 'index'])->name('volunteering');
+Route::get('all/active/volunteering', [VolunteeringApiController::class, 'activeVolunteerings'])->name('active.volunteering');
+Route::get('volunteering/{volunteering_slug}', [VolunteeringApiController::class, 'volunteering'])->name('single.volunteering');
+Route::get('date/volunteering', [VolunteeringApiController::class, 'dateVolunteering'])->name('date.volunteering');
+
+Route::get('legal/document', [LegalDocumentApiController::class, 'index'])->name('legal.index');
+Route::post('contact-us', [ContactUsApiController::class, 'store'])->name('contact.store');
+Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store']);
+
+Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips');
+Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
+
+
 //end review
 
 
@@ -46,43 +67,16 @@ Route::get('user/current-location/places', [UserProfileController::class, 'curre
 
 
 
-////////////////////////////// event api //////////////////////////////////////////////////////////////////
-
-Route::get('all/events', [EventApiController::class, 'index'])->name('events');
-
-Route::get('all/active/events', [EventApiController::class, 'activeEvents'])->name('active.events');
-
-Route::get('event/{event_id}', [EventApiController::class, 'event'])->name('single.events');
-
-Route::get('date/events', [EventApiController::class, 'dateEvents'])->name('date.events');
-
-///////////////////////////////////volunteering api /////////////////////////////////////////////////////
-///
-Route::get('all/volunteering', [VolunteeringApiController::class, 'index'])->name('volunteering');
-
-Route::get('all/active/volunteering', [VolunteeringApiController::class, 'activeVolunteerings'])->name('active.volunteering');
-
-Route::get('volunteering/{volunteering_id}', [VolunteeringApiController::class, 'volunteering'])->name('single.volunteering');
-
-Route::get('date/volunteering', [VolunteeringApiController::class, 'dateVolunteering'])->name('date.volunteering');
-
-Route::get('legal/document', [LegalDocumentApiController::class, 'index'])->name('legal.index');
-
-Route::post('contact-us', [ContactUsApiController::class, 'store'])->name('contact.store');
-
-Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store']);
-
 
 ////////////////////////////////////// trip ////////////////////////////////////////////////
 
-Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips');
-Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
 
 
 /////////////////////////////////////  search  ///////////////////////////////////////////////////////////
 
 Route::get('all/places/search', [PlaceApiController::class, 'search']);
 Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']);
+//here
 Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']);
 Route::get('places/filter', [PlaceApiController::class, 'filter']);
 Route::get('categories/search', [CategoryApiController::class, 'search']);

@@ -38,6 +38,7 @@ class SingleVolunteeringResource extends JsonResource
 
         $data = [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'name' => $this->name,
             'description' => $this->description,
             'image' => $this->getFirstMediaUrl('volunteering', 'volunteering_app'),

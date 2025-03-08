@@ -28,7 +28,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     public function plans()
     {
         $perPage = 15;
-        $allPlans = Plan::where('creator_type', 'App\Models\Admin')->with('activities')->paginate($perPage);
+        $allPlans = Plan::where('creator_type', 'App\Models\Admin')->with('days')->paginate($perPage);
 //        $plansArray = $plans->toArray();
         // Convert paginated items to a collection and shuffle
         $shuffledPlans = $allPlans->getCollection()->shuffle();

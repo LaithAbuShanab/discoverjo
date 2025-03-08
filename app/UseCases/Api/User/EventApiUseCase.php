@@ -26,9 +26,9 @@ class EventApiUseCase
         return $this->eventRepository->activeEvents();
     }
 
-    public function event($id)
+    public function event($slug)
     {
-        return $this->eventRepository->event($id);
+        return $this->eventRepository->event($slug);
     }
 
     public function dateEvents($date)

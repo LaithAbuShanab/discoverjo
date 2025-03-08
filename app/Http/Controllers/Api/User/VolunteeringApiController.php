@@ -52,16 +52,17 @@ class VolunteeringApiController extends Controller
 
     public function volunteering(Request $request)
     {
-        $id = $request->volunteering_id;
-        $validator = Validator::make(['volunteering_id' => $id], [
-            'volunteering_id' => 'required|exists:volunteerings,id',
+        $slug = $request->volunteering_slug;
+        $validator = Validator::make(['volunteering_slug' => $slug], [
+            'volunteering_slug' => 'required|exists:volunteerings,slug',
         ]);
 
         if ($validator->fails()) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $validator->errors());
         }
+        $data = $validator->validated();
         try {
-            $volunteering = $this->volunteeringApiUseCase->Volunteering($id);
+            $volunteering = $this->volunteeringApiUseCase->Volunteering($data['volunteering_slug']);
             return ApiResponse::sendResponse(200, 'Active Volunteering Retrieved Successfully', $volunteering);
         } catch (\Exception $e) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

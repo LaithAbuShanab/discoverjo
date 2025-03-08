@@ -21,6 +21,7 @@ class VolunteeringResource extends JsonResource
         $interestedUsers = $this->interestedUsers->map(function ($interestedUser) {
             return [
                 'id' => $interestedUser->id,
+                'slug'=>$interestedUser->slug,
                 'name' => $interestedUser->username,
                 'image' => $interestedUser->getFirstMediaUrl('avatar', 'avatar_app')
             ];
@@ -28,6 +29,7 @@ class VolunteeringResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => $this->name,
             'start_day' => $startDatetime->format('Y-m-d'),
             'start_time' => $startDatetime->format('H:i:s'),

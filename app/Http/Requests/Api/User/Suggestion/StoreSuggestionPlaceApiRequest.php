@@ -29,7 +29,7 @@ class StoreSuggestionPlaceApiRequest extends FormRequest
             'place_name' => 'required',
             'address' => 'required',
             "images" => ['nullable'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:10000'],
         ];
     }
 

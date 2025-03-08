@@ -37,7 +37,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => new ResourceCollection(EventResource::collection($eloquentEvents)),
+            'events' => EventResource::collection($eloquentEvents),
             'pagination' => $pagination
         ];
     }
@@ -45,9 +45,13 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function activeEvents()
     {
         $perPage = 15;
+        //we need cron job for update the status of event
         $now = now()->setTimezone('Asia/Riyadh');
+        //retrieve active event
         $eloquentEvents = Event::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
+        //update the event where it inactive
         Event::where('status', '1')->whereNotIn('id', $eloquentEvents->pluck('id'))->update(['status' => '0']);
+
         $eventsArray = $eloquentEvents->toArray();
         $pagination = [
             'next_page_url' => $eventsArray['next_page_url'],
@@ -57,14 +61,14 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => new ResourceCollection(EventResource::collection($eloquentEvents)),
+            'events' => EventResource::collection($eloquentEvents),
             'pagination' => $pagination
         ];
     }
 
-    public function event($id)
+    public function event($slug)
     {
-        $eloquentEvents = Event::where('id', $id)->first();
+        $eloquentEvents = Event::where('slug', $slug)->first();
         return new SingleEventResource($eloquentEvents);
     }
 

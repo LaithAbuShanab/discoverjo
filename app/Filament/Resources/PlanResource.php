@@ -108,14 +108,29 @@ class PlanResource extends Resource
                                             ->required()
                                             ->columnSpan(2),
 
-                                        // Start and End Time
                                         TimePicker::make('start_time')
                                             ->label('Start Time')
-                                            ->required(),
+                                            ->required()
+                                            ->rule(function (callable $get) {
+                                                return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                    $endTime = $get('end_time'); // Fetch the end_time dynamically
+                                                    if ($endTime && $value >= $endTime) {
+                                                        $fail('The Start Time must be before the End Time.');
+                                                    }
+                                                };
+                                            }),
 
                                         TimePicker::make('end_time')
                                             ->label('End Time')
-                                            ->required(),
+                                            ->required()
+                                            ->rule(function (callable $get) {
+                                                return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                    $startTime = $get('start_time'); // Fetch the start_time dynamically
+                                                    if ($startTime && $value <= $startTime) {
+                                                        $fail('The End Time must be after the Start Time.');
+                                                    }
+                                                };
+                                            }),
 
                                         // Notes (English & Arabic inside JSON)
                                         TextInput::make('notes.en')
@@ -157,6 +172,7 @@ class PlanResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

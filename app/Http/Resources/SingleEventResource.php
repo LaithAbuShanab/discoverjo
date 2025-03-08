@@ -38,6 +38,7 @@ class SingleEventResource extends JsonResource
 
         $data = [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
             'image' => $this->getFirstMediaUrl('event', 'event_app'),

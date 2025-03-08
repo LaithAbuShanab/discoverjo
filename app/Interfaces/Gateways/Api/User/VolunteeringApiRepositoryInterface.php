@@ -7,7 +7,7 @@ interface VolunteeringApiRepositoryInterface
 {
     public function getAllVolunteerings();
     public function activeVolunteerings();
-    public function volunteering($id);
+    public function volunteering($slug);
     public function dateVolunteerings($date);
     public function createInterestVolunteering($data);
     public function disinterestVolunteering($id);

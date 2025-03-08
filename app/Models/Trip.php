@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Trip extends Model
 {
-    use HasFactory;
+    use HasFactory,HasSlug;
 
     protected $guarded = [];
     protected $table = 'trips';
@@ -16,6 +18,15 @@ class Trip extends Model
     protected $casts = [
         'age_range' => 'array',
     ];
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(function () {
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
+    }
     public function place()
     {
         return $this->belongsTo(Place::class);

@@ -51,19 +51,20 @@ class EventApiController extends Controller
 
     public function event(Request $request)
     {
-        $id = $request->event_id;
-        $validator = Validator::make(['event_id' => $id], [
-            'event_id' => 'required|exists:events,id',
+        $slug = $request->event_slug;
+        $validator = Validator::make(['event_slug' => $slug], [
+            'event_slug' => 'required|exists:events,slug',
         ], [
-            'event_id.required' => __('validation.api.event-id-is-required'),
-            'event_id.exists' => __('validation.api.event-id-does-not-exists'),
+            'event_slug.required' => __('validation.api.event-id-is-required'),
+            'event_slug.exists' => __('validation.api.event-id-does-not-exists'),
         ]);
 
+        $data =$validator->validated();
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors());
         }
         try {
-            $events = $this->eventApiUseCase->event($id);
+            $events = $this->eventApiUseCase->event($data['event_slug']);
             return ApiResponse::sendResponse(200, __('app.event.api.event-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());

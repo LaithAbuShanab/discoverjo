@@ -80,7 +80,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function allTrips()
     {
         $perPage = 15;
-        $trips = Trip::where('status', '1')->where('trip_type', '0')->paginate($perPage);
+        $now = now()->setTimezone('Asia/Riyadh');
+        $trips = Trip::where('status', '1')->where('trip_type', '0')->where('date_time', '>=', $now)->paginate($perPage);
         $tripsArray = $trips->toArray();
 
         $pagination = [

@@ -27,7 +27,7 @@ class TopTenPlaceResource extends JsonResource
             return [
 
                 'place_id' => $place->place->id,
-                'slug'=>$place->place->slug,
+                'place_slug'=>$place->place->slug,
                 'name' => $place->place->name,
                 'description'=>$place->place->description,
                 'image' => $place->place->getFirstMediaUrl('main_place', 'main_place_website'),

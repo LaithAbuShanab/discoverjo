@@ -32,8 +32,7 @@ Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->n
 Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places');
 
 Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places');
-Route::get('popular/places', [PopularPlaceApiController::class, 'topTenPlaces'])->name('popular.places');
-Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']);
+Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places');
 
 //////////////////////////////////////// event api //////////////////////////////////////////////////////////////////
 // this api for all event active and inactive order by start_time old to new
@@ -99,6 +98,8 @@ Route::post('guide/register', [RegisterGuideApiController::class, 'register']);
 Route::get('/guides/trips', [GuideTripApiController::class, 'index']);
 
 Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
+
+Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']);
 
 
 require __DIR__ . '/auth_user.php';

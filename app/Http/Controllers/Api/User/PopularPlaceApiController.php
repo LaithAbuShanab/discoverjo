@@ -22,12 +22,12 @@ class PopularPlaceApiController extends Controller
      * Display a listing of the resource.
      */
 
-    public function topTenPlaces()
+    public function popularPlaces()
     {
         try{
-            $topTenPlaces = $this->popularPlaceApiUseCase->popularPlaces();
+            $popularPlaces = $this->popularPlaceApiUseCase->popularPlaces();
 
-            return ApiResponse::sendResponse(200, __('app.api.popular-places-retrieved-successfully'), $topTenPlaces);
+            return ApiResponse::sendResponse(200, __('app.api.popular-places-retrieved-successfully'), $popularPlaces);
         } catch (\Exception $e) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }

@@ -17,7 +17,6 @@ class ChildrenRelationManager extends RelationManager
 {
     use Translatable;
 
-
     protected static string $relationship = 'Children';
 
     public function getTranslatableLocales(): array
@@ -34,8 +33,14 @@ class ChildrenRelationManager extends RelationManager
                 Forms\Components\TextInput::make('priority')
                     ->required()
                     ->numeric(),
-                SpatieMediaLibraryFileUpload::make('image')->collection('category_active')->label('Image Active'),
-                SpatieMediaLibraryFileUpload::make('image')->collection('category_inactive')->label('Image Inactive'),
+                SpatieMediaLibraryFileUpload::make('category_active_image')
+                    ->collection('category_active')
+                    ->conversion('category_active_website')
+                    ->label('Image Active'),
+                SpatieMediaLibraryFileUpload::make('category_inactive_image')
+                    ->collection('category_inactive')
+                    ->conversion('category_inactive_website')
+                    ->label('Image Inactive'),
 
 
             ]);
@@ -50,7 +55,6 @@ class ChildrenRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
-//                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('priority')
                     ->numeric()
@@ -64,7 +68,7 @@ class ChildrenRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id','!=',null)->orderByDesc('priority'))
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', '!=', null)->orderByDesc('priority'))
             ->filters([
                 //
             ])
@@ -82,6 +86,4 @@ class ChildrenRelationManager extends RelationManager
                 ]),
             ]);
     }
-
-
 }

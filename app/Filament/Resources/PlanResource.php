@@ -45,7 +45,7 @@ class PlanResource extends Resource
                                     ->placeholder('Please Enter Plan Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
+                                    ->live(onBlur: true) // Updates the state only when the field loses focus
                                     ->afterStateUpdated(function (callable $set, $state, $livewire) {
                                         if ($livewire->activeLocale === 'en') {
                                             $set('slug', Str::slug($state));
@@ -135,13 +135,11 @@ class PlanResource extends Resource
                                         // Notes (English & Arabic inside JSON)
                                         TextInput::make('notes.en')
                                             ->label('Notes (English)')
-                                            ->placeholder('Please Enter Notes')
-                                            ->required(),
+                                            ->placeholder('Please Enter Notes'),
 
                                         TextInput::make('notes.ar')
                                             ->label('Notes (Arabic)')
-                                            ->placeholder('Please Enter Notes')
-                                            ->required(),
+                                            ->placeholder('Please Enter Notes'),
                                     ])
                                     ->columns(2)
                             ])

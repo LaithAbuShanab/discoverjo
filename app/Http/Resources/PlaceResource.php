@@ -22,6 +22,7 @@ class PlaceResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'name' => $this->name,
             'image' => $this->getFirstMediaUrl('main_place', 'main_place_app'),
             'region' => $this->region->name,

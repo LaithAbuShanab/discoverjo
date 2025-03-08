@@ -16,6 +16,7 @@ class SliderResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'title' => $this->title,
             'content' => $this->content,
             'image' => $this->getFirstMediaUrl('slider', 'slider_app'),

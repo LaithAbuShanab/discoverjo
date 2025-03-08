@@ -39,9 +39,10 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function allUsersForGuideTrip()
     {
         $perPage =15;
-        $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
-        GuideTrip::where('status', '1')->where('start_datetime','<',$now)->update(['status' => '0']);
-        $guideTrip = GuideTrip::with('guide')->with('guideTripUsers')->paginate($perPage);
+        $now = now()->setTimezone('Asia/Riyadh');
+        $guideTrip = GuideTrip::with('guide')->with('guideTripUsers')->where('status', '1')->where('end_datetime', '>=', $now)->orderBy('start_datetime')->paginate($perPage);
+        //edit the status should has cron job
+        GuideTrip::where('status', '1')->where('end_datetime','<',$now)->update(['status' => '0']);
 
         $tripsArray = $guideTrip->toArray();
 

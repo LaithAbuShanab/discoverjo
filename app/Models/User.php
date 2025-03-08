@@ -13,11 +13,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Translatable\HasTranslations;
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.

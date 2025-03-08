@@ -228,7 +228,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => new ResourceCollection(EventResource::collection($eloquentEvents)),
+            'events' => EventResource::collection($eloquentEvents),
             'pagination' => $pagination
         ];
     }

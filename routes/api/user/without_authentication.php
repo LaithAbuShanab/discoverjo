@@ -53,8 +53,28 @@ Route::post('contact-us', [ContactUsApiController::class, 'store'])->name('conta
 Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store']);
 
 Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips');
-Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
 
+//////////////////////////////////search and filter /////////////////////////////////////////
+Route::get('all/places/search', [PlaceApiController::class, 'search']);
+Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']);
+Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']);
+Route::get('categories/search', [CategoryApiController::class, 'search']);
+Route::get('all/event/search', [EventApiController::class, 'search']);
+Route::get('all/volunteering/search', [VolunteeringApiController::class, 'search']);
+Route::get('all/trip/search', [TripApiController::class, 'search']);
+Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']);
+Route::get('all/plan/search', [PlanApiController::class, 'search']);
+Route::get('user/search', [UserProfileController::class, 'search']);
+
+Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']);
+
+///////////////////////////////////Guide trips ///////////////////////////////////////////
+Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']);
+Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']);
+Route::get('all/guides', [GuideTripApiController::class, 'allGuides']);
+
+Route::get('all/regions', [RegionsApiController::class, 'index']);
+Route::get('all/features', [FeaturesApiController::class, 'index']);
 
 //end review
 
@@ -68,42 +88,18 @@ Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
 
 
 
-////////////////////////////////////// trip ////////////////////////////////////////////////
 
 
-
-/////////////////////////////////////  search  ///////////////////////////////////////////////////////////
-
-Route::get('all/places/search', [PlaceApiController::class, 'search']);
-Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']);
 //here
-Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']);
 Route::get('places/filter', [PlaceApiController::class, 'filter']);
-Route::get('categories/search', [CategoryApiController::class, 'search']);
-Route::get('all/event/search', [EventApiController::class, 'search']);
-Route::get('all/volunteering/search', [VolunteeringApiController::class, 'search']);
-Route::get('all/trip/search', [TripApiController::class, 'search']);
-Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']);
-Route::get('all/plan/search', [PlanApiController::class, 'search']);
 Route::get('plan/filter', [PlanApiController::class, 'filter']);
-Route::get('user/search', [UserProfileController::class, 'search']);
 Route::get('all/search', [PlaceApiController::class, 'allSearch']);
-
-Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']);
-
-Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']);
-
-Route::get('user/guide/trips/show/{guide_trip_id}', [GuideTripApiController::class, 'show']);
 
 Route::post('guide/register', [RegisterGuideApiController::class, 'register']);
 Route::get('/guides/trips', [GuideTripApiController::class, 'index']);
-Route::get('all/guides', [GuideTripApiController::class, 'allGuides']);
 
+Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
 
-/////////////////////////////////////  Regions  ///////////////////////////////////////////////////////////
-Route::get('all/regions', [RegionsApiController::class, 'index']);
-/////////////////////////////////////  Features  ///////////////////////////////////////////////////////////
-Route::get('all/features', [FeaturesApiController::class, 'index']);
 
 require __DIR__ . '/auth_user.php';
 

@@ -17,6 +17,7 @@ class GuideResource extends JsonResource
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
+                'slug'=>$tag->slug,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
                 'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
@@ -29,6 +30,7 @@ class GuideResource extends JsonResource
         ];
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,

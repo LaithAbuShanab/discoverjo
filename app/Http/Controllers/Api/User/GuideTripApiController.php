@@ -49,20 +49,21 @@ class GuideTripApiController extends Controller
 
     public function show(Request $request)
     {
-        $id = $request->guide_trip_id;
+        $id = $request->guide_trip_slug;
 
-        $validator = Validator::make(['guide_trip_id' => $id], [
-            'guide_trip_id' => ['required', 'exists:guide_trips,id'],
+        $validator = Validator::make(['guide_trip_slug' => $id], [
+            'guide_trip_slug' => ['required', 'exists:guide_trips,slug'],
         ],[
-            'guide_trip_id.required'=>__('validation.api.guide-trip-id-required'),
-            'guide_trip_id.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $updateTrip = $this->guideTripApiUseCase->showGuideTrip( $id);
+            $data = $validator->validated();
+            $updateTrip = $this->guideTripApiUseCase->showGuideTrip($data['guide_trip_slug']);
             return ApiResponse::sendResponse(200, __('app.api.trip-retrieved-successfully'), $updateTrip);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());

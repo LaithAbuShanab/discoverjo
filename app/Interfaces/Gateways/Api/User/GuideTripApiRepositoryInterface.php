@@ -16,7 +16,7 @@ interface GuideTripApiRepositoryInterface
 
     public function deleteGuideTrip($id);
     public function deleteImage($id);
-    public function showGuideTrip($id);
+    public function showGuideTrip($slug);
     public function joinRequests($id);
     public function changeJoinRequestStatus($request);
 

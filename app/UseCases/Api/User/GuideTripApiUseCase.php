@@ -26,9 +26,9 @@ class GuideTripApiUseCase
         return $this->guideTripApiRepository->allGuides();
     }
 
-    public function showGuideTrip($id)
+    public function showGuideTrip($slug)
     {
-        return $this->guideTripApiRepository->showGuideTrip($id);
+        return $this->guideTripApiRepository->showGuideTrip($slug);
 
     }
 

@@ -231,7 +231,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'volunteering' => new ResourceCollection(VolunteeringResource::collection($eloquentVolunteerings)),
+            'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
             'pagination' => $pagination
         ];
     }

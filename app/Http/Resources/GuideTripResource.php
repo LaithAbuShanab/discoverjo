@@ -43,6 +43,7 @@ class GuideTripResource extends JsonResource
             : false;
         return [
             'id'=>$this->id,
+            'slug'=>$this->slug,
             "name"=>$this->name,
             "description"=>$this->description,
             "start_datetime"=>$this->start_datetime,
@@ -51,6 +52,7 @@ class GuideTripResource extends JsonResource
             "max_attendance"=>$this->max_attendance,
             "status"=>$this->status,
             'guide_id'=>$this->guide_id,
+            'guide_slug'=>$this->guide->slug,
             "guide_username"=>$this->guide->username,
             "guide_phone_number"=>$this->guide->phone_number,
             'guide_rating' => $this->guide->guideRatings->avg('rating'),

@@ -16,6 +16,7 @@ class FeaturesResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'name' => $this->name,
             'active_image' => $this->getFirstMediaUrl('feature_active', 'feature_active_app'),
             'inactive_image' => $this->getFirstMediaUrl('feature_inactive', 'feature_inactive_app'),

@@ -303,8 +303,13 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
          * SEARCH PLACES
          */
         $perPageUsers=20;
-        $users = User::whereRaw("MATCH (first_name, last_name, username) AGAINST (? IN NATURAL LANGUAGE MODE)", [$query])
+        $users = User::where(function ($queryBuilder) use ($query) {
+            $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
+                ->orWhere('last_name', 'LIKE', "%{$query}%")
+                ->orWhere('username', 'LIKE', "%{$query}%");
+        })
             ->paginate($perPageUsers);
+
 
         $usersArray = $users->toArray();
         $paginationUsers = [

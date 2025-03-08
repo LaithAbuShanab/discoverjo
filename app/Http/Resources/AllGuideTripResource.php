@@ -17,6 +17,7 @@ class AllGuideTripResource extends JsonResource
     {
         return [
             'id'=>$this->id,
+            'slug'=>$this->slug,
             'name'=>$this->name,
             'price'=>$this->main_price,
             'start_time'=>$this->start_datetime,
@@ -24,6 +25,7 @@ class AllGuideTripResource extends JsonResource
             'image' => $this->getMedia('guide_trip_gallery')->first()?->original_url,
             'number_of_request'=>$this->guideTripUsers->count(),
             'guide_username' => $this->guide->username,
+            'guide_slug' => $this->guide->slug,
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar', 'avatar_app'),
             'status'=>$this->status,

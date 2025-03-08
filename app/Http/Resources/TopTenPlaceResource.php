@@ -19,14 +19,15 @@ class TopTenPlaceResource extends JsonResource
         $userLng = $request->lng ? $request->lng : null;
 
         return $this->map(function ($place) use ($userLat, $userLng) {
-            $placeLat = $place->latitude;
-            $placeLng = $place->longitude;
+            $placeLat = $place->place->latitude;
+            $placeLng = $place->place->longitude;
 
             $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
 
             return [
 
                 'place_id' => $place->place->id,
+                'slug'=>$place->place->slug,
                 'name' => $place->place->name,
                 'description'=>$place->place->description,
                 'image' => $place->place->getFirstMediaUrl('main_place', 'main_place_website'),

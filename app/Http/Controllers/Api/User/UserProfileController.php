@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Profile\SetLocationApiRequest;
 use App\Http\Requests\Api\User\Profile\UpdateProfileApiRequest;
 use App\Http\Requests\PlacesOfCurrentLocationRequest;
-use App\Rules\CheckAgeGenderExistenceRule;
 use App\UseCases\Api\User\UserProfileApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

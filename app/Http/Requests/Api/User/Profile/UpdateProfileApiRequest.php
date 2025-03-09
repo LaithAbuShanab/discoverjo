@@ -5,7 +5,6 @@ namespace App\Http\Requests\Api\User\Profile;
 use App\Helpers\ApiResponse;
 use App\Rules\CheckTagExistsRule;
 use App\Rules\MinAgeRule;
-use App\Validation\JsonArray;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -30,19 +29,18 @@ class UpdateProfileApiRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId= Auth::guard('api')->user()->id;
+        $userId = Auth::guard('api')->user()->id;
         return [
-            'first_name'=>['nullable','string'],
-            'last_name'=>['nullable','string'],
-            'gender'=>['required',Rule::in(1,2)],
-            'birthday'=>['required', new MinAgeRule()],
-//            'email'=>['required',Rule::unique('users', 'email')->ignore($userId)],
-            'phone_number'=>['nullable','string'],
-            'description'=>['nullable','string'],
-            'tags_id' => ['required',new CheckTagExistsRule()],
+            'first_name' => ['nullable', 'string'],
+            'last_name' => ['nullable', 'string'],
+            'gender' => ['required', Rule::in(1, 2)],
+            'birthday' => ['required', new MinAgeRule()],
+            'phone_number' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'tags_id' => ['required', new CheckTagExistsRule()],
             'tags_id.*' => 'exists:tags,id',
             'username' => ['nullable', 'string', 'alpha_dash', 'min:3', 'max:20', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'not_regex:/\s/', Rule::unique('users', 'username')->ignore($userId)],
-            'image'=>['nullable','image|max:2080'],
+            'image' => ['nullable', 'image', 'max:2048'],
 
         ];
     }

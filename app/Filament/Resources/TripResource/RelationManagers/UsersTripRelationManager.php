@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\TripResource\RelationManagers;
 
-use App\Models\UsersTrip;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UsersTripRelationManager extends RelationManager
 {
@@ -37,8 +34,9 @@ class UsersTripRelationManager extends RelationManager
                         return match ($state) {
                             0 => 'Inactive',
                             1 => 'Active',
-                            2 => 'Deleted by Creator',
-                            3 => 'Deleted by Admin',
+                            2 => 'Cancelled by Creator',
+                            3 => 'Cancelled by User',
+                            4 => 'Cancelled by Admin',
                             default => 'Unknown',
                         };
                     })

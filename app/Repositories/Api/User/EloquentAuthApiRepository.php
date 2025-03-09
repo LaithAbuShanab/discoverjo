@@ -12,51 +12,59 @@ use App\Models\Plan;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\UsersTrip;
-use App\Notifications\Admin\NewUserRegisteredNotification;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
 use mysql_xdevapi\Exception;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 
 class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 {
-    public function register($userData)
+    public function register(array $userData)
     {
-        $token = $userData['device_token'];
-        unset($userData['device_token']);
+        return DB::transaction(function () use ($userData) {
+            // Extract and remove device token
+            $token = $userData['device_token'] ?? null;
+            unset($userData['device_token']);
 
-        //create the user
-        $user = User::create($userData);
+            // Create the user
+            $user = User::create($userData);
 
-        //save device token for the user
-        $device_token = new DeviceToken();
-        $device_token->user_id = $user->id;
-        $device_token->token = $token;
-        $device_token->save();
+            // Save device token if available
+            if ($token) {
+                DeviceToken::create([
+                    'user_id' => $user->id,
+                    'token'   => $token,
+                ]);
+            }
 
-        //make the user following discover jo when registered
-        Follow::create([
-            'following_id' => 1,
-            'follower_id' => $user->id,
-            'status' => 1
-        ]);
+            // Auto-follow a specific user (e.g., user ID 1)
+            Follow::create([
+                'following_id' => 1,
+                'follower_id'  => $user->id,
+                'status'       => 1,
+            ]);
 
-        //this event for real time notification
-        event(new Registered($user));
+            // Notify an admin about the new user registration
+            $recipient = Admin::where('email', 'asma.abughaith@gmail.com')->first();
+            if ($recipient) {
+                Notification::make()
+                    ->title('New User Registered')
+                    ->success()
+                    ->body("A new user **{$user->name}** (ID: {$user->id}) has just registered.")
+                    ->actions([
+                        Action::make('view_user')
+                            ->label('View User')
+                            ->url(route('filament.admin.resources.users.index')),
+                    ])
+                    ->sendToDatabase($recipient);
+            }
 
-        // to save the notification in database
-        Notification::send(Admin::all(), new NewUserRegisteredNotification($user));
-
-        // it is for notification by socket we will change it to filament so we dont need it
-        // Http::post('http://127.0.0.1:3000/notifications');
-        return (new UserResource($user));
+            return new UserResource($user);
+        });
     }
-
     public function login($userData)
     {
         $credentials = [];
@@ -73,7 +81,6 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-//            this will delete the tokens form all devices for mobiles :) but keep the website work
             $user->tokens()->where('name', 'mobile')->delete();
 
             // CHeck If This User Verify Email
@@ -86,12 +93,10 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 return new UserLoginResource($user);
             }
 
-            if($user->status == 3)
-            {
+            if ($user->status == 3) {
                 throw new \Exception(__('validation.api.you-deactivated-by-admin-wait-to-unlock-the-block'));
             }
-            if($user->status == 4)
-            {
+            if ($user->status == 4) {
                 throw new \Exception(__('validation.api.wait-for-admin-to-accept-your-application'));
             }
 
@@ -118,9 +123,9 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
     {
         //to get logout from all devices
         $user = Auth::guard('api')->user();
-//        $user->tokens()->each(function ($token) {
-//            $token->delete();
-//        });
+        //        $user->tokens()->each(function ($token) {
+        //            $token->delete();
+        //        });
 
         //logout from the current device
         $userToken = $user->token();

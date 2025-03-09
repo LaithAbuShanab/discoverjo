@@ -18,6 +18,7 @@ class SingleSubCategoryResource extends JsonResource
         $userLng = $request->lng ? $request->lng : null;
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'name' => $this->name,
             'parent' => $this->parent->name ?? null,
             'image_active' => $this->getFirstMediaUrl('category_active', 'category_active_app'),

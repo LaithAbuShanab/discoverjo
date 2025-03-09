@@ -64,7 +64,6 @@ Route::get('all/trip/search', [TripApiController::class, 'search']);
 Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']);
 Route::get('all/plan/search', [PlanApiController::class, 'search']);
 Route::get('user/search', [UserProfileController::class, 'search']);
-
 Route::get('all/search', [PlaceApiController::class, 'allSearch']);
 
 Route::get('places/filter', [PlaceApiController::class, 'filter']);

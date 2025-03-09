@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude','lang', 'latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -79,7 +79,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('user')
-            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description','phone_number', 'longitude', 'latitude', 'status']);
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude','lang', 'latitude', 'status'])
+            ->logOnlyDirty();
     }
 
     public function getSlugOptions(): SlugOptions

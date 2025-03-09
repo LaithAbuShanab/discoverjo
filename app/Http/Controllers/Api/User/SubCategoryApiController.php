@@ -42,7 +42,8 @@ class SubCategoryApiController extends Controller
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $validator->errors());
         }
         try {
-            $subCategory = $this->subCategoryApiUseCase->singleSubCategory($slug);
+            $data = $validator->validated();
+            $subCategory = $this->subCategoryApiUseCase->singleSubCategory($data['subcategory_slug']);
 
             return ApiResponse::sendResponse(200, __('app.api.places-of-subcategories-retrieved-successfully'), $subCategory);
         } catch (\Exception $e) {

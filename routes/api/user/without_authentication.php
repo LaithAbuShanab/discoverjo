@@ -64,6 +64,9 @@ Route::get('all/trip/search', [TripApiController::class, 'search']);
 Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']);
 Route::get('all/plan/search', [PlanApiController::class, 'search']);
 Route::get('user/search', [UserProfileController::class, 'search']);
+Route::get('all/search', [PlaceApiController::class, 'allSearch']);
+Route::get('places/filter', [PlaceApiController::class, 'filter']);
+Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']);
 
 Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']);
 
@@ -71,36 +74,22 @@ Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']);
 Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']);
 Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']);
 Route::get('all/guides', [GuideTripApiController::class, 'allGuides']);
+Route::post('guide/register', [RegisterGuideApiController::class, 'register']);
+Route::get('/guides/trips', [GuideTripApiController::class, 'index']);
 
 Route::get('all/regions', [RegionsApiController::class, 'index']);
 Route::get('all/features', [FeaturesApiController::class, 'index']);
 
+
 //end review
 
 
-
-
-
-
-
-
-
-
-
-
-
 //here
-Route::get('places/filter', [PlaceApiController::class, 'filter']);
-Route::get('plan/filter', [PlanApiController::class, 'filter']);
-Route::get('all/search', [PlaceApiController::class, 'allSearch']);
 
-Route::post('guide/register', [RegisterGuideApiController::class, 'register']);
-Route::get('/guides/trips', [GuideTripApiController::class, 'index']);
+
 
 Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
-
-Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']);
-
+Route::get('plan/filter', [PlanApiController::class, 'filter']);
 
 require __DIR__ . '/auth_user.php';
 

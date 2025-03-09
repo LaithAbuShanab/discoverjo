@@ -190,9 +190,12 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $userLng = $request['lng'];
         $distanceKm = $request['area'] ?? 15;
 
-        // Decode JSON inputs
-        $subcategoriesIds = isset($request['subcategories_id'])? json_decode($request['subcategories_id']) ?? [] :null;
-        $categoriesIds = isset($request['categories_id'])?json_decode($request['categories_id']) ?? []:null;
+        $categoriesSlugs = isset($request['categories']) ? explode(',', $request['categories']) : [];
+        $subcategoriesSlugs = isset($request['subcategories']) ? explode(',', $request['subcategories']) : [];
+
+        $categoriesIds = Category::whereIn('slug', $categoriesSlugs)->pluck('id');
+        $subcategoriesIds = Category::whereIn('slug', $subcategoriesSlugs)->pluck('id');
+
 
         $query = Place::selectRaw(
             'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',

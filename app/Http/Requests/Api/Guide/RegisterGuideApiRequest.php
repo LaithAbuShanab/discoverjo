@@ -43,12 +43,12 @@ class RegisterGuideApiRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class, new CheckUserInBlackListRule()],
             'phone_number'=>['required','string'],
             'description'=>['required','string'],
-            'tags_id' => ['required',new CheckTagExistsRule()],
-            'tags_id.*' => 'exists:tags,id',
+            'tags' => ['required', new CheckTagExistsRule()],
+            'tags.*' => ['exists:tags,slug'],
             'image'=>['required','image'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             "device_token" => ['max:255', 'required'],
-            'professional_file'=>['required','mimes:pdf,jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz' ]
+            'professional_file'=>['required','mimes:pdf,jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,docx']
 
         ];
     }

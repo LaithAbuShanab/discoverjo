@@ -36,28 +36,36 @@ class PlacesOfCurrentLocationRequest extends FormRequest
             'lng' => ['required'],
             'lat' => ['required'],
             'area' => ['nullable'],
-            'categories_id' => ['nullable', function ($attribute, $value, $fail) {
-                $value = json_decode($value);
-                if (is_array($value)) {
-                    foreach ($value as $id) {
-                        $category = Category::find($id);
-                        if (!$category) $fail(__('validation.api.the-category-does-not-exists'));
-                        if ( $category?->parent_id !=null) $fail(__('validation.api.the-selected-category-does-not-main-category'));
+            'categories' => ['required', function ($attribute, $value, $fail) {
+                $values = explode(',', $value);
+                if (!is_array($values) || empty($values)) {
+                    return $fail(__('validation.api.the-categories-be-string-separated-by-comma'));
+                }
+
+                foreach ($values as $slug) {
+                    $category = Category::findBySlug($slug);
+                    if (!$category) {
+                        return $fail(__('validation.api.the-category-does-not-exist'));
                     }
-                }else{
-                    $fail(__('validation.api.the-category-should-be-array'));
+                    if ($category->parent_id !== null) {
+                        return $fail(__('validation.api.the-selected-category-must-be-main'));
+                    }
                 }
             }],
-            'subcategories_id' => ['nullable', function ($attribute, $value, $fail) {
-                $value = json_decode($value);
-                if (is_array($value)) {
-                    foreach ($value as $id) {
-                        $category = Category::find($id);
-                        if (!$category) $fail('The subcategory does not exists');
-                        if ( $category?->parent_id ==null) $fail(__('validation.api.the-selected-subcategory-it-is-main-category'));
+            'subcategories' => ['nullable', function ($attribute, $value, $fail) {
+                $values = explode(',', $value);
+                if (!is_array($values)) {
+                    return $fail(__('validation.api.the-subcategories-must-be-string-separated-by-comma'));
+                }
+
+                foreach ($values as $slug) {
+                    $category = Category::findBySlug($slug);
+                    if (!$category) {
+                        return $fail(__('validation.api.the-subcategory-does-not-exist'));
                     }
-                }else{
-                    $fail(__('validation.api.the-subcategories-should-be-array'));
+                    if ($category->parent_id === null) {
+                        return $fail(__('validation.api.the-selected-subcategory-must-not-be-main'));
+                    }
                 }
             }],
         ];

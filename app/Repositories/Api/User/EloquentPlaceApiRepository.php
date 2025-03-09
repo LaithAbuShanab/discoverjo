@@ -13,9 +13,11 @@ use App\Http\Resources\VolunteeringResource;
 use App\Interfaces\Gateways\Api\User\PlaceApiRepositoryInterface;
 use App\Models\Category;
 use App\Models\Event;
+use App\Models\Feature;
 use App\Models\GuideTrip;
 use App\Models\Place;
 use App\Models\Plan;
+use App\Models\Region;
 use App\Models\Reviewable;
 use App\Models\Trip;
 use App\Models\User;
@@ -186,27 +188,32 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
     public function filter($data)
     {
-        $userLat = request()->lat ?? null;
-        $userLng = request()->lng ?? null;
+        $userLat = request()->input('lat');
+        $userLng = request()->input('lng');
         $perPage = 20;
 
-        // Decode JSON inputs
-        $subcategoriesIds = isset($data['subcategories_id'])?json_decode($data['subcategories_id']) ?? []:[];
-        $featuresIds = isset($data['features_id'])?json_decode($data['features_id']) ?? []:[];
-        $categoriesIds =  isset($data['categories_id'])?json_decode($data['categories_id']) ?? []:[];
-        $regionId = isset($data['region_id'])?$data['region_id'] : null;
-        $minCost =isset($data['min_cost'])? $data['min_cost'] : null;
-        $maxCost = isset($data['max_cost'])?$data['max_cost'] : null;
-        $minRating = isset($data['min_rate'])? $data['min_rate'] : null;
-        $maxRating =isset($data['max_rate'])? $data['max_rate'] : null;
+        // Decode inputs
+        $categoriesSlugs = isset($data['categories']) ? explode(',', $data['categories']) : [];
+        $subcategoriesSlugs = isset($data['subcategories']) ? explode(',', $data['subcategories']) : [];
+        $featuresSlugs = isset($data['features']) ? explode(',', $data['features']) : [];
+        $regionSlug = $data['region'] ?? null;
+        $minCost = $data['min_cost'] ?? null;
+        $maxCost = $data['max_cost'] ?? null;
+        $minRating = $data['min_rate'] ?? null;
+        $maxRating = $data['max_rate'] ?? null;
 
-        // Base query for filtering places
+        // Retrieve IDs from database
+        $categoriesIds = Category::whereIn('slug', $categoriesSlugs)->pluck('id');
+        $subcategoriesIds = Category::whereIn('slug', $subcategoriesSlugs)->pluck('id');
+        $featuresIds = Feature::whereIn('slug', $featuresSlugs)->pluck('id');
+        $regionId = Region::where('slug', $regionSlug)->value('id');
+
+        // Base query
         $query = Place::query();
 
-
-        if($subcategoriesIds || $categoriesIds){
-            $query->where(function ($subQuery) use ($subcategoriesIds, $categoriesIds) {
-                if (!empty($subcategoriesIds)) {
+        if ($categoriesIds->isNotEmpty() || $subcategoriesIds->isNotEmpty()) {
+            $query->where(function ($subQuery) use ($categoriesIds, $subcategoriesIds) {
+                if ($subcategoriesIds->isNotEmpty()) {
                     $subQuery->whereHas('categories', function ($subQuery) use ($subcategoriesIds) {
                         $subQuery->whereIn('place_categories.category_id', $subcategoriesIds);
                     });
@@ -218,81 +225,55 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
                 }
             });
         }
+
         // Apply filters
-        if($featuresIds) {
-            $query->whereHas('features', function ($subQuery) use ($featuresIds) {
+        $query->when($featuresIds->isNotEmpty(), function ($q) use ($featuresIds) {
+            $q->whereHas('features', function ($subQuery) use ($featuresIds) {
                 $subQuery->whereIn('features.id', $featuresIds);
             });
-        }
+        });
 
-        if($regionId) {
-            $query->when($regionId, function ($subQuery) use ($regionId) {
-                $subQuery->where('region_id', $regionId);
-            });
-        }
+        $query->when($regionId, function ($q) use ($regionId) {
+            $q->where('region_id', $regionId);
+        });
 
-        if($minCost){
-            $query->when($minCost !== null, function ($subQuery) use ($minCost) {
-                $subQuery->where('price_level', '>=', $minCost);
-            });
-        }
+        $query->when($minCost, function ($q) use ($minCost) {
+            $q->where('price_level', '>=', $minCost);
+        });
 
-        if($maxCost){
-            $query->when($maxCost !== null, function ($subQuery) use ($maxCost) {
-                $subQuery->where('price_level', '<=', $maxCost);
-            });
-        }
+        $query->when($maxCost, function ($q) use ($maxCost) {
+            $q->where('price_level', '<=', $maxCost);
+        });
 
-        if($minRating){
-            $query->when($minRating !== null, function ($subQuery) use ($minRating) {
-                $subQuery->where('rating', '>=', $minRating);
-            });
-        }
+        $query->when($minRating, function ($q) use ($minRating) {
+            $q->where('rating', '>=', $minRating);
+        });
 
-        if($maxRating){
-            $query->when($maxRating !== null, function ($subQuery) use ($maxRating) {
-                $subQuery->where('rating', '<=', $maxRating);
-            });
-        }
+        $query->when($maxRating, function ($q) use ($maxRating) {
+            $q->where('rating', '<=', $maxRating);
+        });
 
-
-        // Apply distance calculation if user coordinates are provided
+        // Apply distance sorting if coordinates are provided
         if ($userLat && $userLng) {
             $query->selectRaw(
                 'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
                 [$userLat, $userLng, $userLat]
-            )
-                ->orderBy('distance'); // Sort by distance
+            )->orderBy('distance');
         }
 
-        // Paginate the results
+        // Paginate results
         $places = $query->paginate($perPage);
-
-        // Prepare pagination URLs
         $placesArray = $places->toArray();
-        if($userLat &&$userLng ){
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['next_page_url'];
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['prev_page_url'];
-        }else{
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
-        }
 
-
-        // Convert pagination result to array and include pagination metadata
-        $pagination = [
-            'next_page_url'=>$parameterNext,
-            'prev_page_url'=>$parameterPrevious,
-            'total' => $placesArray['total'],
-        ];
-
-        // Pass user coordinates to the PlaceResource collection
         return [
             'places' => PlaceResource::collection($places),
-            'pagination' => $pagination
+            'pagination' => [
+                'next_page_url' => $places->nextPageUrl(),
+                'prev_page_url' => $places->previousPageUrl(),
+                'total' => $placesArray['total'],
+            ],
         ];
     }
-
     public function allSearch($query)
     {
         // Get user coordinates if provided

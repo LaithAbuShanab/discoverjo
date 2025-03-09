@@ -31,7 +31,10 @@ class RegisterGuideApiUseCase
             'is_guide'=>1,
             'lang'=>$lang
 
-        ],$request['device_token'],json_decode($request['tags_id']),isset($request['image']) ? $request['image'] : null,isset($request['professional_file'])?$request['professional_file']:null);
+        ],$request['device_token'],
+            explode(',',$request['tags']),
+            isset($request['image']) ? $request['image'] : null,
+            isset($request['professional_file'])?$request['professional_file']:null);
     }
 
 

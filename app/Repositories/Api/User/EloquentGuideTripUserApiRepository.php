@@ -39,12 +39,11 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function allUsersForGuideTrip()
     {
         $perPage =15;
-        $now = now()->setTimezone('Asia/Riyadh');
-        $guideTrip = GuideTrip::with('guide')->with('guideTripUsers')->where('status', '1')->where('end_datetime', '>=', $now)->orderBy('start_datetime')->paginate($perPage);
-        //edit the status should has cron job
-        GuideTrip::where('status', '1')->where('end_datetime','<',$now)->update(['status' => '0']);
+        $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
+        $guidesTrips = GuideTrip::where('status',1)->where('start_datetime','>',$now)->orderBy('start_datetime')->paginate($perPage);
+        GuideTrip::where('status', '1')->whereNotIn('id', $guidesTrips->pluck('id'))->update(['status' => '0']);
 
-        $tripsArray = $guideTrip->toArray();
+        $tripsArray = $guidesTrips->toArray();
 
         $pagination = [
             'next_page_url'=>$tripsArray['next_page_url'],
@@ -54,9 +53,10 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' =>AllGuideTripResource::collection($guideTrip),
+            'trips' => AllGuideTripResource::collection($guidesTrips),
             'pagination' => $pagination
         ];
+
 
     }
     public function storeSubscriberInTrip($data)

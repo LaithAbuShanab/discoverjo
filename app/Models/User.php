@@ -13,12 +13,14 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations,HasSlug;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.
@@ -61,6 +63,12 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'password' => 'hashed',
     ];
 
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('username')
+            ->saveSlugsTo('slug');
+    }
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\User\Place;
 
 use App\Helpers\ApiResponse;
 use App\Models\Category;
+use App\Models\Feature;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -22,84 +23,71 @@ class FilterPlaceRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'categories_id' => ['nullable', function ($attribute, $value, $fail) {
-                $value = json_decode($value);
-                if (is_array($value)) {
-                    foreach ($value as $id) {
-                        $category = Category::find($id);
-                        if (!$category) $fail('The category does not exists');
-                        if ( $category?->parent_id !=null) $fail('The selected category does not main category');
+            'categories' => ['required', function ($attribute, $value, $fail) {
+                $values = explode(',', $value);
+                if (!is_array($values) || empty($values)) {
+                    return $fail(__('validation.api.the-categories-be-string-separated-by-comma'));
+                }
+
+                foreach ($values as $slug) {
+                    $category = Category::findBySlug($slug);
+                    if (!$category) {
+                        return $fail(__('validation.api.the-category-does-not-exist'));
                     }
-                }else{
-                    $fail('The categories should be array');
+                    if ($category->parent_id !== null) {
+                        return $fail(__('validation.api.the-selected-category-must-be-main'));
+                    }
                 }
             }],
-            'subcategories_id' => ['nullable', function ($attribute, $value, $fail) {
-                $value = json_decode($value);
-                if (is_array($value)) {
-                    foreach ($value as $id) {
-                        $category = Category::find($id);
-                        if (!$category) $fail('The subcategory does not exists');
-                        if ( $category?->parent_id ==null) $fail('The selected subcategory does not main cateogy');
+
+            'subcategories' => ['nullable', function ($attribute, $value, $fail) {
+                $values = explode(',', $value);
+                if (!is_array($values)) {
+                    return $fail(__('validation.api.the-subcategories-must-be-string-separated-by-comma'));
+                }
+
+                foreach ($values as $slug) {
+                    $category = Category::findBySlug($slug);
+                    if (!$category) {
+                        return $fail(__('validation.api.the-subcategory-does-not-exist'));
                     }
-                }else{
-                    $fail('The subcategories should be array');
+                    if ($category->parent_id === null) {
+                        return $fail(__('validation.api.the-selected-subcategory-must-not-be-main'));
+                    }
                 }
             }],
-            'region_id'=>'nullable',
+
+            'region' => 'nullable|string',
             'min_cost' => 'nullable|integer|between:1,4',
             'max_cost' => 'nullable|integer|between:1,4|gte:min_cost',
-            'features_id'=>'nullable',
-            'features_id*.'=>'exists:features,id',
-            'min_rate'=>'nullable|integer|between:1,5',
-            'max_rate'=>'nullable|integer|between:1,4|gte:min_rate',
+            'features' => ['nullable', function ($attribute, $value, $fail) {
+                $values = explode(',', $value);
+                if (!is_array($values)) {
+                    return $fail(__('validation.api.the-features-must-be-string-separated-by-comma'));
+                }
+
+                foreach ($values as $slug) {
+                    $feature = Feature::findBySlug($slug);
+                    if (!$feature) {
+                        return $fail(__('validation.api.the-feature-does-not-exist'));
+                    }
+                }
+            }],
+            'min_rate' => 'nullable|integer|between:1,5',
+            'max_rate' => 'nullable|integer|between:1,5|gte:min_rate',
         ];
     }
-
-    public function messages()
-    {
-        return [
-            // Categories ID validation messages
-            'categories_id.nullable' => __('validation.api.categories-id-nullable'),
-            'categories_id.array' => __('validation.api.categories-id-array'),
-            'categories_id.*.exists' => __('validation.api.category-exists'),
-            'categories_id.*.parent_id' => __('validation.api.category-main'),
-
-            // Subcategories ID validation messages
-            'subcategories_id.nullable' => __('validation.api.subcategories-id-nullable'),
-            'subcategories_id.array' => __('validation.api.subcategories-id-array'),
-            'subcategories_id.*.exists' => __('validation.api.subcategory-exists'),
-            'subcategories_id.*.parent_id' => __('validation.api.subcategory-main'),
-
-            // Region ID validation message
-            'region_id.nullable' => __('validation.api.region-id-nullable'),
-
-            // Min and Max Cost validation messages
-            'min_cost.nullable' => __('validation.api.min-cost-nullable'),
-            'max_cost.nullable' => __('validation.api.max-cost-nullable'),
-
-            // Features ID validation messages
-            'features_id.nullable' => __('validation.api.features-id-nullable'),
-            'features_id.*.exists' => __('validation.api.feature-exists'),
-
-            // Min and Max Rate validation messages
-            'min_rate.nullable' => __('validation.api.min-rate-nullable'),
-            'max_rate.nullable' => __('validation.api.max-rate-nullable'),
-        ];
-    }
-
 
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
-
         throw new HttpResponseException(
-            ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors)
+            ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors)
         );
     }
 }

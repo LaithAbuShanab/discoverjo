@@ -21,7 +21,6 @@ Broadcast::channel('new-user', function () {
     return true; // Allow all users to access this channel
 }, ['guards' => ['admin']]);
 
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 Broadcast::channel('group-channel.{id}', function ($user, $conversationId) {
     $isAuthorized = GroupMember::where([
@@ -30,7 +29,7 @@ Broadcast::channel('group-channel.{id}', function ($user, $conversationId) {
     ])->exists();
 
     if (!$isAuthorized) {
-        return ApiResponse::sendResponseError(Response::HTTP_UNAUTHORIZED, 'you cannot start chat  because your are not a member in this trip');
+        return ApiResponse::sendResponseError(Response::HTTP_UNAUTHORIZED, 'you cannot start chat because your are not a member in this trip');
     }
 
     return true;

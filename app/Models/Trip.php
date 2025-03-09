@@ -10,7 +10,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Trip extends Model
 {
-    use HasFactory,HasSlug;
+    use HasFactory, HasSlug;
 
     protected $guarded = [];
     protected $table = 'trips';
@@ -22,11 +22,10 @@ class Trip extends Model
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom(function () {
-                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
-            })
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
+
     public function place()
     {
         return $this->belongsTo(Place::class);

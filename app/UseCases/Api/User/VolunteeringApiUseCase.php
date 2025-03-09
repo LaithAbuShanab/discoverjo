@@ -24,9 +24,9 @@ class VolunteeringApiUseCase
         return $this->volunteeringRepository->activeVolunteerings();
     }
 
-    public function Volunteering($id)
+    public function Volunteering($slug)
     {
-        return $this->volunteeringRepository->volunteering($id);
+        return $this->volunteeringRepository->volunteering($slug);
     }
 
     public function dateVolunteerings($date)

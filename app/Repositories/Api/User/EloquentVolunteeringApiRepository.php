@@ -71,6 +71,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function volunteering($slug)
     {
         $eloquentVolunteerings = Volunteering::findBySlug($slug);
+        activityLog('view',$eloquentVolunteerings,'The user viewed volunteering');
         return new SingleVolunteeringResource($eloquentVolunteerings);
     }
 
@@ -228,6 +229,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
+        activityLog('search',$eloquentVolunteerings->first(),$query);
 
         // Pass user coordinates to the PlaceResource collection
         return [

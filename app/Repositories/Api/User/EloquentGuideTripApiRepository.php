@@ -82,6 +82,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     public function showGuideTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
+        activityLog('view',$guideTrip,'The user viewed guide trip');
         return new GuideTripResource($guideTrip);
     }
 

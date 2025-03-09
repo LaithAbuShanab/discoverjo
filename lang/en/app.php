@@ -16,7 +16,7 @@ return [
     'passwords_do_not_match' => 'The Passwords Do Not Match',
     'something_went_wrong' => 'Something went wrong',
     'password_reset_successfully' => 'Password has been reset successfully! You can now login with your new password.',
-
+    'the-searched-volunteering-retrieved-successfully'=>'the searched volunteering retrieved successfully',
     'dashboard' => 'Dashboard',
     'rehletna' => 'Rehletna',
     'menu' => 'Menu',

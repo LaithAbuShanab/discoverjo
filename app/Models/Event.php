@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -14,7 +16,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Event extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug,LogsActivity;
 
     public $translatable = ['name', 'description', 'address'];
 
@@ -32,6 +34,11 @@ class Event extends Model implements HasMedia
         'attendance_number',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('event');
+    }
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

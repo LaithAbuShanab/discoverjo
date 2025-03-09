@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
@@ -20,7 +22,7 @@ use Spatie\Translatable\HasTranslations;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations,HasSlug;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations,HasSlug,LogsActivity;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.
@@ -62,6 +64,23 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'user';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('user')
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description','phone_number', 'longitude', 'latitude', 'status']);
+    }
 
     public function getSlugOptions(): SlugOptions
     {

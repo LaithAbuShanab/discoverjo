@@ -249,7 +249,7 @@ class VolunteeringApiController extends Controller
         $query = $request->input('query');
         try {
             $places = $this->volunteeringApiUseCase->search($query);
-            return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), $places);
+            return ApiResponse::sendResponse(200, __('app.the-searched-volunteering-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }

@@ -16,7 +16,7 @@ return [
     'passwords_do_not_match' => 'كلمة المرور غير متطابقة',
     'something_went_wrong' => 'حدث خطأ ما',
     'password_reset_successfully' => 'تم استعادة كلمة المرور بنجاح',
-
+    'the-searched-volunteering-retrieved-successfully'=>'تم استرجاع فرص التطوع المبحوث عنها بنجاح',
     'dashboard' => 'لوحة التحكم',
     'rehletna' => 'رحلتنا',
     'menu' => 'القائمة',

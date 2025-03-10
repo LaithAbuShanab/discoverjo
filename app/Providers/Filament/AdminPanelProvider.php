@@ -62,7 +62,9 @@ class AdminPanelProvider extends PanelProvider
                 SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales(['en', 'ar']),
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
-                ActivitylogPlugin::make(),
+                ActivitylogPlugin::make()
+                    ->navigationGroup('System')
+
             ])
             ->authMiddleware([
                 Authenticate::class,

@@ -14,6 +14,8 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Concerns\Translatable;
 use Illuminate\Support\Str;
+use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class TripResource extends Resource
 {
@@ -240,6 +242,7 @@ class TripResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                ActivityLogTimelineTableAction::make('Activities'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -252,6 +255,7 @@ class TripResource extends Resource
     {
         return [
             RelationManagers\UsersTripRelationManager::class,
+            ActivitylogRelationManager::class,
         ];
     }
 

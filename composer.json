@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.9",
         "mokhosh/filament-rating": "^1.4",
         "pusher/pusher-php-server": "^7.2",
+        "rmsramos/activitylog": "^1.0",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.11",
         "spatie/laravel-sluggable": "^3.7",

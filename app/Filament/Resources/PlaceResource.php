@@ -22,6 +22,8 @@ use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\RatingTheme;
 use Filament\Resources\Concerns\Translatable;
 use Illuminate\Support\Str;
+use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class PlaceResource extends Resource
 {
@@ -130,6 +132,7 @@ class PlaceResource extends Resource
             ->actions(ActionGroup::make([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                ActivityLogTimelineTableAction::make('Activities'),
             ]))
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -144,7 +147,7 @@ class PlaceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivitylogRelationManager::class,
         ];
     }
 

@@ -15,6 +15,8 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\RatingTheme;
+use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class PopularPlaceResource extends Resource
 {
@@ -76,6 +78,7 @@ class PopularPlaceResource extends Resource
             ->actions(ActionGroup::make([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                ActivityLogTimelineTableAction::make('Activities'),
             ]))
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -87,7 +90,7 @@ class PopularPlaceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivitylogRelationManager::class,
         ];
     }
 

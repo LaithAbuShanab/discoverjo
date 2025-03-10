@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
                 SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales(['en', 'ar']),
+                \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,

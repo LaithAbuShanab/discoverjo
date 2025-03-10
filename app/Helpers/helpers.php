@@ -103,7 +103,7 @@ function sendNotification($deviceTokens, $data)
     return $response->json();
 }
 
-function activityLog($logName, $model, $description)
+function activityLog($logName, $model, $description,$event)
 {
     $activity = activity($logName)
         ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
@@ -111,8 +111,7 @@ function activityLog($logName, $model, $description)
             'ip' => request()->ip(),
             'user_agent' => request()->header('User-Agent'),
         ]);
-
-    // Only call performedOn if $model is not null
+    $activity->event($event);
     if ($model) {
         $activity->performedOn($model);
     }

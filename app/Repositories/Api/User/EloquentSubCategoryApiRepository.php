@@ -46,7 +46,7 @@ class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterf
             'prev_page_url' => $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . '&lng=' . $userLng : null,
             'total' => $placesArray['total'],
         ];
-        activityLog('view',$subCategory,'the user viewed Subcategory');
+        activityLog('subcategory',$subCategory,'the user viewed Subcategory','view');
 
         // Return the child category details and associated places with pagination
         return [

@@ -69,7 +69,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function event($slug)
     {
         $eloquentEvents = Event::where('slug', $slug)->first();
-        activityLog('view',$eloquentEvents,'The user viewed event');
+        activityLog('event',$eloquentEvents,'The user viewed event','view');
         return new SingleEventResource($eloquentEvents);
     }
 
@@ -226,7 +226,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        activityLog('search',$eloquentEvents->first(),$query);
+        activityLog('event',$eloquentEvents->first(), $query,'search');
         // Pass user coordinates to the PlaceResource collection
         return [
             'events' => EventResource::collection($eloquentEvents),

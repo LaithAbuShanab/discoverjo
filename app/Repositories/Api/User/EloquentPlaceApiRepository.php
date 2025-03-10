@@ -36,7 +36,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     public function singlePlace($slug)
     {
         $place = Place::findBySlug($slug);
-        activityLog('view',$place,'The user viewed place');
+        activityLog('Place',$place,'The user viewed place','view');
         return new SinglePlaceResource($place);
     }
 
@@ -171,7 +171,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
         }
 
-        activityLog('search',$places->first(),$query);
+        activityLog('Place',$places->first(),$query,'search');
 
         // Convert pagination result to array and include pagination metadata
         $pagination = [
@@ -428,7 +428,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'total'         => $plansArray['total'],
         ];
 
-        activityLog('all search',$places->first(),$query);
+        activityLog('all',$places->first(),$query,'search');
 
 
         /**

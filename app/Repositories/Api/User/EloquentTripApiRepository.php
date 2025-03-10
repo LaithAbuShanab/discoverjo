@@ -505,7 +505,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'prev_page_url' => $tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
-        activityLog('search',$trips->first(),$query);
+        activityLog('trip',$trips->first(),$query,'search');
 
         // Pass user coordinates to the PlaceResource collection
         return [

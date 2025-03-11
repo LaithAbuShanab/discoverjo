@@ -54,23 +54,23 @@ class PlaceApiController extends Controller
         }
     }
 
-    public function createFavoritePlace(Request $request)
+    public function createFavoritePlace(Request $request,$place_slug)
     {
-        $id = $request->place_id;
 
-        $validator = Validator::make(['place_id' => $id], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfExistsInFavoratblesRule('App\Models\Place')],
+        $validator = Validator::make(['place_slug' => $place_slug], [
+            'place_slug' => ['bail','required', 'exists:places,slug', new CheckIfExistsInFavoratblesRule('App\Models\Place')],
         ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
+            'place_slug.exists'=>__('validation.api.place-id-invalid'),
+            'place_slug.required'=>__('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_id'][0]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_slug'][0]);
         }
 
         try {
-            $createFavPlace = $this->placeApiUseCase->createFavoritePlace($id);
+            $data= $validator->validated();
+            $createFavPlace = $this->placeApiUseCase->createFavoritePlace($data['place_slug']);
 
             return ApiResponse::sendResponse(200,  __('app.place.api.you-put-this-place-in-favorite-list'), $createFavPlace);
         } catch (\Exception $e) {

@@ -169,11 +169,11 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         return TagResource::collection($tags);
     }
 
-    public function otherUserDetails($id)
+    public function otherUserDetails($slug)
     {
-        $eloquentUser = User::find($id);
-        $userId = Auth::guard('api')->user()->id;
-        if($userId == $id){
+        $eloquentUser = User::findBySlug($slug);
+        $userSlug = Auth::guard('api')->user()->slug;
+        if($userSlug == $slug){
             return new UserProfileResource($eloquentUser);
         }else{
             if($eloquentUser->status != '1'){

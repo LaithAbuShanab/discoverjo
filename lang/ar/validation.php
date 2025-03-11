@@ -827,7 +827,7 @@ return [
         // User and Profile Errors
         'wrong-email' => 'البريد الإلكتروني المدخل غير صحيح.',
         'this-is-not-in-favorite-list-to-delete' => 'هذا العنصر غير موجود في قائمة المفضلة الخاصة بك ولا يمكن حذفه.',
-        'you-already-make-this-as-favorite' => 'لقد قمت بالفعل بإضافة هذا إلى المفضلة.',
+        'you-already-make-this-as-favorite' => 'لقد قمت بالفعل بإضافتها إلى المفضلة.',
         'you-already-make-review-for-this' => 'لقد قمت بالفعل بكتابة مراجعة لهذا.',
         'you-do-not-have-review' => 'ليس لديك مراجعة لهذا.',
         'you-already-make-request-to-this-user-wait-for-accept-id' => 'لقد قمت بالفعل بإرسال طلب لهذا المستخدم، انتظر القبول.',

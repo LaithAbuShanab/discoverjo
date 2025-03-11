@@ -65,9 +65,9 @@ class UserProfileApiUseCase
 
     }
 
-    public function otherUserDetails($id)
+    public function otherUserDetails($slug)
     {
-        return $this->userProfileRepository->otherUserDetails($id);
+        return $this->userProfileRepository->otherUserDetails($slug);
     }
 
 

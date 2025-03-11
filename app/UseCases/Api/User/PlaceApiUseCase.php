@@ -3,6 +3,7 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\PlaceApiRepositoryInterface;
+use App\Models\Place;
 use Illuminate\Support\Facades\Auth;
 
 class PlaceApiUseCase
@@ -19,11 +20,12 @@ class PlaceApiUseCase
         return $this->placeApiRepository->singlePlace($slug);
     }
 
-    public function createFavoritePlace($id)
+    public function createFavoritePlace($slug)
     {
+        $placeId = Place::findBySlug($slug)?->id;
         $user_id = Auth::guard('api')->user()->id;
         $data = [
-            'place_id' => $id,
+            'place_id' => $placeId,
             'user_id' => $user_id
         ];
         return $this->placeApiRepository->createFavoritePlace($data);

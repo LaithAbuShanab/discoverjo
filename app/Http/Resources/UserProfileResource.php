@@ -14,9 +14,12 @@ class UserProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $paginationPerPage = config('app.pagination_per_page');
+
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
+                'slug'=>$tag->slug,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
                 'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
@@ -28,9 +31,11 @@ class UserProfileResource extends JsonResource
             'en'=>[1=>'Male', 2 =>'Female']
         ];
 
-
+        $posts = $this->posts()->paginate($paginationPerPage);
+        $reviews = $this->reviews()->paginate($paginationPerPage);
         return [
             'id' => $this->id,
+            'slug'=>$this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
@@ -50,8 +55,22 @@ class UserProfileResource extends JsonResource
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
             'tags'=>$tags,
-            'posts'=>UserPostResource::collection($this->posts),
-            'reviews'=>ReviewResource::collection($this->reviews),
+            'posts' => [
+                'data' => UserPostResource::collection($posts),
+                'pagination' => [
+                    'next_page_url' => $posts->nextPageUrl(),
+                    'prev_page_url' => $posts->previousPageUrl(),
+                    'total' => $posts->total(),
+                ]
+            ],
+            'reviews' => [
+                'data' => ReviewResource::collection($reviews),
+                'pagination' => [
+                    'next_page_url' => $posts->nextPageUrl(),
+                    'prev_page_url' => $posts->previousPageUrl(),
+                    'total' => $posts->total(),
+                ]
+            ],
             'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
             'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
         ];

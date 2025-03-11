@@ -21,9 +21,17 @@ use Illuminate\Support\Facades\Broadcast;
 
 
 Route::middleware(['firstLogin'])->group(function () {
+    //start review
     Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
-    Route::get('other/user/profile/{id}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
-    Route::post('favorite/place/{place_id?}', [PlaceApiController::class, 'createFavoritePlace']);
+    Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
+
+    //make the favorite reusable to easy maintenance
+    Route::post('favorite/{place}/{place_slug}', [PlaceApiController::class, 'createFavoritePlace']);
+
+
+    //end review
+    //care about pagination
+
     Route::delete('favorite/place/{place_id?}/delete', [PlaceApiController::class, 'deleteFavoritePlace']);
     Route::post('visited/place/{place_id?}', [PlaceApiController::class, 'createVisitedPlace']);
     Route::delete('visited/place/{place_id?}/delete', [PlaceApiController::class, 'deleteVisitedPlace']);

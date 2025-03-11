@@ -13,7 +13,7 @@ interface UserProfileApiRepositoryInterface
     public function search($query);
     public function favSearch($query);
     public function allTags();
-    public function otherUserDetails($id);
+    public function otherUserDetails($slug);
 
 
 

@@ -17,7 +17,7 @@ class ApiKeyMiddleware
     {
         $apiKey = $request->header('X-API-KEY');
 
-        if ($apiKey !== env('PUBLIC_API_KEY')) {
+        if ($apiKey !== config('app.public_api_key')) {
             return response()->json(['error' => 'Invalid request'], 401);
         }
 

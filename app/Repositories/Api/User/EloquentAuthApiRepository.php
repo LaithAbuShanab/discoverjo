@@ -53,7 +53,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 Notification::make()
                     ->title('New User Registered')
                     ->success()
-                    ->body("A new user **{$user->name}** (ID: {$user->id}) has just registered.")
+                    ->body("A new user ({$user->username}) (ID: {$user->id}) has just registered.")
                     ->actions([
                         Action::make('view_user')
                             ->label('View User')
@@ -112,6 +112,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             } else {
                 DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
             }
+            activityLog('User',$user,'the user logged in','login');
 
             return new UserLoginResource($user);
         } else {

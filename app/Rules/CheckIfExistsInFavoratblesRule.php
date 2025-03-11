@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\Place;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +23,12 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $place = Place::findBySlug($value);
+
         $exists = DB::table('favorables')
             ->where('user_id', Auth::guard('api')->user()->id)
             ->where('favorable_type', $this->favarable_type)
-            ->where('favorable_id', $value)
+            ->where('favorable_id', $place?->id)
             ->exists();
 
         if ($exists) {

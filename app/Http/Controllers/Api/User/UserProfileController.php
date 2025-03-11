@@ -98,14 +98,14 @@ class UserProfileController extends Controller
         }
     }
 
-    public function otherUserProfile(Request $request,$id)
+    public function otherUserProfile(Request $request,$slug)
     {
 
-        $validator = Validator::make(['id' => $id], [
-            'id' => ['required', 'exists:users,id'],
+        $validator = Validator::make(['slug' => $slug], [
+            'slug' => ['required', 'exists:users,slug'],
         ] ,[
-            'id.required' => __('validation.api.user-id-is-required'),
-            'id.exists' => __('validation.api.user-id-does-not-exists'),
+            'slug.required' => __('validation.api.user-id-is-required'),
+            'slug.exists' => __('validation.api.user-id-does-not-exists'),
 
         ]);
 
@@ -115,7 +115,8 @@ class UserProfileController extends Controller
         }
 
         try {
-            $userDetails = $this->userProfileApiUseCase->otherUserDetails($id);
+            $data = $validator->validated();
+            $userDetails = $this->userProfileApiUseCase->otherUserDetails($data['slug']);
             return ApiResponse::sendResponse(200,__('app.api.user-details-retrieved-successfully'), $userDetails);
         } catch (\Exception $e) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

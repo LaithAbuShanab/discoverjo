@@ -33,7 +33,7 @@ class EventResource extends JsonResource
             'status' => intval($this->status),
             'attendance_number' => $this->attendance_number,
             'interested_users' => UserResource::collection($this->interestedUsers),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvent->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->eventInterestables->contains('id', $this->id) : false,
         ];
     }

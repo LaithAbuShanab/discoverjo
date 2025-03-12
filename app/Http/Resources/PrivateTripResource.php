@@ -31,7 +31,7 @@ class PrivateTripResource extends JsonResource
             'attendance_number' => $this->attendance_number,
             'location' => $this->place->region->name,
             'users_number' => UserTripResource::collection($this->usersTrip),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrip->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
         ];
     }
 }

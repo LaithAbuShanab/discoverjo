@@ -29,9 +29,9 @@ class AllGuideTripResource extends JsonResource
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar', 'avatar_app'),
             'status'=>$this->status,
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrip->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrips->contains('id', $this->id) : false,
 
-//            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrip->contains('id', $this->id) : false,
+//            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrips->contains('id', $this->id) : false,
 
         ];
     }

@@ -347,6 +347,7 @@ return [
         'this-place-already-in-your-visited-place' => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
         'this-place-not-in-your-visited-place-list' => 'هذا المكان غير موجود في قائمة الأماكن التي قمت بزيارتها لإزالته من القائمة.',
         'place-id-does-not-exists' => 'معرف المكان غير موجود.',
+        'id-does-not-exists' => 'المعرف غير موجود.',
 
         // Comment Errors
         'the-selected-comment-id-does-not-exists' => 'معرف التعليق المحدد غير موجود.',
@@ -389,6 +390,7 @@ return [
         'guide-trip-id-does-not-exists' => 'رقم معرف الرحلة السياحية غير موجود.',
         'media-id-required' => 'رقم معرف صورة الرحلة السياحية مطلوب.',
         'media-id-does-not-exists' => 'رقم معرف صورة الرحلة السياحية غير موجود.',
+        'this_is_not_in_favorite_list'=>'هذه غير موجودة في لائحة المفضلة',
         "guide-update-not-allowed" => "لا يُسمح لك بتحديث هذا الدليل.",
         'guide_trip_id.required' => 'معرف رحلة الدليل مطلوب.',
         'guide_trip_id.exists' => 'معرف رحلة الدليل المحدد غير صحيح.',

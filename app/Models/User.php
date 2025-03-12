@@ -162,22 +162,22 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->morphedByMany(Volunteering::class, 'interestable')->withTimestamps();
     }
 
-    public function favoriteEvent()
+    public function favoriteEvents()
     {
         return $this->morphedByMany(Event::class, 'favorable')->withTimestamps();
     }
 
-    public function favoriteVolunteering()
+    public function favoriteVolunteerings()
     {
         return $this->morphedByMany(Volunteering::class, 'favorable')->withTimestamps();
     }
 
-    public function favoriteTrip()
+    public function favoriteTrips()
     {
         return $this->morphedByMany(Trip::class, 'favorable')->withTimestamps();
     }
 
-    public function favoriteGuideTrip()
+    public function favoriteGuideTrips()
     {
         return $this->morphedByMany(GuideTrip::class, 'favorable')->withTimestamps();
     }

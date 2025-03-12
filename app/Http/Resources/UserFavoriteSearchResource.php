@@ -19,6 +19,7 @@ class UserFavoriteSearchResource extends JsonResource
             return [
                 "favorable_type" => explode('\\Models\\',$this->favorable_type)[1],
                 'id' => $volunteering->id,
+                'slug' => $volunteering->slug,
                 'name' => $volunteering->name,
                 'description' => $volunteering->description,
             ];
@@ -27,6 +28,7 @@ class UserFavoriteSearchResource extends JsonResource
             return [
                 "favorable_type" => explode('\\Models\\',$this->favorable_type)[1],
                 'id' => $event->id,
+                'slug' => $event->slug,
                 'name' => $event->name,
                 'description' => $event->description
             ];
@@ -35,6 +37,7 @@ class UserFavoriteSearchResource extends JsonResource
             return [
                 "favorable_type" => explode('\\Models\\',$this->favorable_type)[1],
                 'id' => $place->id,
+                'slug' => $place->slug,
                 'name' => $place->name,
                 'description' => $place->description
             ];
@@ -43,6 +46,7 @@ class UserFavoriteSearchResource extends JsonResource
             return [
                 "favorable_type" => explode('\\Models\\',$this->favorable_type)[1],
                 'id' => $trip->id,
+                'slug' => $trip->slug,
                 'name' => $trip->name,
                 'description' => $trip->description
             ];
@@ -51,6 +55,7 @@ class UserFavoriteSearchResource extends JsonResource
             return [
                 "favorable_type" => explode('\\Models\\',$this->favorable_type)[1],
                 'id' => $plan->id,
+                'slug' => $plan->slug,
                 'name' => $plan->name,
                 'description' => $plan->description
             ];

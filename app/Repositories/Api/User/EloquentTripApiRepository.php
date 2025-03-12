@@ -386,13 +386,13 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function favorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteTrip()->attach($id);
+        $user->favoriteTrips()->attach($id);
     }
 
     public function deleteFavorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteTrip()->detach($id);
+        $user->favoriteTrips()->detach($id);
     }
 
     public function addReview($data)

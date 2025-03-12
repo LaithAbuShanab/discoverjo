@@ -7,6 +7,7 @@ use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\CommentApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ContactUsApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\EventApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\FavoriteApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\FeaturesApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\FollowApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\GameApiRepositoryInterface;
@@ -61,6 +62,7 @@ use App\Repositories\Api\User\EloquentCategoryApiRepository;
 use App\Repositories\Api\User\EloquentCommentApiRepository;
 use App\Repositories\Api\User\EloquentContactUsApiRepository;
 use App\Repositories\Api\User\EloquentEventApiRepository;
+use App\Repositories\Api\User\EloquentFavoriteApiRepository;
 use App\Repositories\Api\User\EloquentFeaturesApiRepository;
 use App\Repositories\Api\User\EloquentFollowApiRepository;
 use App\Repositories\Api\User\EloquentGameApiRepository;
@@ -150,6 +152,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FeaturesApiRepositoryInterface::class, EloquentFeaturesApiRepository::class);
 
         $this->app->bind(GroupChatRepositoryInterface::class, EloquentGroupChatRepository::class);
+
+        $this->app->bind(FavoriteApiRepositoryInterface::class, EloquentFavoriteApiRepository::class);
     }
 
     /**

@@ -17,22 +17,24 @@ use App\Http\Controllers\Api\User\GuideTripApiController;
 use App\Http\Controllers\Api\User\GuideTripUserApiController;
 use App\Http\Controllers\Api\User\GuideRatingController;
 use App\Http\Controllers\Api\User\GroupChatController;
+use App\Http\Controllers\Api\User\FavoriteApiController;
 use Illuminate\Support\Facades\Broadcast;
 
 
 Route::middleware(['firstLogin'])->group(function () {
-    //start review
+    ///////////////////////////////////////////start review//////////////////////////////////////////////////////////
     Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
     Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
 
-    //make the favorite reusable to easy maintenance
-    Route::post('favorite/{place}/{place_slug}', [PlaceApiController::class, 'createFavoritePlace']);
+    //favorite system
+    Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']);
+    Route::delete('favorite/{type}/{slug}/delete', [FavoriteApiController::class, 'unfavored']);
+    Route::get('user/all/favorite', [FavoriteApiController::class, 'allUserFavorites']);
+    Route::get('user/favorite/search', [FavoriteApiController::class, 'favSearch']);
 
 
-    //end review
-    //care about pagination
+    ////////////////////////////////////////////end review////////////////////////////////////////////////////////////
 
-    Route::delete('favorite/place/{place_id?}/delete', [PlaceApiController::class, 'deleteFavoritePlace']);
     Route::post('visited/place/{place_id?}', [PlaceApiController::class, 'createVisitedPlace']);
     Route::delete('visited/place/{place_id?}/delete', [PlaceApiController::class, 'deleteVisitedPlace']);
 
@@ -65,9 +67,7 @@ Route::middleware(['firstLogin'])->group(function () {
             Route::delete('/join/cancel/{trip_id?}', [TripApiController::class, 'cancelJoin']);
             // Trip Details
             Route::get('/details/{trip_id?}', [TripApiController::class, 'tripDetails']);
-            // Managing Favorites
-            Route::post('/favorite/{trip_id?}', [TripApiController::class, 'favorite']);
-            Route::delete('/favorite/{trip_id?}/delete', [TripApiController::class, 'deleteFavorite']);
+
             // Managing Reviews
             Route::post('add/review/{trip_id?}', [TripApiController::class, 'addReview']);
             Route::post('update/review/{trip_id?}', [TripApiController::class, 'updateReview']);
@@ -88,8 +88,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/interested/list', [EventApiController::class, 'interestList']);
         Route::post('/interest/{event_id?}', [EventApiController::class, 'interest']);
         Route::delete('/disinterest/{event_id?}', [EventApiController::class, 'disinterest']);
-        Route::post('/favorite/{event_id?}', [EventApiController::class, 'favorite']);
-        Route::delete('/favorite/{event_id?}/delete', [EventApiController::class, 'deleteFavorite']);
 
         Route::post('add/review/{event_id?}', [EventApiController::class, 'addReview']);
         Route::post('update/review/{event_id?}', [EventApiController::class, 'updateReview']);
@@ -102,8 +100,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']);
         Route::post('/interest/{volunteering_id?}', [VolunteeringApiController::class, 'interest']);
         Route::delete('/disinterest/{volunteering_id?}', [VolunteeringApiController::class, 'disinterest']);
-        Route::post('/favorite/{volunteering_id?}', [VolunteeringApiController::class, 'favorite']);
-        Route::delete('/favorite/{volunteering_id?}/delete', [VolunteeringApiController::class, 'deleteFavorite']);
+
 
         Route::post('add/review/{volunteering_id?}', [VolunteeringApiController::class, 'addReview']);
         Route::post('update/review/{volunteering_id?}', [VolunteeringApiController::class, 'updateReview']);
@@ -118,8 +115,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/update', [PlanApiController::class, 'update']);
         Route::delete('/{plan_id?}/delete', [PlanApiController::class, 'destroy']);
         Route::get('/show/{plan_id?}', [PlanApiController::class, 'show']);
-        Route::post('favorite/{plan_id?}', [PlanApiController::class, 'createFavoritePlan']);
-        Route::delete('favorite/{plan_id?}/delete', [PlanApiController::class, 'deleteFavoritePlan']);
         Route::get('/my-plans', [PlanApiController::class, 'myPlans']);
     });
 
@@ -199,10 +194,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/update', [GuideTripUserApiController::class, 'update']);
         Route::delete('/delete/{guide_trip_id?}', [GuideTripUserApiController::class, 'delete']);
 
-        // favorite of guide trip by user
-        Route::post('favorite/{guide_trip_id?}', [GuideTripUserApiController::class, 'createFavoriteGuideTrip']);
-        Route::delete('favorite/{guide_trip_id?}/delete', [GuideTripUserApiController::class, 'deleteFavoriteGuideTrip']);
-
         //Review of user on guide trip
         Route::post('add/review/{guide_trip_id?}', [GuideTripUserApiController::class, 'addReview']);
         Route::post('update/review/{guide_trip_id?}', [GuideTripUserApiController::class, 'updateReview']);
@@ -222,10 +213,9 @@ Route::middleware(['firstLogin'])->group(function () {
 Route::post('profile/update', [UserProfileController::class, 'update']);
 Route::get('all/tags', [UserProfileController::class, 'allTags']);
 
-Route::get('user/all/favorite', [UserProfileController::class, 'allFavorite']);
+//we will see to add it or not
 Route::post('user/set-location', [UserProfileController::class, 'setLocation']);
 Route::post('delete/account', [AuthUserController::class, 'deleteAccount']);
-Route::get('user/favorite/search', [UserProfileController::class, 'favSearch']);
 Route::get('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
 
 Broadcast::routes();

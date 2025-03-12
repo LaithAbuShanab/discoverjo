@@ -411,7 +411,8 @@ return [
 
         'api' => [
             'place-retrieved-by-id-successfully' => 'Place retrieved by id successfully',
-            'you-put-this-place-in-favorite-list' => 'You put this place in favorite list successfully',
+            'you-put-this-in-favorite-list' => 'You put this in favorite list successfully',
+            'you-delete-this-from-favorite-list'=>'You deleted this form favorite list.',
             'you-remove-this-place-in-favorite-list' => 'You remove this place in favorite list successfully',
             'you-put-this-place-in-visited-place-list' => 'You put this place in visited place list',
             'remove-place-form-visited-places-list-successfully' => 'You remove this place from visited place successfully',

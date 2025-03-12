@@ -106,13 +106,13 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function favorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteEvent()->attach($id);
+        $user->favoriteEvents()->attach($id);
     }
 
     public function deleteFavorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteEvent()->detach($id);
+        $user->favoriteEvents()->detach($id);
     }
 
     public function addReview($data)

@@ -52,7 +52,7 @@ class SingleEventResource extends JsonResource
             'link' => $this->link,
             'price' => $this->price,
             'attendance_number' => $this->attendance_number,
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvent->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->eventInterestables->contains('id', $this->id) : false,
             'organizers' => $organizers,
             'interested_users' => UserResource::collection($this->interestedUsers),

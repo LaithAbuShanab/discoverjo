@@ -24,6 +24,7 @@ class UserFavoriteResource extends JsonResource
 //            }
             return [
                 'id'=>$place->id,
+                'slug'=>$place->slug,
                 'name' => $place->name,
                 'image'=>$place->getFirstMediaUrl('main_place', 'main_place_app'),
                 'region' => $place->region->name,
@@ -50,12 +51,12 @@ class UserFavoriteResource extends JsonResource
 
         return [
             'places' => $placeFav,
-            'trip' => TripResource::collection($this->favoriteTrip),
-            'event'=>EventResource::collection($this->favoriteEvent),
-            'volunteering'=>VolunteeringResource::collection($this->favoriteVolunteering),
+            'trip' => TripResource::collection($this->favoriteTrips),
+            'event'=>EventResource::collection($this->favoriteEvents),
+            'volunteering'=>VolunteeringResource::collection($this->favoriteVolunteerings),
             'plan'=>PlanResource::collection($this->favoritePlans),
             'post'=>$postFav,
-            'guide_trip' => GuideFavoriteResource::collection($this->favoriteGuideTrip),
+            'guide_trip' => GuideFavoriteResource::collection($this->favoriteGuideTrips),
         ];
     }
 }

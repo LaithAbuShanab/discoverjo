@@ -104,13 +104,13 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function favorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteGuideTrip()->attach($id);
+        $user->favoriteGuideTrips()->attach($id);
     }
 
     public function deleteFavorite($id)
     {
         $user = Auth::guard('api')->user();
-        $user->favoriteGuideTrip()->detach($id);
+        $user->favoriteGuideTrips()->detach($id);
     }
 
     public function addReview($data)

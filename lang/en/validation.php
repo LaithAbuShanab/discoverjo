@@ -334,6 +334,8 @@ return [
         'media-id-required'=>'media id is required',
         'media-id-does-not-exists'=>'media id does not exists',
         'place-id-does-not-exists'=>'Place id does not exists',
+        'this_is_not_in_favorite_list'=>'this is not in favorite list',
+        'id-does-not-exists'=>' id does not exists',
         'plan-id-does-not-exists'=>'Plan id does not exists',
         'post-id-does-not-exists'=>'Post id does not exists',
         'post-id-invalid' => 'Post id invalid',

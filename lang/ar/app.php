@@ -379,7 +379,9 @@ return [
 
         'api' => [
             'place-retrieved-by-id-successfully' => 'تم استرجاع المكان بواسطة الهوية بنجاح',
-            'you-put-this-place-in-favorite-list' => 'لقد وضعت هذا المكان في قائمة المفضلة بنجاح',
+            'you-put-this-place-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
+            'you-put-this-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
+            'you-delete-this-from-favorite-list'=>'لقد حذفت هذه من قائمة المفضلة',
             'you-remove-this-place-in-favorite-list' => 'لقد قمت بإزالة هذا المكان من قائمة المفضلة بنجاح',
             'you-put-this-place-in-visited-place-list' => 'لقد وضعت هذا المكان في قائمة الأماكن التي تمت زيارتها بنجاح',
             'remove-place-form-visited-places-list-successfully' => 'لقد قمت بإزالة هذا المكان من قائمة الأماكن التي تمت زيارتها بنجاح',

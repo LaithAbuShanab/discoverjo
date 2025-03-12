@@ -54,7 +54,7 @@ class SingleVolunteeringResource extends JsonResource
             'organizers' => $organizers,
             'interested_users' => UserResource::collection($this->interestedUsers),
             'attendance_number' => $this->attendance_number,
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteVolunteering->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteVolunteerings->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->volunteeringInterestables->contains('id', $this->id) : false,
         ];
 

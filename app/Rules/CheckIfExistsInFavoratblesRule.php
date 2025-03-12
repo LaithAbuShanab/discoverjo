@@ -3,19 +3,28 @@
 namespace App\Rules;
 
 use App\Models\Place;
+use App\Models\Plan;
+use App\Models\Trip;
+use App\Models\Event;
+use App\Models\Volunteering;
+use App\Models\GuideTrip;
+
 use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class CheckIfExistsInFavoratblesRule implements ValidationRule
+class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
 {
-    protected $favarable_type;
+    protected $data;
 
-    public function __construct($favarable_type)
+    public function setData($data)
     {
-        $this->favarable_type = $favarable_type;
+        $this->data = $data;
+        return $this;
     }
+
     /**
      * Run the validation rule.
      *
@@ -23,12 +32,25 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $place = Place::findBySlug($value);
+        $acceptableType = ['place', 'trip','event','volunteering','plan','guideTrip'];
+
+        if(!in_array($this->data['type'],$acceptableType)){
+            return;
+        }
+        // Validate if the type class has the method `findBySlug` before using it
+        $modelClass = 'App\Models\\' . ucfirst($this->data['type']);
+
+        $favorableItem = $modelClass::findBySlug($value);
+
+        if (!$favorableItem) {
+            $fail(__('validation.api.place-id-does-not-exists'));
+            return;
+        }
 
         $exists = DB::table('favorables')
-            ->where('user_id', Auth::guard('api')->user()->id)
-            ->where('favorable_type', $this->favarable_type)
-            ->where('favorable_id', $place?->id)
+            ->where('user_id', Auth::guard('api')->id())
+            ->where('favorable_type', $modelClass)
+            ->where('favorable_id', $favorableItem->id)
             ->exists();
 
         if ($exists) {

@@ -35,7 +35,7 @@ class TripResource extends JsonResource
             'location' => $this->place->region->name,
             'status'=>$this->status,
             'users_number' => UserResource::collection($this->usersTrip->where('status', '1')->pluck('user')),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrip->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
         ];
     }
 }

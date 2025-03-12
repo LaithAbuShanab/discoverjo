@@ -53,7 +53,7 @@ class TripDetailsResource extends JsonResource
             'attendances' => UserResource::collection($this->usersTrip->where('status', '1')->pluck('user')),
             'users_request' => UserTripResource::collection($this->usersTrip),
             'status' => $this->status,
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrip->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
         ];
 
         if ($this->date_time < $now) {

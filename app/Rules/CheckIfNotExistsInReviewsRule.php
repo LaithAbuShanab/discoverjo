@@ -2,20 +2,14 @@
 
 namespace App\Rules;
 
-use App\Models\Place;
-use App\Models\Plan;
-use App\Models\Trip;
-use App\Models\Event;
-use App\Models\Volunteering;
-use App\Models\GuideTrip;
-
+use App\Models\Reviewable;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
+class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
 {
     protected $data;
 
@@ -28,18 +22,18 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip','event','volunteering','plan','guideTrip'];
+        $userId = Auth::guard('api')->user()->id;
+        $acceptableType = ['place', 'trip','event','volunteering','guideTrip'];
 
         if(!in_array($this->data['type'],$acceptableType)){
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
         $modelClass = 'App\Models\\' . ucfirst($this->data['type']);
-
         $favorableItem = $modelClass::findBySlug($value);
 
         if (!$favorableItem) {
@@ -47,21 +41,10 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
             return;
         }
 
-        if($this->data['type']=='place'){
-            if($favorableItem->status != 1){
-                $fail(__('validation.api.the-selected-place-is-not-active'));
-            }
+        $exists = Reviewable::where('user_id', $userId)->where('reviewable_type', $modelClass)->where('reviewable_id', $favorableItem?->id)->exists();
+        if (!$exists) {
+            $fail(__('validation.api.you-did-not-make-review-for-this'));
         }
 
-
-            $exists = DB::table('favorables')
-            ->where('user_id', Auth::guard('api')->id())
-            ->where('favorable_type', $modelClass)
-            ->where('favorable_id', $favorableItem->id)
-            ->exists();
-
-        if ($exists) {
-            $fail(__('validation.api.you-already-make-this-as-favorite'));
-        }
     }
 }

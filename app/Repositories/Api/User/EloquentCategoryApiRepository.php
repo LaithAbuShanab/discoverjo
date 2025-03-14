@@ -39,10 +39,11 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
         $userLng = request()->lng ? request()->lng : null;
 
         // Set the number of places per page
-        $perPage = 20; // You can adjust this number based on your requirements
+        $perPage = config('app.pagination_per_page');; // You can adjust this number based on your requirements
 
         // Retrieve places associated with the category and its children
         $places = Place::selectRaw('places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])
+            ->where('status',1)
             ->whereIn('id', function ($query) use ($category) {
                 $query->select('place_id')
                     ->from('place_categories')

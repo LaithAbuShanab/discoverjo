@@ -15,6 +15,7 @@ use App\Rules\CheckIfTheUserOwnTheTripRule;
 use App\UseCases\Api\User\GuideTripApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -33,6 +34,7 @@ class GuideTripApiController extends Controller
             $guideTrips = $this->guideTripApiUseCase->AllGuideTrip();
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-retrieved-successfully'), $guideTrips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -43,6 +45,7 @@ class GuideTripApiController extends Controller
             $guideTrips = $this->guideTripApiUseCase->allGuides();
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-retrieved-successfully'), $guideTrips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -66,6 +69,7 @@ class GuideTripApiController extends Controller
             $updateTrip = $this->guideTripApiUseCase->showGuideTrip($data['guide_trip_slug']);
             return ApiResponse::sendResponse(200, __('app.api.trip-retrieved-successfully'), $updateTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -76,6 +80,7 @@ class GuideTripApiController extends Controller
             $createTrip = $this->guideTripApiUseCase->storeGuideTrip($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.trip-created-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -99,6 +104,7 @@ class GuideTripApiController extends Controller
             $updateTrip = $this->guideTripApiUseCase->updateGuideTrip($request->validated(), $id);
             return ApiResponse::sendResponse(200, __('app.api.trip-updated-successfully'), $updateTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -122,6 +128,7 @@ class GuideTripApiController extends Controller
             $updateTrip = $this->guideTripApiUseCase->deleteGuideTrip( $id);
             return ApiResponse::sendResponse(200, __('app.api.trip-deleted-successfully'), $updateTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -144,6 +151,7 @@ class GuideTripApiController extends Controller
             $createTrip = $this->guideTripApiUseCase->deleteImage($id);
             return ApiResponse::sendResponse(200, __('app.api.trip-image-deleted-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -167,6 +175,7 @@ class GuideTripApiController extends Controller
             $updateTrip = $this->guideTripApiUseCase->joinRequests($id);
             return ApiResponse::sendResponse(200, __('app.api.join-requests-retrieved-successfully'), $updateTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -195,6 +204,7 @@ class GuideTripApiController extends Controller
             $updateTrip = $this->guideTripApiUseCase->changeJoinRequestStatus($request);
             return ApiResponse::sendResponse(200, __('app.api.join-requests-status-changed-successfully'), $updateTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }

@@ -486,6 +486,7 @@ return [
         'you-deleted-the-trip-from-favorite-Successfully' => 'لقد تم حذف هذه الرحلة من لائحة المفضلة بنجاح',
         'you-added-review-for-this-trip-successfully' => 'تمت اضافة مراجعة لهذه الرحلة بنجاح',
         'your-review-in-this-trip-updated-successfully' => 'تمت تعديل مراجعة لهذه الرحلة بنجاح',
+        'your-review-updated-successfully' => 'تم تعديل مراجعتك بنجاح',
         'the-searched-guide-trip-retrieved-successfully' => 'تم استرجاع الرحلات المبحوث عنها بنجاح',
         'legal-retrieved-successfully' => 'تم استرجاع الوثائق القانونية بنجاح',
         'the-plan-retrieved-successfully' => 'تم استرجاع الخطة بنجاح',
@@ -513,7 +514,8 @@ return [
         'the-users-retried-successfully' => 'تم استرجاع المستخدمين بنجاح',
         'the-searched-favorite-retrieved-successfully' => 'تم استرجاع المفضلة المبحوث عنها',
         'all-tags-retrieved-successfully' => 'تم استرجاع الاوسمة بنجاح',
-        'guide-trips-users-subscription-fetched-successfully'=>'the subscriptions of the user fetched successfully',
+        'guide-trips-users-subscription-fetched-successfully'=>' تم استرجاع لائحة المستخدمين المشتركين في الرحة بنجاح',
+        'the-interest-event-retrieved-successfully' => 'نم استرجاع لائحة الفعاليات التي اهتممت بها بنجاح',
 
 
 

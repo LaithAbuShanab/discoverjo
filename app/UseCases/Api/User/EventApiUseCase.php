@@ -36,20 +36,15 @@ class EventApiUseCase
         return $this->eventRepository->dateEvents($date);
     }
 
-    public function interestEvent($id)
+    public function interestEvent($slug)
     {
-        $user_id = Auth::guard('api')->user()->id;
-        $data = [
-            'event_id' => $id,
-            'user_id' => $user_id
-        ];
-        return $this->eventRepository->createInterestEvent($data);
+        return $this->eventRepository->createInterestEvent($slug);
     }
 
-    public function disinterestEvent($id)
+    public function disinterestEvent($slug)
     {
 
-        return $this->eventRepository->disinterestEvent($id);
+        return $this->eventRepository->disinterestEvent($slug);
     }
 
     public function favorite($id)

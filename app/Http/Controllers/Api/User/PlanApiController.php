@@ -14,6 +14,7 @@ use App\Rules\CheckIfPlanBelongsToUserOrAdmin;
 use App\UseCases\Api\User\PlanApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PlanApiController extends Controller
@@ -32,6 +33,7 @@ class PlanApiController extends Controller
             $plans = $this->planApiUseCase->allPlans();
             return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -42,6 +44,7 @@ class PlanApiController extends Controller
             $plans = $this->planApiUseCase->plans();
             return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -54,6 +57,7 @@ class PlanApiController extends Controller
             $createPlan = $this->planApiUseCase->createPlan($validatedData);
             return ApiResponse::sendResponse(200, __('app.plan.plan-created-successfully'), $createPlan);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -66,6 +70,7 @@ class PlanApiController extends Controller
             $createPlan = $this->planApiUseCase->updatePlan($validatedData);
             return ApiResponse::sendResponse(200, __('app.plan.plan-updated-successfully'), $createPlan);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -88,6 +93,7 @@ class PlanApiController extends Controller
             $plan = $this->planApiUseCase->show($request->plan_id);
             return ApiResponse::sendResponse(200, __('app.api.the-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -112,6 +118,7 @@ class PlanApiController extends Controller
             $createTrip = $this->planApiUseCase->deletePlan($id);
             return ApiResponse::sendResponse(200, __('app.api.plan-deleted-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -138,6 +145,7 @@ class PlanApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.plan.api.favorite-plan-created-successfully'), $createFavPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -163,6 +171,7 @@ class PlanApiController extends Controller
             $deleteFavPlan = $this->planApiUseCase->deleteFavoritePlan($id);
             return ApiResponse::sendResponse(200,  __('app.plan.api.you-remove-plan-from-favorite-list'), $deleteFavPlan);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -174,6 +183,7 @@ class PlanApiController extends Controller
             $plan = $this->planApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.plan.api.the-searched-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -184,6 +194,7 @@ class PlanApiController extends Controller
             $plans = $this->planApiUseCase->filter($request->validated());
             return ApiResponse::sendResponse(200, __('app.plan.api.the-searched-plan-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -194,6 +205,7 @@ class PlanApiController extends Controller
             $plans = $this->planApiUseCase->myPlans();
             return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

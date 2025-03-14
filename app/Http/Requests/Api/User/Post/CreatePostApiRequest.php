@@ -41,7 +41,6 @@ class CreatePostApiRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     $type = $this->input('visitable_type');
-
                     $models = [
                         'place' => Place::class,
                         'plan' => Plan::class,
@@ -58,7 +57,7 @@ class CreatePostApiRequest extends FormRequest
             ],
             'content' => ['required', 'string'],
             'privacy' => ['required', Rule::in([0, 1, 2])],  // Ensure it's an integer
-            'media' => ['nullable', 'max:10000']
+            'media' => ['nullable', 'max:10240']
         ];
     }
 

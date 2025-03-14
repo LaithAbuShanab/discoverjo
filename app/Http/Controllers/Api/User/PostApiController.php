@@ -15,6 +15,7 @@ use App\UseCases\Api\User\PostApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -36,6 +37,7 @@ class PostApiController extends Controller
             $createTrip = $this->postApiUseCase->followingPost();
             return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -50,6 +52,7 @@ class PostApiController extends Controller
             $createTrip = $this->postApiUseCase->createPost($validatedData);
             return ApiResponse::sendResponse(200, __('app.api.post-created-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -64,6 +67,7 @@ class PostApiController extends Controller
             $createTrip = $this->postApiUseCase->updatePost($validatedData);
             return ApiResponse::sendResponse(200, __('app.api.post-updated-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -88,6 +92,7 @@ class PostApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $post);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -110,6 +115,7 @@ class PostApiController extends Controller
             $createTrip = $this->postApiUseCase->deleteImage($id);
             return ApiResponse::sendResponse(200, __('app.api.trip-image-deleted-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -132,6 +138,7 @@ class PostApiController extends Controller
             $createTrip = $this->postApiUseCase->delete($id);
             return ApiResponse::sendResponse(200, __('app.post-deleted-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -157,6 +164,7 @@ class PostApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.favorite-post-created-successfully'), $createFavPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -181,6 +189,7 @@ class PostApiController extends Controller
             $deleteFavPlace = $this->postApiUseCase->deleteFavoritePost($id);
             return ApiResponse::sendResponse(200, __('app.api.favorite-post-deleted-successfully'), $deleteFavPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -204,6 +213,7 @@ class PostApiController extends Controller
             $this->postApiUseCase->postLike($request);
             return ApiResponse::sendResponse(200,__('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

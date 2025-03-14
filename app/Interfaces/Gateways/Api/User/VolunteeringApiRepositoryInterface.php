@@ -9,8 +9,8 @@ interface VolunteeringApiRepositoryInterface
     public function activeVolunteerings();
     public function volunteering($slug);
     public function dateVolunteerings($date);
-    public function createInterestVolunteering($data);
-    public function disinterestVolunteering($id);
+    public function createInterestVolunteering($slug);
+    public function disinterestVolunteering($slug);
     public function favorite($id);
     public function deleteFavorite($id);
     public function addReview($data);
@@ -18,5 +18,5 @@ interface VolunteeringApiRepositoryInterface
     public function deleteReview($id);
     public function reviewsLike($request);
     public function search($query);
-    public function interestedList($userId);
+    public function interestedList($id);
 }

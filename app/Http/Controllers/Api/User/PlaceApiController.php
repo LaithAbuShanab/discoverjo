@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
 use App\Models\Place;
+use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfExistsInReviewsRule;
 use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
@@ -15,6 +16,7 @@ use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
 use App\UseCases\Api\User\PlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -36,7 +38,8 @@ class PlaceApiController extends Controller
         $slug = $request->place_slug;
 
         $validator = Validator::make(['place_slug' => $slug], [
-            'place_slug' => 'required|exists:places,slug',
+            'place_slug' => ['bail','required','exists:places,slug',new ActivePlaceRule()],
+
         ],[
             'place_slug.exists'=>__('validation.api.place-id-invalid'),
             'place_slug.required'=>__('validation.api.place-id-does-not-exists')
@@ -50,134 +53,55 @@ class PlaceApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.place.api.place-retrieved-by-id-successfully'), $allPlaces);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
 
-    public function createFavoritePlace(Request $request,$place_slug)
-    {
 
-        $validator = Validator::make(['place_slug' => $place_slug], [
-            'place_slug' => ['bail','required', 'exists:places,slug', new CheckIfExistsInFavoratblesRule('App\Models\Place')],
+    public function createVisitedPlace(Request $request,$slug)
+    {
+        $validator = Validator::make(['slug' => $slug], [
+            'slug' => ['required', 'exists:places,slug',new ActivePlaceRule(), new CheckIfExistsInVistedPlaceTableRule()],
         ],[
-            'place_slug.exists'=>__('validation.api.place-id-invalid'),
-            'place_slug.required'=>__('validation.api.place-id-does-not-exists')
+            'slug.exists'=>__('validation.api.place-id-invalid'),
+            'slug.required'=>__('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_slug'][0]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
 
         try {
-            $data= $validator->validated();
-            $createFavPlace = $this->placeApiUseCase->createFavoritePlace($data['place_slug']);
-
-            return ApiResponse::sendResponse(200,  __('app.place.api.you-put-this-place-in-favorite-list'), $createFavPlace);
-        } catch (\Exception $e) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
-    public  function deleteFavoritePlace(Request $request)
-    {
-        $id = $request->place_id;
-
-        $validator = Validator::make(['place_id' => $id], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfNotExistsInFavoratblesRule('App\Models\Place')],
-        ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_id']);
-        }
-
-        try {
-            $deleteFavPlace = $this->placeApiUseCase->deleteFavoritePlace($id);
-            return ApiResponse::sendResponse(200, __('app.place.api.you-remove-this-place-in-favorite-list'), $deleteFavPlace);
-        } catch (\Exception $e) {
-            return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
-        }
-    }
-
-    public function createVisitedPlace(Request $request)
-    {
-        $id = $request->place_id;
-
-        $validator = Validator::make(['place_id' => $id], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfExistsInVistedPlaceTableRule()],
-        ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_id']);
-        }
-
-        try {
-            $createVisitedPlace = $this->placeApiUseCase->createVisitedPlace($id);
+            $createVisitedPlace = $this->placeApiUseCase->createVisitedPlace($validator->validated()['slug']);
 
             return ApiResponse::sendResponse(200, __('app.place.api.you-put-this-place-in-visited-place-list'), $createVisitedPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
 
 
-    public  function deleteVisitedPlace(Request $request)
+    public  function deleteVisitedPlace(Request $request,$slug)
     {
-        $id = $request->place_id;
 
-        $validator = Validator::make(['place_id' => $id], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfNotExistsInVistedPlaceTableRule()],
+        $validator = Validator::make(['slug' => $slug], [
+            'slug' => ['required', 'exists:places,slug',new ActivePlaceRule(), new CheckIfNotExistsInVistedPlaceTableRule()],
         ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
+            'slug.exists'=>__('validation.api.place-id-invalid'),
+            'slug.required'=>__('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['place_id']);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
 
         try {
-            $deleteVisitedPlace = $this->placeApiUseCase->deleteVisitedPlace($id);
+            $deleteVisitedPlace = $this->placeApiUseCase->deleteVisitedPlace($validator->validated()['slug']);
             return ApiResponse::sendResponse(200, __('app.place.api.remove-place-form-visited-places-list-successfully'), $deleteVisitedPlace);
         } catch (\Exception $e) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
-        }
-    }
-
-    public function addReview(Request $request)
-    {
-        $validator = Validator::make([
-            'place_id' => $request->place_id,
-            'rating' => $request->rating,
-            'comment' => $request->comment
-        ], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfExistsInReviewsRule('App\Models\Place')],
-            'rating' => ['required', 'numeric'],
-            'comment' => ['nullable', 'string']
-        ],
-            [
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists'),
-            'rating.required' => __('validation.api.rating-is-required'),
-            'comment.string'=>__('validation.api.comment-should-be-string'),
-
-        ]
-        );
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
-        }
-
-        try {
-            $placeRev = $this->placeApiUseCase->addReview($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.place.api.you-added-review-for-this-place-successfully'), $placeRev);
-        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -212,6 +136,7 @@ class PlaceApiController extends Controller
             $placeRev = $this->placeApiUseCase->updateReview($validator->validated());
             return ApiResponse::sendResponse(200,  __('app.place.api.you-updated-review-for-this-place-successfully'), $placeRev);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -235,6 +160,7 @@ class PlaceApiController extends Controller
             $placeRev = $this->placeApiUseCase->deleteReview($validator->validated());
             return ApiResponse::sendResponse(200,  __('app.place.api.you-remove-review-for-this-place-successfully'), $placeRev);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -265,6 +191,7 @@ class PlaceApiController extends Controller
             $this->placeApiUseCase->reviewsLike($request);
             return ApiResponse::sendResponse(200,  __('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -276,6 +203,7 @@ class PlaceApiController extends Controller
             $places = $this->placeApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.place.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -286,6 +214,7 @@ class PlaceApiController extends Controller
             $places = $this->placeApiUseCase->filter($request->validated());
             return ApiResponse::sendResponse(200,  __('app.place.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -297,6 +226,7 @@ class PlaceApiController extends Controller
             $places = $this->placeApiUseCase->allSearch($query);
             return ApiResponse::sendResponse(200, __('app.place.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 

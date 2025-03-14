@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\User\GuideTripUserApiController;
 use App\Http\Controllers\Api\User\GuideRatingController;
 use App\Http\Controllers\Api\User\GroupChatController;
 use App\Http\Controllers\Api\User\FavoriteApiController;
+use App\Http\Controllers\Api\User\ReviewApiController;
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -32,11 +33,61 @@ Route::middleware(['firstLogin'])->group(function () {
     Route::get('user/all/favorite', [FavoriteApiController::class, 'allUserFavorites']);
     Route::get('user/favorite/search', [FavoriteApiController::class, 'favSearch']);
 
+    //review system
+    Route::group(['prefix' => 'review'], function () {
+        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']);//should we return only active review?
+        Route::post('add/{type}/{slug}', [ReviewApiController::class, 'addReview']);
+        Route::put('update/{type}/{slug}', [ReviewApiController::class, 'updateReview']);
+        Route::delete('delete/{type}/{slug}', [ReviewApiController::class, 'deleteReview']);
+        Route::post('{status}/{review_id}', [ReviewApiController::class, 'likeDislike']);
+    });
+
+    Route::post('visited/place/{slug}', [PlaceApiController::class, 'createVisitedPlace']);
+    Route::delete('visited/place/{slug}/delete', [PlaceApiController::class, 'deleteVisitedPlace']);
+
+    // All Routes For event
+    Route::group(['prefix' => 'event'], function () {
+        Route::get('/interested/list', [EventApiController::class, 'interestList']);
+        Route::post('/interest/{slug}', [EventApiController::class, 'interest']);
+        Route::delete('/disinterest/{slug}', [EventApiController::class, 'disinterest']);
+
+    });
+
+    // All Routes For event
+    Route::group(['prefix' => 'volunteering'], function () {
+        Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']);
+        Route::post('/interest/{slug}', [VolunteeringApiController::class, 'interest']);
+        Route::delete('/disinterest/{slug}', [VolunteeringApiController::class, 'disinterest']);
+
+    });
+
+    Route::prefix('post')->group(function () {
+        Route::get('/followings', [PostApiController::class, 'followingPost']);
+
+
+        Route::post('/store', [PostApiController::class, 'store']);
+        Route::post('/update', [PostApiController::class, 'update']);
+        Route::get('show/{post_id}', [PostApiController::class, 'show']);
+        Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
+        Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
+        Route::post('favorite/{post_id?}', [PostApiController::class, 'createFavoritePost']);
+        Route::delete('favorite/{post_id?}/delete', [PostApiController::class, 'deleteFavoritePost']);
+        // Route::post('{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
+        Route::post('/like-dislike/{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
+        Route::post('/comment/store', [CommentApiController::class, 'commentStore']);
+        Route::post('/comment/update/{comment_id?}', [CommentApiController::class, 'commentUpdate']);
+        Route::delete('/comment/delete/{comment_id?}', [CommentApiController::class, 'commentDelete']);
+        // Route::post('comment/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
+        Route::post('comment/like-dislike/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
+        Route::post('reply/create', [ReplyApiController::class, 'replyStore']);
+        Route::post('reply/update/{reply_id?}', [ReplyApiController::class, 'replyUpdate']);
+        Route::delete('reply/delete/{reply_id?}', [ReplyApiController::class, 'replyDelete']);
+        Route::post('reply/{status?}/{reply_id?}', [ReplyApiController::class, 'likeDislike']);
+    });
+
 
     ////////////////////////////////////////////end review////////////////////////////////////////////////////////////
 
-    Route::post('visited/place/{place_id?}', [PlaceApiController::class, 'createVisitedPlace']);
-    Route::delete('visited/place/{place_id?}/delete', [PlaceApiController::class, 'deleteVisitedPlace']);
 
     Route::group(['prefix' => 'chat'], function () {
         Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']);
@@ -83,31 +134,6 @@ Route::middleware(['firstLogin'])->group(function () {
         });
     });
 
-    // All Routes For event
-    Route::group(['prefix' => 'event'], function () {
-        Route::get('/interested/list', [EventApiController::class, 'interestList']);
-        Route::post('/interest/{event_id?}', [EventApiController::class, 'interest']);
-        Route::delete('/disinterest/{event_id?}', [EventApiController::class, 'disinterest']);
-
-        Route::post('add/review/{event_id?}', [EventApiController::class, 'addReview']);
-        Route::post('update/review/{event_id?}', [EventApiController::class, 'updateReview']);
-        Route::delete('delete/review/{event_id?}', [EventApiController::class, 'deleteReview']);
-        Route::post('review/{status?}/{review_id?}', [EventApiController::class, 'likeDislike']);
-    });
-
-    // All Routes For event
-    Route::group(['prefix' => 'volunteering'], function () {
-        Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']);
-        Route::post('/interest/{volunteering_id?}', [VolunteeringApiController::class, 'interest']);
-        Route::delete('/disinterest/{volunteering_id?}', [VolunteeringApiController::class, 'disinterest']);
-
-
-        Route::post('add/review/{volunteering_id?}', [VolunteeringApiController::class, 'addReview']);
-        Route::post('update/review/{volunteering_id?}', [VolunteeringApiController::class, 'updateReview']);
-        Route::delete('delete/review/{volunteering_id?}', [VolunteeringApiController::class, 'deleteReview']);
-        Route::post('review/{status?}/{review_id?}', [VolunteeringApiController::class, 'likeDislike']);
-    });
-
     // All Routes For Plan
     Route::group(['prefix' => 'plan'], function () {
         Route::get('/', [PlanApiController::class, 'index']);
@@ -118,50 +144,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/my-plans', [PlanApiController::class, 'myPlans']);
     });
 
-    //    // All Routes For Plan
-    //    Route::group(['prefix' => 'post'], function () {
-    //        Route::get('/', [PostApiController::class, 'index']);
-    //        Route::post('/store', [PostApiController::class, 'store']);
-    //        Route::post('/update/{post_id}', [PostApiController::class, 'update']);
-    //        Route::get('show/{post_id}', [PostApiController::class, 'show']);
-    //        Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
-    //        Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
-    //        Route::post('favorite/{post_id?}', [PostApiController::class, 'createFavoritePost']);
-    //        Route::delete('favorite/{post_id?}/delete', [PostApiController::class, 'deleteFavoritePost']);
-    //    });
-
-    // All Routes For Review Place
-    Route::group(['prefix' => 'place'], function () {
-        Route::post('add/review/{place_id?}', [PlaceApiController::class, 'addReview']);
-        Route::post('update/review/{place_id?}', [PlaceApiController::class, 'updateReview']);
-        Route::delete('delete/review/{place_id?}', [PlaceApiController::class, 'deleteReview']);
-        Route::post('review/{status?}/{review_id?}', [PlaceApiController::class, 'likeDislike']);
-    });
-
-    Route::prefix('post')->group(function () {
-        Route::get('/followings', [PostApiController::class, 'followingPost']);
-        Route::post('/store', [PostApiController::class, 'store']);
-        Route::post('/update', [PostApiController::class, 'update']);
-        Route::get('show/{post_id}', [PostApiController::class, 'show']);
-        Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
-        Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
-        Route::post('favorite/{post_id?}', [PostApiController::class, 'createFavoritePost']);
-        Route::delete('favorite/{post_id?}/delete', [PostApiController::class, 'deleteFavoritePost']);
-        // Route::post('{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
-        Route::post('/like-dislike/{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
-
-
-        Route::post('/comment/store', [CommentApiController::class, 'commentStore']);
-        Route::post('/comment/update/{comment_id?}', [CommentApiController::class, 'commentUpdate']);
-        Route::delete('/comment/delete/{comment_id?}', [CommentApiController::class, 'commentDelete']);
-        // Route::post('comment/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
-        Route::post('comment/like-dislike/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
-
-        Route::post('reply/create', [ReplyApiController::class, 'replyStore']);
-        Route::post('reply/update/{reply_id?}', [ReplyApiController::class, 'replyUpdate']);
-        Route::delete('reply/delete/{reply_id?}', [ReplyApiController::class, 'replyDelete']);
-        Route::post('reply/{status?}/{reply_id?}', [ReplyApiController::class, 'likeDislike']);
-    });
 
     Route::group(['prefix' => 'follow'], function () {
         Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);
@@ -194,11 +176,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/update', [GuideTripUserApiController::class, 'update']);
         Route::delete('/delete/{guide_trip_id?}', [GuideTripUserApiController::class, 'delete']);
 
-        //Review of user on guide trip
-        Route::post('add/review/{guide_trip_id?}', [GuideTripUserApiController::class, 'addReview']);
-        Route::post('update/review/{guide_trip_id?}', [GuideTripUserApiController::class, 'updateReview']);
-        Route::delete('delete/review/{guide_trip_id?}', [GuideTripUserApiController::class, 'deleteReview']);
-        Route::post('review/{status?}/{review_id?}', [GuideTripUserApiController::class, 'likeDislike']);
     });
 
     Route::controller(GuideRatingController::class)->group(function () {

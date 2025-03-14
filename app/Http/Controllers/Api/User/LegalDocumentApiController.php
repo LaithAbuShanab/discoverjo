@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\UseCases\Api\User\LegalDocumentApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class LegalDocumentApiController extends Controller
 {
@@ -27,6 +28,7 @@ class LegalDocumentApiController extends Controller
             $legal = $this->legalDocumentUseCase->getAllLegalDocument();
             return ApiResponse::sendResponse(200, __('app.api.legal-retrieved-successfully'), $legal);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }

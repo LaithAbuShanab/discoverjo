@@ -15,6 +15,7 @@ use App\UseCases\Api\User\FollowApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -36,6 +37,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->follow($request);
             return ApiResponse::sendResponse(200, __('app.api.the-following-request-sent-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -61,6 +63,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->unfollow($request->following_id);
             return ApiResponse::sendResponse(200, __('app.api.follows-deleted-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -90,6 +93,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->acceptFollower($request->follower_id);
             return ApiResponse::sendResponse(200, __('app.api.accept-follow-request-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
 
@@ -119,6 +123,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->unacceptedFollower($request->follower_id);
             return ApiResponse::sendResponse(200, __('app.api.un-accept-follow-request-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
 
@@ -132,6 +137,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->followersRequest($id);
             return ApiResponse::sendResponse(200, __('app.api.followers-requests-retrieved-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -156,6 +162,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->followers($request->user_id);
             return ApiResponse::sendResponse(200, __('app.api.followers-retrieved-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -179,6 +186,7 @@ class FollowApiController extends Controller
             $follows = $this->followApiUseCase->followings($request->user_id);
             return ApiResponse::sendResponse(200, __('app.api.followings-retrieved-successfully'), $follows);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }

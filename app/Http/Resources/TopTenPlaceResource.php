@@ -36,6 +36,7 @@ class TopTenPlaceResource extends JsonResource
                 'rating' => $place->place->rating,
                 'rank' => $place->rank,
                 'distance' => $distance,
+                'status'=>$place->place->status,
             ];
         });
     }

@@ -38,7 +38,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
     public function allUsersForGuideTrip()
     {
-        $perPage =15;
+        $perPage =config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
         $guidesTrips = GuideTrip::where('status',1)->where('start_datetime','>',$now)->orderBy('start_datetime')->paginate($perPage);
         GuideTrip::where('status', '1')->whereNotIn('id', $guidesTrips->pluck('id'))->update(['status' => '0']);
@@ -213,7 +213,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
     public function search($query)
     {
-        $perPage =15;
+        $perPage = config('app.pagination_per_page');
 
         $trips = GuideTrip::where(function ($queryBuilder) use ($query) {
             $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])

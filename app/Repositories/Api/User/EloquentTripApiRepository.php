@@ -79,7 +79,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function allTrips()
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
         $trips = Trip::where('status', '1')->where('trip_type', '0')->where('date_time', '>=', $now)->paginate($perPage);
         $tripsArray = $trips->toArray();
@@ -496,7 +496,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function search($query)
     {
-        $perPage = 15;
+        $perPage =  config('app.pagination_per_page');
         $trips = Trip::where('name', 'like', "%$query%")->orWhere('description', 'like', "%$query%")->paginate($perPage);
 
         $tripsArray = $trips->toArray();

@@ -18,8 +18,11 @@ class CheckIfExistsInVistedPlaceTableRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-
-        if (VisitedPlace::where('user_id', $userId)->where($attribute,$value)->exists() && Place::find($value)) {
+        $place = Place::findBySlug($value);
+        if(!$place){
+           return;
+        }
+        if (VisitedPlace::where('user_id', $userId)->where('place_id',$place->id)->exists()) {
             $fail(__('validation.api.this-place-already-in-your-visited-place'));
         }
     }

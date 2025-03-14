@@ -19,6 +19,7 @@ use App\Http\Requests\Api\User\Trip\UpdateTripRequest;
 use App\Rules\CheckAgeGenderExistenceRule;
 use App\Rules\CheckIfCanUpdateTripRule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -37,6 +38,7 @@ class TripApiController extends Controller
             $trips = $this->tripApiUseCase->trips();
             return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -47,6 +49,8 @@ class TripApiController extends Controller
             $trips = $this->tripApiUseCase->allTrips();
             return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -57,6 +61,8 @@ class TripApiController extends Controller
             $trips = $this->tripApiUseCase->invitationTrips();
             return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -77,6 +83,8 @@ class TripApiController extends Controller
             $this->tripApiUseCase->changeStatusInvitation($request);
             return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -87,6 +95,8 @@ class TripApiController extends Controller
             $tags = $this->tripApiUseCase->tags();
             return ApiResponse::sendResponse(200, __('app.tags-retrieved-successfully'), $tags);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -97,6 +107,8 @@ class TripApiController extends Controller
             $createTrip = $this->tripApiUseCase->createTrip($request);
             return ApiResponse::sendResponse(200, __('app.trip-created-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -118,6 +130,8 @@ class TripApiController extends Controller
             $this->tripApiUseCase->joinTrip($id);
             return ApiResponse::sendResponse(200, __('app.you-join-to-trip-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -139,6 +153,8 @@ class TripApiController extends Controller
             $this->tripApiUseCase->cancelJoinTrip($id, $request);
             return ApiResponse::sendResponse(200, __('app.you-are-left-from-the-trip-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -149,6 +165,8 @@ class TripApiController extends Controller
             $trips = $this->tripApiUseCase->privateTrips();
             return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -168,6 +186,8 @@ class TripApiController extends Controller
             $details = $this->tripApiUseCase->tripDetails($request->trip_id);
             return ApiResponse::sendResponse(200, __('app.trips-details-retrieved-successfully'), $details);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -188,69 +208,9 @@ class TripApiController extends Controller
             $this->tripApiUseCase->changeStatus($request);
             return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
-    public function favorite(Request $request)
-    {
-        $id = $request->trip_id;
-        $validator = Validator::make(['trip_id' => $id], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckIfExistsInFavoratblesRule('App\Models\Trip')],
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
-        }
-        try {
-            $trip = $this->tripApiUseCase->favorite($id);
-            return ApiResponse::sendResponse(200, __('app.you-add-trip-in-favorite-successfully'), $trip);
-        } catch (\Exception $e) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
-        }
-    }
-
-    public function deleteFavorite(Request $request)
-    {
-        $id = $request->trip_id;
-        $validator = Validator::make(['trip_id' => $id], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckIfNotExistsInFavoratblesRule('App\Models\Trip')],
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
-        }
-        try {
-            $trip = $this->tripApiUseCase->deleteFavorite($id);
-            return ApiResponse::sendResponse(200, __('app.you-deleted-the-trip-from-favorite-successfully'), $trip);
-        } catch (\Exception $e) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
-        }
-    }
-
-    public function addReview(Request $request)
-    {
-        $validator = Validator::make([
-            'trip_id' => $request->trip_id,
-            'rating' => $request->rating,
-            'comment' => $request->comment
-        ], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckIfExistsInReviewsRule('App\Models\Trip'), new CheckIfUserAttendanceAndPastTripRule()],
-            'rating' => ['required', 'numeric'],
-            'comment' => ['nullable', 'string']
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
-        }
-        try {
-            $trip = $this->tripApiUseCase->addReview($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.you-add-review-in-trip-successfully'), $trip);
-        } catch (\Exception $e) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
 
@@ -276,6 +236,8 @@ class TripApiController extends Controller
             $trip = $this->tripApiUseCase->updateReview($validator->validated());
             return ApiResponse::sendResponse(200, __('app.you-update-review-in-trip-successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -296,6 +258,8 @@ class TripApiController extends Controller
             $trip = $this->tripApiUseCase->deleteReview($validator->validated());
             return ApiResponse::sendResponse(200, __('app.you-delete-review-for-trip-successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -316,6 +280,8 @@ class TripApiController extends Controller
             $trip = $this->tripApiUseCase->allReviews($validator->validated());
             return ApiResponse::sendResponse(200, __('app.trip-reviews-retrieved-successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -336,6 +302,8 @@ class TripApiController extends Controller
             $this->tripApiUseCase->reviewsLike($request);
             return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -356,6 +324,8 @@ class TripApiController extends Controller
             // Send Notification For All Users In This Trip
             return ApiResponse::sendResponse(200, __('app.the-trip-deleted-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -375,6 +345,8 @@ class TripApiController extends Controller
             $this->tripApiUseCase->update($request);
             return ApiResponse::sendResponse(200, __('app.the-trip-updated-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -386,6 +358,8 @@ class TripApiController extends Controller
             $places = $this->tripApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.the-searched-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -404,7 +378,7 @@ class TripApiController extends Controller
             $this->tripApiUseCase->removeUser($request);
             return ApiResponse::sendResponse(200, __('app.the-user-deleted-successfully'), []);
         } catch (\Exception $e) {
-            dd($e);
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

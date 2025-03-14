@@ -10,6 +10,7 @@ use App\Http\Requests\PlacesOfCurrentLocationRequest;
 use App\UseCases\Api\User\UserProfileApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class UserProfileController extends Controller
@@ -28,6 +29,7 @@ class UserProfileController extends Controller
             $userDetails = $this->userProfileApiUseCase->allUserDetails();
             return ApiResponse::sendResponse(200, __('app.api.user-details-retrieved-successfully'), $userDetails);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -38,6 +40,8 @@ class UserProfileController extends Controller
             $userUpdate = $this->userProfileApiUseCase->updateProfile($request->validated());
             return ApiResponse::sendResponse(200,  __('app.api.your-profile-updated-successfully'), $userUpdate);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -49,6 +53,8 @@ class UserProfileController extends Controller
             $userLocation = $this->userProfileApiUseCase->setLocation($request->validated());
             return ApiResponse::sendResponse(200,  __('app.api.your-location-set-successfully'), $userLocation);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -60,6 +66,8 @@ class UserProfileController extends Controller
             $userFav = $this->userProfileApiUseCase->allFavorite();
             return ApiResponse::sendResponse(200,  __('app.api.your-all-favorite-retrieved-successfully'), $userFav);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -72,6 +80,8 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -84,6 +94,8 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -94,6 +106,8 @@ class UserProfileController extends Controller
             $userDetails = $this->userProfileApiUseCase->allTags();
             return ApiResponse::sendResponse(200, __('app.api.all-tags-retrieved-successfully'), $userDetails);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -119,6 +133,8 @@ class UserProfileController extends Controller
             $userDetails = $this->userProfileApiUseCase->otherUserDetails($data['slug']);
             return ApiResponse::sendResponse(200,__('app.api.user-details-retrieved-successfully'), $userDetails);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
 
@@ -130,6 +146,8 @@ class UserProfileController extends Controller
             $userLocation = $this->userProfileApiUseCase->PlacesCurrentLocation($request->validated());
             return ApiResponse::sendResponse(200,  __('app.api.your-place-current-location-retrieved-successfully'), $userLocation);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 

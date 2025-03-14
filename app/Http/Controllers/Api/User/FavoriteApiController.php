@@ -9,6 +9,7 @@ use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\UseCases\Api\User\FavoriteApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -47,6 +48,7 @@ class FavoriteApiController extends Controller
 
             return ApiResponse::sendResponse(200,  __('app.place.api.you-put-this-place-in-favorite-list'), $createFavPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -77,6 +79,7 @@ class FavoriteApiController extends Controller
 
             return ApiResponse::sendResponse(200,  __('app.place.api.you-delete-this-from-favorite-list'), $createFavPlace);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -87,6 +90,7 @@ class FavoriteApiController extends Controller
             $userFav = $this->favoriteApiUseCase->allUserFavorite();
             return ApiResponse::sendResponse(200,  __('app.api.your-all-favorite-retrieved-successfully'), $userFav);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -100,6 +104,7 @@ class FavoriteApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

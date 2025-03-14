@@ -351,6 +351,8 @@ return [
             'the-likable-status-change-successfully' => 'The likable status was changed successfully',
             'the-searched-event-retrieved-successfully' => 'The searched event was retrieved successfully',
             'user-details-retrieved-successfully' => 'User details retrieved successfully',
+            'the-interest-event-retrieved-successfully' => 'The interest event list retrieved successfully',
+
         ],
     ],
 
@@ -532,7 +534,8 @@ return [
         'you-deleted-the-trip-from-favorite-Successfully' => 'You deleted this trip from favorite list successfully',
         'you-added-review-for-this-trip-successfully' => 'You added review for this trip successfully',
         'your-review-in-this-trip-updated-successfully' => 'Yor review in this trip updated successfully',
-        'you-deleted-your-review-successfully' => 'Your review on this trip deleted successfully',
+        'your-review-updated-successfully' => 'Yor review updated successfully',
+        'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
         'the-searched-guide-trip-retrieved-successfully' => 'The Searched guide trip retrieved successfully',
         'legal-retrieved-successfully' => 'legal documentation retrieved successfully',
         'the-plan-retrieved-successfully' => 'The plan retrieved successfully',

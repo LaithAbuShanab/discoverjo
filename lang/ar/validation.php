@@ -335,7 +335,9 @@ return [
 
 
     'api' => [
+        'relationship_not_exist' => "العلاقة :relationship غير موجودة في نموذج المستخدم",
         // Category Errors
+
         'the-selected-category-id-does-not-exists' => 'الفئة المحددة غير موجودة.',
         'the-category-id-required' => 'معرّف الفئة مطلوب.',
         'invalid-category-id-not-main-category' => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
@@ -347,7 +349,10 @@ return [
         'this-place-already-in-your-visited-place' => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
         'this-place-not-in-your-visited-place-list' => 'هذا المكان غير موجود في قائمة الأماكن التي قمت بزيارتها لإزالته من القائمة.',
         'place-id-does-not-exists' => 'معرف المكان غير موجود.',
+        'the-selected-place-is-not-active'=>'المكان المطلوب غير نشط',
         'id-does-not-exists' => 'المعرف غير موجود.',
+        'you-did-not-make-review-for-this'=>'انت لم تقم بمراجعة لهذه.',
+
 
         // Comment Errors
         'the-selected-comment-id-does-not-exists' => 'معرف التعليق المحدد غير موجود.',
@@ -385,7 +390,8 @@ return [
         'status-is-required'=>'الحالة مطلوبة',
         'guide-trip-user-id-required'=>'رقم معرف طلب الانضمام مطلوب ',
         'guide-trip-user-id-does-not-exists'=>'رقم معرف طلب الانضمام غير موجود',
-
+        'you_cant_make_review_for_upcoming_trip' => 'هذه الرحلة لا زالت نشطة لا يمكنك عمل مراجهة عليها الان',
+        'this-trip-was-deleted'=>'هذه الرحلة تم حذفها',
 
         'guide-trip-id-does-not-exists' => 'رقم معرف الرحلة السياحية غير موجود.',
         'media-id-required' => 'رقم معرف صورة الرحلة السياحية مطلوب.',
@@ -843,6 +849,7 @@ return [
         'you-are-not-following-this-user' => 'أنت لا تتابع هذا المستخدم.',
         'you-cannot-make-review-for-upcoming-event' => 'لا يمكنك كتابة تقييم لهذا الحدث القادم.',
         'you-cannot-make-review-for-upcoming-trip' => 'لا يمكنك كتابة مراجعة لرحلة قادمة.',
+        'this_place_not_in_your_visited_place_list' => 'هذا المكان ليس في قائمة الاماكن التي زرتها',
 
         // Media, Post, and Tag Errors
         'this-place-not-in-your-visited-place-list' => 'هذا المكان ليس في قائمة الأماكن التي زرتها.',
@@ -865,6 +872,7 @@ return [
         'you-cannot-delete-this-interest' => 'لا يمكنك حذف هذا الاهتمام.',
         'categories-should-be-array' => 'التصنيفات الرئيسية يجب ان تكون مصفوفة.',
         'something-went-wrong' => 'هناك خطأ قد حدث.',
+        'you_are_not_attendance_in_this' => 'انت غير مشترك بهذه الرحلة',
 
         // Additional Errors
         'wait-for-admin-to-accept-your-application'=>'انتظر حتى يقوم المسؤول على الموافقة على طلبك',

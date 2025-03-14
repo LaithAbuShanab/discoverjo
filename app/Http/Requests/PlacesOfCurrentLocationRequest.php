@@ -36,7 +36,7 @@ class PlacesOfCurrentLocationRequest extends FormRequest
             'lng' => ['required'],
             'lat' => ['required'],
             'area' => ['nullable'],
-            'categories' => ['required', function ($attribute, $value, $fail) {
+            'categories' => ['nullable', function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values) || empty($values)) {
                     return $fail(__('validation.api.the-categories-be-string-separated-by-comma'));

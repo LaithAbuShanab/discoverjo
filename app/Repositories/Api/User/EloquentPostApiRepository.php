@@ -27,33 +27,35 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
     public function followingPost()
     {
-        $perPage = 20;
+        $perPage = config('app.pagination_per_page');
         $userId = Auth::guard('api')->user()->id;
 
-        // Get posts from followed users with specific privacy levels, ordered by newest first
+        // Ensure following_id users are active (status = 1)
         $posts = Post::whereIn('user_id', function ($query) use ($userId) {
-            $query->select('following_id')
+            $query->select('follows.following_id')
                 ->from('follows')
-                ->where('follower_id', $userId);
+                ->join('users', 'users.id', '=', 'follows.following_id')
+                ->where('follows.follower_id', $userId)
+                ->where('users.status', 1); // Only active users
         })
-            ->whereIn('privacy', ["1", "2"])
-            ->orderBy('created_at', 'desc') // Order by newest first
+            ->whereIn('privacy', [1, 2])
+            ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
         $postsArray = $posts->toArray();
 
         $pagination = [
             'next_page_url' => $postsArray['next_page_url'],
-            'prev_page_url' => $postsArray['prev_page_url'], // Fixed to prev_page_url
+            'prev_page_url' => $postsArray['prev_page_url'],
             'total' => $postsArray['total'],
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
             'posts' => UserPostResource::collection($posts),
             'pagination' => $pagination
         ];
     }
+
 
     public function createPost($validatedData, $media)
     {
@@ -75,12 +77,9 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         }
         Notification::send(Admin::all(), new NewPostNotification($eloquentPost));
 
-        //$response = Http::post('http://127.0.0.1:3000/notifications');
-
         $followers = Auth::guard('api')->user()->followers()->get();
         Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user()));
 
-        // To Send Notification To Owner Using Firebase Cloud Messaging
         $followersTokens = DeviceToken::whereIn('user_id', Auth::guard('api')->user()->followers()->pluck('follower_id')->toArray())->pluck('token')->toArray();
         $receiverLanguage = Auth::guard('api')->user()->lang;
         $notificationData = [

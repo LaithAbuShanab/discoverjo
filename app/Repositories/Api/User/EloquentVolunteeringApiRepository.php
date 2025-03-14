@@ -28,7 +28,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 {
     public function getAllVolunteerings()
     {
-        $perPage = 15;
+        $perPage =config('app.pagination_per_page');
         $eloquentVolunteerings = Volunteering::OrderBy('start_datetime', 'desc')->paginate($perPage);
 
         $volunteeringArray = $eloquentVolunteerings->toArray();
@@ -48,7 +48,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
     public function activeVolunteerings()
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
         $eloquentVolunteerings = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
         //edit the status should has cron job
@@ -77,7 +77,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
     public function dateVolunteerings($date)
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $eloquentVolunteerings = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1')->paginate($perPage);
         $volunteeringArray = $eloquentVolunteerings->toArray();
 
@@ -94,15 +94,17 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         ];
     }
 
-    public function createInterestVolunteering($data)
-    {
-        $user = User::find($data['user_id']);
-        $user->volunteeringInterestables()->attach([$data['volunteering_id']]);
-    }
-    public function disinterestVolunteering($id)
+    public function createInterestVolunteering($slug)
     {
         $user = Auth::guard('api')->user();
-        $user->volunteeringInterestables()->detach($id);
+        $volunteeringId =Volunteering::findBySlug($slug)->id;
+        $user->volunteeringInterestables()->attach([$volunteeringId]);
+    }
+    public function disinterestVolunteering($slug)
+    {
+        $user = Auth::guard('api')->user();
+        $volunteeringId =Volunteering::findBySlug($slug)->id;
+        $user->volunteeringInterestables()->detach($volunteeringId);
     }
     public function favorite($id)
     {
@@ -213,7 +215,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
     public function search($query)
     {
-        $perPage = 15;
+        $perPage =  config('app.pagination_per_page');
 
         $eloquentVolunteerings = Volunteering::where(function ($queryBuilder) use ($query) {
             $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
@@ -238,12 +240,11 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         ];
     }
 
-    public function interestedList($userId)
+    public function interestedList($id)
     {
-        $perPage = 10;
-
-        $eloquentVolunteerings = Volunteering::whereHas('interestedUsers', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
+        $perPage = config('app.pagination_per_page');
+        $eloquentVolunteerings = Volunteering::whereHas('interestedUsers', function ($query) use ($id) {
+            $query->where('user_id', $id);
         })->paginate($perPage);
 
         $volunteeringArray = $eloquentVolunteerings->toArray();
@@ -256,7 +257,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'volunteering' => new ResourceCollection(VolunteeringResource::collection($eloquentVolunteerings)),
+            'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
             'pagination' => $pagination
         ];
     }

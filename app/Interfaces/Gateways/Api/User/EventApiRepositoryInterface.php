@@ -9,8 +9,8 @@ interface EventApiRepositoryInterface
     public function activeEvents();
     public function event($slug);
     public function dateEvents($date);
-    public function createInterestEvent($data);
-    public function disinterestEvent($id);
+    public function createInterestEvent($slug);
+    public function disinterestEvent($slug);
     public function favorite($id);
     public function deleteFavorite($id);
     public function addReview($data);
@@ -18,5 +18,5 @@ interface EventApiRepositoryInterface
     public function deleteReview($id);
     public function reviewsLike($request);
     public function search($query);
-    public function interestList($userId);
+    public function interestList($id);
 }

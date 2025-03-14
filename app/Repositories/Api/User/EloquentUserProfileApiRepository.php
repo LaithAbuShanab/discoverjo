@@ -72,7 +72,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
     public function search($query)
     {
-        $perPage =15;
+        $perPage = config('app.pagination_per_page');
 
         $users = User::where(function ($queryBuilder) use ($query) {
             $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
@@ -100,7 +100,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
     public function favSearch($searchTerm)
     {
-        $perPage =15;
+        $perPage = config('app.pagination_per_page');
 
         $userId = Auth::guard('api')->user()->id;
         // Retrieve all possibilities that could be in user's favorites and match the search term
@@ -194,11 +194,11 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $categoriesSlugs = isset($request['categories']) ? explode(',', $request['categories']) : [];
         $subcategoriesSlugs = isset($request['subcategories']) ? explode(',', $request['subcategories']) : [];
 
-        $categoriesIds = Category::whereIn('slug', $categoriesSlugs)->pluck('id');
-        $subcategoriesIds = Category::whereIn('slug', $subcategoriesSlugs)->pluck('id');
+        $categoriesIds = Category::whereIn('slug', $categoriesSlugs)->pluck('id')->toArray();
+        $subcategoriesIds = Category::whereIn('slug', $subcategoriesSlugs)->pluck('id')->toArray();
 
 
-        $query = Place::selectRaw(
+        $query = Place::where('status',1)->selectRaw(
             'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
             [$userLat, $userLng, $userLat]
         )->having('distance', '<=', $distanceKm)->orderBy('distance', 'asc');
@@ -210,7 +210,8 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
                     $subQuery->whereHas('categories', function ($subQuery) use ($subcategoriesIds) {
                         $subQuery->whereIn('place_categories.category_id', $subcategoriesIds);
                     });
-                } else {
+                }
+                else {
                     $subQuery->whereHas('categories', function ($subQuery) use ($categoriesIds) {
                         $subQuery->whereIn('place_categories.category_id', $categoriesIds)
                             ->orWhereIn('categories.parent_id', $categoriesIds);
@@ -218,6 +219,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
                 }
             });
         }
+
 
         // Execute the query and paginate
         // Paginate the results

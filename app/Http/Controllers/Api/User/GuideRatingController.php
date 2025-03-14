@@ -14,6 +14,7 @@ use App\Rules\CheckIfUserNotGuideForRatingRule;
 use App\UseCases\Api\User\GuideRatingApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class GuideRatingController extends Controller
@@ -31,6 +32,7 @@ class GuideRatingController extends Controller
             $rating = $this->guideRatingApiUseCase->createGuideRating($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.rating-created-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -41,6 +43,7 @@ class GuideRatingController extends Controller
             $rating = $this->guideRatingApiUseCase->updateGuideRating($request->validated());
             return ApiResponse::sendResponse(200,  __('app.api.rating-updated-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -61,6 +64,7 @@ class GuideRatingController extends Controller
             $rating = $this->guideRatingApiUseCase->deleteGuideRating($id);
             return ApiResponse::sendResponse(200,  __('app.api.rating-deleted-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -81,6 +85,7 @@ class GuideRatingController extends Controller
             $rating = $this->guideRatingApiUseCase->showGuideRating($id);
             return ApiResponse::sendResponse(200,  __('app.api.rating-retrieved-successfully'), $rating);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 

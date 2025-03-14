@@ -9,6 +9,7 @@ use App\Rules\CheckIfCategoryIsParentRule;
 use App\UseCases\Api\User\CategoryApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -31,6 +32,7 @@ class CategoryApiController extends Controller
             $categories = $this->categoryApiUseCase->allCategories();
             return ApiResponse::sendResponse(200, __('app.api.categories-retrieved-successfully'), $categories);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -41,6 +43,8 @@ class CategoryApiController extends Controller
             $categories = $this->categoryApiUseCase->shuffleAllCategories();
             return ApiResponse::sendResponse(200, __('app.api.categories-retrieved-successfully'), $categories);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -62,6 +66,8 @@ class CategoryApiController extends Controller
             $allPlaces = $this->categoryApiUseCase->allPlacesByCategory($validator->validated()['category_slug']);
             return ApiResponse::sendResponse(200,  __('app.api.places-subcategories-retrieved-successfully'), $allPlaces);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -74,6 +80,8 @@ class CategoryApiController extends Controller
             $categories = $this->categoryApiUseCase->allSubcategories($data);
             return ApiResponse::sendResponse(200, __('app.api.all-subcategories-retrieved-successfully'), $categories);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -85,6 +93,8 @@ class CategoryApiController extends Controller
             $places = $this->categoryApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-categories-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

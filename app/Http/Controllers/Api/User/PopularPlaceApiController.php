@@ -8,6 +8,7 @@ use App\UseCases\Api\User\PopularPlaceApiUseCase;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class PopularPlaceApiController extends Controller
 {
@@ -29,6 +30,7 @@ class PopularPlaceApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.popular-places-retrieved-successfully'), $popularPlaces);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -41,6 +43,7 @@ class PopularPlaceApiController extends Controller
             $places = $this->popularPlaceApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-places-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

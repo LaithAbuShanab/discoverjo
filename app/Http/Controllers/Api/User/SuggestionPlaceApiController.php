@@ -8,6 +8,7 @@ use App\Http\Requests\Api\User\Suggestion\StoreSuggestionPlaceApiRequest;
 use App\UseCases\Api\User\SuggestionPlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class SuggestionPlaceApiController extends Controller
 {
@@ -27,6 +28,8 @@ class SuggestionPlaceApiController extends Controller
             $createTrip = $this->suggestionPlaceApiUseCase->createSuggestionPlace($validatedData);
             return ApiResponse::sendResponse(200, __('app.api.suggestion-place-created-successfully'), $createTrip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 

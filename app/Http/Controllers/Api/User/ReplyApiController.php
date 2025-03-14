@@ -13,6 +13,7 @@ use App\Rules\CheckIfUserCanDeleteReply;
 use App\UseCases\Api\User\ReplyApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +35,7 @@ class ReplyApiController extends Controller
             $reply = $this->replyApiUseCase->createReply($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.reply-created-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -66,6 +68,7 @@ class ReplyApiController extends Controller
             $replies = $this->replyApiUseCase->updateReply($validator->validated());
             return ApiResponse::sendResponse(200,  __('app.api.reply-updated-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -92,6 +95,7 @@ class ReplyApiController extends Controller
             $replies = $this->replyApiUseCase->deleteReply($id);
             return ApiResponse::sendResponse(200, __('app.api.reply-deleted-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -120,6 +124,7 @@ class ReplyApiController extends Controller
             $this->replyApiUseCase->replyLike($request);
             return ApiResponse::sendResponse(200, __('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

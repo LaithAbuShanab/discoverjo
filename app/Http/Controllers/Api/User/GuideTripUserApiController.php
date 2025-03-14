@@ -17,6 +17,7 @@ use App\Rules\CheckUserTripExistsRule;
 use App\UseCases\Api\User\GuideTripUserApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -35,6 +36,7 @@ class GuideTripUserApiController extends Controller
             $guideTrips = $this->guideTripUserApiUseCase->AllUsersForGuideTrip();
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-retrieved-successfully'), $guideTrips);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -58,6 +60,7 @@ class GuideTripUserApiController extends Controller
             $createGuideTripUsers = $this->guideTripUserApiUseCase->allSubscription($id);
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-fetched-successfully'), $createGuideTripUsers);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -69,6 +72,7 @@ class GuideTripUserApiController extends Controller
             $createGuideTripUsers = $this->guideTripUserApiUseCase->storeSubscriberInTrip($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-created-successfully'), $createGuideTripUsers);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -79,6 +83,7 @@ class GuideTripUserApiController extends Controller
             $createGuideTripUsers = $this->guideTripUserApiUseCase->updateSubscriberInTrip($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-updated-successfully'), $createGuideTripUsers);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -103,6 +108,7 @@ class GuideTripUserApiController extends Controller
             $createGuideTripUsers = $this->guideTripUserApiUseCase->deleteSubscriberInTrip($id);
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-deleted-successfully'), $createGuideTripUsers);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
 
@@ -126,6 +132,7 @@ class GuideTripUserApiController extends Controller
             $trip = $this->guideTripUserApiUseCase->favorite($id);
             return ApiResponse::sendResponse(200, __('app.api.you-added-trip-in-favorite-successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -148,6 +155,7 @@ class GuideTripUserApiController extends Controller
             $trip = $this->guideTripUserApiUseCase->deleteFavorite($id);
             return ApiResponse::sendResponse(200, __('app.api.you-deleted-the-trip-from-favorite-Successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -178,6 +186,7 @@ class GuideTripUserApiController extends Controller
             $trip = $this->guideTripUserApiUseCase->addReview($validator->validated());
             return ApiResponse::sendResponse(200, __('app.api.you-added-review-for-this-trip-successfully'), $trip);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -209,6 +218,7 @@ class GuideTripUserApiController extends Controller
             $event = $this->guideTripUserApiUseCase->updateReview($validator->validated());
             return ApiResponse::sendResponse(200, __('app.api.your-review-in-this-trip-updated-successfully'), $event);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -232,6 +242,7 @@ class GuideTripUserApiController extends Controller
             $event = $this->guideTripUserApiUseCase->deleteReview($validator->validated());
             return ApiResponse::sendResponse(200, __('app.api.you-deleted-your-review-successfully'), $event);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -262,6 +273,7 @@ class GuideTripUserApiController extends Controller
             $this->guideTripUserApiUseCase->reviewsLike($request);
             return ApiResponse::sendResponse(200,__('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -273,6 +285,7 @@ class GuideTripUserApiController extends Controller
             $places = $this->guideTripUserApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

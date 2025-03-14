@@ -14,14 +14,14 @@ class EloquentTopTenPlaceApiRepository implements TopTenPlaceApiRepositoryInterf
 
     public function topTenPlaces()
     {
-        $topTenPlaces = TopTen::with('place')->orderBy('rank')->get();
-
+        $topTenPlaces = TopTen::whereHas('place', fn($query) => $query->where('status', 1))->orderBy('rank')->get();
         return new TopTenPlaceResource($topTenPlaces);
     }
     public function search($query)
     {
         $places = TopTen::whereHas('place', function ($queryBuilder) use ($query) {
-            $queryBuilder->where(function ($queryBuilder) use ($query) {
+            $queryBuilder->where('status', 1)
+            ->where(function ($queryBuilder) use ($query) {
                 $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])

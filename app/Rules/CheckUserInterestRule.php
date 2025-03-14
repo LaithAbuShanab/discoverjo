@@ -22,17 +22,21 @@ class CheckUserInterestRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $type =  $this->interestable_type::findBySlug($value);
+        if(!$type){
+            return;
+        }
         $exists = DB::table('interestables')
             ->where('user_id', Auth::guard('api')->user()->id)
             ->where('interestable_type', $this->interestable_type)
-            ->where('interestable_id', $value)
+            ->where('interestable_id', $type->id)
             ->exists();
 
         if ($exists) {
             $fail(__('validation.api.you-already-make-this-as-interest'));
         }
 
-        $datetime = $this->interestable_type::find($value)?->end_datetime;
+        $datetime = $type?->end_datetime;
         $now = now()->setTimezone('Asia/Riyadh');
 
         if($datetime && $datetime < $now){

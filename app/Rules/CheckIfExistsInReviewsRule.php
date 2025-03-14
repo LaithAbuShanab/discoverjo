@@ -2,21 +2,25 @@
 
 namespace App\Rules;
 
+use App\Models\Reviewable;
 use App\Models\Trip;
 use App\Models\UsersTrip;
 use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class CheckIfExistsInReviewsRule implements ValidationRule
+class CheckIfExistsInReviewsRule implements ValidationRule, DataAwareRule
 {
-    protected $reviewable_type;
+    protected $data;
 
-    public function __construct($reviewable_type)
+    public function setData($data)
     {
-        $this->reviewable_type = $reviewable_type;
+        $this->data = $data;
+        return $this;
     }
+
     /**
      * Run the validation rule.
      *
@@ -25,7 +29,21 @@ class CheckIfExistsInReviewsRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $exists = DB::table('reviewables')->where('user_id', $userId)->where('reviewable_type', $this->reviewable_type)->where('reviewable_id', $value)->exists();
+        $acceptableType = ['place', 'trip','event','volunteering','guideTrip'];
+
+        if(!in_array($this->data['type'],$acceptableType)){
+            return;
+        }
+        // Validate if the type class has the method `findBySlug` before using it
+        $modelClass = 'App\Models\\' . ucfirst($this->data['type']);
+        $reviewableItem = $modelClass::findBySlug($value);
+
+        if (!$reviewableItem) {
+            $fail(__('validation.api.id-does-not-exists'));
+            return;
+        }
+
+        $exists =  Reviewable::where('user_id', $userId)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewableItem?->id)->exists();
         if ($exists) {
             $fail(__('validation.api.you-already-make-review-for-this'));
         }

@@ -62,7 +62,7 @@ class PopularPlaceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('place.id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('place.name')->searchable()
                     ->getStateUsing(fn($record, $livewire) => $record->place?->getTranslation('name', $livewire->activeLocale)),

@@ -25,7 +25,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 {
     public function getAllEvents()
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $eloquentEvents = Event::OrderBy('start_datetime')->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
 
@@ -44,7 +44,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
     public function activeEvents()
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         //we need cron job for update the status of event
         $now = now()->setTimezone('Asia/Riyadh');
         //retrieve active event
@@ -75,7 +75,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
     public function dateEvents($date)
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $eloquentEvents = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1')->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
         $pagination = [
@@ -91,16 +91,18 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
         ];
     }
 
-    public function createInterestEvent($data)
-    {
-        $user = User::find($data['user_id']);
-        $user->eventInterestables()->attach([$data['event_id']]);
-    }
-
-    public function disinterestEvent($id)
+    public function createInterestEvent($slug)
     {
         $user = Auth::guard('api')->user();
-        $user->eventInterestables()->detach($id);
+        $eventId = Event::findBySlug($slug)?->id;
+        $user->eventInterestables()->attach([$eventId]);
+    }
+
+    public function disinterestEvent($slug)
+    {
+        $user = Auth::guard('api')->user();
+        $eventId = Event::findBySlug($slug)?->id;
+        $user->eventInterestables()->detach($eventId);
     }
 
     public function favorite($id)
@@ -212,7 +214,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
     public function search($query)
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         $eloquentEvents = Event::where(function ($queryBuilder) use ($query) {
             $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
@@ -236,8 +238,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
     public function interestList($id)
     {
-        $perPage = 15;
-
+        $perPage = config('app.pagination_per_page');
         $eloquentEvents = Event::whereHas('interestedUsers', function ($query) use ($id) {
             $query->where('user_id', $id);
         })->paginate($perPage);
@@ -252,7 +253,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => new ResourceCollection(EventResource::collection($eloquentEvents)),
+            'events' => EventResource::collection($eloquentEvents),
             'pagination' => $pagination
         ];
     }

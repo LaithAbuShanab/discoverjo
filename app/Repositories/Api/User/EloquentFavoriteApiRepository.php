@@ -19,7 +19,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $user=User::find($data['user_id']);
         $relationship = 'favorite' . ucfirst($data['type']).'s';
         if (!method_exists($user, $relationship)) {
-            throw new \Exception("The relationship {$relationship} does not exist in User model.");
+            throw new \Exception(__("validation.api.relationship_not_exist", ['relationship' => $relationship]));
         }
         $user->{$relationship}()->attach($data['type_id']);
     }
@@ -29,7 +29,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $user=User::find($data['user_id']);
         $relationship = 'favorite' . ucfirst($data['type']).'s';
         if (!method_exists($user, $relationship)) {
-            throw new \Exception("The relationship {$relationship} does not exist in User model.");
+            throw new \Exception(__("validation.api.relationship_not_exist", ['relationship' => $relationship]));
         }
         $user->{$relationship}()->detach($data['type_id']);
     }

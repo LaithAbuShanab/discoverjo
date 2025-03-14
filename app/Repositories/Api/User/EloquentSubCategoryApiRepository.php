@@ -27,10 +27,11 @@ class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterf
         $userLng = request()->query('lng', null);
 
         // Set the number of places per page
-        $perPage = 20; // Adjust this number as needed
+        $perPage = config('app.pagination_per_page'); // Adjust this number as needed
 
         // Retrieve places associated with the specific child category
         $places = Place::selectRaw('places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])
+            ->where('status',1)
             ->whereIn('id', function ($query) use ($id) {
                 $query->select('place_id')
                     ->from('place_categories')

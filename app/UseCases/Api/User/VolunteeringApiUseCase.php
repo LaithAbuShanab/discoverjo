@@ -34,19 +34,14 @@ class VolunteeringApiUseCase
         return $this->volunteeringRepository->dateVolunteerings($date);
     }
 
-    public function interestVolunteering($id)
+    public function interestVolunteering($slug)
     {
-        $user_id = Auth::guard('api')->user()->id;
-        $data = [
-            'volunteering_id' => $id,
-            'user_id' => $user_id
-        ];
-        return $this->volunteeringRepository->createInterestVolunteering($data);
+        return $this->volunteeringRepository->createInterestVolunteering($slug);
     }
 
-    public function disinterestVolunteering($id)
+    public function disinterestVolunteering($slug)
     {
-        return $this->volunteeringRepository->disinterestVolunteering($id);
+        return $this->volunteeringRepository->disinterestVolunteering($slug);
     }
 
     public function favorite($id)
@@ -84,8 +79,8 @@ class VolunteeringApiUseCase
         return $this->volunteeringRepository->search($query);
     }
 
-    public function interestedList($userId)
+    public function interestedList($id)
     {
-        return $this->volunteeringRepository->interestedList($userId);
+        return $this->volunteeringRepository->interestedList($id);
     }
 }

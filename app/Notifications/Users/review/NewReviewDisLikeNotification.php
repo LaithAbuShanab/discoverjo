@@ -41,8 +41,8 @@ class NewReviewDisLikeNotification extends Notification
         return [
             "title_en" => "New dislike",
             "title_ar" => "عدم اعجاب جديد",
-            "body_en" => "The User " . $this->user->name . " has dislike your review",
-            "body_ar" => "المستخدم لم يعجب بمراجعتك " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has dislike your review",
+            "body_ar" => "المستخدم لم يعجب بمراجعتك " . $this->user->username
         ];
     }
 }

@@ -130,7 +130,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
     public function search($query)
     {
-        $perPage = 15;
+        $perPage = config('app.pagination_per_page');
         // Check if the user is authenticated
         if (!Auth::guard('api')->user()) {
             $plans = Plan::where(function ($queryBuilder) use ($query) {

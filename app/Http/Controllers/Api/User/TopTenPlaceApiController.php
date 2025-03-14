@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\UseCases\Api\User\TopTenPlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class TopTenPlaceApiController extends Controller
@@ -29,6 +30,7 @@ class TopTenPlaceApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.top-ten-places-retrieved-successfully'), $topTenPlaces);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
@@ -41,6 +43,8 @@ class TopTenPlaceApiController extends Controller
 
             return ApiResponse::sendResponse(200, __('app.api.searched-top-ten-places-retrieved-successfully'), $topTenPlaces);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }

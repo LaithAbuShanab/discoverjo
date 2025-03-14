@@ -19,7 +19,7 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
 
     public function popularPlaces()
     {
-        $popularPlace = PopularPlace::with('place')->get();
+        $popularPlace = PopularPlace::whereHas('place', fn($query) => $query->where('status', 1))->get();
         $shuffledPopularPlaces = $popularPlace->shuffle();
         return new PopularPlaceResource($shuffledPopularPlaces);
     }
@@ -27,13 +27,15 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
     public function search($query)
     {
         $places = PopularPlace::whereHas('place', function ($queryBuilder) use ($query) {
-            $queryBuilder->where(function ($queryBuilder) use ($query) {
+            $queryBuilder->where('status', 1)
+            ->where(function ($queryBuilder) use ($query) {
                 $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
             });
         })->get();
+
         activityLog('popular place',$places->first(),$query,'search');
         return new PopularPlaceResource($places);
     }

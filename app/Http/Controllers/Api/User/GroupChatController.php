@@ -9,6 +9,7 @@ use App\Rules\GroupChatIndexRule;
 use App\UseCases\Api\User\GroupChatUseCase;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class GroupChatController extends Controller
@@ -38,6 +39,7 @@ class GroupChatController extends Controller
             $data = $this->groupChatUseCase->getGroupMessages($request->conversation_id);
             return ApiResponse::sendResponse(200, __('app.group-chat.group-chat-retrieved-successfully'), $data);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -60,6 +62,7 @@ class GroupChatController extends Controller
             $data = $this->groupChatUseCase->getGroupMembers($request->conversation_id);
             return ApiResponse::sendResponse(200, __('app.group-chat.group-chat-retrieved-successfully'), $data);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -69,6 +72,7 @@ class GroupChatController extends Controller
             $data = $this->groupChatUseCase->sendMessages($request);
             return ApiResponse::sendResponse(200, __('app.group-chat.message-sent-successfully'), $data);
         } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

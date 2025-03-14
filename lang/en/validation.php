@@ -301,6 +301,7 @@ return [
 
 
     'api' => [
+        'relationship_not_exist' => "The relationship :relationship does not exist in User model",
         'the-selected-category-id-does-not-exists' => 'The selected category does not exist.',
         'the-category-id-required' => 'The category ID is required.',
         'place-id-invalid' => 'Place id invalid',
@@ -314,6 +315,8 @@ return [
         'you_can_not_delete_the_comment'=>'You can\'t delete the comment',
         'the-status-required'=>'The status like or dislike is required',
         'event-id-is-required'=>'Event id is required',
+        'you_are_not_attendance_in_this' => 'You are not an attendee for this trip.',
+
         'event-id-does-not-exists'=>'Event id does not exists',
         'rating-is-required'=>'Rating field is required',
         'comment-should-be-string'=>'Comment should be string',
@@ -334,8 +337,10 @@ return [
         'media-id-required'=>'media id is required',
         'media-id-does-not-exists'=>'media id does not exists',
         'place-id-does-not-exists'=>'Place id does not exists',
+        'the-selected-place-is-not-active'=>'The selected place is not active.',
         'this_is_not_in_favorite_list'=>'this is not in favorite list',
         'id-does-not-exists'=>' id does not exists',
+        'you-did-not-make-review-for-this'=>'You did not make review for this.',
         'plan-id-does-not-exists'=>'Plan id does not exists',
         'post-id-does-not-exists'=>'Post id does not exists',
         'post-id-invalid' => 'Post id invalid',
@@ -825,8 +830,8 @@ return [
         'this_reply_did_not_belong_to_you' => 'This reply does not belong to you.',
         'reply_not_found' => 'The specified reply was not found.',
         'this_user_has_joined_a_trip_on_the_same_date_as_your_trip' => 'This user has joined a trip on the same date as your trip, so he cannot join your trip.',
-        'you_are_not_attendance_in_this' => 'You are not an attendee for this trip.',
         'you_cant_make_review_for_upcoming_trip' => 'You can\'t make a review for an upcoming trip.',
+        'this-trip-was-deleted'=>'This trip was deleted',
         'comment_not_found' => 'The specified comment was not found.',
 
         'you_can_not_delete_the_reply' => 'You cannot delete this reply.',

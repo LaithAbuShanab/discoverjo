@@ -20,35 +20,15 @@ class PlaceApiUseCase
         return $this->placeApiRepository->singlePlace($slug);
     }
 
-    public function createFavoritePlace($slug)
+
+    public function createVisitedPlace($slug)
     {
-        $placeId = Place::findBySlug($slug)?->id;
-        $user_id = Auth::guard('api')->user()->id;
-        $data = [
-            'place_id' => $placeId,
-            'user_id' => $user_id
-        ];
-        return $this->placeApiRepository->createFavoritePlace($data);
+        return $this->placeApiRepository->createVisitedPlace($slug);
     }
 
-    public function deleteFavoritePlace($id)
+    public function deleteVisitedPlace($slug)
     {
-        return $this->placeApiRepository->deleteFavoritePlace($id);
-    }
-
-    public function createVisitedPlace($id)
-    {
-        $user_id = Auth::guard('api')->user()->id;
-        $data = [
-            'place_id' => $id,
-            'user_id' => $user_id
-        ];
-        return $this->placeApiRepository->createVisitedPlace($data);
-    }
-
-    public function deleteVisitedPlace($id)
-    {
-        return $this->placeApiRepository->deleteVisitedPlace($id);
+        return $this->placeApiRepository->deleteVisitedPlace($slug);
     }
 
     public function addReview($data)

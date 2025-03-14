@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Trip;
 
 use App\Helpers\ApiResponse;
+use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfCanMakeTripRule;
 use App\Rules\CheckIfFollowersExistenceRule;
 use App\Rules\CheckTagExistsRule;
@@ -32,7 +33,7 @@ class CreateTripRequest extends FormRequest
     {
         return [
             'trip_type' => ['required', 'string', Rule::in(['0', '1', '2'])],
-            'place_id' => ['required', 'integer', 'exists:places,id'],
+            'place_slug' => ['required', 'integer', 'exists:places,id',new ActivePlaceRule()],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'cost' => ['required', 'numeric', 'min:0'],

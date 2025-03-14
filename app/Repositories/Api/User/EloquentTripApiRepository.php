@@ -167,8 +167,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         // Send notification to all admins
         Notification::send(Admin::all(), new NewTripNotification($trip));
-
-        //Http::post('http://127.0.0.1:3000/notifications');
+        //send notification for specific user the owner make trip //follower
         $createdTrip = Trip::find($trip->id);
 
         $this->handleTripTypeNotifications($request, $trip);

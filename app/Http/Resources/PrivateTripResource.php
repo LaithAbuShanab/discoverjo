@@ -22,11 +22,13 @@ class PrivateTripResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'conversation_id' => $this->conversation->id ?? null,
             'image' => $this->place->getFirstMediaUrl('main_place', 'main_place_app'),
             'date' => Carbon::parse($this->date_time)->format('Y-m-d'),
             'name' => $this->name,
             'place_name' => $this->place->name,
+            'place_slug' => $this->place->slug,
             'price' => $this->cost,
             'attendance_number' => $this->attendance_number,
             'location' => $this->place->region->name,

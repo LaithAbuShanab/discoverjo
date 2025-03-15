@@ -3,11 +3,7 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
-use App\Rules\CheckIfExistsInFavoratblesRule;
-use App\Rules\CheckIfExistsInReviewsRule;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
-use App\Rules\CheckIfUserAttendanceAndPastTripRule;
 use App\Rules\CheckUserTripExistsRule;
 use App\UseCases\Api\User\TripApiUseCase;
 use Illuminate\Http\Response;
@@ -18,6 +14,8 @@ use App\Http\Requests\Api\User\Trip\CreateTripRequest;
 use App\Http\Requests\Api\User\Trip\UpdateTripRequest;
 use App\Rules\CheckAgeGenderExistenceRule;
 use App\Rules\CheckIfCanUpdateTripRule;
+use App\Rules\CheckOwnerTripRule;
+use App\Rules\CheckRemoveUserTripRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +34,7 @@ class TripApiController extends Controller
     {
         try {
             $trips = $this->tripApiUseCase->trips();
-            return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -59,7 +57,7 @@ class TripApiController extends Controller
     {
         try {
             $trips = $this->tripApiUseCase->invitationTrips();
-            return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -81,7 +79,7 @@ class TripApiController extends Controller
 
         try {
             $this->tripApiUseCase->changeStatusInvitation($request);
-            return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -93,7 +91,7 @@ class TripApiController extends Controller
     {
         try {
             $tags = $this->tripApiUseCase->tags();
-            return ApiResponse::sendResponse(200, __('app.tags-retrieved-successfully'), $tags);
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $tags);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -105,7 +103,7 @@ class TripApiController extends Controller
     {
         try {
             $createTrip = $this->tripApiUseCase->createTrip($request);
-            return ApiResponse::sendResponse(200, __('app.trip-created-successfully'), $createTrip);
+            return ApiResponse::sendResponse(200, __('app.api.trip-created-successfully'), $createTrip);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -115,10 +113,10 @@ class TripApiController extends Controller
 
     public function join(Request $request)
     {
-        $id = $request->trip_id;
+        $slug = $request->trip_slug;
 
-        $validator = Validator::make(['trip_id' => $id], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckAgeGenderExistenceRule()],
+        $validator = Validator::make(['trip_slug' => $slug], [
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckAgeGenderExistenceRule()],
         ]);
 
         if ($validator->fails()) {
@@ -127,8 +125,8 @@ class TripApiController extends Controller
         }
 
         try {
-            $this->tripApiUseCase->joinTrip($id);
-            return ApiResponse::sendResponse(200, __('app.you-join-to-trip-successfully'), []);
+            $this->tripApiUseCase->joinTrip($slug);
+            return ApiResponse::sendResponse(200, __('app.api.you-join-to-trip-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -138,10 +136,10 @@ class TripApiController extends Controller
 
     public function cancelJoin(Request $request)
     {
-        $id = $request->trip_id;
+        $slug = $request->trip_slug;
 
-        $validator = Validator::make(['trip_id' => $id], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckUserTripExistsRule()],
+        $validator = Validator::make(['trip_slug' => $slug], [
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckUserTripExistsRule()],
         ]);
 
         if ($validator->fails()) {
@@ -150,8 +148,8 @@ class TripApiController extends Controller
         }
 
         try {
-            $this->tripApiUseCase->cancelJoinTrip($id, $request);
-            return ApiResponse::sendResponse(200, __('app.you-are-left-from-the-trip-successfully'), []);
+            $this->tripApiUseCase->cancelJoinTrip($slug, $request);
+            return ApiResponse::sendResponse(200, __('app.api.you-are-left-from-the-trip-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -163,7 +161,7 @@ class TripApiController extends Controller
     {
         try {
             $trips = $this->tripApiUseCase->privateTrips();
-            return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -173,9 +171,9 @@ class TripApiController extends Controller
 
     public function tripDetails(Request $request)
     {
-        $id = $request->trip_id;
-        $validator = Validator::make(['trip_id' => $id], [
-            'trip_id' => ['required', 'exists:trips,id'],
+        $slug = $request->trip_slug;
+        $validator = Validator::make(['trip_slug' => $slug], [
+            'trip_slug' => ['required', 'exists:trips,slug'],
         ]);
 
         if ($validator->fails()) {
@@ -183,8 +181,8 @@ class TripApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $details = $this->tripApiUseCase->tripDetails($request->trip_id);
-            return ApiResponse::sendResponse(200, __('app.trips-details-retrieved-successfully'), $details);
+            $details = $this->tripApiUseCase->tripDetails($request->trip_slug);
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $details);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -206,7 +204,7 @@ class TripApiController extends Controller
 
         try {
             $this->tripApiUseCase->changeStatus($request);
-            return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -310,8 +308,8 @@ class TripApiController extends Controller
 
     public function remove(Request $request)
     {
-        $validator = Validator::make(['trip_id' => $request->trip_id], [
-            'trip_id' => ['required', 'exists:trips,id'],
+        $validator = Validator::make(['trip_slug' => $request->trip_slug], [
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckOwnerTripRule],
         ]);
 
         if ($validator->fails()) {
@@ -320,9 +318,8 @@ class TripApiController extends Controller
         }
 
         try {
-            $this->tripApiUseCase->remove($request->trip_id);
-            // Send Notification For All Users In This Trip
-            return ApiResponse::sendResponse(200, __('app.the-trip-deleted-successfully'), []);
+            $this->tripApiUseCase->remove($request->trip_slug);
+            return ApiResponse::sendResponse(200, __('app.api.the-trip-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -332,8 +329,8 @@ class TripApiController extends Controller
 
     public function update(UpdateTripRequest $request)
     {
-        $validator = Validator::make(['trip_id' => $request->trip_id], [
-            'trip_id' => ['required', 'exists:trips,id', new CheckIfCanUpdateTripRule],
+        $validator = Validator::make(['trip_slug' => $request->trip_slug], [
+            'trip_slug' => ['required', 'exists:trips,slug', new CheckIfCanUpdateTripRule],
         ]);
 
         if ($validator->fails()) {
@@ -343,7 +340,7 @@ class TripApiController extends Controller
 
         try {
             $this->tripApiUseCase->update($request);
-            return ApiResponse::sendResponse(200, __('app.the-trip-updated-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-trip-updated-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -366,17 +363,20 @@ class TripApiController extends Controller
 
     public function removeUser(Request $request)
     {
-        $validator = Validator::make(['trip_id' => $request->trip_id, 'user_id' => $request->user_id], [
-            'trip_id' => ['required', 'exists:trips,id'],
-            'user_id' => ['required', 'exists:users,id'],
-        ]);
+        $validator = Validator::make(
+            ['trip_slug' => $request->trip_slug, 'user_slug' => $request->user_slug],
+            [
+                'trip_slug' => ['required', 'exists:trips,slug', new CheckRemoveUserTripRule()],
+                'user_slug' => ['required', 'exists:users,slug'],
+            ]
+        );
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
             $this->tripApiUseCase->removeUser($request);
-            return ApiResponse::sendResponse(200, __('app.the-user-deleted-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-user-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

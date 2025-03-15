@@ -17,13 +17,13 @@ class CheckIfFollowersExistenceRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $decodedValue = json_decode($value, true);
+        $decodedValue = explode(',', $value);
 
         foreach ($decodedValue as $user) {
+            $user = User::where('slug', $user)->value('id');
             if (!Follow::where('follower_id', $user)->where('following_id', Auth::guard('api')->user()->id)->exists()) {
                 $fail(__('validation.api.check_if_followers_existence', ['user' => User::find($user)->username]));
             }
         }
     }
-
 }

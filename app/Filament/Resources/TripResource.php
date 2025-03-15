@@ -111,23 +111,34 @@ class TripResource extends Resource
 
                         Forms\Components\Fieldset::make('Age Range')
                             ->schema([
-                                Forms\Components\TextInput::make('age_range.min')
+                                Forms\Components\TextInput::make('min_age')
                                     ->label('Minimum Age')
-                                    ->required()
                                     ->numeric()
-                                    ->minValue(0),
+                                    ->minValue(0)
+                                    ->required(),
 
-                                Forms\Components\TextInput::make('age_range.max')
+                                Forms\Components\TextInput::make('max_age')
                                     ->label('Maximum Age')
-                                    ->required()
                                     ->numeric()
-                                    ->minValue(1),
+                                    ->minValue(1)
+                                    ->required(),
                             ])
-                            ->columns(2),
+                            ->columns(2)
+
+                            ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
+                                if ($record && is_string($record->age_range)) {
+                                    $ageRange = json_decode($record->age_range, true);
+                                    if (is_array($ageRange)) {
+                                        $set('min_age', $ageRange['min'] ?? null);
+                                        $set('max_age', $ageRange['max'] ?? null);
+                                    }
+                                }
+                            }),
 
                         Forms\Components\Select::make('sex')
                             ->required()
                             ->options([
+                                0 => 'Both',
                                 1 => 'Male',
                                 2 => 'Female',
                             ])
@@ -221,12 +232,12 @@ class TripResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\ToggleColumn::make('status')
-                ->label('Admin Deletion')
-                ->afterStateUpdated(function ($record, $state) {
-                    $record->status = $state ? 3 : 1;
-                    $record->save();
-                })
-                ->state(fn($record) => $record->status === 3), // Toggle is "on" when status is 3
+                    ->label('Admin Deletion')
+                    ->afterStateUpdated(function ($record, $state) {
+                        $record->status = $state ? 3 : 1;
+                        $record->save();
+                    })
+                    ->state(fn($record) => $record->status === 3), // Toggle is "on" when status is 3
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

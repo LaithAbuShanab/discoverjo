@@ -18,7 +18,8 @@ class CheckAgeGenderExistenceRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $trip = Trip::find(request()->trip_id);
+        $trip_id = Trip::where('slug', request()->trip_slug)->first()->id;
+        $trip = Trip::find($trip_id);
 
         if ($trip) {
             $user = Auth::guard('api')->user();
@@ -33,7 +34,7 @@ class CheckAgeGenderExistenceRule implements ValidationRule
             $age = abs($currentDate->diff($birthday)->y);
             $tripDateTime = new \DateTime($trip->date_time);
 
-            if ($trip->attendance_number == UsersTrip::where('trip_id', request()->trip_id)->where('status', '1')->count()) {
+            if ($trip->attendance_number == UsersTrip::where('trip_id', $trip_id)->where('status', '1')->count()) {
                 $fail(__('validation.api.this-trip-has-exceeded-the-required-number'));
             }
 
@@ -45,15 +46,15 @@ class CheckAgeGenderExistenceRule implements ValidationRule
                 $fail(__('validation.api.age-or-sex-not-acceptable'));
             }
 
-            if (UsersTrip::where('trip_id', request()->trip_id)->where('user_id', Auth::guard('api')->user()->id)->where('status', '2')->exists()) {
+            if (UsersTrip::where('trip_id', $trip_id)->where('user_id', Auth::guard('api')->user()->id)->where('status', '2')->exists()) {
                 $fail(__('validation.api.join-request-cancelled-by-owner'));
             }
 
-            if (UsersTrip::where('trip_id', request()->trip_id)->where('user_id', Auth::guard('api')->user()->id)->whereIn('status', ['0', '1'])->exists()) {
+            if (UsersTrip::where('trip_id', $trip_id)->where('user_id', Auth::guard('api')->user()->id)->whereIn('status', ['0', '1'])->exists()) {
                 $fail(__('validation.api.already-joined-this-trip'));
             }
 
-            if (Trip::where('user_id', Auth::guard('api')->user()->id)->where('id', request()->trip_id)->exists()) {
+            if (Trip::where('user_id', Auth::guard('api')->user()->id)->where('id', $trip_id)->exists()) {
                 $fail(__('validation.api.creator-cannot-join-trip'));
             }
 

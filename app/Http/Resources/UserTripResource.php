@@ -16,6 +16,7 @@ class UserTripResource extends JsonResource
     {
         return [
             'id' => $this->user->id,
+            'slug'=>$this->user->slug,
             'username' => $this->user->username,
             'email' => $this->user->email,
             'status'=>$this->status,

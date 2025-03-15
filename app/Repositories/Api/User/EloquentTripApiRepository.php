@@ -3,7 +3,6 @@
 namespace App\Repositories\Api\User;
 
 use App\Events\GroupMemberEvent;
-use App\Events\GroupMessageEvent;
 use App\Http\Resources\PrivateTripResource;
 use App\Http\Resources\TagsResource;
 use App\Http\Resources\TripDetailsResource;
@@ -13,24 +12,25 @@ use App\Models\Admin;
 use App\Models\Conversation;
 use App\Models\DeviceToken;
 use App\Models\GroupMember;
+use App\Models\Place;
 use App\Models\Reviewable;
 use App\Models\Tag;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\UsersTrip;
-use App\Notifications\Admin\NewTripNotification;
 use App\Notifications\Users\Trip\AcceptCancelInvitationNotification;
 use App\Notifications\Users\Trip\AcceptCancelNotification;
 use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Pipeline\Pipeline;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification as FilamentNotification;
 
 
 class EloquentTripApiRepository implements TripApiRepositoryInterface
@@ -45,26 +45,30 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $userId = Auth::guard('api')->user()->id;
 
-        $trips = Trip::where(function ($query) use ($userId) {
-            // Public trips
-            $query->where('trip_type', '0')
-                ->orWhere(function ($query) use ($userId) {
-                    // Followers trips and trips created by the authenticated user
-                    $query->where('trip_type', '1')
-                        ->where(function ($query) use ($userId) {
-                            $query->whereHas('user.followers', function ($query) use ($userId) {
-                                $query->where('follower_id', $userId);
+        $trips = Trip::whereHas('user', function ($query) {
+            $query->where('status', '1'); // Only include trips where the user status is 1
+        })
+            ->where(function ($query) use ($userId) {
+                // Public trips
+                $query->where('trip_type', '0')
+                    ->orWhere(function ($query) use ($userId) {
+                        // Followers trips and trips created by the authenticated user
+                        $query->where('trip_type', '1')
+                            ->where(function ($query) use ($userId) {
+                                $query->whereHas('user.followers', function ($query) use ($userId) {
+                                    $query->where('follower_id', $userId);
+                                })->orWhere('user_id', $userId);
+                            });
+                    })->orWhere(function ($query) use ($userId) {
+                        // Specific user trips
+                        $query->where('trip_type', '2')
+                            ->whereHas('usersTrip', function ($query) use ($userId) {
+                                $query->where('user_id', $userId)
+                                    ->where('status', '1');
                             })->orWhere('user_id', $userId);
-                        });
-                })->orWhere(function ($query) use ($userId) {
-                    // Specific user trips
-                    $query->where('trip_type', '2')
-                        ->whereHas('usersTrip', function ($query) use ($userId) {
-                            $query->where('user_id', $userId)
-                                ->where('status', '1');
-                        })->orWhere('user_id', $userId);
-                });
-        })->where('status', '1')
+                    });
+            })
+            ->where('status', '1')
             ->where(function ($query) {
                 $query->where('trip_type', '!=', '2')
                     ->whereHas('usersTrip', function ($query) {
@@ -77,55 +81,13 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return TripResource::collection($trips);
     }
 
-    public function allTrips()
-    {
-        $perPage = config('app.pagination_per_page');
-        $now = now()->setTimezone('Asia/Riyadh');
-        $trips = Trip::where('status', '1')->where('trip_type', '0')->where('date_time', '>=', $now)->paginate($perPage);
-        $tripsArray = $trips->toArray();
-
-        $pagination = [
-            'next_page_url' => $tripsArray['next_page_url'],
-            'prev_page_url' => $tripsArray['next_page_url'],
-            'total' => $tripsArray['total'],
-        ];
-
-        // Pass user coordinates to the PlaceResource collection
-        return [
-            'trips' => TripResource::collection($trips),
-            'pagination' => $pagination
-        ];
-    }
-
-    public function invitationTrips()
-    {
-        $userId = Auth::guard('api')->user()->id;
-        $trips = Trip::where('trip_type', '2')
-            ->where('status', '1')
-            ->whereHas('usersTrip', function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->where('status', '0');
-            })->get();
-
-        return TripResource::collection($trips);
-    }
-
-    public function privateTrips()
-    {
-        $userTrips = UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where('status', '1')->pluck('trip_id')->toArray();
-        $trips = Trip::where('user_id', Auth::guard('api')->user()->id)->orWhereIn('id', $userTrips)->get();
-        return PrivateTripResource::collection($trips);
-    }
-
-    public function tripDetails($trip_id)
-    {
-        $trip = Trip::find($trip_id);
-        return new TripDetailsResource($trip);
-    }
-
     public function createTrip($request)
     {
-        $tags = json_decode($request->tags);
+        $tags = collect(explode(',', $request->tags))->map(function ($tag) {
+            $tagModel = Tag::where('slug', trim($tag))->first();
+            return $tagModel ? $tagModel->id : null;
+        })->filter()->toArray();
+
         $ageRange = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
 
         $dateTime = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
@@ -142,7 +104,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         $trip = new Trip();
         $trip->user_id = Auth::guard('api')->user()->id;
-        $trip->place_id = $request->place_id;
+        $trip->place_id = Place::where('slug', $request->place_slug)->first()->id;
         $trip->trip_type = $request->trip_type;
         $trip->name = $filteredName;
         $trip->description = $filteredDescription;
@@ -165,109 +127,34 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $first_member->joined_datetime = now();
         $first_member->save();
 
-        // Send notification to all admins
-        Notification::send(Admin::all(), new NewTripNotification($trip));
-        //send notification for specific user the owner make trip //follower
         $createdTrip = Trip::find($trip->id);
 
+        // Notify an admin about the new user registration
+        $recipient = Admin::where('email', 'asma.abughaith@gmail.com')->first();
+        if ($recipient) {
+            FilamentNotification::make()
+                ->title('New Trip')
+                ->success()
+                ->body('A new trip has been create by ' . Auth::guard('api')->user()->username)
+                ->actions([
+                    Action::make('view_trip')
+                        ->label('View Trip')
+                        ->url(route('filament.admin.resources.trips.view', $trip)),
+                ])
+                ->sendToDatabase($recipient);
+        }
+
+        //send notification for specific user & Followers of this user
         $this->handleTripTypeNotifications($request, $trip);
+
         return new TripResource($createdTrip);
     }
 
-    private function handleTripTypeNotifications($request, $trip)
+    public function privateTrips()
     {
-        $user = Auth::guard('api')->user();
-        if ($request->trip_type == 1) {
-            $receiverLanguage = $user->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-trip-title', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-trip-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
-            $followers = $user->followers()->get();
-            Notification::send($followers, new TripNewTripNotification($user, $request->trip_type));
-            $this->sendFirebaseNotifications($followers->pluck('id')->toArray(), $notificationData);
-        } elseif ($request->trip_type == 2) {
-            $receiverLanguage = $user->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-trip-invitation-title', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-trip-invitation-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
-            $users = User::whereIn('id', json_decode($request->users))->get();
-            foreach ($users as $user) {
-                UsersTrip::create([
-                    'trip_id' => $trip->id,
-                    'user_id' => $user->id,
-                    'status' => '0',
-                ]);
-            }
-            Notification::send($users, new TripNewTripNotification($user, $request->trip_type));
-            $this->sendFirebaseNotifications($users->pluck('id')->toArray(), $notificationData);
-        }
-    }
-
-    private function sendFirebaseNotifications(array $userIds, array $notificationData)
-    {
-        $tokens = DeviceToken::whereIn('user_id', $userIds)->pluck('token')->toArray();
-        sendNotification($tokens, $notificationData);
-    }
-
-    public function joinTrip($trip_id)
-    {
-        $checkUser = $this->checkIfTheUserHasAlreadyJoined(Auth::guard('api')->user()->id, $trip_id);
-        if ($checkUser) {
-            $eloquentJoinTrip = new UsersTrip();
-            $eloquentJoinTrip->user_id = Auth::guard('api')->user()->id;
-            $eloquentJoinTrip->trip_id = $trip_id;
-            $eloquentJoinTrip->save();
-        }
-
-        // To Save Notification In Database
-        Notification::send(Trip::find($trip_id)->user, new NewRequestNotification(Auth::guard('api')->user()));
-
-        // To Send Notification To Owner Using Firebase Cloud Messaging
-        $ownerToken = Trip::find($trip_id)->user->DeviceToken->token;
-        $receiverLanguage = Trip::find($trip_id)->user->lang;
-        $notificationData = [
-            'title' => Lang::get('app.notifications.new-request', [], $receiverLanguage),
-            'body' => Lang::get('app.notifications.new-user-request-from-trip', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-            'sound' => 'default',
-        ];
-        sendNotification($ownerToken, $notificationData);
-    }
-
-    // When User Leaving
-    public function cancelJoinTrip($trip_id, $request)
-    {
-        return DB::transaction(function () use ($trip_id) {
-            UsersTrip::where('trip_id', $trip_id)->where('user_id', Auth::guard('api')->user()->id)->update(['status' => '3']);
-            $conversation = Conversation::where('trip_id', $trip_id)->first();
-            if ($conversation) {
-                $member = $conversation->members->where('user_id', Auth::guard('api')->user()->id)->where('left_datetime', null)->first();
-                $member->left_datetime = now();
-                $member->save();
-
-                $contents = [
-                    'conversation_id' => $conversation->id,
-                    'member' => Auth::guard('api')->user(),
-                    'action' => 'leave',
-                ];
-
-                Broadcast(new GroupMemberEvent($contents))->toOthers();
-            }
-        });
-    }
-
-    public function checkIfTheUserHasAlreadyJoined($user_id, $trip_id)
-    {
-        $checkUser = UsersTrip::where('trip_id', $trip_id)->where('user_id', $user_id)->where('status', '3')->first();
-        if ($checkUser) {
-            $checkUser->status = '0';
-            $checkUser->save();
-            return false;
-        }
-        return true;
+        $userTrips = UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where('status', '1')->pluck('trip_id')->toArray();
+        $trips = Trip::where('user_id', Auth::guard('api')->user()->id)->orWhereIn('id', $userTrips)->get();
+        return PrivateTripResource::collection($trips);
     }
 
     //When Creator Accept Or Reject User
@@ -276,8 +163,11 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return DB::transaction(function () use ($request) {
             $status = $request->status == 'accept' ? '1' : '2';
 
-            $userTrip = UsersTrip::where('user_id', $request->user_id)
-                ->where('trip_id', $request->trip_id)
+            $userID = User::where('slug', $request->user_slug)->first()->id;
+            $tripId = Trip::where('slug', $request->trip_slug)->first()->id;
+
+            $userTrip = UsersTrip::where('user_id', $userID)
+                ->where('trip_id', $tripId)
                 ->where('status', '0')
                 ->first();
 
@@ -286,13 +176,13 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 $userTrip->save();
             }
 
-            $trip = Trip::findOrFail($request->trip_id);
+            $trip = Trip::findOrFail($tripId);
 
             if ($status == '1' && $trip->conversation) {
                 $conversationId = $trip->conversation->id;
 
                 $existingMember = GroupMember::where('conversation_id', $conversationId)
-                    ->where('user_id', $request->user_id)
+                    ->where('user_id', $userID)
                     ->first();
 
                 if ($existingMember) {
@@ -302,7 +192,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 } else {
                     // Add the user as a new member of the group
                     $newMember = new GroupMember();
-                    $newMember->user_id = $request->user_id;
+                    $newMember->user_id = $userID;
                     $newMember->conversation_id = $conversationId;
                     $newMember->joined_datetime = now();
                     $newMember->save();
@@ -310,14 +200,14 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
                 $contents = [
                     'conversation_id' => $conversationId,
-                    'member' => User::findOrFail($request->user_id),
+                    'member' => User::findOrFail($userID),
                     'action' => 'join',
                 ];
 
                 Broadcast(new GroupMemberEvent($contents))->toOthers();
             }
 
-            $user = User::findOrFail($request->user_id);
+            $user = User::findOrFail($userID);
             Notification::send($user, new AcceptCancelNotification($trip, $request->status));
 
             $receiverLanguage = $user->lang;
@@ -348,18 +238,56 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         });
     }
 
+    public function joinTrip($slug)
+    {
+        $trip_id = Trip::where('slug', $slug)->first()->id;
+        $checkUser = $this->checkIfTheUserHasAlreadyJoined(Auth::guard('api')->user()->id, $trip_id);
+        if ($checkUser) {
+            $eloquentJoinTrip = new UsersTrip();
+            $eloquentJoinTrip->user_id = Auth::guard('api')->user()->id;
+            $eloquentJoinTrip->trip_id = $trip_id;
+            $eloquentJoinTrip->save();
+        }
+
+        // To Save Notification In Database
+        Notification::send(Trip::find($trip_id)->user, new NewRequestNotification(Auth::guard('api')->user()));
+
+        // To Send Notification To Owner Using Firebase Cloud Messaging
+        $ownerToken = Trip::find($trip_id)->user->DeviceToken->token;
+        $receiverLanguage = Trip::find($trip_id)->user->lang;
+        $notificationData = [
+            'title' => Lang::get('app.notifications.new-request', [], $receiverLanguage),
+            'body' => Lang::get('app.notifications.new-user-request-from-trip', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'sound' => 'default',
+        ];
+        sendNotification($ownerToken, $notificationData);
+    }
+
+    public function invitationTrips()
+    {
+        $userId = Auth::guard('api')->user()->id;
+        $trips = Trip::where('trip_type', '2')
+            ->where('status', '1')
+            ->whereHas('usersTrip', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->where('status', '0');
+            })->get();
+
+        return TripResource::collection($trips);
+    }
 
     public function changeStatusInvitation($request)
     {
         $userId = Auth::guard('api')->user()->id;
         $status = $request->status == 'accept' ? '1' : '2';
+        $trip_id = Trip::where('slug', $request->trip_slug)->first()->id;
 
-        $userTrip = UsersTrip::where('user_id', $userId)->where('trip_id', $request->trip_id)->first();
+        $userTrip = UsersTrip::where('user_id', $userId)->where('trip_id', $trip_id)->first();
         $userTrip->status = $status;
         $userTrip->save();
 
         if ($status == '1') {
-            $conversation = Conversation::where('trip_id', $request->trip_id)->first();
+            $conversation = Conversation::where('trip_id', $trip_id)->first();
             // add the user as a new member of the group
             $newMember = new GroupMember();
             $newMember->user_id = $userId;
@@ -368,7 +296,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             $newMember->save();
         }
 
-        $trip = Trip::find($request->trip_id);
+        $trip = Trip::find($trip_id);
         $user = User::find($trip->user_id);
         Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username));
 
@@ -380,6 +308,121 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'sound' => 'default',
         ];
         sendNotification($user->DeviceToken->token, $notificationData);
+    }
+
+    public function tripDetails($slug)
+    {
+        $trip = Trip::where('slug', $slug)->first();
+        return new TripDetailsResource($trip);
+    }
+
+    public function allTrips()
+    {
+        $perPage = config('app.pagination_per_page');
+        $now = now()->setTimezone('Asia/Riyadh');
+        $trips = Trip::where('status', '1')->where('trip_type', '0')->where('date_time', '>=', $now)->paginate($perPage);
+        $tripsArray = $trips->toArray();
+
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
+            'total' => $tripsArray['total'],
+        ];
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'trips' => TripResource::collection($trips),
+            'pagination' => $pagination
+        ];
+    }
+
+    // When User Leaving
+    public function cancelJoinTrip($slug, $request)
+    {
+        $trip_id = Trip::where('slug', $slug)->first()->id;
+        return DB::transaction(function () use ($trip_id) {
+            UsersTrip::where('trip_id', $trip_id)->where('user_id', Auth::guard('api')->user()->id)->update(['status' => '3']);
+            $conversation = Conversation::where('trip_id', $trip_id)->first();
+            if ($conversation) {
+                $member = $conversation->members->where('user_id', Auth::guard('api')->user()->id)->where('left_datetime', null)->first();
+                $member->left_datetime = now();
+                $member->save();
+
+                $contents = [
+                    'conversation_id' => $conversation->id,
+                    'member' => Auth::guard('api')->user(),
+                    'action' => 'leave',
+                ];
+
+                Broadcast(new GroupMemberEvent($contents))->toOthers();
+            }
+        });
+    }
+
+    public function remove($slug)
+    {
+        $trip = Trip::where('slug', $slug)->first();
+        $trip->status = '2';
+        $trip->save();
+        $trip->usersTrip()->update(['status' => '2']);
+        $trip->conversation()->delete();
+    }
+
+    public function update($request)
+    {
+        $trip = Trip::where('slug', $request->trip_slug)->first();
+
+        if ($request->name) {
+            $filteredName = app(Pipeline::class)
+                ->send($request->name)
+                ->through([ContentFilter::class])
+                ->thenReturn();
+        }
+
+        if ($request->description) {
+            $filteredDescription = app(Pipeline::class)
+                ->send($request->description)
+                ->through([ContentFilter::class])
+                ->thenReturn();
+        }
+
+        // get place id by slug
+        $place_id = Place::where('slug', $request->place_slug)->first()->id;
+
+        $trip->place_id = $place_id  ?? $trip->place_id;
+        $trip->name = $request->name ? $filteredName : $trip->name;
+        $trip->description = $request->description ? $filteredDescription : $trip->description;
+        $trip->cost = $request->cost ?? $trip->cost;
+        $trip->sex = $request->gender ?? $trip->gender;
+        $trip->attendance_number = $request->attendance_number ?? $trip->attendance_number;
+
+        if (isset($request->age_min) && isset($request->age_max)) {
+            $age_range = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
+            $trip->age_range = $age_range;
+        }
+
+        if (isset($request->date) && isset($request->time)) {
+            $date_time = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
+            $trip->date_time = $date_time;
+        }
+
+        $trip->save();
+
+        if (isset($request->tags)) {
+            $tags = collect(explode(',', $request->tags))->map(function ($tag) {
+                $tagModel = Tag::where('slug', trim($tag))->first();
+                return $tagModel ? $tagModel->id : null;
+            })->filter()->toArray();
+            $trip->tags()->sync($tags);
+        }
+    }
+
+    public function removeUser($request)
+    {
+        $trip = Trip::where('slug', $request->trip_slug)->first();
+        $user_id = User::where('slug', $request->user_slug)->first()->id;
+        $trip->usersTrip()->where('user_id', $user_id)->delete();
+        $trip->conversation->members()->where('user_id', $user_id)->delete();
     }
 
     public function favorite($id)
@@ -441,58 +484,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         }
     }
 
-    public function remove($trip_id)
-    {
-        $trip = Trip::find($trip_id);
-        $trip->status = '2';
-        $trip->save();
-        $trip->usersTrip()->update(['status' => '2']);
-        $trip->conversation()->delete();
-    }
-
-    public function update($request)
-    {
-        $trip = Trip::find($request->trip_id);
-        if ($request->name) {
-            $filteredName = app(Pipeline::class)
-                ->send($request->name)
-                ->through([ContentFilter::class])
-                ->thenReturn();
-        }
-
-        if ($request->description) {
-            $filteredDescription = app(Pipeline::class)
-                ->send($request->description)
-                ->through([ContentFilter::class])
-                ->thenReturn();
-        }
-
-
-        $trip->place_id = $request->place_id ?? $trip->place_id;
-        $trip->name = $request->name ? $filteredName : $trip->name;
-        $trip->description = $request->description ? $filteredDescription : $trip->description;
-        $trip->cost = $request->cost ?? $trip->cost;
-        $trip->sex = $request->gender ?? $trip->gender;
-        $trip->attendance_number = $request->attendance_number ?? $trip->attendance_number;
-
-        if (isset($request->age_min) && isset($request->age_max)) {
-            $age_range = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
-            $trip->age_range = $age_range;
-        }
-
-        if (isset($request->date) && isset($request->time)) {
-            $date_time = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
-            $trip->date_time = $date_time;
-        }
-
-        $trip->save();
-
-        if (isset($request->tags)) {
-            $tags = json_decode($request->tags);
-            $trip->tags()->sync($tags);
-        }
-    }
-
     public function search($query)
     {
         $perPage =  config('app.pagination_per_page');
@@ -504,7 +495,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'prev_page_url' => $tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
-        activityLog('trip',$trips->first(),$query,'search');
+        activityLog('trip', $trips->first(), $query, 'search');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -513,10 +504,55 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         ];
     }
 
-    public function removeUser($request)
+
+    private function handleTripTypeNotifications($request, $trip)
     {
-        $trip = Trip::find($request->trip_id);
-        $trip->usersTrip()->where('user_id', $request->user_id)->delete();
-        $trip->conversation->members()->where('user_id', $request->user_id)->delete();
+        $user = Auth::guard('api')->user();
+        if ($request->trip_type == 1) {
+            $receiverLanguage = $user->lang;
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-trip-title', [], $receiverLanguage),
+                'body' => Lang::get('app.notifications.new-trip-body', ['username' => $user->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            $followers = $user->followers()->get();
+            Notification::send($followers, new TripNewTripNotification($user, $request->trip_type));
+            $this->sendFirebaseNotifications($followers->pluck('id')->toArray(), $notificationData);
+        } elseif ($request->trip_type == 2) {
+            $receiverLanguage = $user->lang;
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-trip-invitation-title', [], $receiverLanguage),
+                'body' => Lang::get('app.notifications.new-trip-invitation-body', ['username' => $user->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            $slugs = explode(',', $request->users);
+            $users = User::whereIn('slug', $slugs)->get();
+            foreach ($users as $user) {
+                UsersTrip::create([
+                    'trip_id' => $trip->id,
+                    'user_id' => $user->id,
+                    'status' => '0',
+                ]);
+            }
+            Notification::send($users, new TripNewTripNotification($user, $request->trip_type));
+            $this->sendFirebaseNotifications($users->pluck('id')->toArray(), $notificationData);
+        }
+    }
+
+    private function sendFirebaseNotifications(array $userIds, array $notificationData)
+    {
+        $tokens = DeviceToken::whereIn('user_id', $userIds)->pluck('token')->toArray();
+        sendNotification($tokens, $notificationData);
+    }
+
+    private function checkIfTheUserHasAlreadyJoined($user_id, $trip_id)
+    {
+        $checkUser = UsersTrip::where('trip_id', $trip_id)->where('user_id', $user_id)->where('status', '3')->first();
+        if ($checkUser) {
+            $checkUser->status = '0';
+            $checkUser->save();
+            return false;
+        }
+        return true;
     }
 }

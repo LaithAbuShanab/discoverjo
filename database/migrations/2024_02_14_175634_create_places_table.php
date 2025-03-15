@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('places', function (Blueprint $table) {
-            $table->unsignedMediumInteger('id')->autoIncrement();;
+            $table->unsignedMediumInteger('id')->autoIncrement();
             $table->json('name');
             $table->json('description');
             $table->json('address');

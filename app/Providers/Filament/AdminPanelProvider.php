@@ -64,6 +64,8 @@ class AdminPanelProvider extends PanelProvider
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
                 ActivitylogPlugin::make()
                     ->navigationGroup('System')
+                    ->navigationIcon('heroicon-o-wrench')
+                    ->navigationCountBadge(true)
 
             ])
             ->authMiddleware([

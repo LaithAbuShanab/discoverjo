@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Trip;
 
 use App\Helpers\ApiResponse;
+use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfCanMakeTripRule;
 use App\Rules\CheckTagExistsRule;
 use Illuminate\Contracts\Validation\Validator;
@@ -30,7 +31,7 @@ class UpdateTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'place_id' => ['nullable', 'integer', 'exists:places,id'],
+            'place_slug' => ['bail', 'nullable', 'string', 'exists:places,slug', new ActivePlaceRule()],
             'name' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'cost' => ['nullable', 'numeric', 'min:0'],
@@ -72,40 +73,40 @@ class UpdateTripRequest extends FormRequest
             ],
 
             'attendance_number' => ['nullable', 'integer', 'min:1'],
-            'tags' => ['nullable',new CheckTagExistsRule()],
+            'tags' => ['nullable', new CheckTagExistsRule()],
         ];
     }
 
     public function messages()
     {
         return [
-            'place_id.integer' => __('validation.api.place_id-integer'),
-            'place_id.exists' => __('validation.api.place_id-exists'),
-            'name.string' => __('validation.api.name-string'),
-            'name.max' => __('validation.api.name-max'),
-            'description.string' => __('validation.api.description-string'),
-            'cost.numeric' => __('validation.api.cost-numeric'),
-            'cost.min' => __('validation.api.cost-min'),
-            'age_min.integer' => __('validation.api.age_min-integer'),
-            'age_max.integer' => __('validation.api.age_max-integer'),
-            'age_max.gte' => __('validation.api.age_max-gte'),
-            'gender.nullable' => __('validation.api.gender-nullable'),
-            'date.date' => __('validation.api.date-date'),
-            'date.required_if' => __('validation.api.date-required_if'),
-            'date.custom' => __('validation.api.date-custom'),
-            'time.date_format' => __('validation.api.time-date_format'),
-            'time.required_if' => __('validation.api.time-required_if'),
-            'attendance_number.integer' => __('validation.api.attendance_number-integer'),
-            'attendance_number.min' => __('validation.api.attendance_number-min'),
-            'tags.nullable' => __('validation.api.tags-nullable'),
+            'place_slug.string' => __('validation.api.place_slug_string'),
+            'place_slug.exists' => __('validation.api.place_slug_exists'),
+            'name.string' => __('validation.api.name_string'),
+            'name.max' => __('validation.api.name_max'),
+            'description.string' => __('validation.api.description_string'),
+            'cost.numeric' => __('validation.api.cost_numeric'),
+            'cost.min' => __('validation.api.cost_min'),
+            'age_min.integer' => __('validation.api.age_min_integer'),
+            'age_min.required_if' => __('validation.api.age_min_required_if'),
+            'age_max.integer' => __('validation.api.age_max_integer'),
+            'age_max.required_if' => __('validation.api.age_max_required_if'),
+            'age_max.gte' => __('validation.api.age_max_gte'),
+            'gender.nullable' => __('validation.api.gender_nullable'),
+            'date.date' => __('validation.api.date_date'),
+            'date.required_if' => __('validation.api.date_required_if'),
+            'date.after_or_equal' => __('validation.api.date_after_or_equal'),
+            'time.date_format' => __('validation.api.time_date_format'),
+            'time.required_if' => __('validation.api.time_required_if'),
+            'attendance_number.integer' => __('validation.api.attendance_number_integer'),
+            'attendance_number.min' => __('validation.api.attendance_number_min'),
+            'tags.nullable' => __('validation.api.tags_nullable'),
         ];
     }
-
 
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
         throw new HttpResponseException(ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors));
     }
-
 }

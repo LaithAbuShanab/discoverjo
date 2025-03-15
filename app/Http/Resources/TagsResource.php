@@ -16,10 +16,10 @@ class TagsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'name' => $this->name,
             'image_active' => $this->getFirstMediaUrl('tag_active', 'tag_active_app'),
-            'image_inactive'=> $this->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
+            'image_inactive' => $this->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
         ];
     }
 }

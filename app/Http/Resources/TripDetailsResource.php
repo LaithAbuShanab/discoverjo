@@ -29,6 +29,7 @@ class TripDetailsResource extends JsonResource
 
         $data = [
             'id' => $this->id,
+            'slug' => $this->slug,
             'creator_id' => $this->user_id,
             'name' => $this->name,
             'address' => $this->place->address,
@@ -38,11 +39,13 @@ class TripDetailsResource extends JsonResource
             'tags' => $this->tags->map(function ($tag) {
                 return [
                     'name' => $tag->name,
+                    'slug' => $tag->slug,
                     'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
                     'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
                 ];
             }),
             'place_name' => $this->place->name,
+            'place_slug' => $this->place->slug,
             'cost' => $this->cost,
             'age_min' => optional(json_decode($this->age_range))->min,
             'age_max' => optional(json_decode($this->age_range))->max,

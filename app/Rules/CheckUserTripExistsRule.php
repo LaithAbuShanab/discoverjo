@@ -17,16 +17,35 @@ class CheckUserTripExistsRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (Trip::where('id', $value)->where('user_id', Auth::guard('api')->user()->id)->exists()) {
+        $userId = Auth::guard('api')->id();
+        $trip = Trip::where('slug', $value)->first();
+
+        // Case 1: If User is Owner
+        if ($trip->user_id === $userId) {
             $fail(__('validation.api.you-are-owner-of-trip'));
+            return;
         }
 
-        if (!UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where($attribute, $value)->exists()) {
+        // Fetch user trip status in a single query
+        $userTrip = UsersTrip::where('user_id', $userId)
+            ->where('trip_id', $trip->id)
+            ->whereIn('status', [0, 2, 3])
+            ->first();
+
+        // Case 2: If User Is Not a Member
+        if (!$userTrip) {
             $fail(__('validation.api.you-didnt-join-trip'));
+            return;
         }
 
-        if (UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where('status', '2')->where($attribute, $value)->first()) {
-            $fail(__('validation.api.trip-already-canceled'));
+        // Case 3 & 4: If User Has Been Canceled or Left
+        $statusMessages = [
+            2 => __('validation.api.trip-already-canceled'),
+            3 => __('validation.api.you-left-trip'),
+        ];
+
+        if (isset($statusMessages[$userTrip->status])) {
+            $fail($statusMessages[$userTrip->status]);
         }
     }
 }

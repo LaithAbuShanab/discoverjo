@@ -7,6 +7,7 @@ use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfCanMakeTripRule;
 use App\Rules\CheckIfFollowersExistenceRule;
 use App\Rules\CheckTagExistsRule;
+use App\Rules\CheckUserExistsRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -32,8 +33,8 @@ class CreateTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'trip_type' => ['required', 'string', Rule::in(['0', '1', '2'])],
-            'place_slug' => ['required', 'integer', 'exists:places,id',new ActivePlaceRule()],
+            'trip_type' => ['required', 'integer', Rule::in(['0', '1', '2'])],
+            'place_slug' => ['bail', 'required', 'string', 'exists:places,slug', new ActivePlaceRule()],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'cost' => ['required', 'numeric', 'min:0'],
@@ -53,12 +54,14 @@ class CreateTripRequest extends FormRequest
                 'date',
                 function ($attribute, $value, $fail) {
                     if (Carbon::parse($value)->isPast()) {
-                        $fail(__('app.trip-date-cannot-be-in-the-past', ['date' => $value]));
+                        $fail(__('validation.api.date-cannot-be-in-the-past', ['date' => $value]));
                     }
                 },
             ],
             'time' => [
-                'required', 'date_format:H:i:s', new CheckIfCanMakeTripRule,
+                'required',
+                'date_format:H:i:s',
+                new CheckIfCanMakeTripRule,
             ],
             'attendance_number' => [
                 'required_if:trip_type,0,1',
@@ -67,47 +70,47 @@ class CreateTripRequest extends FormRequest
                 'nullable'
             ],
             'tags' => ['required', new CheckTagExistsRule()],
-            'tags.*' => 'exists:tags,id',
             'users' => [
-                'required_if:trip_type,2', new CheckIfFollowersExistenceRule()
+                'required_if:trip_type,2',
+                new CheckIfFollowersExistenceRule(),
+                new CheckUserExistsRule(),
             ]
         ];
     }
 
-
     public function messages()
     {
         return [
-            'trip_type.required' => __('validation.api.trip_type-required'),
-            'trip_type.string' => __('validation.api.trip_type-string'),
-            'trip_type.in' => __('validation.api.trip_type-in'),
-            'place_id.required' => __('validation.api.place_id-required'),
-            'place_id.integer' => __('validation.api.place_id-integer'),
-            'place_id.exists' => __('validation.api.place_id-exists'),
-            'name.required' => __('validation.api.name-required'),
-            'name.string' => __('validation.api.name-string'),
-            'name.max' => __('validation.api.name-max'),
-            'description.required' => __('validation.api.description-required'),
-            'description.string' => __('validation.api.description-string'),
-            'cost.required' => __('validation.api.cost-required'),
-            'cost.numeric' => __('validation.api.cost-numeric'),
-            'cost.min' => __('validation.api.cost-min'),
-            'age_min.required_if' => __('validation.api.age_min-required_if'),
-            'age_min.integer' => __('validation.api.age_min-integer'),
-            'age_max.required_if' => __('validation.api.age_max-required_if'),
-            'age_max.integer' => __('validation.api.age_max-integer'),
-            'gender.required' => __('validation.api.gender-required'),
-            'date.required' => __('validation.api.date-required'),
-            'date.date' => __('validation.api.date-date'),
-            'date.custom' => __('validation.api.date-custom'),
-            'time.required' => __('validation.api.time-required'),
-            'time.date_format' => __('validation.api.time-date_format'),
-            'attendance_number.required_if' => __('validation.api.attendance_number-required_if'),
-            'attendance_number.integer' => __('validation.api.attendance_number-integer'),
-            'attendance_number.min' => __('validation.api.attendance_number-min'),
-            'tags.required' => __('validation.api.tags-required'),
-            'tags.*.exists' => __('validation.api.tags-exists'),
-            'users.required_if' => __('validation.api.users-required_if'),
+            'trip_type.required' => __('validation.api.trip_type_required'),
+            'trip_type.integer' => __('validation.api.trip_type_integer'),
+            'trip_type.in' => __('validation.api.trip_type_in'),
+            'place_slug.required' => __('validation.api.place_slug_required'),
+            'place_slug.string' => __('validation.api.place_slug_string'),
+            'place_slug.exists' => __('validation.api.place_slug_exists'),
+            'name.required' => __('validation.api.name_required'),
+            'name.string' => __('validation.api.name_string'),
+            'name.max' => __('validation.api.name_max'),
+            'description.required' => __('validation.api.description_required'),
+            'description.string' => __('validation.api.description_string'),
+            'cost.required' => __('validation.api.cost_required'),
+            'cost.numeric' => __('validation.api.cost_numeric'),
+            'cost.min' => __('validation.api.cost_min'),
+            'age_min.required_if' => __('validation.api.age_min_required_if'),
+            'age_min.integer' => __('validation.api.age_min_integer'),
+            'age_max.required_if' => __('validation.api.age_max_required_if'),
+            'age_max.integer' => __('validation.api.age_max_integer'),
+            'gender.required' => __('validation.api.gender_required'),
+            'date.required' => __('validation.api.date_required'),
+            'date.date' => __('validation.api.date_date'),
+            'date.custom' => __('validation.api.date_custom'),
+            'time.required' => __('validation.api.time_required'),
+            'time.date_format' => __('validation.api.time_date_format'),
+            'attendance_number.required_if' => __('validation.api.attendance_number_required_if'),
+            'attendance_number.integer' => __('validation.api.attendance_number_integer'),
+            'attendance_number.min' => __('validation.api.attendance_number_min'),
+            'tags.required' => __('validation.api.tags_required'),
+            'tags.exists' => __('validation.api.tags_exists'),
+            'users.required_if' => __('validation.api.users_required_if'),
         ];
     }
 

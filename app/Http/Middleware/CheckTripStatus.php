@@ -17,10 +17,10 @@ class CheckTripStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $tripId = $request->trip_id ?? null;
+        $tripSlug = $request->trip_slug ?? null;
 
-        if ($tripId) {
-            $trip = Trip::find($tripId);
+        if ($tripSlug) {
+            $trip = Trip::where('slug', $tripSlug)->first();
 
             if ($trip && $trip->user->status != 1) {
                 return ApiResponse::sendResponseError(403, __('app.we-are-sorry-this-trip-is-no-longer-available'));

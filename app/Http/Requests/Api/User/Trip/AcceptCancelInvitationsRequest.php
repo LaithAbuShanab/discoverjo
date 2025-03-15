@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api\User\Trip;
 
 use App\Helpers\ApiResponse;
-use App\Rules\CheckUserTripStatus;
+use App\Rules\CheckInvitationTripRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -27,12 +27,12 @@ class AcceptCancelInvitationsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'trip_id' => [
+            'trip_slug' => [
                 'bail', // Stops validation if any rule before it fails
                 'required',
-                'integer',
-                'exists:trips,id',
-                new CheckUserTripStatus, // Only runs if 'exists:trips,id' passes
+                'string',
+                'exists:trips,slug',
+                new CheckInvitationTripRule, // Only runs if 'exists:trips,id' passes
             ],
         ];
     }
@@ -41,11 +41,12 @@ class AcceptCancelInvitationsRequest extends FormRequest
     public function messages()
     {
         return [
-            'trip_id.required' => __('validation.api.trip_id-required'),
-            'trip_id.integer' => __('validation.api.trip_id-integer'),
-            'trip_id.exists' => __('validation.api.trip_id-exists'),
+            'trip_slug.required' => __('validation.api.trip_slug_required'),
+            'trip_slug.string' => __('validation.api.trip_slug_string'),
+            'trip_slug.exists' => __('validation.api.trip_slug_exists'),
         ];
     }
+
 
     protected function failedValidation(Validator $validator)
     {

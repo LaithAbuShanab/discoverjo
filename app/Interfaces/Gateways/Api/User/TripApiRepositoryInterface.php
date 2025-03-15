@@ -9,23 +9,23 @@ interface TripApiRepositoryInterface
 
     public function allTrips();
 
+    public function changeStatus($data);
+
     public function invitationTrips();
 
     public function changeStatusInvitation($data);
 
     public function privateTrips();
 
-    public function tripDetails($trip_id);
+    public function tripDetails($slug);
 
     public function tags();
 
     public function createTrip($data);
 
-    public function joinTrip($trip_id);
+    public function joinTrip($slug);
 
-    public function cancelJoinTrip($trip_id, $request);
-
-    public function changeStatus($data);
+    public function cancelJoinTrip($slug, $request);
 
     public function favorite($id);
 
@@ -41,7 +41,7 @@ interface TripApiRepositoryInterface
 
     public function reviewsLike($data);
 
-    public function remove($trip_id);
+    public function remove($slug);
 
     public function update($data);
 

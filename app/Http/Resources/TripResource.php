@@ -30,6 +30,7 @@ class TripResource extends JsonResource
             'date' => Carbon::parse($this->date_time)->format('Y-m-d'),
             'name' => $this->name,
             'place_name' => $this->place->name,
+            'place_slug' => $this->place->slug,
             'price' => $this->cost,
             'attendance_number' => $this->attendance_number,
             'location' => $this->place->region->name,

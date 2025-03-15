@@ -7,25 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Trip extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, LogsActivity;
 
     protected $guarded = [];
     protected $table = 'trips';
 
-    protected $casts = [
-        'age_range' => 'array',
-    ];
-
     public function getSlugOptions(): SlugOptions
     {
-        return SlugOptions::create()
+        $slugOptions = SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
-    }
 
+        // Only generate the slug when creating (not updating)
+        if ($this->exists) {
+            $slugOptions->doNotGenerateSlugsOnUpdate();
+        }
+
+        return $slugOptions;
+    }
     public function place()
     {
         return $this->belongsTo(Place::class);
@@ -71,5 +75,11 @@ class Trip extends Model
     public function conversation()
     {
         return $this->belongsTo(Conversation::class, 'id', 'trip_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('trip');
     }
 }

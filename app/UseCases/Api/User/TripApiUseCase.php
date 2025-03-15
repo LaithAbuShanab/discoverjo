@@ -43,14 +43,14 @@ class TripApiUseCase
         return $this->tripApiRepository->createTrip($request);
     }
 
-    public function joinTrip($trip_id)
+    public function joinTrip($slug)
     {
-        return $this->tripApiRepository->joinTrip($trip_id);
+        return $this->tripApiRepository->joinTrip($slug);
     }
 
-    public function cancelJoinTrip($trip_id, $request)
+    public function cancelJoinTrip($slug, $request)
     {
-        return $this->tripApiRepository->cancelJoinTrip($trip_id, $request);
+        return $this->tripApiRepository->cancelJoinTrip($slug, $request);
     }
 
     public function privateTrips()
@@ -58,9 +58,9 @@ class TripApiUseCase
         return $this->tripApiRepository->privateTrips();
     }
 
-    public function tripDetails($trip_id)
+    public function tripDetails($slug)
     {
-        return $this->tripApiRepository->tripDetails($trip_id);
+        return $this->tripApiRepository->tripDetails($slug);
     }
 
     public function changeStatus($request)
@@ -103,9 +103,9 @@ class TripApiUseCase
         return $this->tripApiRepository->reviewsLike($data);
     }
 
-    public function remove($trip_id)
+    public function remove($slug)
     {
-        return $this->tripApiRepository->remove($trip_id);
+        return $this->tripApiRepository->remove($slug);
     }
 
     public function update($data)

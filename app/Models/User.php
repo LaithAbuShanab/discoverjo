@@ -125,8 +125,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         $this->notify(new UserResetPasswordNotification($token));
     }
 
-
-
     public function findForPassport($username)
     {
         return $this->where('email', $username)->orWhere('username', $username)->first();

@@ -35,7 +35,7 @@ Route::middleware(['firstLogin'])->group(function () {
 
     //review system
     Route::group(['prefix' => 'review'], function () {
-        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']);//should we return only active review?
+        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']); //should we return only active review?
         Route::post('add/{type}/{slug}', [ReviewApiController::class, 'addReview']);
         Route::put('update/{type}/{slug}', [ReviewApiController::class, 'updateReview']);
         Route::delete('delete/{type}/{slug}', [ReviewApiController::class, 'deleteReview']);
@@ -50,7 +50,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/interested/list', [EventApiController::class, 'interestList']);
         Route::post('/interest/{slug}', [EventApiController::class, 'interest']);
         Route::delete('/disinterest/{slug}', [EventApiController::class, 'disinterest']);
-
     });
 
     // All Routes For event
@@ -58,7 +57,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']);
         Route::post('/interest/{slug}', [VolunteeringApiController::class, 'interest']);
         Route::delete('/disinterest/{slug}', [VolunteeringApiController::class, 'disinterest']);
-
     });
 
     Route::prefix('post')->group(function () {
@@ -97,40 +95,35 @@ Route::middleware(['firstLogin'])->group(function () {
 
     // All Routes For Trip
     Route::group(['prefix' => 'trip'], function () {
-        Route::get('/tags', [TripApiController::class, 'tags']);
-        Route::get('/', [TripApiController::class, 'index']);
-        Route::post('/create', [TripApiController::class, 'create']);
-
+        // Get Tags
+        Route::get('/tags', [TripApiController::class, 'tags']); // DONE ✅
+        // Get Trips
+        Route::get('/', [TripApiController::class, 'index']); // DONE ✅
+        // Create Trips
+        Route::post('/create', [TripApiController::class, 'create']); // DONE ✅
         // Private Trips
-        Route::get('/private', [TripApiController::class, 'privateTrips']);
-        Route::post('/user/{status?}', [TripApiController::class, 'acceptCancel']);
-
+        Route::get('/private', [TripApiController::class, 'privateTrips']); // DONE ✅
+        // User Trips Requests
+        Route::post('/user/{status}', [TripApiController::class, 'acceptCancel']); // DONE ✅
         // Invitations Trips
-        Route::get('/invitations', [TripApiController::class, 'invitationTrips']);
-
-        // Liking or Disliking a Review
-        Route::get('review/{status?}/{review_id?}', [TripApiController::class, 'likeDislike']);
+        Route::get('/invitations', [TripApiController::class, 'invitationTrips']); // DONE ✅
 
         // Middleware Grouped Routes
         Route::middleware('CheckTripStatus')->group(function () {
             // Joining Trips
-            Route::post('/join/{trip_id?}', [TripApiController::class, 'join']);
-            Route::delete('/join/cancel/{trip_id?}', [TripApiController::class, 'cancelJoin']);
+            Route::post('/join/{trip_slug}', [TripApiController::class, 'join']); // DONE ✅
+            // Canceling Join
+            Route::delete('/join/cancel/{trip_slug}', [TripApiController::class, 'cancelJoin']); // DONE ✅
             // Trip Details
-            Route::get('/details/{trip_id?}', [TripApiController::class, 'tripDetails']);
-
-            // Managing Reviews
-            Route::post('add/review/{trip_id?}', [TripApiController::class, 'addReview']);
-            Route::post('update/review/{trip_id?}', [TripApiController::class, 'updateReview']);
-            Route::delete('delete/review/{trip_id?}', [TripApiController::class, 'deleteReview']);
-            Route::get('all/reviews/{trip_id?}', [TripApiController::class, 'reviews']);
-            // Removing and Updating Trips
-            Route::delete('/delete/{trip_id?}', [TripApiController::class, 'remove']);
-            Route::post('/update/{trip_id?}', [TripApiController::class, 'update']);
+            Route::get('/details/{trip_slug}', [TripApiController::class, 'tripDetails']); // DONE ✅
+            // Delete Trips
+            Route::delete('/delete/{trip_slug}', [TripApiController::class, 'remove']); // DONE ✅
+            // Update Trips
+            Route::put('/update/{trip_slug}', [TripApiController::class, 'update']); // DONE ✅
             // Invitations Trips Accept or Cancel
-            Route::post('/invitation-status/{status?}', [TripApiController::class, 'acceptCancelInvitation']);
+            Route::post('/invitation-status/{status}', [TripApiController::class, 'acceptCancelInvitation']); // DONE ✅
             // Remove User From Trip After User Joined
-            Route::post('/remove-user/{trip_id?}', [TripApiController::class, 'removeUser']);
+            Route::post('/remove-user/{trip_slug}', [TripApiController::class, 'removeUser']); // DONE ✅
         });
     });
 
@@ -166,8 +159,8 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/trips/update/{guide_trip_id?}', [GuideTripApiController::class, 'update']);
         Route::delete('/trips/delete/{guide_trip_id?}', [GuideTripApiController::class, 'delete']);
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
-        Route::get('join/requests/list/{guide_trip_id?}',[GuideTripApiController::class, 'joinRequests']);
-        Route::put('change/join/request/{status?}/{guide_trip_user_id?}',[GuideTripApiController::class, 'changeJoinRequestStatus']);
+        Route::get('join/requests/list/{guide_trip_id?}', [GuideTripApiController::class, 'joinRequests']);
+        Route::put('change/join/request/{status?}/{guide_trip_user_id?}', [GuideTripApiController::class, 'changeJoinRequestStatus']);
     });
 
     Route::group(['prefix' => 'user/guide-trip'], function () {
@@ -175,7 +168,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/store', [GuideTripUserApiController::class, 'store']);
         Route::post('/update', [GuideTripUserApiController::class, 'update']);
         Route::delete('/delete/{guide_trip_id?}', [GuideTripUserApiController::class, 'delete']);
-
     });
 
     Route::controller(GuideRatingController::class)->group(function () {

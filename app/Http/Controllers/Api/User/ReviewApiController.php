@@ -28,19 +28,21 @@ class ReviewApiController extends Controller
         $this->reviewApiUseCase = $reviewApiUseCase;
     }
 
-    public function reviews(Request $request,$type,$slug)
+    public function reviews(Request $request, $type, $slug)
     {
         $validator = Validator::make(
             [
-                'type'=>$type,
+                'type' => $type,
                 'slug' => $slug
             ],
             [
-                'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
                 'slug' => ['required', new CheckIfTypeAndSlugRule()],
-            ],[
-            'slug.required'=>__('validation.api.id-does-not-exists'),
-        ]);
+            ],
+            [
+                'slug.required' => __('validation.api.id-does-not-exists'),
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -55,21 +57,21 @@ class ReviewApiController extends Controller
         }
     }
 
-    public function addReview(Request $request,$type,$slug)
+    public function addReview(Request $request, $type, $slug)
     {
         $validator = Validator::make([
-            'type'=>$type,
+            'type' => $type,
             'slug' => $slug,
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-            'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
-        ],[
+        ], [
             'rating.required' => __('validation.api.rating-is-required'),
-            'comment.string'=>__('validation.api.comment-should-be-string'),
+            'comment.string' => __('validation.api.comment-should-be-string'),
         ]);
 
         if ($validator->fails()) {
@@ -86,22 +88,22 @@ class ReviewApiController extends Controller
         }
     }
 
-    public function updateReview(Request $request,$type,$slug)
+    public function updateReview(Request $request, $type, $slug)
     {
 
         $validator = Validator::make([
-            'type'=>$type,
+            'type' => $type,
             'slug' => $slug,
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-            'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfNotExistsInReviewsRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
-        ],[
+        ], [
             'rating.required' => __('validation.api.rating-is-required'),
-            'comment.string'=>__('validation.api.comment-should-be-string'),
+            'comment.string' => __('validation.api.comment-should-be-string'),
         ]);
 
         if ($validator->fails()) {
@@ -118,13 +120,13 @@ class ReviewApiController extends Controller
         }
     }
 
-    public function deleteReview(Request $request,$type,$slug)
+    public function deleteReview(Request $request, $type, $slug)
     {
         $validator = Validator::make([
-            'type'=>$type,
+            'type' => $type,
             'slug' => $slug,
         ], [
-            'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfNotExistsInReviewsRule()],
         ]);
 
@@ -141,12 +143,12 @@ class ReviewApiController extends Controller
         }
     }
 
-    public function likeDislike(Request $request,$status,$review_id)
+    public function likeDislike(Request $request, $status, $review_id)
     {
         $validator = Validator::make(
             [
                 'status' => $status,
-                'review_id' =>$review_id,
+                'review_id' => $review_id,
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
@@ -154,9 +156,10 @@ class ReviewApiController extends Controller
             ],
             [
                 'review_id.exists' => __('validation.api.the-selected-review-id-does-not-exists'),
-                'review_id.required'=> __('validation.api.the-review-id-required'),
-                'status'=>__('validation.api.the-status-required')
-            ]);
+                'review_id.required' => __('validation.api.the-review-id-required'),
+                'status' => __('validation.api.the-status-required')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -165,7 +168,7 @@ class ReviewApiController extends Controller
 
         try {
             $this->reviewApiUseCase->reviewsLike($validator->validated());
-            return ApiResponse::sendResponse(200,__('app.event.api.the-likable-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

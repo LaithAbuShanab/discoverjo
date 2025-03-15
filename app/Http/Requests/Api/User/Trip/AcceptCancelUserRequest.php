@@ -28,22 +28,23 @@ class AcceptCancelUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required','integer','exists:users_trips,user_id', new CheckIfTheUserIsTripAnotherTrip],
-            'trip_id' => ['required', 'integer', 'exists:trips,id', new CheckUserTripStatus]
+            'user_slug' => ['bail', 'required', 'string', 'exists:users,slug', new CheckIfTheUserIsTripAnotherTrip],
+            'trip_slug' => ['bail', 'required', 'string', 'exists:trips,slug', new CheckUserTripStatus]
         ];
     }
 
     public function messages()
     {
         return [
-            'user_id.required' => __('validation.api.user_id-required'),
-            'user_id.integer' => __('validation.api.user_id-integer'),
-            'user_id.exists' => __('validation.api.user_id-exists'),
-            'trip_id.required' => __('validation.api.trip_id-required'),
-            'trip_id.integer' => __('validation.api.trip_id-integer'),
-            'trip_id.exists' => __('validation.api.trip_id-exists'),
+            'user_slug.required' => __('validation.api.user_slug_required'),
+            'user_slug.string' => __('validation.api.user_slug_string'),
+            'user_slug.exists' => __('validation.api.user_slug_exists'),
+            'trip_slug.required' => __('validation.api.trip_slug_required'),
+            'trip_slug.string' => __('validation.api.trip_slug_string'),
+            'trip_slug.exists' => __('validation.api.trip_slug_exists'),
         ];
     }
+
 
     protected function failedValidation(Validator $validator)
     {
@@ -52,5 +53,4 @@ class AcceptCancelUserRequest extends FormRequest
             ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors)
         );
     }
-
 }

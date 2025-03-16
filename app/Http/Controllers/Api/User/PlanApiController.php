@@ -19,11 +19,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PlanApiController extends Controller
 {
-    protected $planApiUseCase;
-
-    public function __construct(PlanApiUseCase $planApiUseCase)
+    public function __construct(protected PlanApiUseCase $planApiUseCase)
     {
-
         $this->planApiUseCase = $planApiUseCase;
     }
 
@@ -31,7 +28,31 @@ class PlanApiController extends Controller
     {
         try {
             $plans = $this->planApiUseCase->allPlans();
-            return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
+            return ApiResponse::sendResponse(200, __('app.api.plans-retrieved-successfully'), $plans);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function create(CreatePlanApiRequest $request)
+    {
+        try {
+            $validatedData = $request->validated();
+            $createPlan = $this->planApiUseCase->createPlan($validatedData);
+            return ApiResponse::sendResponse(200, __('app.api.plan-created-successfully'), $createPlan);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function update(UpdatePlanApiRequest $request)
+    {
+        try {
+            $validatedData = $request->validated();
+            $createPlan = $this->planApiUseCase->updatePlan($validatedData);
+            return ApiResponse::sendResponse(200, __('app.api.plan-updated-successfully'), $createPlan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -49,48 +70,25 @@ class PlanApiController extends Controller
         }
     }
 
-    public function create(CreatePlanApiRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        try {
-            $createPlan = $this->planApiUseCase->createPlan($validatedData);
-            return ApiResponse::sendResponse(200, __('app.plan.plan-created-successfully'), $createPlan);
-        } catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
-    public function update(UpdatePlanApiRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        try {
-            $createPlan = $this->planApiUseCase->updatePlan($validatedData);
-            return ApiResponse::sendResponse(200, __('app.plan.plan-updated-successfully'), $createPlan);
-        } catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
     public function show(Request $request)
     {
-        $validator = Validator::make(['plan_id' => $request->plan_id], [
-            'plan_id' => ['required', 'exists:plans,id', new CheckIfPlanBelongsToUserOrAdmin()],
+        $validator = Validator::make(
+            ['plan_slug' => $request->plan_slug],
+            [
+                'plan_slug' => ['required', 'exists:plans,slug', new CheckIfPlanBelongsToUserOrAdmin()],
             ],
             [
-                'plan_id.exists'=>__('validation.api.plan-id-invalid'),
-                'plan_id.required'=>__('validation.api.plan-id-does-not-exists')
-            ]);
+                'plan_slug.exists' => __('validation.api.plan-slug-invalid'),
+                'plan_slug.required' => __('validation.api.plan-slug-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $plan = $this->planApiUseCase->show($request->plan_id);
+            $plan = $this->planApiUseCase->show($request->plan_slug);
             return ApiResponse::sendResponse(200, __('app.api.the-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -100,14 +98,17 @@ class PlanApiController extends Controller
 
     public function destroy(Request $request)
     {
-        $id = $request->plan_id;
-        $validator = Validator::make(['plan_id' => $id], [
-            'plan_id' => ['required', 'exists:plans,id', new CheckIfPlanBelongsToUser()],
-        ],
+        $slug = $request->plan_slug;
+        $validator = Validator::make(
+            ['plan_slug' => $slug],
             [
-                'plan_id.exists'=>__('validation.api.plan-id-invalid'),
-                'plan_id.required'=>__('validation.api.plan-id-does-not-exists')
-            ]);
+                'plan_slug' => ['bail', 'required', 'exists:plans,slug', new CheckIfPlanBelongsToUser()],
+            ],
+            [
+                'plan_slug.exists' => __('validation.api.plan-slug-invalid'),
+                'plan_slug.required' => __('validation.api.plan-slug-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -115,8 +116,19 @@ class PlanApiController extends Controller
         }
 
         try {
-            $createTrip = $this->planApiUseCase->deletePlan($id);
+            $createTrip = $this->planApiUseCase->deletePlan($slug);
             return ApiResponse::sendResponse(200, __('app.api.plan-deleted-successfully'), $createTrip);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function myPlans()
+    {
+        try {
+            $plans = $this->planApiUseCase->myPlans();
+            return ApiResponse::sendResponse(200, __('app.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -127,13 +139,16 @@ class PlanApiController extends Controller
     {
         $id = $request->plan_id;
 
-        $validator = Validator::make(['plan_id' => $id], [
-            'plan_id' => ['required', 'exists:plans,id', new CheckIfExistsInFavoratblesRule('App\Models\Plan'), new CheckIfPlanBelongsToUserOrAdmin()],
-        ],
+        $validator = Validator::make(
+            ['plan_id' => $id],
             [
-                'plan_id.exists'=>__('validation.api.plan-id-invalid'),
-                'plan_id.required'=>__('validation.api.plan-id-does-not-exists')
-            ]);
+                'plan_id' => ['required', 'exists:plans,id', new CheckIfExistsInFavoratblesRule('App\Models\Plan'), new CheckIfPlanBelongsToUserOrAdmin()],
+            ],
+            [
+                'plan_id.exists' => __('validation.api.plan-id-invalid'),
+                'plan_id.required' => __('validation.api.plan-id-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -154,13 +169,16 @@ class PlanApiController extends Controller
     {
         $id = $request->plan_id;
 
-        $validator = Validator::make(['plan_id' => $id], [
-            'plan_id' => ['required', 'exists:plans,id', new CheckIfNotExistsInFavoratblesRule('App\Models\Plan')],
-        ],
+        $validator = Validator::make(
+            ['plan_id' => $id],
             [
-                'plan_id.exists'=>__('validation.api.plan-id-invalid'),
-                'plan_id.required'=>__('validation.api.plan-id-does-not-exists')
-            ]);
+                'plan_id' => ['required', 'exists:plans,id', new CheckIfNotExistsInFavoratblesRule('App\Models\Plan')],
+            ],
+            [
+                'plan_id.exists' => __('validation.api.plan-id-invalid'),
+                'plan_id.required' => __('validation.api.plan-id-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -193,17 +211,6 @@ class PlanApiController extends Controller
         try {
             $plans = $this->planApiUseCase->filter($request->validated());
             return ApiResponse::sendResponse(200, __('app.plan.api.the-searched-plan-retrieved-successfully'), $plans);
-        } catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
-    public function myPlans()
-    {
-        try {
-            $plans = $this->planApiUseCase->myPlans();
-            return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

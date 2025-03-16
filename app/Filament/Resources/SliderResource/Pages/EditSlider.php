@@ -12,13 +12,12 @@ use Illuminate\Validation\ValidationException;
 class EditSlider extends EditRecord
 {
     protected static string $resource = SliderResource::class;
-    use EditRecord\Concerns\Translatable;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 

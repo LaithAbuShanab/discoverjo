@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api\User\Plan;
 
 use App\Helpers\ApiResponse;
-use App\Rules\CheckIfPlanBelongsToUser;
+use Illuminate\Support\Str;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -19,6 +19,39 @@ class UpdatePlanApiRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'plan_slug' => request('plan_slug'),
+        ]);
+    }
+
+    // public function rules(): array
+    // {
+    //     $rules = [
+    //         'name' => 'required',
+    //         'description' => 'required',
+    //         'days' => 'required|array',
+    //     ];
+
+    //     foreach ($this->json('days') as $dayIndex => $day) {
+    //         foreach ($day['activities'] as $activityIndex => $activity) {
+    //             $activityRule = "required|date_format:H:i";
+    //             if ($activityIndex > 0) {
+    //                 $previousEndTime = $this->json("days.$dayIndex.activities." . ($activityIndex - 1) . ".end_time");
+    //                 $activityRule .= "|after:$previousEndTime";
+    //             }
+    //             $rules["days.$dayIndex.activities.$activityIndex.name"] = "required";
+    //             $rules["days.$dayIndex.activities.$activityIndex.start_time"] = $activityRule;
+    //             $rules["days.$dayIndex.activities.$activityIndex.end_time"] = $activityRule . "|after:days.$dayIndex.activities.$activityIndex.start_time";
+    //             $rules["days.$dayIndex.activities.$activityIndex.place_id"] = "required|exists:places,id";
+    //             $rules["days.$dayIndex.activities.$activityIndex.note"] = "max:255";
+    //         }
+    //     }
+
+    //     return $rules;
+    // }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,77 +59,91 @@ class UpdatePlanApiRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'plan_id'=>['required','exists:plans,id',new CheckIfPlanBelongsToUser()],
-            'name' => 'required',
-            'description' => 'required',
-            'days' => 'required|array',
-        ];
-
-        foreach ($this->json('days') as $dayIndex => $day) {
-            foreach ($day['activities'] as $activityIndex => $activity) {
-                $activityRule = "required|date_format:H:i";
-                if ($activityIndex > 0) {
-                    $previousEndTime = $this->json("days.$dayIndex.activities." . ($activityIndex - 1) . ".end_time");
-                    $activityRule .= "|after:$previousEndTime";
-                }
-                $rules["days.$dayIndex.activities.$activityIndex.name"] = "required";
-                $rules["days.$dayIndex.activities.$activityIndex.start_time"] = $activityRule;
-                $rules["days.$dayIndex.activities.$activityIndex.end_time"] = $activityRule . "|after:days.$dayIndex.activities.$activityIndex.start_time";
-                $rules["days.$dayIndex.activities.$activityIndex.place_id"] = "required|exists:places,id";
-                $rules["days.$dayIndex.activities.$activityIndex.note"] = "max:255";
-            }
-        }
-
-        return $rules;
-    }
-
-
-    public function messages()
-    {
         return [
-            'plan_id.required' => __('validation.api.plan-id-required'),
-            'plan_id.exists' => __('validation.api.plan-id-exists'),
-            'name.required' => __('validation.api.name-required'),
-            'name.string' => __('validation.api.name-string'),
-            'name.max' => __('validation.api.name-max'),
-            'description.required' => __('validation.api.description-required'),
-            'description.string' => __('validation.api.description-string'),
-            'days.required' => __('validation.api.days-required'),
-            'days.array' => __('validation.api.days-array'),
-            'days.*.activities.required' => __('validation.api.activities-required'),
-            'days.*.activities.array' => __('validation.api.activities-array'),
-            'days.*.activities.*.name.required' => __('validation.api.activity-name-required'),
-            'days.*.activities.*.start_time.required' => __('validation.api.activity-start-time-required'),
-            'days.*.activities.*.start_time.date_format' => __('validation.api.activity-start-time-format'),
-            'days.*.activities.*.end_time.required' => __('validation.api.activity-end-time-required'),
-            'days.*.activities.*.end_time.date_format' => __('validation.api.activity-end-time-format'),
-            'days.*.activities.*.end_time.after' => __('validation.api.activity-end-time-after'),
-            'days.*.activities.*.place_id.required' => __('validation.api.activity-place-id-required'),
-            'days.*.activities.*.place_id.exists' => __('validation.api.activity-place-id-exists'),
-            'days.*.activities.*.note.max' => __('validation.api.activity-note-max'),
+            'plan_slug' => ['required', 'exists:plans,slug'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:1000'],
+            'days' => ['required', 'array', 'min:1'],
+            'days.*.activities' => ['required', 'array', 'min:1'],
+            'days.*.activities.*.name' => ['required', 'string', 'max:255'],
+            'days.*.activities.*.start_time' => ['required', 'date_format:H:i'],
+            'days.*.activities.*.end_time' => ['required', 'date_format:H:i'],
+            'days.*.activities.*.place_slug' => ['required', 'string', 'exists:places,slug'],
+            'days.*.activities.*.note' => ['nullable', 'string', 'max:255'],
         ];
     }
 
+    /**
+     * Additional validation for nested time logic (end_time after start_time and sequential activities).
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $days = $this->input('days', []);
+
+            foreach ($days as $dayIndex => $day) {
+                $previousEndTime = null;
+
+                foreach ($day['activities'] as $activityIndex => $activity) {
+                    $startTime = $activity['start_time'];
+                    $endTime = $activity['end_time'];
+
+                    // Validate that end_time is after start_time
+                    if (strtotime($endTime) <= strtotime($startTime)) {
+                        $validator->errors()->add(
+                            "days.$dayIndex.activities.$activityIndex.end_time_custom",
+                            ''
+                        );
+                    }
+
+                    // Validate sequential activities times
+                    if ($previousEndTime && strtotime($startTime) < strtotime($previousEndTime)) {
+                        $validator->errors()->add(
+                            "days.$dayIndex.activities.$activityIndex.start_time_custom",
+                            ''
+                        );
+                    }
+
+                    $previousEndTime = $endTime;
+                }
+            }
+        });
+    }
 
     /**
      * Handle a failed validation attempt.
      *
      * @param \Illuminate\Contracts\Validation\Validator $validator
-     * @return void
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
-        $errors = [];
+        $errors = collect($validator->errors()->messages())->map(function ($messages, $field) {
+            if (preg_match('/\.(\w+)$/', $field, $matches)) {
+                $attributeName = $matches[1];
+            } else {
+                $attributeName = $field;
+            }
 
-        foreach ($validator->errors()->messages() as $field => $messages) {
-            //dd($field);
-            //list($dayIndex, $activityIndex, $attribute) = explode('.', $field, 3);
-            $errors[] = "$field: $messages[0]";
-        }
+            preg_match_all('/\d+/', $field, $indexes);
+            $day = $indexes[0][0] ?? null;
+            $activity = $indexes[0][1] ?? null;
+
+            if (Str::contains($field, 'days')) {
+                $messageKey = "validation.api.{$attributeName}_plan_error";
+                $messageData = [
+                    'day' => $day + 1,
+                    'activity' => $activity + 1,
+                ];
+            } else {
+                $messageKey = "validation.api.{$attributeName}_plan_error_main";
+                $messageData = [];
+            }
+
+            return __($messageKey, $messageData);
+        })->values();
 
         throw new HttpResponseException(
-            ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors)
+            ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors->toArray())
         );
     }
 }

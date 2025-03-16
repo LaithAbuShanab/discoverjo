@@ -8,14 +8,13 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditOrganizer extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
     protected static string $resource = OrganizerResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

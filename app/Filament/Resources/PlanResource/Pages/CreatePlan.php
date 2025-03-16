@@ -9,14 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class CreatePlan extends CreateRecord
 {
-    use CreateRecord\Concerns\Translatable;
-
     protected static string $resource = PlanResource::class;
 
     protected function getActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
         ];
     }
 

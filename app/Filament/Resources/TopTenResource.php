@@ -6,7 +6,6 @@ use App\Filament\Resources\TopTenResource\Pages;
 use App\Models\TopTen;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -22,8 +21,6 @@ use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class TopTenResource extends Resource
 {
-    use Translatable;
-
     protected static ?string $model = TopTen::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-trophy';
@@ -77,12 +74,10 @@ class TopTenResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('place.name')->searchable()
-                    ->getStateUsing(fn($record, $livewire) => $record->place?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('place.name')->searchable(),
                 Tables\Columns\TextColumn::make('place.phone_number')->searchable(),
                 RatingColumn::make('place.rating')->theme(RatingTheme::HalfStars)->sortable()->color('warning')->default(0.0),
-                Tables\Columns\TextColumn::make('place.region.name')->searchable()->sortable()
-                    ->getStateUsing(fn($record, $livewire) => $record->place->region?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('place.region.name')->searchable()->sortable(),
                 SpatieMediaLibraryImageColumn::make('place.Media')->allCollections()->circular()->stacked(),
             ])
             ->filters([

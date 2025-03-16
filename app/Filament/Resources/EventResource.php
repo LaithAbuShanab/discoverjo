@@ -20,7 +20,6 @@ use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class EventResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Event::class;
 
@@ -51,35 +50,24 @@ class EventResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Event Name')
-                                    ->unique()
+                                    ->placeholder('Please Enter Event Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
-                                    ->disabled()
+                                    ->placeholder('Please Enter Slug')
                                     ->maxLength(255),
                             ]),
                         Grid::make(1)
                             ->schema([
-                                Forms\Components\Textarea::make('description')->required()->columnSpanFull(),
+                                Forms\Components\Textarea::make('description')->placeholder('Please Enter Description')->required()->columnSpanFull()->translatable(),
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('address')
-                                    ->required(),
-                                Forms\Components\Select::make('region_id')
-                                    ->relationship('region', 'name')
-                                    ->required()
-                                    ->getOptionLabelFromRecordUsing(function ($record, $livewire) {
-                                        return $record->getTranslation('name', $livewire->activeLocale);
-                                    }),
+                                Forms\Components\TextInput::make('address')->required()->placeholder('Please Enter Address')->translatable(),
+                                Forms\Components\Select::make('region_id')->relationship('region', 'name')->required(),
                             ]),
                         Grid::make(2)
                             ->schema([
@@ -98,19 +86,18 @@ class EventResource extends Resource
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('price')->required()->numeric(),
-                                Forms\Components\TextInput::make('attendance_number')->required()->numeric(),
+                                Forms\Components\TextInput::make('price')->placeholder('Please Enter Price')->required()->numeric(),
+                                Forms\Components\TextInput::make('attendance_number')->placeholder('Please Enter Attendance Number')->required()->numeric(),
                             ]),
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\Toggle::make('status')->required()->inline(false),
-                                Forms\Components\TextInput::make('link')->required()->url(),
+                                Forms\Components\TextInput::make('link')->placeholder('Please Enter Link')->required()->url(),
                             ]),
                         Grid::make(1)
                             ->schema([
                                 Forms\Components\Select::make('organizer_id')
                                     ->relationship('organizers', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn($record, $livewire) => $record->getTranslation('name', $livewire->activeLocale))
                                     ->required()
                                     ->multiple()
                                     ->searchable()
@@ -147,7 +134,7 @@ class EventResource extends Resource
                 SpatieMediaLibraryImageColumn::make('image')->collection('event')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('start_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('end_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make('status'),

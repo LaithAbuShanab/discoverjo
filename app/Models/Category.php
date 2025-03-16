@@ -10,8 +10,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
-use Illuminate\Database\Eloquent\Builder;
-
 
 class Category extends Model implements HasMedia
 {

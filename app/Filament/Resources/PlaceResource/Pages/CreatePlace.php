@@ -9,14 +9,13 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreatePlace extends CreateRecord
 {
-    use CreateRecord\Concerns\Translatable;
 
     protected static string $resource = PlaceResource::class;
 
     protected function getActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 

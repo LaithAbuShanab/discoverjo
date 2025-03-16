@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListPopularPlaces extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
 
     protected static string $resource = PopularPlaceResource::class;
 
@@ -16,7 +15,7 @@ class ListPopularPlaces extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

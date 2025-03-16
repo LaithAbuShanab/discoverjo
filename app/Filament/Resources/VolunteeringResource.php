@@ -20,12 +20,12 @@ use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class VolunteeringResource extends Resource
 {
-    use Translatable;
     protected static ?string $model = Volunteering::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-gif';
 
     protected static ?string $navigationGroup = 'Event & Volunteering';
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -47,35 +47,24 @@ class VolunteeringResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Volunteering Name')
-                                    ->unique()
+                                    ->placeholder('Please Enter Volunteering Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
-                                    ->disabled()
+                                    ->placeholder('Please Enter Slug')
                                     ->maxLength(255),
                             ]),
                         Grid::make(1)
                             ->schema([
-                                Forms\Components\Textarea::make('description')->required()->columnSpanFull(),
+                                Forms\Components\Textarea::make('description')->placeholder('Please Enter Description')->required()->columnSpanFull()->translatable(),
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('address')
-                                    ->required(),
-                                Forms\Components\Select::make('region_id')
-                                    ->relationship('region', 'name')
-                                    ->required()
-                                    ->getOptionLabelFromRecordUsing(function ($record, $livewire) {
-                                        return $record->getTranslation('name', $livewire->activeLocale);
-                                    }),
+                                Forms\Components\TextInput::make('address')->placeholder('Please Enter Address')->required()->translatable(),
+                                Forms\Components\Select::make('region_id')->relationship('region', 'name')->required(),
                             ]),
                         Grid::make(2)
                             ->schema([
@@ -89,24 +78,23 @@ class VolunteeringResource extends Resource
                                     }),
                                 Forms\Components\DateTimePicker::make('end_datetime')
                                     ->required()
-                                    ->minDate(fn (callable $get) => $get('start_datetime')) // Ensure it starts after start_datetime
+                                    ->minDate(fn(callable $get) => $get('start_datetime')) // Ensure it starts after start_datetime
                                     ->rules(['after:start_datetime']),
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('hours_worked')->required()->numeric(),
-                                Forms\Components\TextInput::make('attendance_number')->required()->numeric(),
+                                Forms\Components\TextInput::make('hours_worked')->placeholder('Please Enter Hours Worked')->required()->numeric(),
+                                Forms\Components\TextInput::make('attendance_number')->placeholder('Please Enter Attendance Number')->required()->numeric(),
                             ]),
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\Toggle::make('status')->required()->inline(false),
-                                Forms\Components\TextInput::make('link')->required()->url(),
+                                Forms\Components\TextInput::make('link')->placeholder('Please Enter Link')->required()->url(),
                             ]),
                         Grid::make(1)
                             ->schema([
                                 Forms\Components\Select::make('organizer_id')
                                     ->relationship('organizers', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn($record, $livewire) => $record->getTranslation('name', $livewire->activeLocale))
                                     ->required()
                                     ->multiple()
                                     ->searchable()
@@ -143,7 +131,7 @@ class VolunteeringResource extends Resource
                 SpatieMediaLibraryImageColumn::make('image')->collection('volunteering')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('start_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('end_datetime')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make('status'),

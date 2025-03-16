@@ -3,8 +3,6 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\PlanApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\VolunteeringApiRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
 
 class PlanApiUseCase
 {
@@ -13,6 +11,11 @@ class PlanApiUseCase
     public function __construct(PlanApiRepositoryInterface $planRepository)
     {
         $this->planRepository = $planRepository;
+    }
+
+    public function allPlans()
+    {
+        return $this->planRepository->allPlans();
     }
 
     public function createPlan($validatedData)
@@ -25,14 +28,19 @@ class PlanApiUseCase
         return $this->planRepository->updatePlan($validatedData);
     }
 
-    public function deletePlan($id)
+    public function deletePlan($slug)
     {
-        return $this->planRepository->deletePlan($id);
+        return $this->planRepository->deletePlan($slug);
     }
 
-    public function allPlans()
+    public function show($slug)
     {
-        return $this->planRepository->allPlans();
+        return $this->planRepository->show($slug);
+    }
+
+    public function myPlans()
+    {
+        return $this->planRepository->myPlans();
     }
 
     public function plans()
@@ -40,10 +48,6 @@ class PlanApiUseCase
         return $this->planRepository->plans();
     }
 
-    public function show($id)
-    {
-        return $this->planRepository->show($id);
-    }
     public function createFavoritePlan($id)
     {
         return $this->planRepository->favorite($id);
@@ -60,10 +64,5 @@ class PlanApiUseCase
     public function filter($data)
     {
         return $this->planRepository->filter($data);
-    }
-
-    public function myPlans()
-    {
-        return $this->planRepository->myPlans();
     }
 }

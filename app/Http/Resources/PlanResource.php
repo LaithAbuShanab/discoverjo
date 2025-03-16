@@ -16,22 +16,30 @@ class PlanResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // $placeIds = $this->activities->pluck('place_id')->unique();
-        // $randomPlaceId = $placeIds->random();
-        $placeId = $this->days->pluck('place_id')->first();
-        $place = Place::find($placeId);
-        $creator = $this->creator_type== "App\Models\Admin"? "admin":"user";
+        $activities = $this->days->flatMap->activities;
+
+        // Get all unique place IDs from activities
+        $placeIds = $activities->pluck('place_id')->unique()->values();
+
+        // Get the first place
+        $place = Place::find($placeIds->first());
+
+        // Determine creator type
+        $creator = $this->creator_type == "App\Models\Admin" ? "admin" : "user";
+
         return [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'name' => $this->name,
-            'creator'=>$creator,
+            'creator' => $creator,
             'description' => $this->description,
-            'number_of_days' => $this->days->groupBy('day_number')->count(),
-            'number_of_activities' => $this->days->count(),
-            'number_of_place' => $this->days->groupBy('place_id')->count(),
+            'number_of_days' => $this->days->count(),
+            'number_of_activities' => $activities->count(),
+            'number_of_places' => $placeIds->count(),
             'image' => $place?->getFirstMediaUrl('main_place', 'main_place_app'),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlans->contains('id', $this->id) : false,
+            'favorite' => Auth::guard('api')->user()
+                ? Auth::guard('api')->user()->favoritePlans->contains($this->id)
+                : false,
         ];
     }
 }

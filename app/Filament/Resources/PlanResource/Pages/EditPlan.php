@@ -9,15 +9,12 @@ use Illuminate\Validation\ValidationException;
 
 class EditPlan extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
-
     protected static string $resource = PlanResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
         ];
     }
 

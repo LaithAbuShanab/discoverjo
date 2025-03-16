@@ -10,7 +10,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPlace extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
 
     protected static string $resource = PlaceResource::class;
 
@@ -18,7 +17,7 @@ class EditPlace extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 

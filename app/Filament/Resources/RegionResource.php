@@ -16,8 +16,6 @@ use Illuminate\Support\Str;
 
 class RegionResource extends Resource
 {
-    use Translatable;
-
     protected static ?string $model = Region::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
@@ -47,13 +45,7 @@ class RegionResource extends Resource
                                     ->label('Region Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
-
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')

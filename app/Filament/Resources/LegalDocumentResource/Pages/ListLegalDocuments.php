@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListLegalDocuments extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
 
     protected static string $resource = LegalDocumentResource::class;
 
@@ -16,7 +15,7 @@ class ListLegalDocuments extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

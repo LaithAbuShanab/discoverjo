@@ -10,13 +10,9 @@ class PlanActivity extends Model
 {
     use HasFactory, HasTranslations;
 
-    public $translatable = ['activity_name', 'notes'];
     public $guarded = [];
 
-    protected $casts = [
-        'activity_name' => 'array',
-        'notes' => 'array',
-    ];
+    public $translatable = ['activity_name', 'notes'];
 
     public function plan()
     {

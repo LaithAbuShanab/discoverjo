@@ -20,8 +20,6 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class CategoryResource extends Resource
 {
-    use Translatable;
-
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-bars-4';
@@ -52,16 +50,12 @@ class CategoryResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
                                     ->disabled()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
                             ]),
                     ])
                     ->columns(1),

@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListFeatures extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
 
     protected static string $resource = FeatureResource::class;
 
@@ -16,7 +15,7 @@ class ListFeatures extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

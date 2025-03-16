@@ -18,7 +18,6 @@ use Illuminate\Support\Str;
 
 class OrganizerResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Organizer::class;
 
@@ -49,19 +48,13 @@ class OrganizerResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Organizer Name')
-                                    ->unique()
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
-                                    ->disabled()
+                                    ->placeholder('Please Enter Slug')
                                     ->maxLength(255),
                             ]),
                     ])

@@ -7,21 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Plan extends Model
 {
-    use HasFactory, HasTranslations, HasSlug;
+    use HasFactory, HasTranslations, HasSlug , LogsActivity;
 
     public $translatable = ['name', 'description'];
     public $guarded = [];
 
+    protected $casts = [
+        'activity_name' => 'array',
+        'notes' => 'array',
+    ];
+
     public function getSlugOptions(): SlugOptions
     {
-        return SlugOptions::create()
+        $slugOptions = SlugOptions::create()
             ->generateSlugsFrom(function () {
-                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
-            })
-            ->saveSlugsTo('slug');
+                $name = $this->getTranslation('name', 'en') ?? $this->getTranslation('name', app()->getLocale());
+                return !empty($name) ? $name : 'default-slug';
+            })->saveSlugsTo('slug');
+
+        // Only generate the slug when creating (not updating)
+        if ($this->exists) {
+            $slugOptions->doNotGenerateSlugsOnUpdate();
+        }
+
+        return $slugOptions;
     }
 
     public function creator()
@@ -42,5 +56,11 @@ class Plan extends Model
     public function posts()
     {
         return $this->morphMany(Post::class, 'visitable');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('trip');
     }
 }

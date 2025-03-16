@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListEvents extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
 
     protected static string $resource = EventResource::class;
 
@@ -16,7 +15,7 @@ class ListEvents extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

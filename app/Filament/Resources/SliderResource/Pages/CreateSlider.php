@@ -4,14 +4,12 @@ namespace App\Filament\Resources\SliderResource\Pages;
 
 use App\Filament\Resources\SliderResource;
 use App\Models\Slider;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\ValidationException;
 use Filament\Notifications\Notification;
 
 class CreateSlider extends CreateRecord
 {
-    use CreateRecord\Concerns\Translatable;
     protected static string $resource = SliderResource::class;
 
     protected function getRedirectUrl(): string
@@ -22,7 +20,7 @@ class CreateSlider extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 

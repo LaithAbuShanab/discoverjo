@@ -5,16 +5,17 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\SinglePlanResource;
 use App\Interfaces\Gateways\Api\User\PlanApiRepositoryInterface;
+use App\Models\Place;
 use App\Models\Plan;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 {
     public function allPlans()
     {
         $userId = Auth::guard('api')->user()->id;
-        $plans = Plan::with('activities')
+        $plans = Plan::with('days.activities')
             ->where(function ($query) use ($userId) {
                 $query->where('creator_type', 'App\Models\Admin')
                     ->orWhere(function ($query) use ($userId) {
@@ -25,11 +26,93 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         return PlanResource::collection($plans);
     }
 
+    public function createPlan($validatedData)
+    {
+        return DB::transaction(function () use ($validatedData) {
+            $plan = new Plan();
+            $plan->creator_type = 'App\Models\User';
+            $plan->creator_id = Auth::guard('api')->user()->id;
+
+            $plan->setTranslations('name', ['en' => $validatedData['name'], 'ar' => $validatedData['name']]);
+            $plan->setTranslations('description', ['en' => $validatedData['description'], 'ar' => $validatedData['description']]);
+
+            $plan->save();
+
+            foreach ($validatedData['days'] as $index => $dayData) {
+                $day = $plan->days()->create([
+                    'plan_id' => $plan->id,
+                    'day' => $index + 1,
+                ]);
+
+                foreach ($dayData['activities'] as $activityData) {
+                    $place_id = Place::where('slug', $activityData['place_slug'])->first()->id;
+                    $activity = $day->activities()->create([
+                        'plan_day_id' => $day->id,
+                        'activity_name' => $activityData['name'],
+                        'start_time' => $activityData['start_time'],
+                        'end_time' => $activityData['end_time'],
+                        'place_id' => $place_id,
+                        'notes' => $activityData['note'],
+                    ]);
+
+                    // Set Translations
+                    $activity->setTranslations('activity_name', ['en' => $activityData['name'], 'ar' => $activityData['name']]);
+                    $activity->setTranslations('notes', ['en' => $activityData['note'], 'ar' => $activityData['note']]);
+                    $activity->save();
+                }
+            }
+        });
+    }
+
+    public function updatePlan($validatedData)
+    {
+        return DB::transaction(function () use ($validatedData) {
+            // Fetch the plan
+            $plan = Plan::where('slug', $validatedData['plan_slug'])->firstOrFail();
+
+            // Update Plan Details
+            $plan->setTranslations('name', ['ar' => $validatedData['name'], 'en' => $validatedData['name']]);
+            $plan->setTranslations('description', ['ar' => $validatedData['description'], 'en' => $validatedData['description']]);
+            $plan->save();
+
+            // Delete existing days & activities (to be reinserted)
+            $plan->days()->delete();
+
+            foreach ($validatedData['days'] as $index => $dayData) {
+                // Create new day
+                $day = $plan->days()->create([
+                    'plan_id' => $plan->id,
+                    'day' => $index + 1,
+                ]);
+
+                foreach ($dayData['activities'] as $activityData) {
+                    // Fetch place_id using slug
+                    $place = Place::where('slug', $activityData['place_slug'])->first();
+
+                    // Create Activity
+                    $activity = $day->activities()->create([
+                        'plan_day_id' => $day->id,
+                        'activity_name' => $activityData['name'],
+                        'start_time' => $activityData['start_time'],
+                        'end_time' => $activityData['end_time'],
+                        'place_id' => $place->id,
+                        'notes' => $activityData['note'] ?? null,
+                    ]);
+
+                    // Set Translations
+                    $activity->setTranslations('activity_name', ['en' => $activityData['name'], 'ar' => $activityData['name']]);
+                    $activity->setTranslations('notes', ['en' => $activityData['note'] ?? '', 'ar' => $activityData['note'] ?? '']);
+                    $activity->save();
+                }
+            }
+        });
+    }
+
     public function plans()
     {
         $perPage = 15;
         $allPlans = Plan::where('creator_type', 'App\Models\Admin')->with('days')->paginate($perPage);
-//        $plansArray = $plans->toArray();
+        //        $plansArray = $plans->toArray();
         // Convert paginated items to a collection and shuffle
         $shuffledPlans = $allPlans->getCollection()->shuffle();
 
@@ -50,70 +133,20 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         ];
     }
 
-
-    public function createPlan($validatedData)
+    public function deletePlan($slug)
     {
-        $plan = new Plan();
-        $plan->setTranslations('name', ['en' => $validatedData['name'], 'ar' => $validatedData['name']]);
-        $plan->setTranslations('description', ['en' => $validatedData['description'], 'ar' => $validatedData['description']]);
-        $plan->creator_type = 'App\Models\User';
-        $plan->creator_id = Auth::guard('api')->user()->id;
-        $plan->save();
-
-        foreach ($validatedData['days'] as $index => $day) {
-            foreach ($day['activities'] as $activityData) {
-                $activity = $plan->activities()->create([
-                    'activity_name' => $activityData['name'],
-                    'day_number' => $index + 1,
-                    'start_time' => $activityData['start_time'],
-                    'end_time' => $activityData['end_time'],
-                    'place_id' => $activityData['place_id'],
-                    'notes' => $activityData['note'],
-                ]);
-                $activity->setTranslations('activity_name', ['en' => $activityData['name'], 'ar' => $activityData['name'],]);
-                $activity->setTranslations('notes', ['en' => $activityData['note'], 'ar' => $activityData['note'],]);
-                $activity->save();
-            }
-        }
+        $plan = Plan::where('slug', $slug)->delete();
     }
 
-    public function updatePlan($validatedData)
+    public function show($slug)
     {
-        $plan = Plan::find($validatedData['plan_id']);
-        $plan->activities()->delete();
-
-        $plan->update(['name' => $validatedData['name'], 'description' => $validatedData['description']]);
-        $plan->setTranslations('name', ['ar' => $validatedData['name'], 'en' => $validatedData['name']]);
-        $plan->setTranslations('description', ['ar' => $validatedData['description'], 'en' => $validatedData['description']]);
-        $plan->save();
-
-        foreach ($validatedData['days'] as $index => $day) {
-            foreach ($day['activities'] as $activityData) {
-                $activity = $plan->activities()->create([
-                    'day_number' => $index + 1,
-                    'activity_name' => $activityData['name'],
-                    'start_time' => $activityData['start_time'],
-                    'end_time' => $activityData['end_time'],
-                    'place_id' => $activityData['place_id'],
-                    'notes' => $activityData['note'] ?? null,
-                ]);
-                $activity->setTranslations('activity_name', ['en' => $activityData['name'], 'ar' => $activityData['name']]);
-                $activity->setTranslations('notes', ['en' => $activityData['note'], 'ar' => $activityData['note']]);
-                $activity->save();
-            }
-        }
-    }
-
-
-    public function deletePlan($id)
-    {
-        $plan = Plan::find($id)->delete();
-    }
-
-    public function show($id)
-    {
-        $plan = Plan::find($id);
+        $plan = Plan::where('slug', $slug)->firstOrFail();
         return new SinglePlanResource($plan);
+    }
+
+    public function myPlans()
+    {
+        return PlanResource::collection(Auth::guard('api')->user()->plans);
     }
 
     public function favorite($id)
@@ -161,7 +194,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'prev_page_url' => $plansArray['next_page_url'],
             'total' => $plansArray['total'],
         ];
-        activityLog('plan',$plans->first(),$query,'search');
+        activityLog('plan', $plans->first(), $query, 'search');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -224,10 +257,5 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         ];
 
         return $response;
-    }
-
-    public function myPlans()
-    {
-        return PlanResource::collection(Auth::guard('api')->user()->plans);
     }
 }

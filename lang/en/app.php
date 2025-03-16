@@ -58,7 +58,6 @@ return [
 
     "plan" => [
         'api' => [
-            'plans-retrieved-successfully' => 'Plans retrieved successfully',
             'favorite-plan-created-successfully' => 'You added this plan to favorite list',
             'you-remove-plan-from-favorite-list' => 'You removed this plan from favorite list',
             'the-likable-status-change-successfully' => 'The likable status changed successfully',
@@ -183,5 +182,11 @@ return [
         'the-trip-deleted-successfully'           => 'The trip deleted successfully',
         'the-trip-updated-successfully'           => 'The trip updated successfully',
         'the-user-deleted-successfully'           => 'The user deleted successfully',
+
+        // Plan Api
+        'plan-created-successfully'               => 'Plan created successfully',
+        'plan-updated-successfully'               => 'Plan updated successfully',
+        'plan-deleted-successfully'               => 'Plan deleted successfully',
+        'plans-retrieved-successfully'            => 'Plans retrieved successfully',
     ],
 ];

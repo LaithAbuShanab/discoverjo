@@ -8,7 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateVolunteering extends CreateRecord
 {
-    use CreateRecord\Concerns\Translatable;
     protected static string $resource = VolunteeringResource::class;
     protected function getRedirectUrl(): string
     {
@@ -18,7 +17,7 @@ class CreateVolunteering extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

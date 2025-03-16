@@ -19,7 +19,6 @@ use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class TripResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Trip::class;
 
@@ -65,12 +64,7 @@ class TripResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->label('Trip Name')
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->reactive(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->maxLength(255)
@@ -195,8 +189,7 @@ class TripResource extends Resource
                 Tables\Columns\TextColumn::make('user.username'),
                 Tables\Columns\TextColumn::make('place.name')
                     ->numeric()
-                    ->sortable()
-                    ->getStateUsing(fn($record, $livewire) => $record->place?->getTranslation('name', $livewire->activeLocale)),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('trip_type')
                     ->formatStateUsing(function ($state) {
                         return match ($state) {

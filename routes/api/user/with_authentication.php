@@ -86,7 +86,6 @@ Route::middleware(['firstLogin'])->group(function () {
 
     ////////////////////////////////////////////end review////////////////////////////////////////////////////////////
 
-
     Route::group(['prefix' => 'chat'], function () {
         Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']);
         Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']);
@@ -129,14 +128,13 @@ Route::middleware(['firstLogin'])->group(function () {
 
     // All Routes For Plan
     Route::group(['prefix' => 'plan'], function () {
-        Route::get('/', [PlanApiController::class, 'index']);
-        Route::post('/create', [PlanApiController::class, 'create']);
-        Route::post('/update', [PlanApiController::class, 'update']);
-        Route::delete('/{plan_id?}/delete', [PlanApiController::class, 'destroy']);
-        Route::get('/show/{plan_id?}', [PlanApiController::class, 'show']);
-        Route::get('/my-plans', [PlanApiController::class, 'myPlans']);
+        Route::get('/', [PlanApiController::class, 'index']); // DONE ✅
+        Route::post('/create', [PlanApiController::class, 'create']); // DONE ✅
+        Route::put('/update/{plan_slug}', [PlanApiController::class, 'update']); // DONE ✅
+        Route::delete('/{plan_slug}/delete', [PlanApiController::class, 'destroy']); // DONE ✅
+        Route::get('/show/{plan_slug}', [PlanApiController::class, 'show']); // DONE ✅
+        Route::get('/my-plans', [PlanApiController::class, 'myPlans']); // DONE ✅
     });
-
 
     Route::group(['prefix' => 'follow'], function () {
         Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);

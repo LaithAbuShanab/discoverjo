@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListTopTens extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
 
     protected static string $resource = TopTenResource::class;
 
@@ -18,7 +17,7 @@ class ListTopTens extends ListRecords
         if (count($limitTen) < 10) {
             return [
                 Actions\CreateAction::make(),
-                Actions\LocaleSwitcher::make(),
+
             ];
         } else {
             return [];

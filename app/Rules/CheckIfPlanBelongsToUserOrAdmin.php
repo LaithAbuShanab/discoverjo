@@ -17,8 +17,8 @@ class CheckIfPlanBelongsToUserOrAdmin implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $plan = Plan::where('id', $value)->where('creator_type', 'App\Models\User')->where('creator_id', $userId)->exists();
-        $adminPlan = Plan::where('id', $value)->where('creator_type', 'App\Models\Admin')->exists();
+        $plan = Plan::where('slug', $value)->where('creator_type', 'App\Models\User')->where('creator_id', $userId)->exists();
+        $adminPlan = Plan::where('slug', $value)->where('creator_type', 'App\Models\Admin')->exists();
         if (!$plan && !$adminPlan) {
             $fail(__('validation.api.you_are_not_the_owner_of_this_plan'));
         }

@@ -18,7 +18,6 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class FeatureResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Feature::class;
 
@@ -50,11 +49,7 @@ class FeatureResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')

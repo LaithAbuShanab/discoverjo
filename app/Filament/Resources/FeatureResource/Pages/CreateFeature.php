@@ -8,14 +8,13 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateFeature extends CreateRecord
 {
-    use CreateRecord\Concerns\Translatable;
 
     protected static string $resource = FeatureResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

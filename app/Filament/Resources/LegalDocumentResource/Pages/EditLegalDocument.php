@@ -8,7 +8,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditLegalDocument extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
 
     protected static string $resource = LegalDocumentResource::class;
 
@@ -16,7 +15,7 @@ class EditLegalDocument extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

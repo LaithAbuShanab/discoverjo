@@ -15,12 +15,12 @@ class SinglePlanResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $creator = $this->creator_type== "App\Models\Admin"? "admin":"user";
+        $creator = $this->creator_type == "App\Models\Admin" ? "admin" : "user";
         return [
             'name' => $this->name,
-            'creator'=>$creator,
+            'creator' => $creator,
             'description' =>  $this->description,
-            'days' => DaySinglePlanResource::collection($this->activities->groupBy('day_number')),
+            'days' => DaySinglePlanResource::collection($this->days->groupBy('day')),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlans->contains('id', $this->id) : false,
 
         ];

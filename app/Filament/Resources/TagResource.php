@@ -18,7 +18,6 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class TagResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Tag::class;
 
@@ -49,12 +48,7 @@ class TagResource extends Resource
                                     ->label('Tag Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')

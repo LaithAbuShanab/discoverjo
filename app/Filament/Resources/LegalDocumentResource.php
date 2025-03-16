@@ -18,7 +18,6 @@ use Filament\Forms\Form;
 
 class LegalDocumentResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = LegalDocument::class;
 
@@ -61,7 +60,8 @@ class LegalDocumentResource extends Resource
                                     ->label('Title')
                                     ->required()
                                     ->maxLength(255)
-                                    ->placeholder('Enter the document title'),
+                                    ->placeholder('Enter the document title')
+                                    ->translatable(),
                             ]),
                     ])
                     ->columns(1),
@@ -74,7 +74,7 @@ class LegalDocumentResource extends Resource
                             ->label('Document Content')
                             ->required()
                             ->placeholder('Enter the document content here')
-                            ->autosize(),
+                            ->translatable(),
                     ])
                     ->columns(1),
             ])

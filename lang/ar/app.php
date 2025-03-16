@@ -51,7 +51,6 @@ return [
 
     "plan" => [
         'api' => [
-            'plans-retrieved-successfully' => 'تم استرجاع الخطط بنجاح',
             'favorite-plan-created-successfully' => 'لقد أضفت هذه الخطة إلى قائمة المفضلة',
             'you-remove-plan-from-favorite-list' => 'لقد قمت بإزالة هذه الخطة من قائمة المفضلة',
             'the-likable-status-change-successfully' => 'تم تغيير حالة الإعجاب بنجاح',
@@ -172,5 +171,11 @@ return [
         'the-trip-deleted-successfully'           => 'تم حذف الرحلة بنجاح',
         'the-trip-updated-successfully'           => 'تم تعديل الرحلة بنجاح',
         'the-user-deleted-successfully'           => 'تم حذف المستخدم بنجاح',
+
+        // Plan Api
+        'plan-created-successfully'               => 'تم انشاء الخطة بنجاح',
+        'plan-updated-successfully'               => 'تم تعديل الخطة بنجاح',
+        'plan-deleted-successfully'               => 'تم حذف الخطة بنجاح',
+        'plans-retrieved-successfully'            => 'تم استرجاع الخطط بنجاح',
     ],
 ];

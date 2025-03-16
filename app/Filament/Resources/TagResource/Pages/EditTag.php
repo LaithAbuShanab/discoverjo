@@ -8,7 +8,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditTag extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
 
     protected static string $resource = TagResource::class;
 
@@ -16,7 +15,7 @@ class EditTag extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\LocaleSwitcher::make(),
+
         ];
     }
 }

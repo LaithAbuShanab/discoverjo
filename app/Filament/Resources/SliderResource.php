@@ -9,17 +9,14 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class SliderResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Slider::class;
 
@@ -48,15 +45,9 @@ class SliderResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('title')
                                     ->label('Slider title')
-                                    ->unique()
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                        if ($livewire->activeLocale === 'en') {
-                                            $set('slug', Str::slug($state));
-                                        }
-                                    }),
+                                    ->translatable(),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
@@ -65,7 +56,7 @@ class SliderResource extends Resource
                             ]),
                         Grid::make(1)
                             ->schema([
-                                Forms\Components\Textarea::make('content')->required()->columnSpanFull(),
+                                Forms\Components\Textarea::make('content')->required()->columnSpanFull()->translatable(),
                                 Forms\Components\Select::make('type')
                                     ->required()
                                     ->options([

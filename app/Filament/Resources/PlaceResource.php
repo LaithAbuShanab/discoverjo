@@ -20,14 +20,11 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\RatingTheme;
-use Filament\Resources\Concerns\Translatable;
-use Illuminate\Support\Str;
 use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class PlaceResource extends Resource
 {
-    use Translatable;
 
     protected static ?string $model = Place::class;
 
@@ -53,19 +50,9 @@ class PlaceResource extends Resource
             ->schema([
                 Section::make('Place Details')
                     ->schema([
-                        Forms\Components\TextInput::make('name')->required()->placeholder('Please Enter Name')
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $set, $state, $livewire) {
-                                if ($livewire->activeLocale === 'en') {
-                                    $set('slug', Str::slug($state));
-                                }
-                            }),
-                        Forms\Components\TextInput::make('slug')
-                            ->label('Slug')
-                            ->disabled()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('description')->required()->placeholder('Please Enter Description'),
-                        Forms\Components\TextInput::make('address')->required()->placeholder('Please Enter Address'),
+                        Forms\Components\TextInput::make('name')->required()->placeholder('Please Enter Name')->translatable()->columnSpanFull(),
+                        Forms\Components\Textarea::make('description')->required()->placeholder('Please Enter Description')->translatable()->columnSpanFull(),
+                        Forms\Components\TextInput::make('address')->required()->placeholder('Please Enter Address')->translatable()->columnSpanFull(),
                         Forms\Components\TextInput::make('google_map_url')->required()->columnSpan(1)->placeholder('Please Enter Google Map Url'),
                         Forms\Components\TextInput::make('phone_number')->tel()->maxLength(255)->required()->placeholder('Please Enter Phone Number'),
                         Forms\Components\TextInput::make('longitude')->required()->numeric()->placeholder('EX: 32.123456'),
@@ -74,16 +61,23 @@ class PlaceResource extends Resource
                         Forms\Components\TextInput::make('website')->columnSpan(1)->placeholder('Please Enter Website'),
                         Forms\Components\TextInput::make('rating')->numeric()->required()->placeholder('Please Enter Rating'),
                         Forms\Components\TextInput::make('total_user_rating')->numeric()->required()->placeholder('Please Enter Total User Rating'),
-                        Forms\Components\TextInput::make('google_place_id')->columnSpan(1)->placeholder('Please Enter Google Place Id'),
+                        Forms\Components\Select::make('categories')
+                            ->relationship('categories', 'name', function ($query) {
+                                $query->whereNotNull('parent_id');
+                            })
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->required(),
                         Forms\Components\Select::make('business_status')->options(self::$statuses)->required()->default('2'),
                         Forms\Components\Select::make('region_id')->relationship('region', 'name')->required(),
                         CheckboxList::make('Features')->relationship('features', 'name')->columnSpanFull()->columns(4),
                         SpatieMediaLibraryFileUpload::make('main_place')->collection('main_place')->columnSpanFull()->required(),
-                        SpatieMediaLibraryFileUpload::make('place_gallery')->collection('place_gallery')->columnSpanFull()->multiple()->required()
-                            ->panelLayout('grid')
+                        SpatieMediaLibraryFileUpload::make('place_gallery')->collection('place_gallery')->columnSpanFull()->multiple()->required()->panelLayout('grid')
                     ])->columnSpan(2)->columns(2),
                 Group::make()->schema([
-                    Section::make('Tags')->schema([
+                    Section::make('Slug & Tags')->schema([
+                        Forms\Components\TextInput::make('slug')->label('Slug')->maxLength(255)->placeholder('Please Enter Slug'),
                         Select::make('tags')->preload()->relationship('tags', 'name')->multiple()->searchable(),
                     ]),
                     Section::make('openingHours')->schema([
@@ -122,8 +116,7 @@ class PlaceResource extends Resource
                 Tables\Columns\TextColumn::make('phone_number')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable(),
                 RatingColumn::make('rating')->theme(RatingTheme::HalfStars)->sortable()->color('warning')->default(0.0),
-                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable()
-                    ->getStateUsing(fn($record, $livewire) => $record->region?->getTranslation('name', $livewire->activeLocale)),
+                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
                 SpatieMediaLibraryImageColumn::make('Media')->allCollections()->circular()->stacked()->limit(3)->limitedRemainingText()
             ])
             ->filters([

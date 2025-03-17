@@ -1,0 +1,1 @@
+[17-Mar-2025 16:09:04 America/Boise] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.3.0". You are running 8.2.27. in /home2/odhlaxmy/public_html/discoverjo/vendor/composer/platform_check.php on line 26

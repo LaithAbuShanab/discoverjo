@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
+use App\Models\Admin;
 use Spatie\Permission\Models\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -11,98 +11,98 @@ class RolePolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
+     * Determine whether the Admin can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(Admin $admin): bool
     {
-        return $user->can('view_any_role');
+        return $admin->can('view_any_role');
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the Admin can view the model.
      */
-    public function view(User $user, Role $role): bool
+    public function view(Admin $admin, Role $role): bool
     {
-        return $user->can('view_role');
+        return $admin->can('view_role');
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the Admin can create models.
      */
-    public function create(User $user): bool
+    public function create(Admin $admin): bool
     {
-        return $user->can('create_role');
+        return $admin->can('create_role');
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine whether the Admin can update the model.
      */
-    public function update(User $user, Role $role): bool
+    public function update(Admin $admin, Role $role): bool
     {
-        return $user->can('update_role');
+        return $admin->can('update_role');
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine whether the Admin can delete the model.
      */
-    public function delete(User $user, Role $role): bool
+    public function delete(Admin $admin, Role $role): bool
     {
-        return $user->can('delete_role');
+        return $admin->can('delete_role');
     }
 
     /**
-     * Determine whether the user can bulk delete.
+     * Determine whether the Admin can bulk delete.
      */
-    public function deleteAny(User $user): bool
+    public function deleteAny(Admin $admin): bool
     {
-        return $user->can('delete_any_role');
+        return $admin->can('delete_any_role');
     }
 
     /**
-     * Determine whether the user can permanently delete.
+     * Determine whether the Admin can permanently delete.
      */
-    public function forceDelete(User $user, Role $role): bool
+    public function forceDelete(Admin $admin, Role $role): bool
     {
-        return $user->can('{{ ForceDelete }}');
+        return $admin->can('{{ ForceDelete }}');
     }
 
     /**
-     * Determine whether the user can permanently bulk delete.
+     * Determine whether the Admin can permanently bulk delete.
      */
-    public function forceDeleteAny(User $user): bool
+    public function forceDeleteAny(Admin $admin): bool
     {
-        return $user->can('{{ ForceDeleteAny }}');
+        return $admin->can('{{ ForceDeleteAny }}');
     }
 
     /**
-     * Determine whether the user can restore.
+     * Determine whether the Admin can restore.
      */
-    public function restore(User $user, Role $role): bool
+    public function restore(Admin $admin, Role $role): bool
     {
-        return $user->can('{{ Restore }}');
+        return $admin->can('{{ Restore }}');
     }
 
     /**
-     * Determine whether the user can bulk restore.
+     * Determine whether the Admin can bulk restore.
      */
-    public function restoreAny(User $user): bool
+    public function restoreAny(Admin $admin): bool
     {
-        return $user->can('{{ RestoreAny }}');
+        return $admin->can('{{ RestoreAny }}');
     }
 
     /**
-     * Determine whether the user can replicate.
+     * Determine whether the Admin can replicate.
      */
-    public function replicate(User $user, Role $role): bool
+    public function replicate(Admin $admin, Role $role): bool
     {
-        return $user->can('{{ Replicate }}');
+        return $admin->can('{{ Replicate }}');
     }
 
     /**
-     * Determine whether the user can reorder.
+     * Determine whether the Admin can reorder.
      */
-    public function reorder(User $user): bool
+    public function reorder(Admin $admin): bool
     {
-        return $user->can('{{ Reorder }}');
+        return $admin->can('{{ Reorder }}');
     }
 }

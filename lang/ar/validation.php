@@ -327,10 +327,8 @@ return [
         'subcategory-does-not-exists' => 'رقم التصنيف الفرعي غير موجود.',
 
         // Place Errors
-        'place-id-invalid' => 'معرّف المكان غير صالح.',
         'this-place-already-in-your-visited-place' => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
         'this-place-not-in-your-visited-place-list' => 'هذا المكان غير موجود في قائمة الأماكن التي قمت بزيارتها لإزالته من القائمة.',
-        'place-id-does-not-exists' => 'معرف المكان غير موجود.',
         'id-does-not-exists' => 'المعرف غير موجود.',
         'you-did-not-make-review-for-this' => 'انت لم تقم بمراجعة لهذه.',
 
@@ -868,7 +866,6 @@ return [
         'tags_required'                                             => 'يجب اختيار علامة واحدة على الأقل.',
         'tags_exists'                                               => 'واحدة أو أكثر من العلامات المحددة غير موجودة.',
         'users_required_if'                                         => 'المستخدمون مطلوبون لهذا النوع من الرحلات.',
-        'the-selected-place-is-not-active'                          => 'المكان المحدد غير نشط.',
         'time-should-not-be-in-the-past'                            => 'يجب ألا يكون الوقت في الماضي.',
         'select_at_least_three_tags'                                => 'يرجى اختيار على الاقل ثلاث علامات.',
         'tag_does_not_exist'                                        => 'العلامة :tag غير موجودة.',
@@ -912,28 +909,34 @@ return [
         'user_slug_exists'                                          => 'المستخدم المحدد غير موجود.',
 
         // Plan Validation
-        'plan_slug_plan_error_main'                           => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',
-        'name_plan_error_main'                                => 'اسم الخطة مطلوب أو يجب أن يكون نصًا بطول أقصى 255 حرفًا.',
-        'description_plan_error_main'                         => 'وصف الخطة مطلوب أو يجب أن يكون نصًا بطول أقصى 1000 حرف.',
-        'days_plan_error'                                     => 'يجب تضمين يوم واحد على الأقل في الخطة.',
-        'activities_plan_error'                               => 'الأنشطة لليوم :day مطلوبة أو يجب أن تكون مصفوفة.',
-        'name_plan_error'                                     => 'اسم الخطة لليوم :day، النشاط :activity مطلوب أو يجب أن يكون نصًا بطول أقصى 255 حرفًا.',
-        'start_time_plan_error'                               => 'وقت البدء لليوم :day، النشاط :activity مطلوب أو يجب أن يكون بالتنسيق H:i.',
-        'end_time_plan_error'                                 => 'وقت الانتهاء لليوم :day، النشاط :activity مطلوب أو يجب أن يكون بالتنسيق H:i.',
-        'place_slug_plan_error'                               => 'المكان المحدد لليوم :day، النشاط :activity مطلوب أو غير موجود.',
-        'start_time_custom_plan_error'                        => 'يجب أن يكون وقت البدء لليوم :day، النشاط :activity بترتيب متسلسل.',
-        'end_time_custom_plan_error'                          => 'يجب أن يكون وقت الانتهاء لليوم :day، النشاط :activity بعد وقت البدء.',
-        'plan-slug-invalid'                                   => 'معرف الخطة غير صالح.',
-        'plan-slug-does-not-exists'                           => 'الخطة غير موجودة.',
-        'you_are_not_the_owner_of_this_plan'                  => 'انت لست صاحب هذه الخطة.',
+        'plan_slug_plan_error_main'                                 => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',
+        'name_plan_error_main'                                      => 'اسم الخطة مطلوب أو يجب أن يكون نصًا بطول أقصى 255 حرفًا.',
+        'description_plan_error_main'                               => 'وصف الخطة مطلوب أو يجب أن يكون نصًا بطول أقصى 1000 حرف.',
+        'days_plan_error'                                           => 'يجب تضمين يوم واحد على الأقل في الخطة.',
+        'activities_plan_error'                                     => 'الأنشطة لليوم :day مطلوبة أو يجب أن تكون مصفوفة.',
+        'name_plan_error'                                           => 'اسم الخطة لليوم :day، النشاط :activity مطلوب أو يجب أن يكون نصًا بطول أقصى 255 حرفًا.',
+        'start_time_plan_error'                                     => 'وقت البدء لليوم :day، النشاط :activity مطلوب أو يجب أن يكون بالتنسيق H:i.',
+        'end_time_plan_error'                                       => 'وقت الانتهاء لليوم :day، النشاط :activity مطلوب أو يجب أن يكون بالتنسيق H:i.',
+        'place_slug_plan_error'                                     => 'المكان المحدد لليوم :day، النشاط :activity مطلوب أو غير موجود.',
+        'start_time_custom_plan_error'                              => 'يجب أن يكون وقت البدء لليوم :day، النشاط :activity بترتيب متسلسل.',
+        'end_time_custom_plan_error'                                => 'يجب أن يكون وقت الانتهاء لليوم :day، النشاط :activity بعد وقت البدء.',
+        'plan-slug-invalid'                                         => 'معرف الخطة غير صالح.',
+        'plan-slug-does-not-exists'                                 => 'الخطة غير موجودة.',
+        'you_are_not_the_owner_of_this_plan'                        => 'انت لست صاحب هذه الخطة.',
 
         // Category Validation
-        'the-category-does-not-exists'                        => 'الفئة غير موجودة',
-        'the-selected-category-does-not-main-category'        => 'الفئة المختارة ليست الفئة الرئيسية',
-        'the-categories-should-be-array'                      => 'الفئات يجب أن تكون مصفوفة.',
-        'the-selected-category-id-does-not-exists'            => 'الفئة المحددة غير موجودة.',
-        'the-category-id-required'                            => 'معرّف الفئة مطلوب.',
-        'invalid-category-id-not-main-category'               => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
+        'the-category-does-not-exists'                              => 'الفئة غير موجودة',
+        'the-selected-category-does-not-main-category'              => 'الفئة المختارة ليست الفئة الرئيسية',
+        'the-categories-should-be-array'                            => 'الفئات يجب أن تكون مصفوفة.',
+        'the-selected-category-id-does-not-exists'                  => 'الفئة المحددة غير موجودة.',
+        'the-category-id-required'                                  => 'معرّف الفئة مطلوب.',
+        'invalid-category-id-not-main-category'                     => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
+
+        // Place Validation
+        'the-selected-place-is-not-active'                          => 'المكان المحدد غير نشط.',
+        'place-id-invalid'                                          => 'معرّف المكان غير صالح.',
+        'place-id-does-not-exists'                                  => 'معرف المكان غير موجود.',
+
 
     ],
 

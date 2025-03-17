@@ -18,7 +18,9 @@ interface PlaceApiRepositoryInterface
     public function reviewsLike($data);
 
     public function search($query);
+
     public function allSearch($query);
+
     public function filter($data);
 
 

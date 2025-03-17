@@ -36,22 +36,21 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     public function singlePlace($slug)
     {
         $place = Place::findBySlug($slug);
-        activityLog('Place',$place,'The user viewed place','view');
+        activityLog('Place', $place, 'The user viewed place', 'view');
         return new SinglePlaceResource($place);
     }
-
 
     public function createVisitedPlace($slug)
     {
         $user = Auth::guard('api')->user();
-        $place= Place::findBySlug($slug);
+        $place = Place::findBySlug($slug);
         $user->visitedPlace()->attach([$place->id]);
     }
 
     public function deleteVisitedPlace($slug)
     {
         $user = Auth::guard('api')->user();
-        $place= Place::findBySlug($slug);
+        $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
     }
 
@@ -135,31 +134,31 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
          ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
             [$userLat, $userLng, $userLat]
         )
-            ->where('status',1)
+            ->where('status', 1)
             ->where(function ($queryBuilder) use ($query) {
                 $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            }) ->orderBy('distance') // Sort by distance
+            })->orderBy('distance') // Sort by distance
             ->paginate($perPage);
 
         $placesArray = $places->toArray();
 
-        if($userLat &&$userLng ){
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['next_page_url'];
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:$placesArray['prev_page_url'];
-        }else{
-            $parameterNext = $placesArray['next_page_url']?$placesArray['next_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
-            $parameterPrevious = $placesArray['prev_page_url']?$placesArray['prev_page_url'].'&lat='.$userLat."&lng=".$userLng:null;
+        if ($userLat && $userLng) {
+            $parameterNext = $placesArray['next_page_url'] ? $placesArray['next_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : $placesArray['next_page_url'];
+            $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : $placesArray['prev_page_url'];
+        } else {
+            $parameterNext = $placesArray['next_page_url'] ? $placesArray['next_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
+            $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
         }
 
-        activityLog('Place',$places->first(),$query,'search');
+        activityLog('Place', $places->first(), $query, 'search');
 
         // Convert pagination result to array and include pagination metadata
         $pagination = [
-            'next_page_url'=>$parameterNext,
-            'prev_page_url'=>$parameterPrevious,
+            'next_page_url' => $parameterNext,
+            'prev_page_url' => $parameterPrevious,
             'total' => $placesArray['total'],
         ];
 
@@ -168,7 +167,6 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'places' => PlaceResource::collection($places),
             'pagination' => $pagination
         ];
-
     }
 
     public function filter($data)
@@ -194,7 +192,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $regionId = Region::where('slug', $regionSlug)->value('id');
 
         // Base query
-        $query = Place::query()->where('status',1);
+        $query = Place::query()->where('status', 1);
 
         if ($categoriesIds->isNotEmpty() || $subcategoriesIds->isNotEmpty()) {
             $query->where(function ($subQuery) use ($categoriesIds, $subcategoriesIds) {
@@ -268,7 +266,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         /**
          * SEARCH PLACES
          */
-        $users = User::where('status',1)->where(function ($queryBuilder) use ($query) {
+        $users = User::where('status', 1)->where(function ($queryBuilder) use ($query) {
             $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
                 ->orWhere('last_name', 'LIKE', "%{$query}%")
                 ->orWhere('username', 'LIKE', "%{$query}%");
@@ -282,7 +280,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'prev_page_url' => $usersArray['prev_page_url'],
             'total'         => $usersArray['total'],
         ];
-        $places = Place::where('status',1)->selectRaw(
+        $places = Place::where('status', 1)->selectRaw(
             'places.*,
          (6371 * acos( cos( radians(?) ) * cos( radians(places.latitude) ) *
          cos( radians(places.longitude) - radians(?) ) + sin( radians(?) ) *
@@ -410,7 +408,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'total'         => $plansArray['total'],
         ];
 
-        activityLog('all',$places->first(),$query,'search');
+        activityLog('all', $places->first(), $query, 'search');
 
 
         /**
@@ -447,6 +445,4 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             ],
         ];
     }
-
-
 }

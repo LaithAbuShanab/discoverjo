@@ -40,7 +40,6 @@ return [
 
     'place' => [
         'api' => [
-            'place-retrieved-by-id-successfully' => 'Place retrieved by id successfully',
             'you-put-this-in-favorite-list' => 'You put this in favorite list successfully',
             'you-delete-this-from-favorite-list' => 'You deleted this form favorite list.',
             'you-remove-this-place-in-favorite-list' => 'You remove this place in favorite list successfully',
@@ -190,6 +189,9 @@ return [
         'categories-retrieved-successfully'           => 'Categories retrieved successfully',
         'all-subcategories-retrieved-successfully'    => 'All subcategories retrieved successfully',
         'places-subcategories-retrieved-successfully' => 'Places and SubCategories by Category id Retrieved Successfully.',
+
+        // Place Api
+        'place-retrieved-by-id-successfully'          => 'Place retrieved by id successfully',
 
     ],
 ];

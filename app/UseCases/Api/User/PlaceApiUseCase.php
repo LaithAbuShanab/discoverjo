@@ -3,14 +3,10 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\PlaceApiRepositoryInterface;
-use App\Models\Place;
-use Illuminate\Support\Facades\Auth;
 
 class PlaceApiUseCase
 {
-    protected $placeApiRepository;
-
-    public function __construct(PlaceApiRepositoryInterface $placeApiRepository)
+    public function __construct(protected PlaceApiRepositoryInterface $placeApiRepository)
     {
         $this->placeApiRepository = $placeApiRepository;
     }

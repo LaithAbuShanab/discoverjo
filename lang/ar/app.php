@@ -35,7 +35,6 @@ return [
 
     'place' => [
         'api' => [
-            'place-retrieved-by-id-successfully' => 'تم استرجاع المكان بواسطة الهوية بنجاح',
             'you-put-this-place-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
             'you-put-this-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
             'you-delete-this-from-favorite-list' => 'لقد حذفت هذه من قائمة المفضلة',
@@ -180,7 +179,8 @@ return [
         'all-subcategories-retrieved-successfully'    => 'جميع الفئات الفرعية تم استرجاعها بنجاح',
         'places-subcategories-retrieved-successfully' => 'تم استرجاع الأماكن والفئات الفرعية بواسطة معرف الفئة بنجاح.',
 
-
+        // Place Api
+        'place-retrieved-by-id-successfully'          => 'تم استرجاع المكان بواسطة الهوية بنجاح',
 
     ],
 ];

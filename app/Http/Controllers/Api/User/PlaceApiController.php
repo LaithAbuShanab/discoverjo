@@ -5,12 +5,8 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
-use App\Models\Place;
 use App\Rules\ActivePlaceRule;
-use App\Rules\CheckIfExistsInReviewsRule;
-use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
 use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
 use App\UseCases\Api\User\PlaceApiUseCase;
@@ -22,27 +18,21 @@ use Illuminate\Validation\Rule;
 
 class PlaceApiController extends Controller
 {
-    protected $placeApiUseCase;
-
-    public function __construct(PlaceApiUseCase $placeApiUseCase)
+    public function __construct(protected PlaceApiUseCase $placeApiUseCase)
     {
-
         $this->placeApiUseCase = $placeApiUseCase;
     }
-    /**
-     * Display a listing of the resource.
-     */
 
     public function singlePlaces(Request $request)
     {
         $slug = $request->place_slug;
 
         $validator = Validator::make(['place_slug' => $slug], [
-            'place_slug' => ['bail','required','exists:places,slug',new ActivePlaceRule()],
+            'place_slug' => ['bail', 'required', 'exists:places,slug', new ActivePlaceRule()],
 
-        ],[
-            'place_slug.exists'=>__('validation.api.place-id-invalid'),
-            'place_slug.required'=>__('validation.api.place-id-does-not-exists')
+        ], [
+            'place_slug.exists' => __('validation.api.place-id-invalid'),
+            'place_slug.required' => __('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
@@ -51,7 +41,7 @@ class PlaceApiController extends Controller
         try {
             $allPlaces = $this->placeApiUseCase->singlePlace($slug);
 
-            return ApiResponse::sendResponse(200, __('app.place.api.place-retrieved-by-id-successfully'), $allPlaces);
+            return ApiResponse::sendResponse(200, __('app.api.place-retrieved-by-id-successfully'), $allPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
@@ -59,13 +49,13 @@ class PlaceApiController extends Controller
     }
 
 
-    public function createVisitedPlace(Request $request,$slug)
+    public function createVisitedPlace(Request $request, $slug)
     {
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:places,slug',new ActivePlaceRule(), new CheckIfExistsInVistedPlaceTableRule()],
-        ],[
-            'slug.exists'=>__('validation.api.place-id-invalid'),
-            'slug.required'=>__('validation.api.place-id-does-not-exists')
+            'slug' => ['required', 'exists:places,slug', new ActivePlaceRule(), new CheckIfExistsInVistedPlaceTableRule()],
+        ], [
+            'slug.exists' => __('validation.api.place-id-invalid'),
+            'slug.required' => __('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
@@ -83,14 +73,14 @@ class PlaceApiController extends Controller
     }
 
 
-    public  function deleteVisitedPlace(Request $request,$slug)
+    public  function deleteVisitedPlace(Request $request, $slug)
     {
 
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:places,slug',new ActivePlaceRule(), new CheckIfNotExistsInVistedPlaceTableRule()],
-        ],[
-            'slug.exists'=>__('validation.api.place-id-invalid'),
-            'slug.required'=>__('validation.api.place-id-does-not-exists')
+            'slug' => ['required', 'exists:places,slug', new ActivePlaceRule(), new CheckIfNotExistsInVistedPlaceTableRule()],
+        ], [
+            'slug.exists' => __('validation.api.place-id-invalid'),
+            'slug.required' => __('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
@@ -109,20 +99,22 @@ class PlaceApiController extends Controller
     public function updateReview(Request $request)
     {
 
-        $validator = Validator::make([
-            'place_id' => $request->place_id,
-            'rating' => $request->rating,
-            'comment' => $request->comment
-        ], [
-            'place_id' => ['required', 'exists:places,id', new CheckIfExistsInToUpdateReviewsRule('App\Models\Place')],
-            'rating' => ['required', 'numeric'],
-            'comment' => ['nullable', 'string']
-        ],
+        $validator = Validator::make(
             [
-                'place_id.exists'=>__('validation.api.place-id-invalid'),
-                'place_id.required'=>__('validation.api.place-id-does-not-exists'),
+                'place_id' => $request->place_id,
+                'rating' => $request->rating,
+                'comment' => $request->comment
+            ],
+            [
+                'place_id' => ['required', 'exists:places,id', new CheckIfExistsInToUpdateReviewsRule('App\Models\Place')],
+                'rating' => ['required', 'numeric'],
+                'comment' => ['nullable', 'string']
+            ],
+            [
+                'place_id.exists' => __('validation.api.place-id-invalid'),
+                'place_id.required' => __('validation.api.place-id-does-not-exists'),
                 'rating.required' => __('validation.api.rating-is-required'),
-                'comment.string'=>__('validation.api.comment-should-be-string'),
+                'comment.string' => __('validation.api.comment-should-be-string'),
 
             ]
         );
@@ -147,9 +139,9 @@ class PlaceApiController extends Controller
             'place_id' => $request->place_id,
         ], [
             'place_id' => ['required', 'exists:places,id', new CheckIfExistsInToUpdateReviewsRule('App\Models\Place')],
-        ],[
-            'place_id.exists'=>__('validation.api.place-id-invalid'),
-            'place_id.required'=>__('validation.api.place-id-does-not-exists')
+        ], [
+            'place_id.exists' => __('validation.api.place-id-invalid'),
+            'place_id.required' => __('validation.api.place-id-does-not-exists')
         ]);
 
         if ($validator->fails()) {
@@ -178,9 +170,10 @@ class PlaceApiController extends Controller
             ],
             [
                 'review_id.exists' => __('validation.api.the-selected-review-id-does-not-exists'),
-                'review_id.required'=> __('validation.api.the-review-id-required'),
-                'status'=>__('validation.api.the-status-required')
-            ]);
+                'review_id.required' => __('validation.api.the-review-id-required'),
+                'status' => __('validation.api.the-status-required')
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -229,7 +222,5 @@ class PlaceApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
-
 }

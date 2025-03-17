@@ -108,6 +108,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::delete('rating/guide/delete/{guide_slug}', 'delete');
     });
 
+
     Route::group(['prefix' => 'follow'], function () {
         Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);
         Route::post('/create/{following_slug}', [FollowApiController::class, 'follow']);

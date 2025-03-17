@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Post\CreateCommentRequest;
 use App\Rules\CheckIfCommentBelongToUser;
+use App\Rules\CheckIfCommentOwnerActiveRule;
 use App\Rules\CheckIfUserCanDeleteComment;
 use App\UseCases\Api\User\CommentApiUseCase;
 use Illuminate\Http\Request;
@@ -107,7 +108,7 @@ class CommentApiController extends Controller
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
-                'comment_id' => ['required', 'integer', 'exists:comments,id'],
+                'comment_id' => ['required', 'integer', 'exists:comments,id',new CheckIfCommentOwnerActiveRule()],
             ],
             [
                 'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),

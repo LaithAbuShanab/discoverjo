@@ -8,6 +8,7 @@ use App\Http\Requests\Api\User\GuideRating\CreateGuideRatingRequest;
 use App\Http\Requests\Api\User\GuideRating\DeleteGuideRatingRequest;
 use App\Http\Requests\Api\User\GuideRating\UpdateGuideRatingRequest;
 use App\Rules\CheckIfTheIdIsGuideRule;
+use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckIfUserJoinedGuidPreviouslyRule;
 use App\Rules\CheckIfUserMadeRatingRule;
 use App\Rules\CheckIfUserMakeRatingOnGuideRule;
@@ -31,7 +32,7 @@ class GuideRatingController extends Controller
     public function create(CreateGuideRatingRequest $request,$guide_slug)
     {
         $validator = Validator::make(['guide_slug' => $guide_slug], [
-            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserJoinedGuidPreviouslyRule(),new CheckIfUserMakeRatingOnGuideRule()],
+            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserJoinedGuidPreviouslyRule(),new CheckIfUserMakeRatingOnGuideRule(),new CheckIfUserActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -52,7 +53,7 @@ class GuideRatingController extends Controller
     public function update(UpdateGuideRatingRequest $request,$guide_slug)
     {
         $validator = Validator::make(['guide_slug' => $guide_slug], [
-            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserMakeUpdateToUpdateRule()],
+            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserMakeUpdateToUpdateRule(),new CheckIfUserActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +74,7 @@ class GuideRatingController extends Controller
     {
 
         $validator = Validator::make(['guide_slug' => $guide_slug], [
-            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
+            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule(),new CheckIfUserActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -93,7 +94,7 @@ class GuideRatingController extends Controller
     {
 
         $validator = Validator::make(['guide_slug' => $guide_slug], [
-            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
+            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule(),new CheckIfUserActiveRule()],
         ]);
 
         if ($validator->fails()) {

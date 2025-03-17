@@ -308,7 +308,10 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     public function joinRequests($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
-        return GuideTripUserResource::collection($guideTrip->guideTripUsers);
+        $usersInGuideTrip =  $guideTrip->guideTripUsers()->whereHas('user', function ($query) {
+            $query->where('status', 1);
+        })->get();
+        return GuideTripUserResource::collection($usersInGuideTrip);
     }
 
 

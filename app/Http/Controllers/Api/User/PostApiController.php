@@ -9,6 +9,7 @@ use App\Http\Requests\Api\User\Post\UpdatePostApiRequest;
 use App\Models\Post;
 use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
+use App\Rules\CheckIfPostCreateorActiveRule;
 use App\Rules\CheckMediaBelongsToUserRule;
 use App\Rules\CheckPostBelongToUser;
 use App\UseCases\Api\User\PostApiUseCase;
@@ -153,10 +154,7 @@ class PostApiController extends Controller
         $validator = Validator::make(
             ['post_id' => $post_id],
             [
-                'post_id' => [
-                    'required',
-                    'exists:posts,id',
-                    function ($attribute, $value, $fail) { // Add $attribute and $fail parameters
+                'post_id' => ['required', 'exists:posts,id', function ($attribute, $value, $fail) { // Add $attribute and $fail parameters
                         $exists = DB::table('favorables')
                             ->where('user_id', Auth::guard('api')->id())
                             ->where('favorable_type', 'App\Models\Post')
@@ -166,7 +164,7 @@ class PostApiController extends Controller
                         if ($exists) {
                             $fail(__('validation.api.you-already-make-this-as-favorite'));
                         }
-                    }
+                    },new CheckIfPostCreateorActiveRule()
                 ]
             ],
             [
@@ -233,7 +231,7 @@ class PostApiController extends Controller
     {
         $validator = Validator::make(
             ['status' => $status, 'post_id' => $post_id],
-            ['status' => ['required', Rule::in(['like', 'dislike'])], 'post_id' => ['required', 'integer', 'exists:posts,id'],],
+            ['status' => ['required', Rule::in(['like', 'dislike'])], 'post_id' => ['required', 'integer', 'exists:posts,id',new CheckIfPostCreateorActiveRule()],],
             [
                 'post_id.exists'=>__('validation.api.post-id-invalid'),
                 'post_id.required'=>__('validation.api.post-id-does-not-exists'),

@@ -10,6 +10,7 @@ use App\Rules\CheckIfFollowerFollowingExistsRule;
 use App\Rules\CheckIfFollowerFollowingNotExistsRule;
 use App\Rules\CheckIfFollowerFollowingUserRule;
 use App\Rules\CheckIfFollowerFollowingUserWithAnyStatusRule;
+use App\Rules\CheckIfUserActiveRule;
 use App\Rules\DiscoverJordanFollowRule;
 use App\UseCases\Api\User\CategoryApiUseCase;
 use App\UseCases\Api\User\FollowApiUseCase;
@@ -36,7 +37,7 @@ class FollowApiController extends Controller
     {
 
         $validator = Validator::make(['following_slug' => $following_slug], [
-            'following_slug' => ['required', 'exists:users,slug', new CheckIfFollowerFollowingExistsRule()],
+            'following_slug' => ['required', 'exists:users,slug', new CheckIfFollowerFollowingExistsRule(),new CheckIfUserActiveRule()],
         ],
             [
                 'following_slug.required'=>__('validation.api.the-following-id-is-required'),
@@ -61,7 +62,7 @@ class FollowApiController extends Controller
     {
 
         $validator = Validator::make(['following_slug' => $following_slug], [
-            'following_slug' => ['bail','required', 'exists:users,slug', new CheckIfFollowerFollowingNotExistsRule(),new DiscoverJordanFollowRule()],
+            'following_slug' => ['bail','required', 'exists:users,slug', new CheckIfFollowerFollowingNotExistsRule(),new DiscoverJordanFollowRule(),new CheckIfUserActiveRule()],
             ],
             [
                 'following_slug.required'=>__('validation.api.the-following-id-is-required'),
@@ -90,7 +91,7 @@ class FollowApiController extends Controller
                 'follower_slug' => $follower_slug,
             ],
             [
-                'follower_slug' => ['bail','required', 'exists:users,slug', new CheckIfFollowerFollowingUserRule()],
+                'follower_slug' => ['bail','required', 'exists:users,slug', new CheckIfFollowerFollowingUserRule(),new CheckIfUserActiveRule()],
             ],
             [
                 'follower_slug.required' => __('validation.api.the-follower-id-is-required'),
@@ -120,7 +121,7 @@ class FollowApiController extends Controller
                 'follower_slug' => $follower_slug
             ],
             [
-                'follower_slug' => ['required', 'exists:users,slug', new CheckIfFollowerFollowingUserWithAnyStatusRule()],
+                'follower_slug' => ['required', 'exists:users,slug', new CheckIfFollowerFollowingUserWithAnyStatusRule(),new CheckIfUserActiveRule()],
             ],
             [
                 'follower_slug.required'=>__('validation.api.the-following-id-is-required'),
@@ -157,7 +158,7 @@ class FollowApiController extends Controller
     {
 
         $validator = Validator::make(['user_slug' => $user_slug], [
-            'user_slug' => ['bail','required', 'exists:users,slug'],
+            'user_slug' => ['bail','required', 'exists:users,slug',new CheckIfUserActiveRule()],
         ],
             [
                 'user_slug.required'=>__('validation.api.user-id-is-required'),
@@ -182,7 +183,7 @@ class FollowApiController extends Controller
     {
 
         $validator = Validator::make(['user_slug' => $user_slug], [
-            'user_slug' => ['bail','required', 'exists:users,slug'],
+            'user_slug' => ['bail','required', 'exists:users,slug',new CheckIfUserActiveRule()],
         ],
             [
                 'user_slug.required'=>__('validation.api.user-id-is-required'),

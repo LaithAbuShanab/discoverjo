@@ -74,9 +74,17 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
     public function followersRequest()
     {
         $id = Auth::guard('api')->user()->id;
-        $followers = Follow::where('following_id', $id)->where('status', 0)->get();
+
+        $followers = Follow::where('following_id', $id)
+            ->where('status', 0)
+            ->whereHas('followerUser', function ($query) {
+                $query->where('status', 1);
+            })
+            ->get();
+
         return FollowerResource::collection($followers);
     }
+
 
 
     public function followers($user_slug)

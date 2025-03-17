@@ -4,6 +4,8 @@ namespace App\Http\Requests\Api\User\Post;
 
 use App\Helpers\ApiResponse;
 use App\Rules\CheckIfCommentHasNullParentIdRule;
+use App\Rules\CheckIfCommentOwnerActiveRule;
+use App\Rules\CheckIfPostCreateorActiveRule;
 use App\Rules\IfUserCanMakeCommentInPostRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,9 +30,9 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id'=>['required','exists:posts,id',new IfUserCanMakeCommentInPostRule()],
+            'post_id'=>['required','exists:posts,id',new IfUserCanMakeCommentInPostRule(),new CheckIfPostCreateorActiveRule()],
             'content'=>['required','string'],
-            'parent_id' => ['nullable','exists:comments,id',new CheckIfCommentHasNullParentIdRule()],
+            'parent_id' => ['nullable','exists:comments,id',new CheckIfCommentHasNullParentIdRule(),new CheckIfCommentOwnerActiveRule()],
         ];
     }
 

@@ -80,7 +80,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/comment/store', [CommentApiController::class, 'commentStore']);
         Route::put('/comment/update/{comment_id}', [CommentApiController::class, 'commentUpdate']);
         Route::delete('/comment/delete/{comment_id}', [CommentApiController::class, 'commentDelete']);
-        Route::post('comment/like-dislike/{status}/{type_id}', [CommentApiController::class, 'likeDislike']);
+        Route::post('comment/like-dislike/{status}/{comment_id}', [CommentApiController::class, 'likeDislike']);
 
     });
 

@@ -13,6 +13,7 @@ use App\Rules\CheckIfGuideIsOwnerOfTrip;
 use App\Rules\CheckIfImageBelongToGuideRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfTheUserOwnTheTripRule;
+use App\Rules\CheckIfUserJoinedToTripActiveRule;
 use App\UseCases\Api\User\GuideTripApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -184,7 +185,7 @@ class GuideTripApiController extends Controller
             'status' => $status,
             ],
             [
-            'guide_trip_user_id' => ['required', 'exists:guide_trip_users,id' ,new CheckIfTheUserOwnTheTripRule()],
+            'guide_trip_user_id' => ['required', 'exists:guide_trip_users,id' ,new CheckIfTheUserOwnTheTripRule(),new CheckIfUserJoinedToTripActiveRule()],
              'status' => ['required', Rule::in(['confirmed', 'canceled'])],
         ],[
             'status.required'=>__('validation.api.status-is-required'),

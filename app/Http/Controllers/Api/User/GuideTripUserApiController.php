@@ -10,6 +10,7 @@ use App\Http\Requests\Api\User\GuideTrip\UpdateGuideTripUserRequest;
 use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfExistsInReviewsRule;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
+use App\Rules\CheckIfGuideActiveRule;
 use App\Rules\CheckIfGuideTripActiveOrInFuture;
 use App\Rules\CheckIfGuideTripUserExistRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
@@ -48,7 +49,7 @@ class GuideTripUserApiController extends Controller
     {
 
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule()],
+            'guide_trip_slug' => ['required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule(),new CheckIfGuideActiveRule()],
         ],[
             'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
             'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
@@ -71,7 +72,7 @@ class GuideTripUserApiController extends Controller
     public function store(CreateGuideTripUserRequest $request,$guide_trip_slug)
     {
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture(),new CheckIfGuideTripUserExistRule()],
+            'guide_trip_slug' => ['bail','required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture(),new CheckIfGuideTripUserExistRule(),new CheckIfGuideActiveRule()],
         ],[
             'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
             'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
@@ -94,7 +95,7 @@ class GuideTripUserApiController extends Controller
     public function update(UpdateGuideTripUserRequest $request,$guide_trip_slug)
     {
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['bail','required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture() ,new CheckIfUserHasJoinedInTripRule()],
+            'guide_trip_slug' => ['bail','required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture() ,new CheckIfUserHasJoinedInTripRule(),new CheckIfGuideActiveRule()],
         ],[
             'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
             'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
@@ -119,7 +120,7 @@ class GuideTripUserApiController extends Controller
     {
 
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['bail','required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule()],
+            'guide_trip_slug' => ['bail','required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule(),new CheckIfGuideActiveRule()],
         ],[
             'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
             'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),

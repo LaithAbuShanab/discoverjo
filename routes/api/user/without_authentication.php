@@ -33,7 +33,7 @@ Route::get('places/category/{category_slug}', [CategoryApiController::class, 'ca
 Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->name('place'); // DONE ✅
 // GET ALL PLACES BY SUBCATEGORY
 Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places'); //
-
+// GET TOP PLACES
 Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places'); //
 Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places'); //
 

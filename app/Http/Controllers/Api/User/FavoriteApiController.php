@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
+use App\Rules\CheckIfUserTypeActiveRule;
 use App\UseCases\Api\User\FavoriteApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,7 +34,7 @@ class FavoriteApiController extends Controller
             ],
             [
                 'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','plan','guideTrip'])],
-                'slug' => ['required', new CheckIfExistsInFavoratblesRule()],
+                'slug' => ['required', new CheckIfExistsInFavoratblesRule(),new CheckIfUserTypeActiveRule()],
         ],[
             'slug.required'=>__('validation.api.id-does-not-exists'),
         ]);

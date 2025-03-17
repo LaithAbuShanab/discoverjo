@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -14,7 +15,9 @@ class DiscoverJordanFollowRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if($value == 1){
+        $followingUser = User::findBySlug($value);
+        if(!$followingUser)return;
+        if($followingUser->id == 1){
             $fail(__('validation.api.you_can_not_unfollow_discover_jordan_profile'));
         }
     }

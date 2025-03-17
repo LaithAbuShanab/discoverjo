@@ -76,14 +76,14 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         Comment::find($id)->delete();
     }
 
-    public function commentLike($request)
+    public function commentLike($data)
     {
-        $comment = Comment::find($request->comment_id);
+        $comment = Comment::find($data['comment_id']);
         $userComment = User::find($comment->user_id);
         $ownerToken = $userComment->DeviceToken->token;
         $receiverLanguage = $userComment->lang;
         $notificationData=[];
-        $status = $request->status == "like" ? '1' : '0';
+        $status = $data['status'] == "like" ? '1' : '0';
 
         $existingLike = $comment->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
 
@@ -93,7 +93,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
             if ($existingLike->status != $status) {
                 $existingLike->update(['status' => $status]);
 
-                if($request->status == "like"){
+                if( $data['status'] == "like"){
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
                         'body' => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -119,7 +119,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                 'status' => $status,
             ]);
 
-            if($request->status == "like"){
+            if( $data['status'] == "like"){
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
                     'body' => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -138,9 +138,9 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
             }
         }
 
-
-
-        sendNotification($ownerToken, $notificationData);
+        if (!empty($notificationData)) {
+            sendNotification($ownerToken, $notificationData);
+        }
     }
 
 

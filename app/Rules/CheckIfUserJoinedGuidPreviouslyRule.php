@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use App\Models\GuideTripUser;
 use App\Models\RatingGuide;
+use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -27,7 +28,10 @@ class CheckIfUserJoinedGuidPreviouslyRule implements DataAwareRule,  ValidationR
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $guideId =$this->data['guide_id'];
+        $guideSlug =$this->data['guide_slug'];
+        $guide = User::findBySlug($guideSlug);
+        if(!$guide) return;
+        $guideId = $guide->id;
         $hasParticipated = GuideTripUser::where('user_id', $userId)
             ->whereHas('guideTrip', function($query) use ($guideId) {
                 $query->where('guide_id', $guideId);
@@ -35,6 +39,7 @@ class CheckIfUserJoinedGuidPreviouslyRule implements DataAwareRule,  ValidationR
             ->exists();
         if (!$hasParticipated) {
             $fail(__('validation.api.you_did_not_participate_in_any_of_guide_trip'));
+            return;
         }
 
         // Check if the user has already created a rating for the guide

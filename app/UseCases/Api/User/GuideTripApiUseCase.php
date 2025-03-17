@@ -59,7 +59,7 @@ class GuideTripApiUseCase
     }
 
 
-    public function updateGuideTrip($data, $id)
+    public function updateGuideTrip($data, $slug)
     {
         $translator = ['en' => $data['name_en'], 'ar' => $data['name_ar']];
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
@@ -72,7 +72,7 @@ class GuideTripApiUseCase
             'start_datetime' => $data['start_datetime'],
             'end_datetime' => $data['end_datetime'],
             'max_attendance' => $data['max_attendance']
-        ], $id,
+        ], $slug,
             isset($data['gallery']) ? $data['gallery'] : null,
             json_decode($data['activities']),
             json_decode($data['price_include']),
@@ -91,9 +91,9 @@ class GuideTripApiUseCase
     {
         return $this->guideTripApiRepository->deleteImage($id);
     }
-    public function joinRequests($id)
+    public function joinRequests($slug)
     {
-        return $this->guideTripApiRepository->joinRequests($id);
+        return $this->guideTripApiRepository->joinRequests($slug);
     }
     public function changeJoinRequestStatus($request)
     {

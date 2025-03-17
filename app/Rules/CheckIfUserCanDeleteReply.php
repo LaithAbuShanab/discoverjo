@@ -19,11 +19,8 @@ class CheckIfUserCanDeleteReply implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $reply = Reply::find($value);
-        if (!$reply) {
-            $fail(__('validation.api.reply_not_found'));
-            return;
-        }
-        $post = Post::find($reply->comment->post_id);
+        if (!$reply) return;
+        $post = Post::find($reply->comment?->post_id);
 
         if(!$reply->user_id == $userId && !$post->user_id !== $userId){
             $fail(__('validation.api.you_can_not_delete_the_reply'));

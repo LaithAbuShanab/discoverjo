@@ -17,6 +17,9 @@ class CheckIfCommentBelongToUser implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $comment = Comment::find($value);
+        if(!$comment){
+            return;
+        }
         if($comment->user_id !== Auth::guard('api')->user()->id){
             $fail(__('validation.api.this-comment-did-not-belong-to-you'));
         }

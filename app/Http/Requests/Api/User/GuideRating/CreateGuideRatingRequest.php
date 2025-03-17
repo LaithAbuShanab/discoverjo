@@ -32,7 +32,6 @@ class CreateGuideRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'guide_id'=>['required','exists:users,id',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserJoinedGuidPreviouslyRule(),new CheckIfUserMakeRatingOnGuideRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5'],
         ];
     }

@@ -38,18 +38,18 @@ class CommentApiController extends Controller
         }
     }
 
-    public function commentUpdate(Request $request)
+    public function commentUpdate(Request $request,$comment_id)
     {
-        $id = $request->comment_id;
-        $content = $request->content;
+        $id = $comment_id;
+        $content = $request->input('content');
         $validator = Validator::make(
             [
                 'comment_id' => $id,
-                'content' => $content
+                'content' => $content,
             ],
             [
                 'comment_id' => ['required', 'exists:comments,id', new CheckIfCommentBelongToUser()],
-                'content' => ['required', 'string']
+                'content' => ['required', 'string'],
             ],
             [
             'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),
@@ -72,12 +72,11 @@ class CommentApiController extends Controller
         }
     }
 
-    public function commentDelete(Request $request){
-        $id = $request->comment_id;
+    public function commentDelete(Request $request,$comment_id){
 
         $validator = Validator::make(
             [
-                'comment_id' => $id,
+                'comment_id' => $comment_id,
             ],
             [
                 'comment_id' => ['required', 'exists:comments,id', new CheckIfUserCanDeleteComment()],
@@ -90,7 +89,7 @@ class CommentApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
         }
         try{
-            $comments = $this->commentApiUseCase->deleteComment($id);
+            $comments = $this->commentApiUseCase->deleteComment($validator->validated()['comment_id']);
             return ApiResponse::sendResponse(200, __('app.api.comment-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -99,10 +98,13 @@ class CommentApiController extends Controller
         }
     }
 
-    public function likeDislike(Request $request)
+    public function likeDislike(Request $request,$status,$comment_id)
     {
         $validator = Validator::make(
-            ['status' => $request->status, 'comment_id' => $request->comment_id,],
+            [
+                'status' => $status,
+                'comment_id' => $comment_id
+            ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
                 'comment_id' => ['required', 'integer', 'exists:comments,id'],
@@ -118,7 +120,7 @@ class CommentApiController extends Controller
         }
 
         try {
-            $this->commentApiUseCase->commentLike($request);
+            $this->commentApiUseCase->commentLike($validator->validated());
             return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

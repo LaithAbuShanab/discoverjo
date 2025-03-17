@@ -73,10 +73,10 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
         Reply::find($id)->delete();
     }
 
-    public function replyLike($request)
+    public function replyLike($data)
     {
-        $reply = Reply::find($request->reply_id);
-        $status = $request->status == "like" ? '1' : '0';
+        $reply = Reply::find($data['reply_id']);
+        $status = $data['status'] == "like" ? '1' : '0';
         $comment = Comment::find($reply->comment_id);
         $userReply = User::find($comment->user_id);
         $ownerToken = $userReply->DeviceToken->token;
@@ -89,7 +89,7 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
             if ($existingLike->status != $status) {
                 $existingLike->update(['status' => $status]);
 
-                if ($request->status == "like") {
+                if ($data['status'] == "like") {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-reply-like', [], $receiverLanguage),
                         'body' => Lang::get('app.notifications.new-user-like-in-reply', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -115,7 +115,7 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
                 'status' => $status,
             ]);
 
-            if ($request->status == "like") {
+            if ($data['status'] == "like") {
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-reply-like', [], $receiverLanguage),
                     'body' => Lang::get('app.notifications.new-user-like-in-reply', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -134,7 +134,9 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
             }
 
         }
-        sendNotification($ownerToken, $notificationData);
+        if (!empty($notificationData)) {
+            sendNotification($ownerToken, $notificationData);
+        }
     }
 
 

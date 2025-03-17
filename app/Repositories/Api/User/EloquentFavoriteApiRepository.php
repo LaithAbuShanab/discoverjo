@@ -22,6 +22,14 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
             throw new \Exception(__("validation.api.relationship_not_exist", ['relationship' => $relationship]));
         }
         $user->{$relationship}()->attach($data['type_id']);
+
+//        $favoriteRecord = $user->{$relationship}()
+//            ->wherePivot('favorable_id', $data['type_id'])
+//            ->wherePivot('favorable_type', get_class($user->{$relationship}()->getRelated()))
+//            ->first();
+//        activityLog('favorite',$favoriteRecord ,'the user add new favorite','create');
+
+
     }
 
     public function unfavored($data)
@@ -31,7 +39,13 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         if (!method_exists($user, $relationship)) {
             throw new \Exception(__("validation.api.relationship_not_exist", ['relationship' => $relationship]));
         }
+//        $favoriteRecord = $user->{$relationship}()
+//            ->wherePivot('favorable_id', $data['type_id'])
+//            ->wherePivot('favorable_type', get_class($user->{$relationship}()->getRelated()))
+//            ->first();
+//        activityLog('favorite',$favoriteRecord ,'the user add delete favorite','delete');
         $user->{$relationship}()->detach($data['type_id']);
+
     }
 
     public function allUserFavorite()
@@ -42,7 +56,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
 
     public function favSearch($searchTerm)
     {
-        $perPage =15;
+        $perPage = config('app.pagination_per_page');
 
         $userId = Auth::guard('api')->user()->id;
         // Retrieve all possibilities that could be in user's favorites and match the search term

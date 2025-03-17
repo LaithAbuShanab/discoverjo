@@ -4,6 +4,7 @@ namespace App\UseCases\Api\User;
 
 
 use App\Interfaces\Gateways\Api\User\GuideRatingApiRepositoryInterface;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class GuideRatingApiUseCase
@@ -17,9 +18,10 @@ class GuideRatingApiUseCase
 
     public function createGuideRating($data)
     {
+        $guide = User::findBySlug($data['guide_slug']);
         return $this->guideRatingRepository->createGuideRating([
             'user_id'=>Auth::guard('api')->user()->id,
-            'guide_id'=>$data['guide_id'],
+            'guide_id'=>$guide->id,
             'rating'=>$data['rating']
         ]);
 
@@ -27,21 +29,22 @@ class GuideRatingApiUseCase
 
     public function updateGuideRating($data)
     {
+        $guide = User::findBySlug($data['guide_slug']);
         return $this->guideRatingRepository->updateGuideRating([
             'user_id'=>Auth::guard('api')->user()->id,
-            'guide_id'=>$data['guide_id'],
+            'guide_id'=>$guide->id,
             'rating'=>$data['rating']
         ]);
     }
 
-    public function deleteGuideRating($id)
+    public function deleteGuideRating($slug)
     {
-        return $this->guideRatingRepository->deleteGuideRating($id);
+        return $this->guideRatingRepository->deleteGuideRating($slug);
     }
 
-    public function showGuideRating($id)
+    public function showGuideRating($slug)
     {
-        return $this->guideRatingRepository->showGuideRating($id);
+        return $this->guideRatingRepository->showGuideRating($slug);
     }
 
 

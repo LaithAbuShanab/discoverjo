@@ -18,8 +18,10 @@ class CheckIfTheUserOwnTheTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $guideTripUser = GuideTripUser::find($value);
+        if(!$guideTripUser) return;
         if ($guideTripUser) {
             $guideTrip = GuideTrip::find($guideTripUser->guide_trip_id);
+            if(!$guideTrip) return;
             if($guideTrip){
                 if ($guideTrip->guide_id !== Auth::guard('api')->user()->id) {
                     $fail(__('validation.api.not_owner_of_trip'));

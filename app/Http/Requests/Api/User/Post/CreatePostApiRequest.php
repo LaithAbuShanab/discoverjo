@@ -9,6 +9,7 @@ use App\Models\Place;
 use App\Models\Plan;
 use App\Models\Trip;
 use App\Models\Volunteering;
+use App\Rules\ActivePlaceRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -37,7 +38,7 @@ class CreatePostApiRequest extends FormRequest
                 'required',
                 Rule::in(['place', 'plan', 'trip', 'event', 'volunteering', 'guide_trip'])
             ],
-            'visitable_id' => [
+            'visitable_slug' => [
                 'required',
                 function ($attribute, $value, $fail) {
                     $type = $this->input('visitable_type');
@@ -50,14 +51,21 @@ class CreatePostApiRequest extends FormRequest
                         'guide_trip' => GuideTrip::class,
                     ];
 
-                    if (isset($models[$type]) && !$models[$type]::where('id', $value)->exists()) {
+                    if (isset($models[$type]) && !$models[$type]::findBySlug( $value)) {
                         $fail(__('validation.api.selected-' . $type . '-does-not-exist'));
+                        return;
+                    }
+                    if($type == 'place'){
+                        if(!$models[$type]::findBySlug( $value)->status){
+                            $fail(__('validation.api.the-selected-place-is-not-active'));
+                        }
                     }
                 }
             ],
             'content' => ['required', 'string'],
             'privacy' => ['required', Rule::in([0, 1, 2])],  // Ensure it's an integer
-            'media' => ['nullable', 'max:10240']
+            'media' => ['nullable'],
+            'media.*'=>['file','mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo','max:10240']
         ];
     }
 

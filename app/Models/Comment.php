@@ -23,9 +23,16 @@ class Comment extends Model
         return $this->morphMany(PostLike::class, 'likable');
     }
 
+    // A comment can have many replies
     public function replies()
     {
-        return $this->hasMany(Reply::class);
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    // A reply belongs to a parent comment
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
     }
 
 }

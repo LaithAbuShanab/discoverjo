@@ -117,15 +117,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
     public function showPost($id)
     {
         $eloquentPost = Post::findOrFail($id);
-        //
-        activity('view')
-            ->causedBy(Auth::check() ? Auth::user() : 'guest') // User or Guest
-            ->performedOn(Post::find($id))
-            ->withProperties([
-                'ip' => request()->ip(),
-                'user_agent' => request()->header('User-Agent'),
-            ])
-            ->log('User viewed the post');
         return new SinglePostResource($eloquentPost);
     }
 
@@ -154,10 +145,10 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $user->favoritePosts()->detach($id);
     }
 
-    public function postLike($request)
+    public function postLike($data)
     {
-        $post = Post::find($request->post_id);
-        $status = $request->status == "like" ? '1' : '0';
+        $post = Post::find($data['post_id']);
+        $status = $data['status'] == "like" ? '1' : '0';
         $ownerToken = $post->user->DeviceToken->token;
         $receiverLanguage = $post->user->lang;
         $notificationData=[];
@@ -169,7 +160,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             if ($existingLike->status != $status) {
                 $existingLike->update(['status' => $status]);
 
-                if($request->status == "like"){
+                if($data->status == "like"){
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
                         'body' => Lang::get('app.notifications.new-user-like-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -195,8 +186,9 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             ]);
         }
 
+        if (!empty($notificationData)) {
+            sendNotification($ownerToken, $notificationData);
 
-
-        sendNotification($ownerToken, $notificationData);
+        }
     }
 }

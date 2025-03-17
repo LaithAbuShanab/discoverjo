@@ -81,6 +81,62 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return TripResource::collection($trips);
     }
 
+<<<<<<< HEAD
+=======
+    public function allTrips()
+    {
+        $perPage = config('app.pagination_per_page');
+        $now = now()->setTimezone('Asia/Riyadh');
+        $trips = Trip::where('status', '1')
+            ->where('trip_type', '0')
+            ->where('date_time', '>=', $now)
+            ->whereHas('user', function ($query) {
+                $query->where('status', '!=', '0');
+            })
+            ->paginate($perPage);
+
+        $tripsArray = $trips->toArray();
+
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
+            'total' => $tripsArray['total'],
+        ];
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'trips' => TripResource::collection($trips),
+            'pagination' => $pagination
+        ];
+    }
+
+    public function invitationTrips()
+    {
+        $userId = Auth::guard('api')->user()->id;
+        $trips = Trip::where('trip_type', '2')
+            ->where('status', '1')
+            ->whereHas('usersTrip', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->where('status', '0');
+            })->get();
+
+        return TripResource::collection($trips);
+    }
+
+    public function privateTrips()
+    {
+        $userTrips = UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where('status', '1')->pluck('trip_id')->toArray();
+        $trips = Trip::where('user_id', Auth::guard('api')->user()->id)->orWhereIn('id', $userTrips)->get();
+        return PrivateTripResource::collection($trips);
+    }
+
+    public function tripDetails($trip_id)
+    {
+        $trip = Trip::find($trip_id);
+        return new TripDetailsResource($trip);
+    }
+
+>>>>>>> asma
     public function createTrip($request)
     {
         $tags = collect(explode(',', $request->tags))->map(function ($tag) {
@@ -487,7 +543,16 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function search($query)
     {
         $perPage =  config('app.pagination_per_page');
-        $trips = Trip::where('name', 'like', "%$query%")->orWhere('description', 'like', "%$query%")->paginate($perPage);
+
+
+        $trips = Trip::where(function ($q) use ($query) {
+            $q->where('name', 'like', "%$query%")
+                ->orWhere('description', 'like', "%$query%");
+        })
+            ->whereHas('user', function ($query) {
+                $query->where('status', '1'); // Ensure only trips where the owner is active
+            })
+            ->paginate($perPage);
 
         $tripsArray = $trips->toArray();
         $pagination = [

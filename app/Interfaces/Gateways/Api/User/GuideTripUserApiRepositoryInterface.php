@@ -11,8 +11,8 @@ interface GuideTripUserApiRepositoryInterface
     public function allUsersForGuideTrip();
     public function storeSubscriberInTrip($data);
     public function updateSubscriberInTrip($data);
-    public function deleteSubscriberInTrip($id);
-    public function allSubscription($id);
+    public function deleteSubscriberInTrip($slug);
+    public function allSubscription($slug);
     public function favorite($id);
 
     public function deleteFavorite($id);

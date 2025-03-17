@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Requests\Api\User\GuideRating;
+namespace App\Http\Requests\Api\User\Post;
 
 use App\Helpers\ApiResponse;
-use App\Rules\CheckIfTheIdIsGuideRule;
-use App\Rules\CheckIfUserJoinedGuidPreviouslyRule;
-use App\Rules\CheckIfUserMakeUpdateToUpdateRule;
-use App\Rules\CheckIfUserNotGuideForRatingRule;
+use App\Rules\CheckIfCommentBelongToUser;
 use App\Rules\IfUserCanMakeCommentInPostRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
-class UpdateGuideRatingRequest extends FormRequest
+class UpdateCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,23 +28,19 @@ class UpdateGuideRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rating' => ['required', 'numeric', 'min:1', 'max:5'],
+            'comment_id'=>['required','exists:comments,id',new CheckIfCommentBelongToUser()],
+            'content'=>['required','string'],
         ];
     }
 
     public function messages()
     {
         return [
-            // Guide ID
-            'guide_id.required' => __('validation.api.guide-id-is-required'),
-            'guide_id.exists' => __('validation.api.guide-id-not-exists'),
-            'guide_id.CheckIfUserMakeUpdateToUpdateRule' => __('validation.api.guide-update-not-allowed'),
-
-            // Rating
-            'rating.required' => __('validation.api.rating-is-required'),
-            'rating.numeric' => __('validation.api.rating-must-be-numeric'),
-            'rating.min' => __('validation.api.rating-min-value'),
-            'rating.max' => __('validation.api.rating-max-value'),
+            'post_id.required' => __('validation.api.post-id-required'),
+            'post_id.exists' => __('validation.api.post-id-exists'),
+            'post_id.if_user_can_make_comment_in_post' => __('validation.api.post-id-can-make-comment'),
+            'content.required' => __('validation.api.content-required'),
+            'content.string' => __('validation.api.content-string'),
         ];
     }
 

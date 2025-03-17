@@ -19,16 +19,17 @@ class CheckIfUserHasJoinedInTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
+        $activeTrip = GuideTrip::findBySlug($value);
+        if(!$activeTrip) return;
 
         // Check if the user is part of the trip
-        $userInTrip = GuideTripUser::where('guide_trip_id', $value)->where('user_id', $userId)->exists();
+        $userInTrip = GuideTripUser::where('guide_trip_id', $activeTrip->id)->where('user_id', $userId)->exists();
         if (!$userInTrip) {
             $fail(__('validation.api.you_should_join_trip_first'));
             return; // Exit after failing
         }
 
         // Check if the trip is active
-        $activeTrip = GuideTrip::find($value);
         if (!$activeTrip) {
             $fail(__('validation.api.trip_not_found'));
             return; // Exit if the trip doesn't exist

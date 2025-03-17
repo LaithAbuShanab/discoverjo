@@ -20,7 +20,8 @@ class CommentApiUseCase
         return $this->commentRepository->createComment([
             'user_id'=>Auth::guard('api')->user()->id,
             'post_id'=>$data['post_id'],
-            'content'=>$data['content']
+            'content'=>$data['content'],
+            'parent_id'=>$data['parent_id']
         ]);
 
     }

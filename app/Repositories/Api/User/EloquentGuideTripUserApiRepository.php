@@ -40,8 +40,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     {
         $perPage =config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
-        $guidesTrips = GuideTrip::where('status',1)->where('start_datetime','>',$now)->orderBy('start_datetime')->paginate($perPage);
-        GuideTrip::where('status', '1')->whereNotIn('id', $guidesTrips->pluck('id'))->update(['status' => '0']);
+        $guidesTrips = GuideTrip::where('status', 1)
+            ->where('start_datetime', '>', $now)
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1'); // Ensures only trips where the guide is active
+            })
+            ->orderBy('start_datetime')
+            ->paginate($perPage);
+
+        GuideTrip::where('status', '1')->where('start_datetime', '<', $now)->update(['status' => '0']);
 
         $tripsArray = $guidesTrips->toArray();
 
@@ -61,7 +68,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     }
     public function storeSubscriberInTrip($data)
     {
-        $guideTrip = GuideTrip::findOrFail($data['guide_trip_id']);
+        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
 
         $subscribers = array_map(function($subscriber) {
             $subscriber['user_id'] = Auth::guard('api')->user()->id;
@@ -75,7 +82,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
     public function updateSubscriberInTrip($data)
     {
-        $guideTrip = GuideTrip::findOrFail($data['guide_trip_id']);
+        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
 
         GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->delete();
         $subscribers = array_map(function($subscriber) {
@@ -87,18 +94,18 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         return ;
     }
-    public function deleteSubscriberInTrip($id)
+    public function deleteSubscriberInTrip($slug)
     {
-
-        GuideTripUser::where('guide_trip_id', $id)->where('user_id',Auth::guard('api')->user()->id)->delete();
+        $guideTrip = GuideTrip::findBySlug($slug);
+        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->delete();
 
         return ;
     }
 
-    public function allSubscription($id)
+    public function allSubscription($slug)
     {
-
-        $subscription =GuideTripUser::where('guide_trip_id', $id)->where('user_id',Auth::guard('api')->user()->id)->get();
+        $guideTrip = GuideTrip::findBySlug($slug);
+        $subscription =GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->get();
         return  SubscriptionResource::collection($subscription);
     }
     public function favorite($id)
@@ -220,7 +227,12 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-        })->paginate($perPage);
+        })
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1');
+            })
+            ->paginate($perPage);
+
 
 
         $tripsArray = $trips->toArray();

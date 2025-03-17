@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Post;
 
 use App\Helpers\ApiResponse;
+use App\Rules\CheckIfCommentHasNullParentIdRule;
 use App\Rules\IfUserCanMakeCommentInPostRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -29,6 +30,7 @@ class CreateCommentRequest extends FormRequest
         return [
             'post_id'=>['required','exists:posts,id',new IfUserCanMakeCommentInPostRule()],
             'content'=>['required','string'],
+            'parent_id' => ['nullable','exists:comments,id',new CheckIfCommentHasNullParentIdRule()],
         ];
     }
 

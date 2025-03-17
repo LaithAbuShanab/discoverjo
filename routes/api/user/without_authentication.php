@@ -31,7 +31,7 @@ Route::get('shuffle/all-categories', [CategoryApiController::class, 'shuffleAllC
 Route::get('places/category/{category_slug}', [CategoryApiController::class, 'categoryPlaces'])->name('category.places'); // DONE ✅
 // GET ALL PLACES BY SLUG
 Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->name('place'); // DONE ✅
-
+// GET ALL PLACES BY SUBCATEGORY
 Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places'); //
 
 Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places'); //

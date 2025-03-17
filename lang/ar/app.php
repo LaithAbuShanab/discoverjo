@@ -97,9 +97,6 @@ return [
 
     "api" => [
         /** for categories */
-        'all-subcategories-retrieved-successfully' => 'جميع الفئات الفرعية تم استرجاعها بنجاح',
-        'categories-retrieved-successfully' => 'تم استرجاع الفئات بنجاح.',
-        'places-subcategories-retrieved-successfully' => 'تم استرجاع الأماكن والفئات الفرعية بواسطة معرف الفئة بنجاح.',
         'the-searched-categories-retrieved-successfully' => 'تم استرجاع الفئات التي تم البحث عنها بنجاح.',
         'comment-created-successfully' => 'تم انشاء التعليق بنجاح',
         'comment-updated-successfully' => 'تم تعديل التعليق بنجاح',
@@ -163,19 +160,27 @@ return [
         'the-interest-event-retrieved-successfully' => 'نم استرجاع لائحة الفعاليات التي اهتممت بها بنجاح',
 
         // Trip Api
-        'retrieved-successfully'                  => 'تم استرجاع البيانات بنجاح',
-        'trip-created-successfully'               => 'تم إنشاء الرحلة بنجاح',
-        'the-status-change-successfully'          => 'تم تغيير حالة الرحلة بنجاح',
-        'you-join-to-trip-successfully'           => 'تم الانضمام للرحلة بنجاح',
-        'you-are-left-from-the-trip-successfully' => 'تم الخروج من الرحلة بنجاح',
-        'the-trip-deleted-successfully'           => 'تم حذف الرحلة بنجاح',
-        'the-trip-updated-successfully'           => 'تم تعديل الرحلة بنجاح',
-        'the-user-deleted-successfully'           => 'تم حذف المستخدم بنجاح',
+        'retrieved-successfully'                      => 'تم استرجاع البيانات بنجاح',
+        'trip-created-successfully'                   => 'تم إنشاء الرحلة بنجاح',
+        'the-status-change-successfully'              => 'تم تغيير حالة الرحلة بنجاح',
+        'you-join-to-trip-successfully'               => 'تم الانضمام للرحلة بنجاح',
+        'you-are-left-from-the-trip-successfully'     => 'تم الخروج من الرحلة بنجاح',
+        'the-trip-deleted-successfully'               => 'تم حذف الرحلة بنجاح',
+        'the-trip-updated-successfully'               => 'تم تعديل الرحلة بنجاح',
+        'the-user-deleted-successfully'               => 'تم حذف المستخدم بنجاح',
 
         // Plan Api
-        'plan-created-successfully'               => 'تم انشاء الخطة بنجاح',
-        'plan-updated-successfully'               => 'تم تعديل الخطة بنجاح',
-        'plan-deleted-successfully'               => 'تم حذف الخطة بنجاح',
-        'plans-retrieved-successfully'            => 'تم استرجاع الخطط بنجاح',
+        'plan-created-successfully'                   => 'تم انشاء الخطة بنجاح',
+        'plan-updated-successfully'                   => 'تم تعديل الخطة بنجاح',
+        'plan-deleted-successfully'                   => 'تم حذف الخطة بنجاح',
+        'plans-retrieved-successfully'                => 'تم استرجاع الخطط بنجاح',
+
+        // Category Api
+        'categories-retrieved-successfully'           => 'تم استرجاع الفئات بنجاح.',
+        'all-subcategories-retrieved-successfully'    => 'جميع الفئات الفرعية تم استرجاعها بنجاح',
+        'places-subcategories-retrieved-successfully' => 'تم استرجاع الأماكن والفئات الفرعية بواسطة معرف الفئة بنجاح.',
+
+
+
     ],
 ];

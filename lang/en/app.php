@@ -108,9 +108,6 @@ return [
 
     "api" => [
         /** for categories */
-        'all-subcategories-retrieved-successfully' => 'All subcategories retrieved successfully',
-        'categories-retrieved-successfully' => 'Categories retrieved successfully.',
-        'places-subcategories-retrieved-successfully' => 'Places and SubCategories by Category id Retrieved Successfully.',
         'the-searched-categories-retrieved-successfully' => 'The searched categories retrieved successfully.',
         'comment-created-successfully' => 'Comment created successfully',
         'comment-updated-successfully' => 'Comment updated successfully',
@@ -174,19 +171,25 @@ return [
         'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
 
         // Trip Api
-        'retrieved-successfully'                  => 'Data recovered successfully',
-        'trip-created-successfully'               => 'Trip created successfully',
-        'the-status-change-successfully'          => 'The status change successfully',
-        'you-join-to-trip-successfully'           => 'You join to trip successfully',
-        'you-are-left-from-the-trip-successfully' => 'You are left from the trip successfully',
-        'the-trip-deleted-successfully'           => 'The trip deleted successfully',
-        'the-trip-updated-successfully'           => 'The trip updated successfully',
-        'the-user-deleted-successfully'           => 'The user deleted successfully',
+        'retrieved-successfully'                      => 'Data recovered successfully',
+        'trip-created-successfully'                   => 'Trip created successfully',
+        'the-status-change-successfully'              => 'The status change successfully',
+        'you-join-to-trip-successfully'               => 'You join to trip successfully',
+        'you-are-left-from-the-trip-successfully'     => 'You are left from the trip successfully',
+        'the-trip-deleted-successfully'               => 'The trip deleted successfully',
+        'the-trip-updated-successfully'               => 'The trip updated successfully',
+        'the-user-deleted-successfully'               => 'The user deleted successfully',
 
         // Plan Api
-        'plan-created-successfully'               => 'Plan created successfully',
-        'plan-updated-successfully'               => 'Plan updated successfully',
-        'plan-deleted-successfully'               => 'Plan deleted successfully',
-        'plans-retrieved-successfully'            => 'Plans retrieved successfully',
+        'plan-created-successfully'                   => 'Plan created successfully',
+        'plan-updated-successfully'                   => 'Plan updated successfully',
+        'plan-deleted-successfully'                   => 'Plan deleted successfully',
+        'plans-retrieved-successfully'                => 'Plans retrieved successfully',
+
+        // Category Api
+        'categories-retrieved-successfully'           => 'Categories retrieved successfully',
+        'all-subcategories-retrieved-successfully'    => 'All subcategories retrieved successfully',
+        'places-subcategories-retrieved-successfully' => 'Places and SubCategories by Category id Retrieved Successfully.',
+
     ],
 ];

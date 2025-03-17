@@ -8,10 +8,6 @@ use App\Http\Resources\PlaceResource;
 use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Models\Category;
 use App\Models\Place;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-
 
 class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 {
@@ -19,6 +15,13 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
     {
         $eloquentCategories = Category::whereNull('parent_id')->orderBy('priority')->get();
         return AllCategoriesResource::collection($eloquentCategories);
+    }
+
+    public function allSubcategories($data)
+    {
+        $subcategories = Category::whereIn('slug', $data)->with('children')->get();
+        $allChildren = $subcategories->pluck('children')->flatten();
+        return CategoryResource::collection($allChildren);
     }
 
     public function shuffleAllCategories()
@@ -30,32 +33,26 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
     public function allPlacesByCategory($slug)
     {
+        $perPage = config('app.pagination_per_page');
         $category = Category::with('children')->where('slug', $slug)->first();
 
-        // Retrieve all subcategories
         $allSubcategories = $category->children()->whereHas('places')->get();
 
         $userLat = request()->lat ? request()->lat : null;
         $userLng = request()->lng ? request()->lng : null;
 
-        // Set the number of places per page
-        $perPage = config('app.pagination_per_page');; // You can adjust this number based on your requirements
-
-        // Retrieve places associated with the category and its children
-        $places = Place::selectRaw('places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])
-            ->where('status',1)
-            ->whereIn('id', function ($query) use ($category) {
-                $query->select('place_id')
-                    ->from('place_categories')
-                    ->whereIn('category_id', function ($subQuery) use ($category) {
-                        $subQuery->select('id')
-                            ->from('categories')
-                            ->where('parent_id', $category->id)
-                            ->orWhere('id', $category->id); // Include the main category itself
-                    });
+        $places = Place::selectRaw(
+            'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
+            [$userLat, $userLng, $userLat]
+        )
+            ->where('status', 1)
+            ->whereHas('categories', function ($query) use ($category) {
+                $query->where('category_id', $category->id)
+                    ->orWhereIn('category_id', $category->children->pluck('id'));
             })
-            ->orderBy('distance') // Sort by distance
-            ->paginate($perPage);
+            ->orderBy('distance')
+            ->paginate($perPage)
+            ->appends(['lat' => $userLat, 'lng' => $userLng]);
 
 
         $placesArray = $places->toArray();
@@ -67,28 +64,18 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
             $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
         }
 
-        // Convert pagination result to array and include pagination metadata
-
         $pagination = [
             'next_page_url' => $parameterNext,
             'prev_page_url' => $parameterPrevious,
             'total' => $placesArray['total'],
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
             'category' => new AllCategoriesResource($category),
             'sub_categories' => CategoryResource::collection($allSubcategories),
             'places' => PlaceResource::collection($places),
             'pagination' => $pagination
         ];
-    }
-
-    public function allSubcategories($data)
-    {
-        $subcategories = Category::whereIn('slug', $data)->with('children')->get();
-        $allChildren = $subcategories->pluck('children')->flatten();
-        return CategoryResource::collection($allChildren);
     }
 
     public function search($query)

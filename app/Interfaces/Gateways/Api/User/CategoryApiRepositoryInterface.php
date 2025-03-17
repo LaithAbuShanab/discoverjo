@@ -7,9 +7,12 @@ interface CategoryApiRepositoryInterface
 {
     public function getAllCategories();
 
-    public function shuffleAllCategories();
-    public function allPlacesByCategory($slug);
     public function allSubcategories($data);
+
+    public function shuffleAllCategories();
+
+    public function allPlacesByCategory($slug);
+
     public function search($query);
 
 

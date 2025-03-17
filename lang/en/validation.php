@@ -310,12 +310,9 @@ return [
 
     'api' => [
         'relationship_not_exist' => "The relationship :relationship does not exist in User model",
-        'the-selected-category-id-does-not-exists' => 'The selected category does not exist.',
-        'the-category-id-required' => 'The category ID is required.',
         'place-id-invalid' => 'Place id invalid',
         'this-place-already-in-your-visited-place' => 'This place already in your visited place list',
         'this-place-not-in-your-visited-place-list' => 'This place not in your visited place list to remove it form list',
-        'invalid-category-id-not-main-category' => 'Invalid category Id, it is not main category',
         'the-selected-comment-id-does-not-exists' => 'The selected Comment id does not exists',
         'the-comment-id-required' => 'The comment id is required',
         'the-content-required' => 'The content is required',
@@ -786,7 +783,6 @@ return [
 
         'email-lowercase' => 'The email must be lowercase.',
 
-        'the-category-does-not-exists' => 'The category does not exists',
         'the-selected-category-does-not-main-category' => 'The selected category does not main category',
         'the-selected-subcategory-it-is-main-category' => 'The selected subcategory it is main category',
         'the-subcategories-should-be-array' => 'The subcategories should be array',
@@ -857,7 +853,6 @@ return [
         'you-did-not-join-to-this-trip' => 'you did not join to this trip',
         'invalid-credentials' => 'Invalid credentials',
         'you-should-verify-email-first' => 'You should verify your email first',
-        'the-categories-should-be-array' => 'The categories should be an array',
         'something-went-wrong' => 'Something went wrong',
         'you_are_not_authorized_to_delete_this_media' => 'You are not authorized to delete this media.',
         'wait-for-admin-to-accept-your-application' => 'Wait for admin to accept your application',
@@ -953,6 +948,15 @@ return [
         'plan-slug-invalid'                                   => 'The plan slug is invalid.',
         'plan-slug-does-not-exists'                           => 'The plan does not exist.',
         'you_are_not_the_owner_of_this_plan'                  => 'You are not the owner of this plan',
+
+        // Category Validation
+        'the-category-does-not-exists'                        => 'The category does not exists',
+        'the-selected-category-does-not-main-category'        => 'The selected category does not main category',
+        'the-categories-should-be-array'                      => 'The categories should be an array',
+        'the-selected-category-id-does-not-exists'            => 'The selected category does not exist.',
+        'the-category-id-required'                            => 'The category ID is required.',
+        'invalid-category-id-not-main-category'               => 'Invalid category Id, it is not main category',
+
     ]
 
 ];

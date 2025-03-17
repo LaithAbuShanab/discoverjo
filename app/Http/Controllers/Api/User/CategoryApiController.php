@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Helpers\ApiResponse;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\category\SubcategoriesOfCategoriesRequest;
+use App\Http\Controllers\Controller;
 use App\Rules\CheckIfCategoryIsParentRule;
 use App\UseCases\Api\User\CategoryApiUseCase;
 use Illuminate\Http\Request;
@@ -15,22 +15,30 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryApiController extends Controller
 {
-    protected $categoryApiUseCase;
-    protected $categoryApiPresenter;
 
-    public function __construct(CategoryApiUseCase $categoryUseCase)
+    public function __construct(protected CategoryApiUseCase $categoryApiUseCase)
     {
-
-        $this->categoryApiUseCase = $categoryUseCase;
+        $this->categoryApiUseCase = $categoryApiUseCase;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         try {
             $categories = $this->categoryApiUseCase->allCategories();
             return ApiResponse::sendResponse(200, __('app.api.categories-retrieved-successfully'), $categories);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function subcategoriesOfCategories(SubcategoriesOfCategoriesRequest $request)
+    {
+        $data = $request->validated();
+        $data = explode(',', $data['categories']);
+        try {
+            $categories = $this->categoryApiUseCase->allSubcategories($data);
+            return ApiResponse::sendResponse(200, __('app.api.all-subcategories-retrieved-successfully'), $categories);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -44,7 +52,6 @@ class CategoryApiController extends Controller
             return ApiResponse::sendResponse(200, __('app.api.categories-retrieved-successfully'), $categories);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -67,21 +74,6 @@ class CategoryApiController extends Controller
             return ApiResponse::sendResponse(200,  __('app.api.places-subcategories-retrieved-successfully'), $allPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
-        }
-    }
-
-    public function subcategoriesOfCategories(SubcategoriesOfCategoriesRequest $request)
-    {
-        $data = $request->validated();
-        $data = explode(',', $data['categories']);
-        try {
-            $categories = $this->categoryApiUseCase->allSubcategories($data);
-            return ApiResponse::sendResponse(200, __('app.api.all-subcategories-retrieved-successfully'), $categories);
-        } catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

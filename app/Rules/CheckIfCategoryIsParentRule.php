@@ -18,6 +18,5 @@ class CheckIfCategoryIsParentRule implements ValidationRule
         if (Category::whereNotNull('parent_id')->where('slug', $value)->exists()) {
             $fail(__('validation.api.invalid-category-id-not-main-category'));
         }
-
     }
 }

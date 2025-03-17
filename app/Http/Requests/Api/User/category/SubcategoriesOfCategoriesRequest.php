@@ -28,14 +28,14 @@ class SubcategoriesOfCategoriesRequest extends FormRequest
     {
         return [
             'categories' => ['required', function ($attribute, $value, $fail) {
-            $values =explode(',',$value);
+                $values = explode(',', $value);
                 if (is_array($values)) {
                     foreach ($values as $slug) {
                         $category = Category::findBySlug($slug);
                         if (!$category) $fail(__('validation.api.the-category-does-not-exists'));
-                        if ( $category?->parent_id !=null) $fail(__('validation.api.the-selected-category-does-not-main-category'));
+                        if ($category?->parent_id != null) $fail(__('validation.api.the-selected-category-does-not-main-category'));
                     }
-                }else{
+                } else {
                     $fail(__('validation.api.the-categories-should-be-array'));
                 }
             }],
@@ -45,9 +45,6 @@ class SubcategoriesOfCategoriesRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();
-
-        throw new HttpResponseException(
-            ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $errors)
-        );
+        throw new HttpResponseException(ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors));
     }
 }

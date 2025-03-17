@@ -323,9 +323,6 @@ return [
         'relationship_not_exist' => "العلاقة :relationship غير موجودة في نموذج المستخدم",
         // Category Errors
 
-        'the-selected-category-id-does-not-exists' => 'الفئة المحددة غير موجودة.',
-        'the-category-id-required' => 'معرّف الفئة مطلوب.',
-        'invalid-category-id-not-main-category' => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
         'subcategory-is-required' => 'التصنيف الفرعي مطلوب.',
         'subcategory-does-not-exists' => 'رقم التصنيف الفرعي غير موجود.',
 
@@ -769,8 +766,6 @@ return [
         'subcategories-id-invalid' => 'الفئة الفرعية المحددة غير موجودة أو ليست فئة فرعية صالحة.',
 
         // Custom Category Errors
-        'the-category-does-not-exists' => 'الفئة غير موجودة',
-        'the-selected-category-does-not-main-category' => 'الفئة المختارة ليست الفئة الرئيسية',
         'the-selected-subcategory-it-is-main-category' => 'الفئة الفرعية المختارة هي الفئة الرئيسية',
         'the-subcategories-should-be-array' => 'يجب أن تكون الفئات الفرعية في شكل مصفوفة',
         'the-category-should-be-array' => 'يجب أن تكون الفئات في شكل مصفوفة',
@@ -931,6 +926,15 @@ return [
         'plan-slug-invalid'                                   => 'معرف الخطة غير صالح.',
         'plan-slug-does-not-exists'                           => 'الخطة غير موجودة.',
         'you_are_not_the_owner_of_this_plan'                  => 'انت لست صاحب هذه الخطة.',
+
+        // Category Validation
+        'the-category-does-not-exists'                        => 'الفئة غير موجودة',
+        'the-selected-category-does-not-main-category'        => 'الفئة المختارة ليست الفئة الرئيسية',
+        'the-categories-should-be-array'                      => 'الفئات يجب أن تكون مصفوفة.',
+        'the-selected-category-id-does-not-exists'            => 'الفئة المحددة غير موجودة.',
+        'the-category-id-required'                            => 'معرّف الفئة مطلوب.',
+        'invalid-category-id-not-main-category'               => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
+
     ],
 
 ];

@@ -22,11 +22,14 @@ use App\Http\Controllers\Api\User\RegionsApiController;
 use App\Http\Controllers\Api\User\RegisterGuide\RegisterGuideApiController;
 
 
-//start review and fix
-Route::get('all-categories', [CategoryApiController::class, 'index'])->name('categories'); //
-Route::get('list/subcategories', [CategoryApiController::class, 'subcategoriesOfCategories'])->name('subcategories.Categories');//
-Route::get('shuffle/all-categories', [CategoryApiController::class, 'shuffleAllCategories'])->name('categories.shuffle');//
-Route::get('places/category/{category_slug}', [CategoryApiController::class, 'categoryPlaces'])->name('category.places');//
+// GET ALL CATEGORIES
+Route::get('all-categories', [CategoryApiController::class, 'index'])->name('categories'); // DONE ✅
+// GET ALL SUBCATEGORIES
+Route::get('list/subcategories', [CategoryApiController::class, 'subcategoriesOfCategories'])->name('subcategories.categories'); // DONE ✅
+// GET ALL CATEGORIES SHUFFLE
+Route::get('shuffle/all-categories', [CategoryApiController::class, 'shuffleAllCategories'])->name('categories.shuffle'); // DONE ✅
+// GET ALL PLACES BY CATEGORY
+Route::get('places/category/{category_slug}', [CategoryApiController::class, 'categoryPlaces'])->name('category.places'); // DONE ✅
 
 Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->name('place');//
 Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places');//

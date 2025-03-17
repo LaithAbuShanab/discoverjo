@@ -184,7 +184,7 @@ Route::get('all/tags', [UserProfileController::class, 'allTags']);
 Route::post('user/set-location', [UserProfileController::class, 'setLocation']);
 
 //delete and deactivate account need time
-Route::post('delete/account', [AuthUserController::class, 'deleteAccount']);
-Route::get('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
+Route::delete('delete/account', [AuthUserController::class, 'deleteAccount']);
+Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
 
 Broadcast::routes();

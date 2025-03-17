@@ -8,6 +8,8 @@ use App\Interfaces\Gateways\Api\User\AuthApiRepositoryInterface;
 use App\Models\Admin;
 use App\Models\DeviceToken;
 use App\Models\Follow;
+use App\Models\GuideTrip;
+use App\Models\GuideTripUser;
 use App\Models\Plan;
 use App\Models\Trip;
 use App\Models\User;
@@ -67,6 +69,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
     }
     public function login($userData)
     {
+        $now = Carbon::now('Asia/Riyadh');
         $credentials = [];
 
         if (isset($userData['usernameOrEmail']) && isset($userData['password'])) {
@@ -98,6 +101,29 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             }
             if ($user->status == 4) {
                 throw new \Exception(__('validation.api.wait-for-admin-to-accept-your-application'));
+            }
+            if($user->status == 0){
+                $user->status = 1;
+                $user->save();
+                $userTrip = Trip::where('user_id', $user->id)->latest()->first();
+                if($userTrip){
+                    if ( $userTrip->date_time > $now && $userTrip->status ==4) {
+                        $userTrip->status = 1;
+                        $userTrip->save();
+                        UsersTrip::where('trip_id', $userTrip->id)->where('status',5)->update(['status' => 1]);
+                    }
+                }
+                UsersTrip::where('user_id', $user->id)->where('status',5)->update(['status' => 1]);
+
+                $guideTrip = GuideTrip::where('guide_id', $user->id)->latest()->first();
+                if($guideTrip){
+                    if ( $guideTrip->start_datetime > $now && $guideTrip->status ==4) {
+                        $guideTrip->status = 1;
+                        $guideTrip->save();
+                        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status',5)->update(['status' => 1]);
+                    }
+                }
+                GuideTripUser::where('user_id', $user->id)->where('status',5)->update(['status' => 1]);
             }
 
             $token = $user->createToken('mobile')->accessToken;
@@ -161,6 +187,8 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             ->where('taggable_id', $id)
             ->delete();
         $user = User::where('email', $email)->where('id', $id)->first();
+
+        //we shouldn't delete trip and guide trip because they connected to post of user so we should put it to User System
         if ($user) {
             $user->delete();
         }
@@ -168,6 +196,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
     public function deactivateAccount()
     {
+        //when the trip & guide trip status 4 when the user deactivate && the user in those trip become 5 when they acceptance and deactivate trips
         $now = Carbon::now('Asia/Riyadh');
 
         $userId = Auth::guard('api')->user()->id;
@@ -177,13 +206,24 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
         // ======================= Deactivate User Trips =======================
         $userTrip = Trip::where('user_id', $userId)->latest()->first();
-        if ($userTrip && $userTrip->date_time > $now) {
-            $userTrip->status = 4;
-            $userTrip->save();
-            UsersTrip::where('trip_id', $userTrip->id)->update(['status' => 5]);
+        if($userTrip){
+            if ( $userTrip->date_time > $now && $userTrip->status ==1) {
+                $userTrip->status = 4;
+                $userTrip->save();
+                UsersTrip::where('trip_id', $userTrip->id)->where('status',1)->update(['status' => 5]);
+            }
         }
-        UsersTrip::where('user_id', $userId)->update(['status' => 5]);
-        // ===================== End Deactivate User Trips ======================
 
+        UsersTrip::where('user_id', $userId)->where('status',1)->update(['status' => 5]);
+        // ===================== End Deactivate User Trips ======================
+        $guideTrip = GuideTrip::where('guide_id', $userId)->latest()->first();
+        if($guideTrip){
+            if ( $guideTrip->start_datetime > $now && $guideTrip->status ==1) {
+                $guideTrip->status = 4;
+                $guideTrip->save();
+                GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status',1)->update(['status' => 5]);
+            }
+        }
+        GuideTripUser::where('user_id', $userId)->where('status',1)->update(['status' => 5]);
     }
 }

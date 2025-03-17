@@ -34,29 +34,41 @@ class UserFavoriteResource extends JsonResource
         });
 
 
-        $postFav = $this->favoritePosts->map(function ($post) {
+        $postFav = $this->favoritePosts->filter(function ($post) {
+            return $post->user->status == 1; // Filter posts where user status is 1
+        })->map(function ($post) {
             $gallery = [];
             foreach ($post->getMedia('post') as $image) {
                 $gallery[] = $image->original_url;
             }
             return [
-                'id'=>$post->id,
+                'id' => $post->id,
                 'name' => $post->content,
-                'media'=>$gallery,
-                'creator'=>$post->user->username,
-                'visitable_type'=>explode('\\Models\\', $post->visitable_type)[1],
-                'visitable_id'=>$post->visitable_type::find($post->visitable_id)->name,
+                'media' => $gallery,
+                'creator_id' => $post->user->id,
+                'creator_username' => $post->user->username,
+                'creator_slug' => $post->user->slug,
+                'visitable_type' => explode('\\Models\\', $post->visitable_type)[1],
+                'visitable_id' => $post->visitable_type::find($post->visitable_id)->name,
             ];
+        });
+
+        $tripFav = $this->favoriteTrips->filter(function ($trip) {
+            return $trip->user->status == 1;
+        });
+
+        $guideTripFav = $this->favoriteGuideTrips->filter(function ($guideTrip) {
+            return $guideTrip->guide->status == 1;
         });
 
         return [
             'places' => $placeFav,
-            'trip' => TripResource::collection($this->favoriteTrips),
+            'trip' => TripResource::collection($tripFav),
             'event'=>EventResource::collection($this->favoriteEvents),
             'volunteering'=>VolunteeringResource::collection($this->favoriteVolunteerings),
             'plan'=>PlanResource::collection($this->favoritePlans),
             'post'=>$postFav,
-            'guide_trip' => GuideFavoriteResource::collection($this->favoriteGuideTrips),
+            'guide_trip' => GuideFavoriteResource::collection($guideTripFav),
         ];
     }
 }

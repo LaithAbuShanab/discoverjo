@@ -35,17 +35,19 @@ class EloquentGuideRatingApiApiRepository implements GuideRatingApiRepositoryInt
         ]);
 
     }
-    public function deleteGuideRating($id)
+    public function deleteGuideRating($slug)
     {
         $userId = Auth::guard('api')->user()->id;
-        $deleteRatingGuide = RatingGuide::where('guide_id',$id)->where('user_id',$userId)->delete();
+        $guide =User::findBySlug($slug);
+        $deleteRatingGuide = RatingGuide::where('guide_id',$guide->id)->where('user_id',$userId)->delete();
 
     }
 
-    public function showGuideRating($id)
+    public function showGuideRating($slug)
     {
         $userId = Auth::guard('api')->user()->id;
-        $RatingGuide = RatingGuide::where('guide_id',$id)->where('user_id',$userId)->first();
+        $guide = User::findBySlug($slug);
+        $RatingGuide = RatingGuide::where('guide_id',$guide->id)->where('user_id',$userId)->first();
         return new ShowGuideRatingResource($RatingGuide);
 
     }

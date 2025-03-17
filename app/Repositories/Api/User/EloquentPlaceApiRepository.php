@@ -268,7 +268,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         /**
          * SEARCH PLACES
          */
-        $users = User::where(function ($queryBuilder) use ($query) {
+        $users = User::where('status',1)->where(function ($queryBuilder) use ($query) {
             $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
                 ->orWhere('last_name', 'LIKE', "%{$query}%")
                 ->orWhere('username', 'LIKE', "%{$query}%");
@@ -334,7 +334,11 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
         })
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1'); // Ensures only active guides are included
+            })
             ->paginate($perPage);
+
 
         $guideTripsArray = $guideTrips->toArray();
         $paginationGuideTrips = [
@@ -363,7 +367,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
          * SEARCH TRIPS (Non-guide trips)
          */
         $trips = Trip::where('name', 'like', "%$query%")
-            // Removed the description condition as requested.
+            ->whereHas('user', function ($query) {
+                $query->where('status', '1');
+            })
             ->paginate($perPage);
 
         $tripsArray = $trips->toArray();

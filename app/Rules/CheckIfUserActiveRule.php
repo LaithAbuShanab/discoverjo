@@ -6,20 +6,19 @@ use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class CheckIfTheIdIsGuideRule implements ValidationRule
+class CheckIfUserActiveRule implements ValidationRule
 {
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $user = User::findBySlug($value);
         if(!$user) return;
-        if(!$user->is_guide){
-            $fail(__('validation.api.the-provided-id-not-guide'));
-            return;
+        if(!$user->status){
+            $fail(__('validation.api.this-user-not-longer-active'));
         }
     }
 }

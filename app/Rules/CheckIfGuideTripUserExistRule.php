@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -16,7 +17,10 @@ class CheckIfGuideTripUserExistRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $userInTrip = GuideTripUser::where('guide_trip_id', $value)->where('user_id', Auth::guard('api')->user()->id)->exists();
+        $guideTrip = GuideTrip::findBySlug($value);
+        if(!$guideTrip) return;
+        $userInTrip = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->exists();
+        if(!$userInTrip) return;
         if ($userInTrip) {
             $fail(__('validation.api.already_in_trip'));
         }

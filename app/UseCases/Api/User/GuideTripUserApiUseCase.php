@@ -29,12 +29,12 @@ class GuideTripUserApiUseCase
     {
         return $this->guideTripUserApiRepository->updateSubscriberInTrip($data);
     }
-    public function deleteSubscriberInTrip($id)
+    public function deleteSubscriberInTrip($slug)
     {
-        return $this->guideTripUserApiRepository->deleteSubscriberInTrip($id);
-    }public function allSubscription($id)
+        return $this->guideTripUserApiRepository->deleteSubscriberInTrip($slug);
+    }public function allSubscription($slug)
     {
-        return $this->guideTripUserApiRepository->allSubscription($id);
+        return $this->guideTripUserApiRepository->allSubscription($slug);
     }
 
     public function favorite($id)

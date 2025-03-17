@@ -7,8 +7,8 @@ interface GuideRatingApiRepositoryInterface
 {
     public function createGuideRating($data);
     public function updateGuideRating($data);
-    public function DeleteGuideRating($id);
-    public function showGuideRating($id);
+    public function DeleteGuideRating($slug);
+    public function showGuideRating($slug);
 
 
 }

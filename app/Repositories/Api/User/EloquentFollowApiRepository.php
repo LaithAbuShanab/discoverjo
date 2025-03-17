@@ -34,22 +34,23 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         sendNotification($ownerToken, $notificationData);
     }
 
-    public function unfollow($following_id)
+    public function unfollow($following_slug)
     {
+        $followingId = User::findBySlug($following_slug);
         $id = Auth::guard('api')->user()->id;
-        $eloquentFollows = Follow::where('follower_id', $id)->where('following_id', $following_id)->delete();
+        $eloquentFollows = Follow::where('follower_id', $id)->where('following_id', $followingId->id)->delete();
         return;
     }
 
-    public function acceptFollower($follower_id)
+    public function acceptFollower($follower_slug)
     {
         $id = Auth::guard('api')->user()->id;
-        $eloquentFollows = Follow::where('follower_id', $follower_id)->where('following_id', $id)->first();
+        $followerUser = User::findBySlug($follower_slug);
+        $eloquentFollows = Follow::where('follower_id', $followerUser->id)->where('following_id', $id)->first();
         $eloquentFollows->update([
             'status' => 1,
         ]);
 
-        $followerUser = User::find($follower_id);
         $ownerToken = $followerUser->DeviceToken->token;
         $receiverLanguage = $followerUser->lang;
         $notificationData = [
@@ -62,29 +63,33 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         return;
     }
 
-    public function unacceptedFollower($follower_id)
+    public function unacceptedFollower($follower_slug)
     {
         $id = Auth::guard('api')->user()->id;
-        $eloquentFollows = Follow::where('follower_id', $follower_id)->where('following_id', $id)->delete();
+        $follower = User::findBySlug($follower_slug);
+        $eloquentFollows = Follow::where('follower_id', $follower->id)->where('following_id', $id)->delete();
         return;
     }
 
-    public function followersRequest($id)
+    public function followersRequest()
     {
+        $id = Auth::guard('api')->user()->id;
         $followers = Follow::where('following_id', $id)->where('status', 0)->get();
         return FollowerResource::collection($followers);
     }
 
 
-    public function followers($user_id)
+    public function followers($user_slug)
     {
-        $followers = Follow::where('following_id', $user_id)->where('status', 1)->get();
+        $followingUser=User::findBySlug($user_slug);
+        $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->get();
         return FollowerResource::collection($followers);
     }
 
-    public function followings($user_id)
+    public function followings($user_slug)
     {
-        $followers = Follow::where('follower_id', $user_id)->where('status', 1)->get();
+        $follower = User::findBySlug($user_slug);
+        $followers = Follow::where('follower_id', $follower->id)->where('status', 1)->get();
         return FollowingResource::collection($followers);
     }
 }

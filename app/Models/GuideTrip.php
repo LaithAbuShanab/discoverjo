@@ -28,9 +28,10 @@ class GuideTrip extends Model implements HasMedia
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function () {
-                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+                return $this->getTranslation('name', 'en');
             })
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->usingLanguage('en');
     }
 
     public function registerMediaCollections(): void

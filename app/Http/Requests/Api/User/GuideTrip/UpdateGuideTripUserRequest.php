@@ -26,7 +26,6 @@ class UpdateGuideTripUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'guide_trip_id' => ['required','exists:guide_trips,id',new CheckIfGuideTripActiveOrInFuture() ,new CheckIfUserHasJoinedInTripRule()],
             'subscribers' => 'required|array',
             'subscribers.*.first_name' => 'required|string|max:255',
             'subscribers.*.last_name' => 'required|string|max:255',

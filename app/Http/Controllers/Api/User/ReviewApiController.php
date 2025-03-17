@@ -9,8 +9,10 @@ use App\Rules\CheckIfExistsInReviewsRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfNotExistsInReviewsRule;
 use App\Rules\CheckIfPastEventOrVolunteering;
+use App\Rules\CheckIfReviewOwnerActiveRule;
 use App\Rules\CheckIfTypeAndSlugRule;
 use App\Rules\CheckIfTypeIsInThePastRule;
+use App\Rules\CheckIfUserTypeActiveRule;
 use App\UseCases\Api\User\ReviewApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -37,7 +39,7 @@ class ReviewApiController extends Controller
             ],
             [
                 'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
-                'slug' => ['required', new CheckIfTypeAndSlugRule()],
+                'slug' => ['required', new CheckIfTypeAndSlugRule(),new CheckIfUserTypeActiveRule()],
             ],[
             'slug.required'=>__('validation.api.id-does-not-exists'),
         ]);
@@ -64,7 +66,7 @@ class ReviewApiController extends Controller
             'comment' => $request->comment
         ], [
             'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
-            'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule()],
+            'slug' => ['bail','required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(),new CheckIfUserTypeActiveRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
         ],[
@@ -150,7 +152,7 @@ class ReviewApiController extends Controller
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
-                'review_id' => ['required', 'integer', 'exists:reviewables,id'],
+                'review_id' => ['bail','required', 'integer', 'exists:reviewables,id',new CheckIfReviewOwnerActiveRule()],
             ],
             [
                 'review_id.exists' => __('validation.api.the-selected-review-id-does-not-exists'),

@@ -44,6 +44,7 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
         if($this->data['type']=='place'){
             if($reviewableItem->status != 1){
                 $fail(__('validation.api.the-selected-place-is-not-active'));
+                return;
             }
         }elseif($this->data['type']=='trip'){
             $userId = Auth::guard('api')->user()->id;
@@ -51,20 +52,24 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
             $owner = $reviewableItem?->user_id;
             if (!$attendance && $owner != $userId) {
                 $fail(__('validation.api.you_are_not_attendance_in_this'));
+                return;
             }
             $trip = Trip::findBySlug($value);
             if($trip->status == 2 || $trip->status == 3){
                 $fail(__('validation.api.this-trip-was-deleted'));
+                return;
             }
             $now = now()->setTimezone('Asia/Riyadh');
             if ($trip?->date_time > $now ) {
                 $fail(__('validation.api.you_cant_make_review_for_upcoming_trip'));
+                return;
             }
         }else{
             $date = $modelClass::findBySlug($value)?->start_datetime;
 
             if ($date > $now) {
                 $fail(__('validation.api.you_cannot_make_review_for_upcoming_event'));
+                return;
             }
         }
 

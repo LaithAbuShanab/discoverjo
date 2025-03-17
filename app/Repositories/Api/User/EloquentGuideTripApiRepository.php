@@ -37,8 +37,15 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
-        $guidesTrips = GuideTrip::where('status',1)->where('start_datetime','>',$now)->orderBy('start_datetime')->paginate($perPage);
-        GuideTrip::where('status', '1')->whereNotIn('id', $guidesTrips->pluck('id'))->update(['status' => '0']);
+        $guidesTrips = GuideTrip::where('status', 1)
+            ->where('start_datetime', '>', $now)
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1'); // Ensures only trips where the guide is active
+            })
+            ->orderBy('start_datetime')
+            ->paginate($perPage);
+
+        GuideTrip::where('status', '1')->where('start_datetime', '<', $now)->update(['status' => '0']);
 
         $tripsArray = $guidesTrips->toArray();
 
@@ -60,7 +67,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     public function allGuides()
     {
         $perPage = config('app.pagination_per_page');
-        $guides=User::where('is_guide',1)->paginate($perPage);
+        $guides=User::where('status',1)->where('is_guide',1)->paginate($perPage);
         $guidesArray = $guides->toArray();
 
         $pagination = [
@@ -186,12 +193,12 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     }
 
 
-    public function updateGuideTrip($mainData, $id, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)
     {
         DB::beginTransaction();
         try {
             // 1- Update the main table for the guide trip
-            $guideTrip = GuideTrip::findOrFail($id);
+            $guideTrip = GuideTrip::findBySlug($slug);
             $guideTrip->update($mainData);
             $guideTrip->setTranslations('name', $mainData['name']);
             $guideTrip->setTranslations('description', $mainData['description']);
@@ -285,9 +292,9 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         }
     }
 
-    public function deleteGuideTrip($id)
+    public function deleteGuideTrip($slug)
     {
-        $guideTrip = GuideTrip::find($id);
+        $guideTrip = GuideTrip::findBySlug($slug);
         $guideTrip->clearMediaCollection('guide_trip_gallery');
         $guideTrip->delete();
 
@@ -295,23 +302,20 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
     public function deleteImage($id)
     {
-        if ($id) {
-            Media::find($id)->delete();
-        }
-        return;
+        Media::find($id)->delete();
     }
 
-    public function joinRequests($id)
+    public function joinRequests($slug)
     {
-        $guideTrip = GuideTrip::findOrFail($id);
+        $guideTrip = GuideTrip::findBySlug($slug);
         return GuideTripUserResource::collection($guideTrip->guideTripUsers);
     }
 
 
     public function changeJoinRequestStatus($request)
     {
-        $status = $request->status == 'confirmed'?1:2;
-        $guideTripUser = GuideTripUser::findOrFail($request->guide_trip_user_id);
+        $status = $request['status'] == 'confirmed'?1:2;
+        $guideTripUser = GuideTripUser::findOrFail($request['guide_trip_user_id']);
         $guideTripUser->update([
             'status'=>$status
         ]);

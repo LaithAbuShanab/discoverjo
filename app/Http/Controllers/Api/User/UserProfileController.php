@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Profile\SetLocationApiRequest;
 use App\Http\Requests\Api\User\Profile\UpdateProfileApiRequest;
 use App\Http\Requests\PlacesOfCurrentLocationRequest;
+use App\Rules\CheckIfUserActiveRule;
 use App\UseCases\Api\User\UserProfileApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -116,7 +117,7 @@ class UserProfileController extends Controller
     {
 
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:users,slug'],
+            'slug' => ['required', 'exists:users,slug',new CheckIfUserActiveRule()],
         ] ,[
             'slug.required' => __('validation.api.user-id-is-required'),
             'slug.exists' => __('validation.api.user-id-does-not-exists'),

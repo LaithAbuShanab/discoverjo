@@ -17,7 +17,12 @@ class CheckIfImageBelongToGuideRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $media = Media::find($value);
+        if(!$media)return;
         $belongToGuide = $media->model_type::find($media->model_id);
+        if(!$belongToGuide) {
+            $fail(__('validation.api.there is no trip belong to this image'));
+            return;
+        };
         if($belongToGuide->guide_id !== Auth::guard('api')->user()->id){
             $fail(__('validation.api.not_owner_of_image'));
         }

@@ -42,11 +42,13 @@ class PostApiUseCase
                 $validatedData['visitable_type']='App\Models\GuideTrip';
                 break;
         }
+
+        $visitable = $validatedData['visitable_type']::findBySlug( $validatedData['visitable_slug']);
         return $this->postRepository->createPost(
             [
                 'user_id' => Auth::guard('api')->user()->id,
                 'visitable_type' => $validatedData['visitable_type'],
-                'visitable_id' => $validatedData['visitable_id'],
+                'visitable_id' => $visitable->id,
                 'content' => $validatedData['content'],
                 'privacy' => $validatedData['privacy'],
             ],
@@ -76,14 +78,16 @@ class PostApiUseCase
                 $validatedData['visitable_type']='App\Models\GuideTrip';
                 break;
         }
+        $visitable = $validatedData['visitable_type']::findBySlug( $validatedData['visitable_slug']);
         return $this->postRepository->updatePost(
             [
                 'user_id' => Auth::guard('api')->user()->id,
                 'visitable_type' => $validatedData['visitable_type'],
-                'visitable_id' => $validatedData['visitable_id'],
+                'visitable_id' =>$visitable->id,
                 'content' => $validatedData['content'],
                 'privacy' => $validatedData['privacy'],
-                'post_id' => $validatedData['post_id']
+                'post_id' => $validatedData['post_id'],
+                'seen_status'=>0
             ],
             isset($validatedData['media']) ? $validatedData['media'] : null,
         );

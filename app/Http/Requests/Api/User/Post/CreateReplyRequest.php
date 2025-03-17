@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Post;
 
 use App\Helpers\ApiResponse;
+use App\Rules\CheckIfUserCanReplyOnCommentRule;
 use App\Rules\IfUserCanMakeCommentInPostRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,7 +28,7 @@ class CreateReplyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment_id'=>['required','exists:comments,id'],
+            'comment_id'=>['required','exists:comments,id',new CheckIfUserCanReplyOnCommentRule()],
             'content'=>['required','string'],
         ];
     }

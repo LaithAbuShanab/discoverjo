@@ -18,14 +18,16 @@ class CheckIfGuideTripActiveOrInFuture implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $activeTrip = GuideTrip::find($value);
-
-        if ($activeTrip && $activeTrip->status != 1) {
+        $activeTrip = GuideTrip::findBySlug($value);
+        if(!$activeTrip) return;
+        if ($activeTrip->status != 1) {
             $fail(__('validation.api.trip_registration_closed'));
+            return;
         }
 
-        if ($activeTrip && Carbon::parse($activeTrip->start_datetime)->isPast()) {
+        if (Carbon::parse($activeTrip->start_datetime)->isPast()) {
             $fail(__('validation.api.trip_has_started', ['start_datetime' => $activeTrip->start_datetime]));
+            return;
         }
     }
 

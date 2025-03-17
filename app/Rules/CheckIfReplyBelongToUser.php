@@ -17,10 +17,7 @@ class CheckIfReplyBelongToUser implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $reply = Reply::find($value);
-        if (!$reply) {
-            $fail(__('validation.api.reply_not_found'));
-            return;
-        }
+        if (!$reply) return;
 
         // Check if the authenticated user is the owner of the reply
         if ($reply->user_id !== Auth::guard('api')->user()->id) {

@@ -31,11 +31,12 @@ Route::middleware(['firstLogin'])->group(function () {
     Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']);
     Route::delete('favorite/{type}/{slug}/delete', [FavoriteApiController::class, 'unfavored']);
     Route::get('user/all/favorite', [FavoriteApiController::class, 'allUserFavorites']);
+    //need a lot of work to search on trip and guide trip of active owner in search
     Route::get('user/favorite/search', [FavoriteApiController::class, 'favSearch']);
 
     //review system
     Route::group(['prefix' => 'review'], function () {
-        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']);//should we return only active review?
+        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']);
         Route::post('add/{type}/{slug}', [ReviewApiController::class, 'addReview']);
         Route::put('update/{type}/{slug}', [ReviewApiController::class, 'updateReview']);
         Route::delete('delete/{type}/{slug}', [ReviewApiController::class, 'deleteReview']);
@@ -60,41 +61,72 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::delete('/disinterest/{slug}', [VolunteeringApiController::class, 'disinterest']);
 
     });
-
+// we need to concentrate about the previous (notification / activity log)
+    /*************/
     Route::prefix('post')->group(function () {
         Route::get('/followings', [PostApiController::class, 'followingPost']);
-
-
         Route::post('/store', [PostApiController::class, 'store']);
-        Route::post('/update', [PostApiController::class, 'update']);
+        //we should care about the method of post to become put .....
+        Route::post('/update/{post_id}', [PostApiController::class, 'update']);
         Route::get('show/{post_id}', [PostApiController::class, 'show']);
         Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
         Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
-        Route::post('favorite/{post_id?}', [PostApiController::class, 'createFavoritePost']);
-        Route::delete('favorite/{post_id?}/delete', [PostApiController::class, 'deleteFavoritePost']);
-        // Route::post('{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
-        Route::post('/like-dislike/{status?}/{post_id?}', [PostApiController::class, 'likeDislike']);
+
+        Route::post('favorite/{post_id}', [PostApiController::class, 'createFavoritePost']);
+        Route::delete('favorite/{post_id}/delete', [PostApiController::class, 'deleteFavoritePost']);
+        Route::post('/like-dislike/{status}/{post_id}', [PostApiController::class, 'likeDislike']);
+
+        //comment system
         Route::post('/comment/store', [CommentApiController::class, 'commentStore']);
-        Route::post('/comment/update/{comment_id?}', [CommentApiController::class, 'commentUpdate']);
-        Route::delete('/comment/delete/{comment_id?}', [CommentApiController::class, 'commentDelete']);
-        // Route::post('comment/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
-        Route::post('comment/like-dislike/{status?}/{comment_id?}', [CommentApiController::class, 'likeDislike']);
-        Route::post('reply/create', [ReplyApiController::class, 'replyStore']);
-        Route::post('reply/update/{reply_id?}', [ReplyApiController::class, 'replyUpdate']);
-        Route::delete('reply/delete/{reply_id?}', [ReplyApiController::class, 'replyDelete']);
-        Route::post('reply/{status?}/{reply_id?}', [ReplyApiController::class, 'likeDislike']);
+        Route::put('/comment/update/{comment_id}', [CommentApiController::class, 'commentUpdate']);
+        Route::delete('/comment/delete/{comment_id}', [CommentApiController::class, 'commentDelete']);
+        Route::post('comment/like-dislike/{status}/{type_id}', [CommentApiController::class, 'likeDislike']);
+
+    });
+
+    Route::group(['prefix' => 'guide'], function () {
+        Route::post('/trips/store', [GuideTripApiController::class, 'store']);
+        Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']);
+        Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']);
+        Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
+        Route::get('join/requests/list/{slug}',[GuideTripApiController::class, 'joinRequests']);
+        Route::put('change/join/request/{status}/{guide_trip_user_id}',[GuideTripApiController::class, 'changeJoinRequestStatus']);
+    });
+
+    Route::group(['prefix' => 'user/guide-trip'], function () {
+        Route::get('/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'allSubscription']);
+        Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']);
+        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']);
+        Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']);
+
+    });
+
+    Route::controller(GuideRatingController::class)->group(function () {
+        Route::get('rating/guide/show/{guide_slug}', 'show');
+        Route::post('rating/guide/store/{guide_slug}', 'create');
+        Route::post('rating/guide/update/{guide_slug}', 'update');
+        Route::delete('rating/guide/delete/{guide_slug}', 'delete');
+    });
+
+    Route::group(['prefix' => 'follow'], function () {
+        Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);
+        Route::post('/create/{following_slug}', [FollowApiController::class, 'follow']);
+        Route::delete('/delete/{following_slug}', [FollowApiController::class, 'unfollow']);
+        Route::get('/followers/{user_slug}', [FollowApiController::class, 'followers']);
+        Route::get('/followings/{user_slug}', [FollowApiController::class, 'followings']);
+        Route::put('/accept/following-request/{follower_slug}', [FollowApiController::class, 'acceptFollowerRequest']);
+        Route::put('/unaccepted/following-request/{follower_slug}', [FollowApiController::class, 'UnacceptedFollowerRequest']);
     });
 
 
-    ////////////////////////////////////////////end review////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////end review////////////////////////////////////////////////////////////
 
     Route::group(['prefix' => 'chat'], function () {
         Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']);
         Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']);
         Route::post('/store', [GroupChatController::class, 'store']);
     });
-
     // All Routes For Trip
     Route::group(['prefix' => 'trip'], function () {
         Route::get('/tags', [TripApiController::class, 'tags']);
@@ -133,7 +165,6 @@ Route::middleware(['firstLogin'])->group(function () {
             Route::post('/remove-user/{trip_id?}', [TripApiController::class, 'removeUser']);
         });
     });
-
     // All Routes For Plan
     Route::group(['prefix' => 'plan'], function () {
         Route::get('/', [PlanApiController::class, 'index']);
@@ -144,46 +175,12 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/my-plans', [PlanApiController::class, 'myPlans']);
     });
 
-
-    Route::group(['prefix' => 'follow'], function () {
-        Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);
-        Route::post('/create', [FollowApiController::class, 'follow']);
-        Route::delete('/delete/{following_id?}', [FollowApiController::class, 'unfollow']);
-        Route::get('/followers/{user_id?}', [FollowApiController::class, 'followers']);
-        Route::get('/followings/{user_id?}', [FollowApiController::class, 'followings']);
-        Route::post('/accept/following-request/{follower_id?}', [FollowApiController::class, 'acceptFollowerRequest']);
-        Route::post('/unaccepted/following-request/{follower_id?}', [FollowApiController::class, 'UnacceptedFollowerRequest']);
-    });
-
     Route::group(['prefix' => 'game'], function () {
         Route::get('/start', [GameApiController::class, 'start']);
         Route::post('/next-question', [GameApiController::class, 'next']);
         Route::post('/finish', [GameApiController::class, 'finish']);
     });
 
-    Route::group(['prefix' => 'guide'], function () {
-        Route::post('/trips/store', [GuideTripApiController::class, 'store']);
-        Route::post('/trips/update/{guide_trip_id?}', [GuideTripApiController::class, 'update']);
-        Route::delete('/trips/delete/{guide_trip_id?}', [GuideTripApiController::class, 'delete']);
-        Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
-        Route::get('join/requests/list/{guide_trip_id?}',[GuideTripApiController::class, 'joinRequests']);
-        Route::put('change/join/request/{status?}/{guide_trip_user_id?}',[GuideTripApiController::class, 'changeJoinRequestStatus']);
-    });
-
-    Route::group(['prefix' => 'user/guide-trip'], function () {
-        Route::get('/subscription/{guide_trip_id}', [GuideTripUserApiController::class, 'allSubscription']);
-        Route::post('/store', [GuideTripUserApiController::class, 'store']);
-        Route::post('/update', [GuideTripUserApiController::class, 'update']);
-        Route::delete('/delete/{guide_trip_id?}', [GuideTripUserApiController::class, 'delete']);
-
-    });
-
-    Route::controller(GuideRatingController::class)->group(function () {
-        Route::get('rating/guide/show/{guide_id?}', 'show');
-        Route::post('rating/guide/store', 'create');
-        Route::post('rating/guide/update', 'update');
-        Route::delete('rating/guide/delete/{guide_id?}', 'delete');
-    });
 });
 
 // All Routes For profile
@@ -192,6 +189,8 @@ Route::get('all/tags', [UserProfileController::class, 'allTags']);
 
 //we will see to add it or not
 Route::post('user/set-location', [UserProfileController::class, 'setLocation']);
+
+//delete and deactivate account need time
 Route::post('delete/account', [AuthUserController::class, 'deleteAccount']);
 Route::get('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
 

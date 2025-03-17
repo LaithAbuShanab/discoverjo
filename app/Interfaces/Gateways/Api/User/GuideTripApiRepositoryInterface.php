@@ -12,12 +12,12 @@ interface GuideTripApiRepositoryInterface
     public function allGuides();
     public function storeGuideTrip($mainData, $gallery,$activities, $priceInclude,$priceAge,$assembly,$requiredItem, $trail);
 
-    public function updateGuideTrip($mainData, $id, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail);
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail);
 
-    public function deleteGuideTrip($id);
+    public function deleteGuideTrip($slug);
     public function deleteImage($id);
     public function showGuideTrip($slug);
-    public function joinRequests($id);
+    public function joinRequests($slug);
     public function changeJoinRequestStatus($request);
 
 

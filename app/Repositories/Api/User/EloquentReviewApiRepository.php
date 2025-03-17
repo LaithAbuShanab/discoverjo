@@ -55,6 +55,11 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             'comment' => $data['comment']
         ]);
 
+//        $reviewRecord = $user->{$relationship}()
+//            ->wherePivot('favorable_id', $data['type_id'])
+//            ->wherePivot('favorable_type', get_class($user->{$relationship}()->getRelated()))
+//            ->first();
+//        activityLog('favorite',$reviewRecord ,'the user add delete favorite','delete');
     }
 
     public function updateReview($data)

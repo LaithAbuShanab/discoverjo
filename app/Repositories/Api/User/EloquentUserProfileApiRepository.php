@@ -39,7 +39,8 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $eloquentUser = User::find($userId);
         $eloquentUser->update($request);
         // ======================= Tags =======================
-        $eloquentUser->tags()->sync(array_values($tags));
+        $tagIds = Tag::whereIn('slug', $tags)->pluck('id');
+        $eloquentUser->tags()->sync($tagIds);
 
         if ($userImage !== null) {
             $extension = pathinfo($userImage->getClientOriginalName(), PATHINFO_EXTENSION);
@@ -74,7 +75,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $perPage = config('app.pagination_per_page');
 
-        $users = User::where(function ($queryBuilder) use ($query) {
+        $users = User::where('status',1)->where(function ($queryBuilder) use ($query) {
             $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
                 ->orWhere('last_name', 'LIKE', "%{$query}%")
                 ->orWhere('username', 'LIKE', "%{$query}%");
@@ -176,13 +177,8 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         if($userSlug == $slug){
             return new UserProfileResource($eloquentUser);
         }else{
-            if($eloquentUser->status != '1'){
-                throw new \Exception('this user inactive');
-            }
             return new OtherUserProfileResource($eloquentUser);
         }
-
-
     }
 
     public function PlacesCurrentLocation($request)

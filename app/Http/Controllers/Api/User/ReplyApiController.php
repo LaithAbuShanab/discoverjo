@@ -40,13 +40,12 @@ class ReplyApiController extends Controller
         }
     }
 
-    public function replyUpdate(Request $request)
+    public function replyUpdate(Request $request,$reply_id)
     {
-        $id = $request->reply_id;
-        $content = $request["content"];
+        $content = $request->input('content');
         $validator = Validator::make(
             [
-                'reply_id' => $id,
+                'reply_id' => $reply_id,
                 'content' => $content
             ],
             [
@@ -73,8 +72,8 @@ class ReplyApiController extends Controller
         }
     }
 
-    public function replyDelete(Request $request){
-        $id = $request->reply_id;
+    public function replyDelete(Request $request,$reply_id){
+        $id =$reply_id;
 
         $validator = Validator::make(
             [
@@ -100,12 +99,12 @@ class ReplyApiController extends Controller
         }
     }
 
-    public function likeDislike(Request $request)
+    public function likeDislike(Request $request,$status,$reply_id)
     {
         $validator = Validator::make(
             [
-                'status' => $request->status,
-                'reply_id' => $request->reply_id,
+                'status' => $status,
+                'reply_id' => $reply_id,
             ], [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
                 'reply_id' => ['required', 'integer', 'exists:replies,id'],

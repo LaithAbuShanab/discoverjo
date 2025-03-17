@@ -81,7 +81,14 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
-        $trips = Trip::where('status', '1')->where('trip_type', '0')->where('date_time', '>=', $now)->paginate($perPage);
+        $trips = Trip::where('status', '1')
+            ->where('trip_type', '0')
+            ->where('date_time', '>=', $now)
+            ->whereHas('user', function ($query) {
+                $query->where('status', '!=', '0');
+            })
+            ->paginate($perPage);
+
         $tripsArray = $trips->toArray();
 
         $pagination = [
@@ -496,7 +503,16 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function search($query)
     {
         $perPage =  config('app.pagination_per_page');
-        $trips = Trip::where('name', 'like', "%$query%")->orWhere('description', 'like', "%$query%")->paginate($perPage);
+
+
+        $trips = Trip::where(function ($q) use ($query) {
+            $q->where('name', 'like', "%$query%")
+                ->orWhere('description', 'like', "%$query%");
+        })
+            ->whereHas('user', function ($query) {
+                $query->where('status', '1'); // Ensure only trips where the owner is active
+            })
+            ->paginate($perPage);
 
         $tripsArray = $trips->toArray();
         $pagination = [

@@ -8,7 +8,9 @@ use App\Http\Requests\Api\User\GuideRating\CreateGuideRatingRequest;
 use App\Http\Requests\Api\User\GuideRating\DeleteGuideRatingRequest;
 use App\Http\Requests\Api\User\GuideRating\UpdateGuideRatingRequest;
 use App\Rules\CheckIfTheIdIsGuideRule;
+use App\Rules\CheckIfUserJoinedGuidPreviouslyRule;
 use App\Rules\CheckIfUserMadeRatingRule;
+use App\Rules\CheckIfUserMakeRatingOnGuideRule;
 use App\Rules\CheckIfUserMakeUpdateToUpdateRule;
 use App\Rules\CheckIfUserNotGuideForRatingRule;
 use App\UseCases\Api\User\GuideRatingApiUseCase;
@@ -26,10 +28,20 @@ class GuideRatingController extends Controller
         $this->guideRatingApiUseCase = $guideRatingUseCase;
     }
 
-    public function create(CreateGuideRatingRequest $request)
+    public function create(CreateGuideRatingRequest $request,$guide_slug)
     {
+        $validator = Validator::make(['guide_slug' => $guide_slug], [
+            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserJoinedGuidPreviouslyRule(),new CheckIfUserMakeRatingOnGuideRule()],
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        $validatedData = array_merge($request->validated(), $validator->validated());
+
         try{
-            $rating = $this->guideRatingApiUseCase->createGuideRating($request->validated());
+            $rating = $this->guideRatingApiUseCase->createGuideRating($validatedData);
             return ApiResponse::sendResponse(200, __('app.api.rating-created-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -37,10 +49,19 @@ class GuideRatingController extends Controller
         }
     }
 
-    public function update(UpdateGuideRatingRequest $request)
+    public function update(UpdateGuideRatingRequest $request,$guide_slug)
     {
+        $validator = Validator::make(['guide_slug' => $guide_slug], [
+            'guide_slug'=>['bail','required','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserNotGuideForRatingRule(),new CheckIfUserMakeUpdateToUpdateRule()],
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        $validatedData = array_merge($request->validated(), $validator->validated());
         try{
-            $rating = $this->guideRatingApiUseCase->updateGuideRating($request->validated());
+            $rating = $this->guideRatingApiUseCase->updateGuideRating($validatedData);
             return ApiResponse::sendResponse(200,  __('app.api.rating-updated-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -48,12 +69,11 @@ class GuideRatingController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request,$guide_slug)
     {
-        $id = $request->guide_id;
 
-        $validator = Validator::make(['guide_id' => $id], [
-            'guide_id' => ['required', 'exists:users,id' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
+        $validator = Validator::make(['guide_slug' => $guide_slug], [
+            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
         ]);
 
         if ($validator->fails()) {
@@ -61,7 +81,7 @@ class GuideRatingController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try{
-            $rating = $this->guideRatingApiUseCase->deleteGuideRating($id);
+            $rating = $this->guideRatingApiUseCase->deleteGuideRating($validator->validated()['guide_slug']);
             return ApiResponse::sendResponse(200,  __('app.api.rating-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -69,12 +89,11 @@ class GuideRatingController extends Controller
         }
     }
 
-    public function show(Request $request)
+    public function show(Request $request,$guide_slug)
     {
-        $id = $request->guide_id;
 
-        $validator = Validator::make(['guide_id' => $id], [
-            'guide_id' => ['required', 'exists:users,id' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
+        $validator = Validator::make(['guide_slug' => $guide_slug], [
+            'guide_slug' => ['bail','required', 'exists:users,slug' ,new CheckIfTheIdIsGuideRule(),new CheckIfUserMadeRatingRule()],
         ]);
 
         if ($validator->fails()) {
@@ -82,7 +101,7 @@ class GuideRatingController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try{
-            $rating = $this->guideRatingApiUseCase->showGuideRating($id);
+            $rating = $this->guideRatingApiUseCase->showGuideRating($validator->validated()['guide_slug']);
             return ApiResponse::sendResponse(200,  __('app.api.rating-retrieved-successfully'), $rating);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

@@ -2,23 +2,28 @@
 
 namespace App\Rules;
 
+use App\Models\Comment;
 use App\Models\Follow;
 use App\Models\Post;
+use App\Models\Reply;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
 
-class IfUserCanMakeCommentInPostRule implements ValidationRule
+class CheckIfUserCanReplyOnCommentRule implements ValidationRule
 {
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $post = Post::find($value);
+        $comment = Comment::find($value);
+        if(!$comment) return;
+        $post =$comment?->post;
         if(!$post) return;
+
         $userId = Auth::guard('api')->user()->id;
 
         if($post->user_id != $userId ){
@@ -31,7 +36,6 @@ class IfUserCanMakeCommentInPostRule implements ValidationRule
                 }
             }
         }
-
 
     }
 }

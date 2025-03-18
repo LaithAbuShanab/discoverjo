@@ -35,7 +35,7 @@ class CategoryApiController extends Controller
     public function subcategoriesOfCategories(SubcategoriesOfCategoriesRequest $request)
     {
         $data = $request->validated();
-        $data = explode(',', $data['categories']);
+        $data = array_map('trim', explode(',', $data['categories']));
         try {
             $categories = $this->categoryApiUseCase->allSubcategories($data);
             return ApiResponse::sendResponse(200, __('app.api.all-subcategories-retrieved-successfully'), $categories);

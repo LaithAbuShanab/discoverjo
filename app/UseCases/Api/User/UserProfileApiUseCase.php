@@ -35,7 +35,7 @@ class UserProfileApiUseCase
             'description'=>$request['description']??$user->description,
             'phone_number'=>$request['phone_number']??$user->phone_number,
             'status'=>'1'
-        ],explode(',',$request['tags']),isset($request['image']) ? $request['image'] : null,);
+        ],array_map('trim', explode(',', $request['tags'])),isset($request['image']) ? $request['image'] : null,);
     }
 
     public function setLocation($request)

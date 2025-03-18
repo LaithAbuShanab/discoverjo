@@ -44,7 +44,6 @@ class RegisterGuideApiRequest extends FormRequest
             'phone_number'=>['required','string'],
             'description'=>['required','string'],
             'tags' => ['required', new CheckTagExistsRule()],
-            'tags.*' => ['exists:tags,slug'],
             'image'=>['required','image'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             "device_token" => ['max:255', 'required'],

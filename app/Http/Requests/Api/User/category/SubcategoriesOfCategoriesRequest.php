@@ -31,6 +31,7 @@ class SubcategoriesOfCategoriesRequest extends FormRequest
                 $values = explode(',', $value);
                 if (is_array($values)) {
                     foreach ($values as $slug) {
+                        $slug = trim($slug);
                         $category = Category::findBySlug($slug);
                         if (!$category) $fail(__('validation.api.the-category-does-not-exists'));
                         if ($category?->parent_id != null) $fail(__('validation.api.the-selected-category-does-not-main-category'));

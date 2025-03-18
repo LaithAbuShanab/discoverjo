@@ -38,7 +38,6 @@ class UpdateProfileApiRequest extends FormRequest
             'phone_number' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'tags' => ['required', new CheckTagExistsRule()],
-            'tags.*' => ['exists:tags,slug'],
             'username' => ['nullable', 'string', 'alpha_dash', 'min:3', 'max:20', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'not_regex:/\s/', Rule::unique('users', 'username')->ignore($userId)],
             'image' => ['nullable', 'image', 'max:2048'],
 

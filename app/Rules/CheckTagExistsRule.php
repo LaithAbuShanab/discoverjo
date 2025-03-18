@@ -26,6 +26,7 @@ class CheckTagExistsRule implements ValidationRule
 
         // Validate that all tags exist in the database
         foreach ($tagsSlugs as $slug) {
+            $slug = trim($slug);
             if (!Tag::where('slug', $slug)->exists()) {
                 $fail(__('validation.api.tag_does_not_exist', ['tag' => $slug]));
                 return;

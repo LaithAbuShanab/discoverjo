@@ -38,21 +38,12 @@ class ReviewApiController extends Controller
                 'slug' => $slug
             ],
             [
-<<<<<<< HEAD
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
-                'slug' => ['required', new CheckIfTypeAndSlugRule()],
-            ],
-            [
-                'slug.required' => __('validation.api.id-does-not-exists'),
-            ]
-        );
-=======
+
                 'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
                 'slug' => ['required', new CheckIfTypeAndSlugRule(),new CheckIfUserTypeActiveRule()],
             ],[
             'slug.required'=>__('validation.api.id-does-not-exists'),
         ]);
->>>>>>> asma
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -75,13 +66,8 @@ class ReviewApiController extends Controller
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-<<<<<<< HEAD
-            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
-            'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule()],
-=======
             'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
             'slug' => ['bail','required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(),new CheckIfUserTypeActiveRule()],
->>>>>>> asma
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
         ], [

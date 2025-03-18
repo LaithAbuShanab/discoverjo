@@ -29,17 +29,11 @@ class PostApiUseCase
             case "plan":
                 $validatedData['visitable_type']='App\Models\Plan';
                 break;
-            case "trip":
-                $validatedData['visitable_type']='App\Models\Trip';
-                break;
             case "event":
                 $validatedData['visitable_type']='App\Models\Event';
                 break;
             case "volunteering":
                 $validatedData['visitable_type']='App\Models\Volunteering';
-                break;
-            case "guide_trip":
-                $validatedData['visitable_type']='App\Models\GuideTrip';
                 break;
         }
 
@@ -65,17 +59,11 @@ class PostApiUseCase
             case "plan":
                 $validatedData['visitable_type']='App\Models\Plan';
                 break;
-            case "trip":
-                $validatedData['visitable_type']='App\Models\Trip';
-                break;
             case "event":
                 $validatedData['visitable_type']='App\Models\Event';
                 break;
             case "volunteering":
                 $validatedData['visitable_type']='App\Models\Volunteering';
-                break;
-            case "guide_trip":
-                $validatedData['visitable_type']='App\Models\GuideTrip';
                 break;
         }
         $visitable = $validatedData['visitable_type']::findBySlug( $validatedData['visitable_slug']);

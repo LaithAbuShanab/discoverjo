@@ -24,18 +24,11 @@ class Plan extends Model
 
     public function getSlugOptions(): SlugOptions
     {
-        $slugOptions = SlugOptions::create()
+        return SlugOptions::create()
             ->generateSlugsFrom(function () {
-                $name = $this->getTranslation('name', 'en') ?? $this->getTranslation('name', app()->getLocale());
-                return !empty($name) ? $name : 'default-slug';
-            })->saveSlugsTo('slug');
-
-        // Only generate the slug when creating (not updating)
-        if ($this->exists) {
-            $slugOptions->doNotGenerateSlugsOnUpdate();
-        }
-
-        return $slugOptions;
+                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+            })
+            ->saveSlugsTo('slug');
     }
 
     public function creator()

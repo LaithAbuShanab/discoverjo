@@ -8,7 +8,7 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Support\Str;
 Route::get('generate-slug', function () {
     // Get all places that do not have a slug
-    $guideTripsWithoutSlug = \App\Models\Trip::whereNull('slug')->orWhere('slug', '')->get();
+    $guideTripsWithoutSlug = \App\Models\GuideTripUser::whereNull('slug')->orWhere('slug', '')->get();
 
     foreach ($guideTripsWithoutSlug as $guideTrip) {
         $guideTrip->slug = Str::slug($guideTrip->name);

@@ -141,6 +141,8 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         if (!empty($notificationData)) {
             sendNotification($ownerToken, $notificationData);
         }
+
+        ActivityLog('comment',$comment,'the user '.$data['status'].' the comment',$data['status']);
     }
 
 

@@ -47,36 +47,6 @@ class EventApiUseCase
         return $this->eventRepository->disinterestEvent($slug);
     }
 
-    public function favorite($id)
-    {
-        return $this->eventRepository->favorite($id);
-    }
-
-    public function deleteFavorite($id)
-    {
-        return $this->eventRepository->deleteFavorite($id);
-    }
-
-    public function addReview($data)
-    {
-        return $this->eventRepository->addReview($data);
-    }
-
-    public function updateReview($data)
-    {
-        return $this->eventRepository->updateReview($data);
-    }
-
-    public function deleteReview($id)
-    {
-        return $this->eventRepository->deleteReview($id);
-    }
-
-    public function reviewsLike($data)
-    {
-        return $this->eventRepository->reviewsLike($data);
-    }
-
     public function search($query)
     {
         return $this->eventRepository->search($query);

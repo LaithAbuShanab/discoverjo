@@ -32,15 +32,17 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user()));
         sendNotification($ownerToken, $notificationData);
+
     }
 
     public function unfollow($following_slug)
     {
         $followingId = User::findBySlug($following_slug);
         $id = Auth::guard('api')->user()->id;
-        $eloquentFollows = Follow::where('follower_id', $id)->where('following_id', $followingId->id)->delete();
-        return;
+        $follow = Follow::where('follower_id', $id)->where('following_id', $followingId->id)->first();
+        $follow->delete();
     }
+
 
     public function acceptFollower($follower_slug)
     {
@@ -60,14 +62,14 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
         sendNotification($ownerToken, $notificationData);
-        return;
     }
 
     public function unacceptedFollower($follower_slug)
     {
         $id = Auth::guard('api')->user()->id;
         $follower = User::findBySlug($follower_slug);
-        $eloquentFollows = Follow::where('follower_id', $follower->id)->where('following_id', $id)->delete();
+        $eloquentFollows = Follow::where('follower_id', $follower->id)->where('following_id', $id)->first();
+        $eloquentFollows->delete();
         return;
     }
 
@@ -81,7 +83,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
                 $query->where('status', 1);
             })
             ->get();
-
+        activityLog('follow',$followers->first(), 'the user view follower request ','view');
         return FollowerResource::collection($followers);
     }
 
@@ -91,13 +93,16 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
     {
         $followingUser=User::findBySlug($user_slug);
         $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->get();
+        activityLog('follow',$followingUser, 'the user view followers of this user ','view');
         return FollowerResource::collection($followers);
+
     }
 
     public function followings($user_slug)
     {
         $follower = User::findBySlug($user_slug);
         $followers = Follow::where('follower_id', $follower->id)->where('status', 1)->get();
+        activityLog('follow',$follower, 'the user view followings of this user ','view');
         return FollowingResource::collection($followers);
     }
 }

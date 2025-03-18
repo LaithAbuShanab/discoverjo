@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -13,14 +15,18 @@ use Spatie\Translatable\HasTranslations;
 
 class Category extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasSlug;
+    use HasFactory, InteractsWithMedia, HasSlug,LogsActivity;
 
     use HasTranslations;
 
     public $translatable = ['name'];
     public $guarded = [];
 
-
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('category');
+    }
 
     public function registerMediaCollections(): void
     {

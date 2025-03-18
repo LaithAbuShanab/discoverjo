@@ -7,6 +7,7 @@ use App\Http\Resources\SinglePlanResource;
 use App\Interfaces\Gateways\Api\User\PlanApiRepositoryInterface;
 use App\Models\Place;
 use App\Models\Plan;
+use App\Models\Region;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -207,7 +208,12 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     {
         $perPage = 20;
         $numberOfDays = $data['number_of_days'] ?? null;
-        $regionId = $data['region_id'] ?? null;
+        $regionSlug = $data['region'] ?? null;
+        $regionId=null;
+        if($regionSlug != null){
+            $regionId = Region::findBySlug($regionSlug)?->id;
+        }
+
 
         // Base query for filtering plans
         $baseQuery = Plan::query();

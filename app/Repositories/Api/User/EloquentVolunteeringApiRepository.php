@@ -29,6 +29,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function getAllVolunteerings()
     {
         $perPage =config('app.pagination_per_page');
+        $query = Volunteering::OrderBy('start_datetime', 'desc');
         $eloquentVolunteerings = Volunteering::OrderBy('start_datetime', 'desc')->paginate($perPage);
 
         $volunteeringArray = $eloquentVolunteerings->toArray();
@@ -38,6 +39,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
+        activityLog('volunteering',$query->first(),'The user viewed all volunteering','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -50,6 +52,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     {
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
+        $query = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now);
         $eloquentVolunteerings = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
         //edit the status should has cron job
         Volunteering::where('status', '1')->whereNotIn('id', $eloquentVolunteerings->pluck('id'))->update(['status' => '0']);
@@ -60,6 +63,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
+        activityLog('volunteering',$query->first(),'The user viewed all active volunteering','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -78,6 +82,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function dateVolunteerings($date)
     {
         $perPage = config('app.pagination_per_page');
+        $query = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1');
         $eloquentVolunteerings = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1')->paginate($perPage);
         $volunteeringArray = $eloquentVolunteerings->toArray();
 
@@ -86,6 +91,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
+        activityLog('volunteering',$query->first(),'The user viewed volunteering in specific date '.$date['date'],'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -97,120 +103,20 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function createInterestVolunteering($slug)
     {
         $user = Auth::guard('api')->user();
-        $volunteeringId =Volunteering::findBySlug($slug)->id;
+        $volunteering =Volunteering::findBySlug($slug);
+        $volunteeringId =$volunteering?->id;
+        ActivityLog('volunteering',$volunteering,'the user interested in the volunteering','interest');
+
         $user->volunteeringInterestables()->attach([$volunteeringId]);
     }
     public function disinterestVolunteering($slug)
     {
         $user = Auth::guard('api')->user();
-        $volunteeringId =Volunteering::findBySlug($slug)->id;
+        $volunteering =Volunteering::findBySlug($slug);
+        $volunteeringId =$volunteering->id;
         $user->volunteeringInterestables()->detach($volunteeringId);
-    }
-    public function favorite($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->favoriteVolunteerings()->attach($id);
-    }
+        ActivityLog('volunteering',$volunteering,'the user disinterest in the volunteering','disinterest');
 
-    public function deleteFavorite($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->favoriteVolunteerings()->detach($id);
-    }
-
-    public function addReview($data)
-    {
-        $filteredContent = app(Pipeline::class)
-            ->send($data['comment'])
-            ->through([
-                ContentFilter::class,
-            ])
-            ->thenReturn();
-
-        $data['comment'] = $filteredContent;
-        $user = Auth::guard('api')->user();
-        $user->reviewVolunteering()->attach($data['volunteering_id'], [
-            'rating' => $data['rating'],
-            'comment' => $data['comment']
-        ]);
-    }
-
-    public function updateReview($data)
-    {
-        $filteredContent = app(Pipeline::class)
-            ->send($data['comment'])
-            ->through([
-                ContentFilter::class,
-            ])
-            ->thenReturn();
-
-        $data['comment'] = $filteredContent;
-        $user = Auth::guard('api')->user();
-        $user->reviewVolunteering()->sync([$data['volunteering_id'] => [
-            'rating' => $data['rating'],
-            'comment' => $data['comment']
-        ]]);
-    }
-
-    public function deleteReview($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->reviewVolunteering()->detach($id);
-    }
-
-    public function reviewsLike($request)
-    {
-        $review = Reviewable::find($request->review_id);
-        $status = $request->status == "like" ? '1' : '0';
-        $userReview = $review->user;
-        $receiverLanguage = $userReview->lang;
-        $ownerToken = $userReview->DeviceToken->token;
-        $notificationData = [];
-
-        $existingLike = $review->like()->where('user_id', Auth::guard('api')->user()->id)->first();
-
-        if ($existingLike) {
-            if ($existingLike->pivot->status != $status) {
-                $review->like()->updateExistingPivot(Auth::guard('api')->user()->id, ['status' => $status]);
-                if ($request->status == "like") {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-                } else {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-
-                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-                }
-            } else {
-                $review->like()->detach(Auth::guard('api')->user()->id);
-            }
-        } else {
-            $review->like()->attach(Auth::guard('api')->user()->id, ['status' => $status]);
-            if ($request->status == "like") {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-                Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-            } else {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-
-                Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-            }
-        }
-        sendNotification($ownerToken, $notificationData);
     }
 
     public function search($query)
@@ -243,6 +149,9 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function interestedList($id)
     {
         $perPage = config('app.pagination_per_page');
+        $query = Volunteering::whereHas('interestedUsers', function ($query) use ($id) {
+            $query->where('user_id', $id);
+        })->paginate($perPage);
         $eloquentVolunteerings = Volunteering::whereHas('interestedUsers', function ($query) use ($id) {
             $query->where('user_id', $id);
         })->paginate($perPage);
@@ -254,7 +163,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-
+        activityLog('volunteering',$query->first(), 'the user view his volunteering interest list','view');
         // Pass user coordinates to the PlaceResource collection
         return [
             'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),

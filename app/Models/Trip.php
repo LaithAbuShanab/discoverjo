@@ -19,16 +19,9 @@ class Trip extends Model
 
     public function getSlugOptions(): SlugOptions
     {
-        $slugOptions = SlugOptions::create()
+        return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
-
-        // Only generate the slug when creating (not updating)
-        if ($this->exists) {
-            $slugOptions->doNotGenerateSlugsOnUpdate();
-        }
-
-        return $slugOptions;
     }
     public function place()
     {

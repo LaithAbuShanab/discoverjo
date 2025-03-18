@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\User\Trip;
 
 use App\Helpers\ApiResponse;
 use App\Rules\CheckIfTheUserIsTripAnotherTrip;
+use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckUserTripStatus;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +29,7 @@ class AcceptCancelUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_slug' => ['bail', 'required', 'string', 'exists:users,slug', new CheckIfTheUserIsTripAnotherTrip],
+            'user_slug' => ['bail', 'required', 'string', 'exists:users,slug', new CheckIfTheUserIsTripAnotherTrip,new CheckIfUserActiveRule()],
             'trip_slug' => ['bail', 'required', 'string', 'exists:trips,slug', new CheckUserTripStatus]
         ];
     }

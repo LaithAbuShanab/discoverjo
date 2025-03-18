@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
+use App\Rules\CheckIfTheOwnerOfTripActiveRule;
 use App\Rules\CheckUserTripExistsRule;
 use App\UseCases\Api\User\TripApiUseCase;
 use Illuminate\Http\Response;
@@ -116,7 +117,7 @@ class TripApiController extends Controller
         $slug = $request->trip_slug;
 
         $validator = Validator::make(['trip_slug' => $slug], [
-            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckAgeGenderExistenceRule()],
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckAgeGenderExistenceRule(), new CheckIfTheOwnerOfTripActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -173,7 +174,7 @@ class TripApiController extends Controller
     {
         $slug = $request->trip_slug;
         $validator = Validator::make(['trip_slug' => $slug], [
-            'trip_slug' => ['required', 'exists:trips,slug'],
+            'trip_slug' => ['required', 'exists:trips,slug',new CheckIfTheOwnerOfTripActiveRule()],
         ]);
 
         if ($validator->fails()) {

@@ -20,7 +20,7 @@ class CheckUserExistsRule implements ValidationRule
 
         // Validate that all tags exist in the database
         foreach ($usersSlugs as $slug) {
-            if (!User::where('slug', $slug)->exists()) {
+            if (!User::where('slug', $slug)->where('status',1)->exists()) {
                 $fail(__('validation.api.user_does_not_exist', ['user' => $slug]));
                 return;
             }

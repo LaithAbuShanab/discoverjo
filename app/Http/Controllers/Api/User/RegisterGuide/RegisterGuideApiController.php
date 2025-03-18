@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\User\RegisterGuide;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Guide\RegisterGuideApiRequest;
-use App\Http\Requests\Api\User\Auth\RegisterApiUserRequest;
 use App\UseCases\Api\User\RegisterGuideApiUseCase;
 use Illuminate\Http\Response;
 
@@ -17,7 +16,6 @@ class RegisterGuideApiController extends Controller
     {
         $this->registerGuideApiUseCase = $registerGuideApiUseCase;
     }
-
 
     public function register(RegisterGuideApiRequest $request)
     {

@@ -236,10 +236,9 @@ class CreateGuideTripRequest extends FormRequest
         }
     }
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-        ], \Illuminate\Http\Response::HTTP_BAD_REQUEST));
+        $errors = $validator->errors()->all();
+        throw new HttpResponseException(ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors));
     }
 }

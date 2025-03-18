@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Api\User\GuideTrip;
 
-use App\Rules\CheckIfGuideTripActiveOrInFuture;
-use App\Rules\CheckIfGuideTripUserExistRule;
-use App\Rules\CheckIfJordanianPhoneRule;
+
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
+use App\Helpers\ApiResponse;
 
 class CreateGuideTripUserRequest extends FormRequest
 {
@@ -43,34 +44,27 @@ class CreateGuideTripUserRequest extends FormRequest
             'guide_trip_id.exists' => __('validation.api.guide-trip-id-invalid'),
             'guide_trip_id.check_if_guide_trip_active_or_in_future' => __('validation.api.guide-trip-active-or-future'),
             'guide_trip_id.check_if_guide_trip_user_exist' => __('validation.api.guide-trip-user-exists'),
-
             // Subscribers validation messages
             'subscribers.required' => __('validation.api.subscribers-required'),
             'subscribers.array' => __('validation.api.subscribers-array'),
-
             'subscribers.*.first_name.required' => __('validation.api.subscriber-first-name-required'),
             'subscribers.*.first_name.string' => __('validation.api.subscriber-first-name-string'),
             'subscribers.*.first_name.max' => __('validation.api.subscriber-first-name-max'),
-
             'subscribers.*.last_name.required' => __('validation.api.subscriber-last-name-required'),
             'subscribers.*.last_name.string' => __('validation.api.subscriber-last-name-string'),
             'subscribers.*.last_name.max' => __('validation.api.subscriber-last-name-max'),
-
             'subscribers.*.age.required' => __('validation.api.subscriber-age-required'),
             'subscribers.*.age.integer' => __('validation.api.subscriber-age-integer'),
             'subscribers.*.age.min' => __('validation.api.subscriber-age-min'),
-
             'subscribers.*.phone_number.required' => __('validation.api.subscriber-phone-number-required'),
             'subscribers.*.phone_number.string' => __('validation.api.subscriber-phone-number-string'),
             'subscribers.*.phone_number.max' => __('validation.api.subscriber-phone-number-max'),
         ];
     }
 
-
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-        ], \Illuminate\Http\Response::HTTP_BAD_REQUEST));
+        $errors = $validator->errors()->all();
+        throw new HttpResponseException(ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors));
     }
 }

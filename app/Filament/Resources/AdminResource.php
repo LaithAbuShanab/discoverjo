@@ -24,6 +24,8 @@ class AdminResource extends Resource
 
     protected static ?string $navigationGroup = 'App users';
 
+    protected static ?int $navigationSort = 1;
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

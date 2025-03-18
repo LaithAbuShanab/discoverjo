@@ -22,7 +22,7 @@ use Spatie\Translatable\HasTranslations;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations,HasSlug,LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.
@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude','lang', 'latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -79,7 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('user')
-            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude','lang', 'latitude', 'status'])
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'])
             ->logOnlyDirty();
     }
 
@@ -91,23 +91,47 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     }
     public function registerMediaCollections(): void
     {
+        // Avatar collection (Profile Image)
         $this->addMediaCollection('avatar')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('avatar_app')->width(250)->height(250)->format('webp')->nonQueued();
-                $this->addMediaConversion('avatar_website')->width(250)->height(250)->format('webp')->nonQueued();
+                $this->addMediaConversion('avatar_app')
+                    ->width(250)
+                    ->height(250)
+                    ->format('webp')
+                    ->nonQueued();
+
+                $this->addMediaConversion('avatar_website')
+                    ->width(250)
+                    ->height(250)
+                    ->format('webp')
+                    ->nonQueued();
             });
 
+        // File collection (Supports images & PDFs)
         $this->addMediaCollection('file')
             ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/bmp', 'image/gif', 'image/svg+xml', 'image/webp', 'application/pdf'])
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/bmp',
+                'image/gif',
+                'image/svg+xml',
+                'image/webp',
+                'application/pdf'
+            ])
             ->registerMediaConversions(function (Media $media) {
-                // Only perform conversion for image files, skip for PDFs
-                if (in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/bmp', 'image/gif', 'image/svg+xml', 'image/webp'])) {
-                    $this->addMediaConversion('avatar_app')->width(250)->height(250)->format('webp')->nonQueued();
+                // Convert only image files (not PDFs)
+                if (str_starts_with($media->mime_type, 'image/')) {
+                    $this->addMediaConversion('file_preview')
+                        ->width(250)
+                        ->height(250)
+                        ->format('webp')
+                        ->nonQueued();
                 }
             });
     }
+
 
     public function plans()
     {
@@ -267,7 +291,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function guideRatings()
     {
-        return $this->hasMany(RatingGuide::class,'guide_id');
+        return $this->hasMany(RatingGuide::class, 'guide_id');
     }
 
     public function averageRating()
@@ -277,7 +301,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function userGuideRating()
     {
-        return $this->hasMany(RatingGuide::class,'user_id');
+        return $this->hasMany(RatingGuide::class, 'user_id');
     }
 
     public function reviews()
@@ -285,7 +309,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->hasMany(Reviewable::class);
     }
 
-    public function conversations() : HasMany
+    public function conversations(): HasMany
     {
         return $this->hasMany(Conversation::class);
     }

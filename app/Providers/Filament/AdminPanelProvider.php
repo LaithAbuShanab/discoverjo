@@ -10,7 +10,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -61,10 +60,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
                 FilamentTranslatableFieldsPlugin::make()
-                ->supportedLocales([
-                    'en' => 'English',
-                    'ar' => 'العربية',
-                ]),
+                    ->supportedLocales([
+                        'en' => 'English',
+                        'ar' => 'العربية',
+                    ]),
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
                 ActivitylogPlugin::make()
                     ->navigationGroup('System')
@@ -84,7 +83,9 @@ class AdminPanelProvider extends PanelProvider
                 'Suggestion & Contact',
                 'Post & Comment',
                 'Legal Documents',
-                'Plans'
+                'Plans',
+                'Guide Trips',
+                'System'
             ])
             ->authGuard('admin')
             ->databaseNotifications();

@@ -17,11 +17,15 @@ use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Notification ;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Mockery\Matcher\Not;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification as FilamentNotification;
+
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
@@ -75,19 +79,37 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 $eloquentPost->addMedia($image)->usingFileName($filename)->toMediaCollection('post');
             }
         }
-        Notification::send(Admin::all(), new NewPostNotification($eloquentPost));
 
-        $followers = Auth::guard('api')->user()->followers()->get();
-        Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user()));
+        //dashboard notification for new post
+        $recipient = Admin::all();
+        if ($recipient) {
+            FilamentNotification::make()
+                ->title('New User post')
+                ->success()
+                ->body("A new user ({$eloquentPost->user->username}) (ID: {$eloquentPost->user->id}) has just registered.")
+                ->actions([
+                    Action::make('view_post')
+                        ->label('View Post')
+                        ->url(route('filament.admin.resources.posts.view', $eloquentPost)),
+                    ])
+                ->sendToDatabase($recipient);
+        }
 
-        $followersTokens = DeviceToken::whereIn('user_id', Auth::guard('api')->user()->followers()->pluck('follower_id')->toArray())->pluck('token')->toArray();
-        $receiverLanguage = Auth::guard('api')->user()->lang;
-        $notificationData = [
-            'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
-            'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-            'sound' => 'default',
-        ];
-        sendNotification($followersTokens, $notificationData);
+        //notification for followers if the privacy not equal 0
+        if($eloquentPost->privacy){
+            $followers = Auth::guard('api')->user()->followers()->get();
+            Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user()));
+
+            $followersTokens = DeviceToken::whereIn('user_id', Auth::guard('api')->user()->followers()->pluck('follower_id')->toArray())->pluck('token')->toArray();
+            $receiverLanguage = Auth::guard('api')->user()->lang;
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
+                'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            sendNotification($followersTokens, $notificationData);
+        }
+
 
     }
 

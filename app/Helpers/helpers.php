@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Admin;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -117,5 +120,22 @@ function activityLog($logName, $model, $description,$event)
     }
 
     $activity->log($description);
+}
+
+function adminNotification($user)
+{
+    $recipient = Admin::all();
+    if ($recipient) {
+        Notification::make()
+            ->title('New User Registered')
+            ->success()
+            ->body("A new user ({$user->username}) (ID: {$user->id}) has just registered.")
+            ->actions([
+                Action::make('view_user')
+                    ->label('View User')
+                    ->url(route('filament.admin.resources.users.index')),
+            ])
+            ->sendToDatabase($recipient);
+    }
 }
 

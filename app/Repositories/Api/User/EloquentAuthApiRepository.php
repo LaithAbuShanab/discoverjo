@@ -50,7 +50,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             ]);
 
             // Notify an admin about the new user registration
-            $recipient = Admin::where('email', 'asma.abughaith@gmail.com')->first();
+            $recipient = Admin::all();
             if ($recipient) {
                 Notification::make()
                     ->title('New User Registered')

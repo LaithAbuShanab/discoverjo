@@ -114,6 +114,7 @@ class AuthUserController extends Controller
                     'first_name' => explode(' ', $user->name)[0],
                     'last_name' => explode(' ', $user->name)[1],
                 ]);
+                adminNotification($userModel);
             }
 
             // Handle avatar if it exists
@@ -170,6 +171,7 @@ class AuthUserController extends Controller
                     'first_name' => $user->given_name,
                     'last_name' => $user->family_name,
                 ]);
+                adminNotification($userModel);
             }
 
             if ($user->avatar !== null) {
@@ -215,6 +217,7 @@ class AuthUserController extends Controller
                     'first_name' => explode(' ', $user->name)[0],
                     'last_name' => explode(' ', $user->name)[1],
                 ]);
+                adminNotification($userModel);
             }
 
             $token = $userModel->createToken('asma')->accessToken;

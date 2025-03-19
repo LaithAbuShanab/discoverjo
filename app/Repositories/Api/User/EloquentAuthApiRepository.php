@@ -133,7 +133,6 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             $user->verified_email = true;
 
             $existingDeviceToken = DeviceToken::where('user_id', $user->id)->first();
-            dd($existingDeviceToken);
             if ($existingDeviceToken) {
                 $existingDeviceToken->update(['token' => $userData['device_token']]);
             } else {

@@ -119,7 +119,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     $notificationData['title'],
                     $notificationData['body']
                 );
-                dd($response);
 //                sendNotification($token, $notificationData);
             }
         }

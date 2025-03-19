@@ -115,7 +115,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     'sound' => 'default',
                 ];
                 $response = $this->firebaseMessagingService->sendNotification(
-                    'D8636BCC62A673B4D574736AFCA1F73AF7C34EBBB7D99A38E05CDB6963FEAE8B',
+                    'ExponentPushToken[pe-Y44GLOTj5csZP2wCaDz]',
                     $notificationData['title'],
                     $notificationData['body']
                 );

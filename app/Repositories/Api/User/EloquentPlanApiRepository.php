@@ -206,14 +206,14 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
     public function filter($data)
     {
-        $perPage = 20;
+        $perPage = config('app.pagination_per_page');
         $numberOfDays = $data['number_of_days'] ?? null;
         $regionSlug = $data['region'] ?? null;
-        $regionId=null;
-        if($regionSlug != null){
+        $regionId = null;
+
+        if ($regionSlug != null) {
             $regionId = Region::findBySlug($regionSlug)?->id;
         }
-
 
         // Base query for filtering plans
         $baseQuery = Plan::query();
@@ -231,19 +231,19 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             });
         }
 
+        // Filter by number of days
         $baseQuery->when($numberOfDays != null, function ($queryBuilder) use ($numberOfDays) {
-            $queryBuilder->whereHas('activities', function ($queryBuilder) use ($numberOfDays) {
-                $queryBuilder->where('day_number', $numberOfDays);
+            $queryBuilder->whereHas('days', function ($queryBuilder) use ($numberOfDays) {
+                $queryBuilder->groupBy('plan_id')->havingRaw('COUNT(*) = ?', [$numberOfDays]);
             });
         });
-        // Apply filters independently
 
+        // Filter by region
         $baseQuery->when($regionId != null, function ($queryBuilder) use ($regionId) {
-            $queryBuilder->whereHas('activities.place', function ($queryBuilder) use ($regionId) {
+            $queryBuilder->whereHas('days.activities.place', function ($queryBuilder) use ($regionId) {
                 $queryBuilder->where('region_id', $regionId);
             });
         });
-
 
         // Execute the query and get the results
         $plans = $baseQuery->paginate($perPage);

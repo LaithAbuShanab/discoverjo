@@ -16,7 +16,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Place extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug,LogsActivity;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug, LogsActivity;
 
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
@@ -124,5 +124,10 @@ class Place extends Model implements HasMedia
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'place_categories');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(PlanActivity::class);
     }
 }

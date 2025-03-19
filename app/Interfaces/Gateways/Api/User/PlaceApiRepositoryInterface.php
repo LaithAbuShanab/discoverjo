@@ -11,12 +11,6 @@ interface PlaceApiRepositoryInterface
 
     public function deleteVisitedPlace($slug);
 
-    public function updateReview($data);
-
-    public function deleteReview($id);
-
-    public function reviewsLike($data);
-
     public function search($query);
 
     public function allSearch($query);

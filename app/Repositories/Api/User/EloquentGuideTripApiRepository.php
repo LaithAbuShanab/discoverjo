@@ -30,9 +30,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 {
-
-
-
     public function AllGuideTrip()
     {
         $perPage = config('app.pagination_per_page');

@@ -45,6 +45,8 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->attach([$place->id]);
+        activityLog('Place', $place, 'The user create visited place', 'create');
+
     }
 
     public function deleteVisitedPlace($slug)
@@ -52,78 +54,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
+        activityLog('Place', $place, 'The user delete visited place', 'delete');
+
     }
-
-    public function updateReview($data)
-    {
-        $user = Auth::guard('api')->user();
-        $user->reviewPlace()->sync([$data['place_id'] => [
-            'rating' => $data['rating'],
-            'comment' => $data['comment']
-        ]]);
-    }
-
-    public function deleteReview($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->reviewPlace()->detach($id);
-    }
-
-    public function reviewsLike($request)
-    {
-        $review = Reviewable::find($request->review_id);
-        $status = $request->status == "like" ? '1' : '0';
-        $userReview = $review->user;
-        $receiverLanguage = $userReview->lang;
-        $ownerToken = $userReview->DeviceToken->token;
-        $notificationData = [];
-
-        $existingLike = $review->like()->where('user_id', Auth::guard('api')->user()->id)->first();
-
-        if ($existingLike) {
-            if ($existingLike->pivot->status != $status) {
-                $review->like()->updateExistingPivot(Auth::guard('api')->user()->id, ['status' => $status]);
-                if ($request->status == "like") {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-                } else {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-
-                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-                }
-            } else {
-                $review->like()->detach(Auth::guard('api')->user()->id);
-            }
-        } else {
-            $review->like()->attach(Auth::guard('api')->user()->id, ['status' => $status]);
-            if ($request->status == "like") {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-                Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-            } else {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-
-                Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-            }
-        }
-        sendNotification($ownerToken, $notificationData);
-    }
-
     public function search($query)
     {
         $userLat = request()->lat ? request()->lat : null;

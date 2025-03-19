@@ -6,7 +6,8 @@ use App\Interfaces\Gateways\Api\User\PlaceApiRepositoryInterface;
 
 class PlaceApiUseCase
 {
-    public function __construct(protected PlaceApiRepositoryInterface $placeApiRepository)
+    protected $placeApiRepository;
+    public function __construct( PlaceApiRepositoryInterface $placeApiRepository)
     {
         $this->placeApiRepository = $placeApiRepository;
     }
@@ -16,7 +17,6 @@ class PlaceApiUseCase
         return $this->placeApiRepository->singlePlace($slug);
     }
 
-
     public function createVisitedPlace($slug)
     {
         return $this->placeApiRepository->createVisitedPlace($slug);
@@ -25,26 +25,6 @@ class PlaceApiUseCase
     public function deleteVisitedPlace($slug)
     {
         return $this->placeApiRepository->deleteVisitedPlace($slug);
-    }
-
-    public function addReview($data)
-    {
-        return $this->placeApiRepository->addReview($data);
-    }
-
-    public function updateReview($data)
-    {
-        return $this->placeApiRepository->updateReview($data);
-    }
-
-    public function deleteReview($id)
-    {
-        return $this->placeApiRepository->deleteReview($id);
-    }
-
-    public function reviewsLike($data)
-    {
-        return $this->placeApiRepository->reviewsLike($data);
     }
 
     public function search($query){

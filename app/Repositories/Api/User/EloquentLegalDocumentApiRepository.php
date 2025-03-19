@@ -28,6 +28,7 @@ class EloquentLegalDocumentApiRepository implements LegalDocumentApiRepositoryIn
                 $typeName => LegalResource::collection($documents)
             ];
         }
+        activityLog('legal Document',$legalDocuments->first(), 'the user view privacy and policy','view');
 
         return $formattedData;
     }

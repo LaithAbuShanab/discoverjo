@@ -6,26 +6,20 @@ use App\Http\Resources\SinglePostResource;
 use App\Http\Resources\UserPostResource;
 use App\Interfaces\Gateways\Api\User\PostApiRepositoryInterface;
 use App\Models\Admin;
-use App\Models\DeviceToken;
 use App\Models\Post;
 use App\Models\User;
-use App\Notifications\Admin\NewPostNotification;
 use App\Notifications\Users\post\NewPostDisLikeNotification;
 use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
 use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Notification ;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
-use Mockery\Matcher\Not;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
-
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
@@ -60,15 +54,13 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         ];
     }
 
-
     public function createPost($validatedData, $media)
     {
         $filteredContent = app(Pipeline::class)
             ->send($validatedData['content'])
             ->through([
                 ContentFilter::class,
-            ])
-            ->thenReturn();
+            ])->thenReturn();
 
         $validatedData['content'] = $filteredContent;
         $eloquentPost = Post::create($validatedData);
@@ -80,7 +72,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             }
         }
 
-        //dashboard notification for new post
+        // Dashboard notification for new post
         $recipient = Admin::all();
         if ($recipient) {
             FilamentNotification::make()
@@ -91,26 +83,35 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     Action::make('view_post')
                         ->label('View Post')
                         ->url(route('filament.admin.resources.posts.view', $eloquentPost)),
-                    ])
+                ])
                 ->sendToDatabase($recipient);
         }
 
-        //notification for followers if the privacy not equal 0
-        if($eloquentPost->privacy){
-            $followers = Auth::guard('api')->user()->followers()->get();
+        // Notification for followers if the privacy not equal 0
+        if ($eloquentPost->privacy) {
+
+            $followers = Auth::guard('api')->user()
+                ->followers()
+                ->wherePivot('status', 1)
+                ->where('users.status', 1)
+                ->get();
+
+            // To Save Notification In Database
             Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user()));
 
-            $followersTokens = DeviceToken::whereIn('user_id', Auth::guard('api')->user()->followers()->pluck('follower_id')->toArray())->pluck('token')->toArray();
-            $receiverLanguage = Auth::guard('api')->user()->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
-            sendNotification($followersTokens, $notificationData);
+            // Send Notification Via Firebase
+            foreach ($followers as $follower) {
+                $token = $follower->DeviceToken->token;
+                $receiverLanguage = $follower->lang;
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
+                    'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                    'sound' => 'default',
+                ];
+
+                sendNotification($token, $notificationData);
+            }
         }
-
-
     }
 
     public function updatePost($validatedData, $media)
@@ -150,7 +151,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         return;
     }
 
-
     public function delete($id)
     {
         Post::find($id)->delete();
@@ -161,6 +161,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $user->favoritePosts()->attach($id);
     }
+
     public function deleteFavorite($id)
     {
         $user = Auth::guard('api')->user();
@@ -173,7 +174,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $status = $data['status'] == "like" ? '1' : '0';
         $ownerToken = $post->user->DeviceToken->token;
         $receiverLanguage = $post->user->lang;
-        $notificationData=[];
+        $notificationData = [];
         $userPostId = $post->user_id;
 
         $existingLike = $post->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
@@ -182,15 +183,14 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             if ($existingLike->status != $status) {
                 $existingLike->update(['status' => $status]);
 
-                if($data->status == "like"){
+                if ($data->status == "like") {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
                         'body' => Lang::get('app.notifications.new-user-like-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
                         'sound' => 'default',
                     ];
                     Notification::send(User::find($userPostId), new NewPostLikeNotification(Auth::guard('api')->user()));
-
-                }else{
+                } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
                         'body' => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
@@ -210,7 +210,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
         if (!empty($notificationData)) {
             sendNotification($ownerToken, $notificationData);
-
         }
     }
 }

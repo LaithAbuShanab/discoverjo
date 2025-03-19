@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\post;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewPostFollowersNotification extends Notification
@@ -39,10 +37,10 @@ class NewPostFollowersNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "There is a new post",
-            "title_ar" => "يوجد منشور جديدة",
-            "body_en" => "The User " . $this->user->name . " has created a new post",
-            "body_ar" => "تم إنشاء منشور جديدة بواسطة المستخدم " . $this->user->name
+            "title_en" => "New Post Alert!",
+            "title_ar" => "تنبيه: منشور جديد!",
+            "body_en" => "Exciting news! " . $this->user->name . " has just shared a new post. Stay updated and check it out!",
+            "body_ar" => "خبر رائع! قام " . $this->user->name . " بنشر منشور جديد. ابقَ على اطلاع وتصفحه الآن!"
         ];
     }
 }

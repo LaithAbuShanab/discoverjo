@@ -58,20 +58,24 @@ return [
     ],
 
     "notifications" => [
-        "new-request" => "طلب جديد للإنضمام للرحلة",
-        'new-user-request-from-trip' => 'المستخدم :username قام بارسال طلب للإنضمام للرحلة"',
-        "accepted-trip" => "تم قبول طلبك للإنضمام للرحلة",
-        "rejected-trip" => "تم رفض طلبك للإنضمام للرحلة",
-        "accepted-trip-body" => "قام المستخدم :username بقبول طلبك في الرحلة :trip_name",
-        "rejected-trip-body" => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
-        "new-trip-title" => "يوجد رحلة جديدة",
-        "new-trip-body" => "تم انشاء رحلة جديدة بواسطة المستخدم :username",
-        'new-trip-invitation-title' => 'دعوة رحلة جديدة',
-        'new-trip-invitation-body' => ':username دعاك للانضمام إلى رحلة.',
-        "accepted-invitation-trip" => "تم قبول الدعوة",
-        "rejected-invitation-trip" => "تم رفض الدعوة",
+        "new-request"                   => "طلب جديد للإنضمام للرحلة",
+        'new-user-request-from-trip'    => 'المستخدم :username قام بارسال طلب للإنضمام للرحلة"',
+        "accepted-trip"                 => "تم قبول طلبك للإنضمام للرحلة",
+        "rejected-trip"                 => "تم رفض طلبك للإنضمام للرحلة",
+        "accepted-trip-body"            => "قام المستخدم :username بقبول طلبك في الرحلة :trip_name",
+        "rejected-trip-body"            => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
+        "new-trip-title"                => "يوجد رحلة جديدة",
+        "new-trip-body"                 => "تم انشاء رحلة جديدة بواسطة المستخدم :username",
+        'new-trip-invitation-title'     => 'دعوة رحلة جديدة',
+        'new-trip-invitation-body'      => ':username دعاك للانضمام إلى رحلة.',
+        "accepted-invitation-trip"      => "تم قبول الدعوة",
+        "rejected-invitation-trip"      => "تم رفض الدعوة",
         "accepted-invitation-trip-body" => "وافق المستخدم :username على الدعوة",
         "rejected-invitation-trip-body" =>  "رفض المستخدم :username الدعوة",
+
+        'new-post-title'                => 'تنبيه: منشور جديد!',
+        'new-post-body'                 => 'خبر رائع! قام :username بمشاركة منشور جديد. ابقَ على اطلاع وتصفحه الآن!',
+
     ],
 
     'auth' => [

@@ -51,6 +51,7 @@ function haversineDistance($userLat, $userLng, $placeLat, $placeLng)
 
     return $distance;
 }
+
 function daysTranslation($lang, $request)
 {
     $dayTranslation = [
@@ -83,7 +84,6 @@ function dateTime($dateTime)
     return $timeFormat;
 }
 
-
 function sendNotification($deviceTokens, $data)
 {
     $notificationData = [
@@ -103,10 +103,11 @@ function sendNotification($deviceTokens, $data)
         'registration_ids' => $deviceTokens,
         'notification' => $notificationData,
     ]);
+
     return $response->json();
 }
 
-function activityLog($logName, $model, $description,$event)
+function activityLog($logName, $model, $description, $event)
 {
     $activity = activity($logName)
         ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
@@ -138,4 +139,3 @@ function adminNotification($user)
             ->sendToDatabase($recipient);
     }
 }
-

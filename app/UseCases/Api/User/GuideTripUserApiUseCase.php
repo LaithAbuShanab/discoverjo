@@ -37,35 +37,6 @@ class GuideTripUserApiUseCase
         return $this->guideTripUserApiRepository->allSubscription($slug);
     }
 
-    public function favorite($id)
-    {
-        return $this->guideTripUserApiRepository->favorite($id);
-    }
-
-    public function deleteFavorite($id)
-    {
-        return $this->guideTripUserApiRepository->deleteFavorite($id);
-    }
-    public function addReview($data)
-    {
-        return $this->guideTripUserApiRepository->addReview($data);
-    }
-
-    public function updateReview($data)
-    {
-        return $this->guideTripUserApiRepository->updateReview($data);
-    }
-
-    public function deleteReview($id)
-    {
-        return $this->guideTripUserApiRepository->deleteReview($id);
-    }
-
-    public function reviewsLike($data)
-    {
-        return $this->guideTripUserApiRepository->reviewsLike($data);
-    }
-
     public function search($query){
         return $this->guideTripUserApiRepository->search($query);
     }

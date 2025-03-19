@@ -55,6 +55,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'total' => $tripsArray['total'],
         ];
 
+        activityLog('Guide trip',$guidesTrips->first(), 'the user view all guide trip','view');
+
         // Pass user coordinates to the PlaceResource collection
         return [
             'trips' => AllGuideTripResource::collection($guidesTrips),
@@ -75,6 +77,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'prev_page_url'=>$guidesArray['next_page_url'],
             'total' => $guidesArray['total'],
         ];
+        activityLog('guide',$guides->first(), 'the user view all guide ','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -311,6 +314,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $usersInGuideTrip =  $guideTrip->guideTripUsers()->whereHas('user', function ($query) {
             $query->where('status', 1);
         })->get();
+        activityLog('Guide trip',$usersInGuideTrip->first(), 'the guide view join request ','view');
+
         return GuideTripUserResource::collection($usersInGuideTrip);
     }
 

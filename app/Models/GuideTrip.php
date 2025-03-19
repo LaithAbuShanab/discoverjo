@@ -29,7 +29,7 @@ class GuideTrip extends Model implements HasMedia
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('guide-trip');
+            ->useLogName('Guide trip');
     }
     public function getSlugOptions(): SlugOptions
     {

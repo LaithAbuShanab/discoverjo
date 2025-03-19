@@ -57,6 +57,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'prev_page_url'=>$tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
+        activityLog('Guide trip',$guidesTrips->first(), 'the user view all guide trip','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -75,7 +76,9 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             return $subscriber;
         }, $data['subscribers']);
 
-        $guideTrip->guideTripUsers()->createMany($subscribers);
+        $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
+
+        activityLog('Guide trip user',$joinGuideTrip->first(), 'the user join guide trip','create');
 
         return ;
     }
@@ -89,16 +92,17 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             $subscriber['user_id'] = Auth::guard('api')->user()->id;
             return $subscriber;
         }, $data['subscribers']);
+        $joinGuideTrip =$guideTrip->guideTripUsers()->createMany($subscribers);
+        activityLog('Guide trip user',$joinGuideTrip->first(), 'the user update join guide trip','update');
 
-        $guideTrip->guideTripUsers()->createMany($subscribers);
 
         return ;
     }
     public function deleteSubscriberInTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
-        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->delete();
-
+        $guideTripUser =GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->first();
+        $guideTripUser->delete();
         return ;
     }
 
@@ -106,116 +110,9 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     {
         $guideTrip = GuideTrip::findBySlug($slug);
         $subscription =GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id',Auth::guard('api')->user()->id)->get();
+        activityLog('Guide trip user',$subscription->first(), 'the user viewed join guide trip','view');
+
         return  SubscriptionResource::collection($subscription);
-    }
-    public function favorite($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->favoriteGuideTrips()->attach($id);
-    }
-
-    public function deleteFavorite($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->favoriteGuideTrips()->detach($id);
-    }
-
-    public function addReview($data)
-    {
-        $filteredContent = app(Pipeline::class)
-            ->send($data['comment'])
-            ->through([
-                ContentFilter::class,
-            ])
-            ->thenReturn();
-
-        $data['comment'] = $filteredContent;
-        $user = Auth::guard('api')->user();
-        $user->reviewGuideTrip()->attach($data['guide_trip_id'], [
-            'rating' => $data['rating'],
-            'comment' => $data['comment']
-        ]);
-    }
-
-    public function updateReview($data)
-    {
-        $filteredContent = app(Pipeline::class)
-            ->send($data['comment'])
-            ->through([
-                ContentFilter::class,
-            ])
-            ->thenReturn();
-
-        $data['comment'] = $filteredContent;
-        $user = Auth::guard('api')->user();
-        $user->reviewGuideTrip()->sync([$data['guide_trip_id'] => [
-            'rating' => $data['rating'],
-            'comment' => $data['comment']
-        ]]);
-    }
-
-    public function deleteReview($id)
-    {
-        $user = Auth::guard('api')->user();
-        $user->reviewGuideTrip()->detach($id);
-    }
-
-    public function reviewsLike($request)
-    {
-        $review = Reviewable::find($request->review_id);
-        $status = $request->status == "like" ? '1' : '0';
-        $userReview = $review->user;
-        $receiverLanguage = $userReview->lang;
-        $ownerToken = $userReview->DeviceToken->token;
-        $notificationData=[];
-
-        $existingLike = $review->like()->where('user_id', Auth::guard('api')->user()->id)->first();
-
-        if ($existingLike) {
-            if ($existingLike->pivot->status != $status) {
-                $review->like()->updateExistingPivot(Auth::guard('api')->user()->id, ['status' => $status]);
-                if($request->status == "like"){
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-
-                }else{
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'sound' => 'default',
-                    ];
-
-                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-                }
-            } else {
-                $review->like()->detach(Auth::guard('api')->user()->id);
-            }
-        } else {
-            $review->like()->attach(Auth::guard('api')->user()->id, ['status' => $status]);
-            if($request->status == "like"){
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-                Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
-
-            }else{
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'sound' => 'default',
-                ];
-
-                Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
-            }
-        }
-        sendNotification($ownerToken, $notificationData);
-
     }
 
     public function search($query)

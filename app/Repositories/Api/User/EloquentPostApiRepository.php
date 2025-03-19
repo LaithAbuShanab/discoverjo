@@ -12,6 +12,7 @@ use App\Notifications\Users\post\NewPostDisLikeNotification;
 use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
 use App\Pipelines\ContentFilters\ContentFilter;
+use App\Services\FirebaseMessagingService;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
@@ -23,6 +24,11 @@ use Filament\Notifications\Notification as FilamentNotification;
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
+
+    public function __construct(protected FirebaseMessagingService $firebaseMessagingService) {
+
+
+    }
     public function followingPost()
     {
         $perPage = config('app.pagination_per_page');
@@ -108,8 +114,13 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
                     'sound' => 'default',
                 ];
-
-                sendNotification($token, $notificationData);
+                $response = $this->firebaseMessagingService->sendNotification(
+                    'D8636BCC62A673B4D574736AFCA1F73AF7C34EBBB7D99A38E05CDB6963FEAE8B',
+                    $notificationData['title'],
+                    $notificationData['body']
+                );
+                dd($response);
+//                sendNotification($token, $notificationData);
             }
         }
     }

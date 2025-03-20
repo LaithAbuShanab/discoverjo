@@ -24,7 +24,6 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        activityLog('event',$query->first(),'The user viewed all event','view');
 
 
         // Pass user coordinates to the PlaceResource collection
@@ -52,7 +51,6 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'total' => $eventsArray['total'],
         ];
 
-        activityLog('event',$query->first(),'The user viewed all active event','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [

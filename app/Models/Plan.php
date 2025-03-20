@@ -26,9 +26,10 @@ class Plan extends Model
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function () {
-                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+                return $this->getTranslation('name', 'en');
             })
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->usingLanguage('en');
     }
 
     public function creator()
@@ -54,6 +55,6 @@ class Plan extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('trip');
+            ->useLogName('plan');
     }
 }

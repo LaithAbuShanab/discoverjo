@@ -53,6 +53,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             'prev_page_url' => $postsArray['prev_page_url'],
             'total' => $postsArray['total'],
         ];
+        activityLog('post', $posts->first(), 'the user view all post belong followings', 'view all');
 
         return [
             'posts' => UserPostResource::collection($posts),
@@ -163,18 +164,24 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function delete($id)
     {
-        Post::find($id)->delete();
+        $post =Post::find($id);
+        $post->delete();
     }
 
     public function favorite($id)
     {
         $user = Auth::guard('api')->user();
+        $post = Post::find($id);
+        activityLog('post', $post, 'the user favorite the post', 'favorite');
+
         $user->favoritePosts()->attach($id);
     }
 
     public function deleteFavorite($id)
     {
         $user = Auth::guard('api')->user();
+        $post = Post::find($id);
+        activityLog('post', $post, 'the user unfavored the post', 'unfavored');
         $user->favoritePosts()->detach($id);
     }
 
@@ -217,6 +224,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 'status' => $status,
             ]);
         }
+        activityLog('post', $post, 'the user ' .$data['status'].' the post', $data['status']);
 
         if (!empty($notificationData)) {
             sendNotification($ownerToken, $notificationData);

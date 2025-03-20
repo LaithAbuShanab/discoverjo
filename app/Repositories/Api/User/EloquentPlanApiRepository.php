@@ -136,12 +136,15 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
     public function deletePlan($slug)
     {
-        $plan = Plan::where('slug', $slug)->delete();
+        $plan = Plan::where('slug', $slug)-first();
+        $plan->delete();
     }
 
     public function show($slug)
     {
         $plan = Plan::where('slug', $slug)->firstOrFail();
+        activityLog('plan',$plan,'The user viewed plan','view');
+
         return new SinglePlanResource($plan);
     }
 
@@ -261,6 +264,8 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'plans' => PlanResource::collection($plans),
             'pagination' => $pagination
         ];
+
+        activityLog('plan', $plans->first(), $data['region'], 'filter');
 
         return $response;
     }

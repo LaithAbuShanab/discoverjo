@@ -52,7 +52,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'total' => $tripsArray['total'],
         ];
 
-        activityLog('Guide trip',$guidesTrips->first(), 'the user view all guide trip','view');
 
         // Pass user coordinates to the PlaceResource collection
         return [

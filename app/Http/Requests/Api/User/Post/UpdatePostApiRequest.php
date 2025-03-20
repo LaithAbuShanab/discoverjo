@@ -36,7 +36,7 @@ class UpdatePostApiRequest extends FormRequest
         return [
             'visitable_type' => [
                 'required',
-                Rule::in(['place', 'plan', 'trip', 'event', 'volunteering', 'guide_trip']),
+                Rule::in(['place', 'plan', 'event', 'volunteering']),
             ],
 
             'visitable_slug' => [
@@ -46,10 +46,8 @@ class UpdatePostApiRequest extends FormRequest
                     $models = [
                         'place' => Place::class,
                         'plan' => Plan::class,
-                        'trip' => Trip::class,
                         'event' => Event::class,
                         'volunteering' => Volunteering::class,
-                        'guide_trip' => GuideTrip::class,
                     ];
 
                     if (isset($models[$type]) && !$models[$type]::findBySlug( $value)) {

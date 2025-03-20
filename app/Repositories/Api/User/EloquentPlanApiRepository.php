@@ -136,14 +136,14 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
     public function deletePlan($slug)
     {
-        $plan = Plan::where('slug', $slug)-first();
+        $plan = Plan::where('slug', $slug) - first();
         $plan->delete();
     }
 
     public function show($slug)
     {
         $plan = Plan::where('slug', $slug)->firstOrFail();
-        activityLog('plan',$plan,'The user viewed plan','view');
+        activityLog('plan', $plan, 'The user viewed plan', 'view');
 
         return new SinglePlanResource($plan);
     }
@@ -236,8 +236,12 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
         // Filter by number of days
         $baseQuery->when($numberOfDays != null, function ($queryBuilder) use ($numberOfDays) {
-            $queryBuilder->whereHas('days', function ($queryBuilder) use ($numberOfDays) {
-                $queryBuilder->groupBy('plan_id')->havingRaw('COUNT(*) = ?', [$numberOfDays]);
+            $queryBuilder->whereExists(function ($subQuery) use ($numberOfDays) {
+                $subQuery->select(DB::raw(1))
+                    ->from('plan_days')
+                    ->whereRaw('plans.id = plan_days.plan_id')
+                    ->groupBy('plan_id')
+                    ->havingRaw('COUNT(*) = ?', [$numberOfDays]);
             });
         });
 
@@ -250,6 +254,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
         // Execute the query and get the results
         $plans = $baseQuery->paginate($perPage);
+
 
         // Prepare pagination data
         $plansArray = $plans->toArray();
@@ -265,7 +270,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'pagination' => $pagination
         ];
 
-        activityLog('plan', $plans->first(), $data['region'], 'filter');
+        // activityLog('plan', $plans->first(), $data['region'], 'filter');
 
         return $response;
     }

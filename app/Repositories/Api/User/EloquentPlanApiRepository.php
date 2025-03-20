@@ -248,7 +248,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         // Filter by region
         $baseQuery->when($regionId != null, function ($queryBuilder) use ($regionId) {
             $queryBuilder->whereHas('days.activities.place', function ($queryBuilder) use ($regionId) {
-                $queryBuilder->where('region_id', $regionId);
+                $queryBuilder->orWhere('region_id', $regionId);
             });
         });
 

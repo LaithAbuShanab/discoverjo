@@ -29,7 +29,6 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function getAllVolunteerings()
     {
         $perPage =config('app.pagination_per_page');
-        $query = Volunteering::OrderBy('start_datetime', 'desc');
         $eloquentVolunteerings = Volunteering::OrderBy('start_datetime', 'desc')->paginate($perPage);
 
         $volunteeringArray = $eloquentVolunteerings->toArray();
@@ -39,8 +38,6 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-        activityLog('volunteering',$query->first(),'The user viewed all volunteering','view');
-
         // Pass user coordinates to the PlaceResource collection
         return [
             'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),
@@ -52,7 +49,6 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     {
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
-        $query = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now);
         $eloquentVolunteerings = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
         //edit the status should has cron job
         Volunteering::where('status', '1')->whereNotIn('id', $eloquentVolunteerings->pluck('id'))->update(['status' => '0']);
@@ -63,8 +59,6 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-        activityLog('volunteering',$query->first(),'The user viewed all active volunteering','view');
-
         // Pass user coordinates to the PlaceResource collection
         return [
             'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),

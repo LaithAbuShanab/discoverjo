@@ -82,8 +82,13 @@ return [
         "rejected-invitation-trip"      => "Invitation Rejected",
         "accepted-invitation-trip-body" => ":username has accepted the invitation",
         "rejected-invitation-trip-body" => ":username has rejected the invitation",
+
         'new-post-title'                => 'New Post Alert!',
         'new-post-body'                 => 'Exciting news! :username has just shared a new post. Stay updated and check it out!',
+        'new-warning-title'             => 'New Warning',
+        'new-warning-body'              => 'You have received a warning due to unethical behavior. Please follow our community guidelines.',
+        'new-blocked-two-weeks-title'   => 'Account Temporarily Blocked',
+        'new-blocked-two-weeks-body'    => 'Your account has been blocked for two weeks due to repeated violations of our policies.',
     ],
 
     'auth' => [

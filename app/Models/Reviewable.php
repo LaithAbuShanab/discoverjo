@@ -9,7 +9,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Reviewable extends Model
 {
-    use HasFactory ,LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $table = 'reviewables';
 
@@ -31,6 +31,12 @@ class Reviewable extends Model
             ->logOnly(['rating', 'comment'])
             ->logOnlyDirty();
     }
+
+    public function reviewable()
+    {
+        return $this->morphTo();
+    }
+
     public function like()
     {
         return $this->belongsToMany(User::class, 'review_likes', 'review_id', 'user_id')->withPivot('status');

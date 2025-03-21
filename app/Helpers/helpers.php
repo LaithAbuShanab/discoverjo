@@ -4,7 +4,10 @@ use App\Models\Admin;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
+use Illuminate\Support\Facades\Log;
 
 function AdminPermission($permission)
 {
@@ -86,25 +89,21 @@ function dateTime($dateTime)
 
 function sendNotification($deviceTokens, $data)
 {
-    $notificationData = [
-        'title' => $data['title'],
-        'body' => $data['body'],
-        'sound' => $data['sound'] ?? 'default',
-    ];
+    // Load Firebase credentials
+    $factory = (new Factory)->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
+    $messaging = $factory->createMessaging();
 
-    if (!is_array($deviceTokens)) {
-        $deviceTokens = [$deviceTokens];
+    // Build the notification message
+    $notification = FirebaseNotification::create($data['title'], $data['body']);
+    $message = CloudMessage::new()->withNotification($notification)->withData($data);
+
+    if (is_array($deviceTokens)) {
+        $response = $messaging->sendMulticast($message, $deviceTokens);
+    } else {
+        $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));
     }
 
-    $response = Http::withHeaders([
-        'Authorization' => 'key=' . env('FIREBASE_SERVER_KEY'),
-        'Content-Type' => 'application/json',
-    ])->post('https://fcm.googleapis.com/fcm/send', [
-        'registration_ids' => $deviceTokens,
-        'notification' => $notificationData,
-    ]);
-
-    return $response->json();
+    return $response;
 }
 
 function activityLog($logName, $model, $description, $event)

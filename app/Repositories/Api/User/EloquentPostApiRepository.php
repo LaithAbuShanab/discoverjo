@@ -12,7 +12,6 @@ use App\Notifications\Users\post\NewPostDisLikeNotification;
 use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
 use App\Pipelines\ContentFilters\ContentFilter;
-use App\Services\FirebaseMessagingService;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
@@ -24,11 +23,6 @@ use Filament\Notifications\Notification as FilamentNotification;
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
-
-    public function __construct(protected FirebaseMessagingService $firebaseMessagingService) {
-
-
-    }
     public function followingPost()
     {
         $perPage = config('app.pagination_per_page');
@@ -53,6 +47,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             'prev_page_url' => $postsArray['prev_page_url'],
             'total' => $postsArray['total'],
         ];
+
         activityLog('post', $posts->first(), 'the user view all post belong followings', 'view all');
 
         return [
@@ -108,19 +103,15 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
             // Send Notification Via Firebase
             foreach ($followers as $follower) {
-                $token = $follower->DeviceToken->token;
+                $token[] = $follower->DeviceToken->token;
                 $receiverLanguage = $follower->lang;
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
                     'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
                     'sound' => 'default',
                 ];
-                $response = $this->firebaseMessagingService->sendNotification(
-                    'ExponentPushToken[pe-Y44GLOTj5csZP2wCaDz]',
-                    $notificationData['title'],
-                    $notificationData['body']
-                );
-//                sendNotification($token, $notificationData);
+
+                sendNotification($token, $notificationData);
             }
         }
     }
@@ -164,8 +155,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function delete($id)
     {
-        $post =Post::find($id);
-        $post->delete();
+        Post::find($id)->delete();
     }
 
     public function favorite($id)
@@ -173,7 +163,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $post = Post::find($id);
         activityLog('post', $post, 'the user favorite the post', 'favorite');
-
         $user->favoritePosts()->attach($id);
     }
 
@@ -224,7 +213,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 'status' => $status,
             ]);
         }
-        activityLog('post', $post, 'the user ' .$data['status'].' the post', $data['status']);
+
+        activityLog('post', $post, 'the user ' . $data['status'] . ' the post', $data['status']);
 
         if (!empty($notificationData)) {
             sendNotification($ownerToken, $notificationData);

@@ -85,7 +85,8 @@ class AdminPanelProvider extends PanelProvider
                 'Legal Documents',
                 'Plans',
                 'Guide Trips',
-                'System'
+                'System',
+                'Monitoring Department',
             ])
             ->authGuard('admin')
             ->databaseNotifications();

@@ -41,6 +41,8 @@ class CheckDeleteCounters extends Command
                 $user->status = 1;
                 $user->save();
             }
+
+            $counter->delete();
         }
 
         $this->info('User statuses updated successfully.');

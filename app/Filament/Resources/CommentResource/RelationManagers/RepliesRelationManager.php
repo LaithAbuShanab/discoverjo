@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\CommentResource\RelationManagers;
 
-use App\Models\DeleteCounter;
+use App\Filament\Resources\RepliesResource;
+use App\Models\Comment;
+use Filament\Tables\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,11 +19,7 @@ class RepliesRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('content')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema([]);
     }
 
     public function table(Table $table): Table
@@ -29,15 +27,10 @@ class RepliesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('content')
             ->columns([
-                Tables\Columns\TextColumn::make('user.username'),
-                Tables\Columns\TextColumn::make('content')->limit(120)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
-                        $state = $column->getState();
-                        if (strlen($state) <= $column->getCharacterLimit()) {
-                            return null;
-                        }
-                        return $state;
-                    })
+                Tables\Columns\TextColumn::make('id')->sortable(),
+                Tables\Columns\TextColumn::make('user.username')->searchable(),
+                Tables\Columns\TextColumn::make('post.content')->searchable()->limit(50),
+                Tables\Columns\TextColumn::make('content')->searchable()->limit(50),
             ])
             ->filters([
                 //
@@ -46,14 +39,7 @@ class RepliesRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make()
-                    ->action(function ($record) {
-                        DeleteCounter::updateOrCreate(
-                            ['user_id' => $record->user_id],
-                            ['deleted_count' => DB::raw('deleted_count + 1')]
-                        );
-                        $record->delete();
-                    }),
+                Tables\Actions\ViewAction::make()->url(fn(Comment $record) => route('filament.admin.resources.replies.view', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

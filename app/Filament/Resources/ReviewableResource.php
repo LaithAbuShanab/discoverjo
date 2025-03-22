@@ -20,6 +20,8 @@ class ReviewableResource extends Resource
 
     protected static ?string $navigationGroup = 'Monitoring Department';
 
+    protected static ?int $navigationSort = 4;
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -82,6 +84,7 @@ class ReviewableResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('user.username') // Display the user's username instead of ID
                     ->label('User')
                     ->sortable()

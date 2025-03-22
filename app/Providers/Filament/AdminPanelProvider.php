@@ -81,12 +81,11 @@ class AdminPanelProvider extends PanelProvider
                 'Event & Volunteering',
                 'Trips',
                 'Suggestion & Contact',
-                'Post & Comment',
+                'Monitoring Department',
                 'Legal Documents',
                 'Plans',
                 'Guide Trips',
                 'System',
-                'Monitoring Department',
             ])
             ->authGuard('admin')
             ->databaseNotifications();

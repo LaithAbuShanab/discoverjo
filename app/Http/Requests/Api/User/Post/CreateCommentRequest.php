@@ -30,9 +30,9 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id'=>['required','exists:posts,id',new IfUserCanMakeCommentInPostRule(),new CheckIfPostCreateorActiveRule()],
-            'content'=>['required','string'],
-            'parent_id' => ['nullable','exists:comments,id',new CheckIfCommentHasNullParentIdRule(),new CheckIfCommentOwnerActiveRule()],
+            'post_id' => ['required', 'exists:posts,id', new IfUserCanMakeCommentInPostRule(), new CheckIfPostCreateorActiveRule()],
+            'content' => ['required', 'string'],
+            'parent_id' => ['nullable', 'exists:comments,id', new CheckIfCommentHasNullParentIdRule(), new CheckIfCommentOwnerActiveRule()],
         ];
     }
 

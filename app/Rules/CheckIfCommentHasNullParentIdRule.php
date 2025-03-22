@@ -16,8 +16,8 @@ class CheckIfCommentHasNullParentIdRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $comment = Comment::find($value);
-        if(!$comment) return;
-        if($comment->parent_id != null){
+        if (!$comment) return;
+        if ($comment->parent_id != null) {
             $fail(__('validation.api.the-comment-not-main'));
         }
     }

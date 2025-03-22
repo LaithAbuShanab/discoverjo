@@ -36,18 +36,21 @@ class ViewReviewable extends ViewRecord
                         return;
                     }
 
+                    $latestCount = DeleteCounter::where('user_id', $record->user_id)
+                        ->latest('created_at')
+                        ->value('deleted_count') ?? 0;
+
                     DeleteCounter::create([
                         'typeable_type' => get_class($record),
                         'typeable_id'   => $record->id,
                         'user_id'       => $record->user_id,
-                        'deleted_count' => 1,
+                        'deleted_count' => $latestCount + 1,
                     ]);
 
-                    $totalWarnings = DeleteCounter::where('user_id', $record->user_id)
-                        ->sum('deleted_count');
+
+                    $totalWarnings = DeleteCounter::where('user_id', $record->user_id)->latest('created_at')->first()->deleted_count;
 
                     $user = $record->user;
-                    $issuer = Auth::user();
                     $deviceToken = optional($user->deviceToken)->token;
                     $receiverLanguage = in_array($user->lang, ['en', 'ar']) ? $user->lang : 'en';
 
@@ -91,12 +94,20 @@ class ViewReviewable extends ViewRecord
                         ->body('A new warning has been issued to the user.')
                         ->success()
                         ->send();
+                })->disabled(function ($record) {
+                    $existsForRecord = DeleteCounter::where([
+                        'typeable_type' => get_class($record),
+                        'typeable_id'   => $record->id,
+                        'user_id'       => $record->user_id,
+                    ])->exists();
+
+                    $userHasThreeDeletions = DeleteCounter::where('user_id', $record->user_id)
+                        ->latest() // fallback to latest record
+                        ->value('deleted_count') === 3;
+
+                    return $existsForRecord || $userHasThreeDeletions;
                 })
-                ->disabled(fn() => DeleteCounter::where([
-                    'typeable_type' => get_class($this->record),
-                    'typeable_id'   => $this->record->id,
-                    'user_id'       => $this->record->user_id,
-                ])->exists()),
+
         ];
     }
 }

@@ -22,7 +22,7 @@ class PostResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-on-square-stack';
 
-    protected static ?string $navigationGroup = 'Post & Comment';
+    protected static ?string $navigationGroup = 'Monitoring Department';
 
     protected static ?int $navigationSort = 1;
 
@@ -129,18 +129,10 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.username')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('visitable_type')
-                    ->label('Type')
-                    ->formatStateUsing(fn($state) => class_basename($state)) // Extracts only the class name
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('visitable_id')
-                    ->label('Type Name')
+                Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('user.username')->searchable(),
+                Tables\Columns\TextColumn::make('visitable_type')->label('Type')->formatStateUsing(fn($state) => class_basename($state))->searchable(),
+                Tables\Columns\TextColumn::make('visitable_id')->label('Type Name')
                     ->formatStateUsing(function ($record) {
                         $model = $record->visitable_type;
                         $id = $record->visitable_id;
@@ -149,15 +141,14 @@ class PostResource extends Resource
                             return 'N/A';
                         }
 
-                        $modelClass = '\\' . $model; // Ensure full namespace
+                        $modelClass = '\\' . $model;
                         if (class_exists($modelClass)) {
                             $instance = $modelClass::find($id);
                             return $instance ? $instance->name ?? 'N/A' : 'N/A';
                         }
 
                         return 'N/A';
-                    })
-                    ->sortable(),
+                    })->searchable(),
                 Tables\Columns\TextColumn::make('privacy')
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
@@ -166,10 +157,8 @@ class PostResource extends Resource
                             2 => 'Followers',
                         };
                     }),
-                Tables\Columns\ToggleColumn::make('seen_status')
-                    ->sortable(),
+                Tables\Columns\ToggleColumn::make('seen_status')->sortable(),
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('post')->allCollections()->circular()->stacked()->limit(3)->limitedRemainingText(),
-
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -184,15 +173,7 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->action(function ($record) {
-                        DeleteCounter::updateOrCreate(
-                            ['user_id' => $record->user_id],
-                            ['deleted_count' => DB::raw('deleted_count + 1')]
-                        );
-                        $record->delete();
-                    }),
-
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

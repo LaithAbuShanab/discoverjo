@@ -2,36 +2,35 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CommentResource\Pages;
-use App\Filament\Resources\CommentResource\RelationManagers\RepliesRelationManager;
+use App\Filament\Resources\RepliesResource\Pages;
 use App\Models\Comment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Illuminate\Database\Eloquent\Builder;
 
-class CommentResource extends Resource
+class RepliesResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-command-line';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Monitoring Department';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('parent_id', null)->count();
+        return static::getModel()::whereNotNull('parent_id')->count();
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    public static function getLabel(): string
     {
-        return 'primary';
+        return 'Replies';
     }
 
     public static function form(Form $form): Form
@@ -61,8 +60,8 @@ class CommentResource extends Resource
                     ->columns(1),
 
                 // Section 2: Comment Content
-                Section::make('Comment Content')
-                    ->description('Enter the comment content.')
+                Section::make('Reply Content')
+                    ->description('Enter the reply content.')
                     ->schema([
                         Forms\Components\Textarea::make('content')
                             ->label('Content')
@@ -78,7 +77,7 @@ class CommentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('id')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('user.username')->searchable(),
                 Tables\Columns\TextColumn::make('post.content')->searchable()->limit(50),
                 Tables\Columns\TextColumn::make('content')->searchable()->limit(50),
@@ -97,21 +96,14 @@ class CommentResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', null));
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RepliesRelationManager::class,
-        ];
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('parent_id', '!=', null));
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComments::route('/'),
-            'view' => Pages\ViewComment::route('/{record}'),
+            'index' => Pages\ListReplies::route('/'),
+            'view' => Pages\ViewReplies::route('/{record}'),
         ];
     }
 }

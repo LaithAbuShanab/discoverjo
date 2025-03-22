@@ -34,14 +34,9 @@ class CommentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('user_id')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.username')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('content')
-                    ->limit(50)
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('id')->searchable(),
+                Tables\Columns\TextColumn::make('user.username')->searchable(),
+                Tables\Columns\TextColumn::make('content')->limit(50)->searchable(),
             ])
             ->filters([
                 //
@@ -50,7 +45,7 @@ class CommentsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->url(fn (Comment $record) => route('filament.admin.resources.comments.view', $record)),
+                Tables\Actions\ViewAction::make()->url(fn(Comment $record) => route('filament.admin.resources.comments.view', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -58,5 +53,4 @@ class CommentsRelationManager extends RelationManager
                 ]),
             ]);
     }
-
 }

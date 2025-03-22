@@ -16,10 +16,9 @@ class CheckIfCommentOwnerActiveRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $comment = Comment::find($value);
-        if(!$comment) return;
-        if(!$comment->user?->status){
+        if (!$comment) return;
+        if (!$comment->user?->status) {
             $fail(__('validation.api.the-user-who-wrote-the-comment-not-longer-active'));
         }
-
     }
 }

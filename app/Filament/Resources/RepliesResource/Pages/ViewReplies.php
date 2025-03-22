@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PostResource\Pages;
+namespace App\Filament\Resources\RepliesResource\Pages;
 
-use App\Filament\Resources\PostResource;
+use App\Filament\Resources\RepliesResource;
 use Filament\Resources\Pages\ViewRecord;
 use App\Models\DeleteCounter;
 use App\Notifications\Users\Warning\NewWarningUserNotification;
@@ -11,14 +11,9 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Lang;
 use Filament\Notifications\Notification as FilamentNotification;
 
-class ViewPost extends ViewRecord
+class ViewReplies extends ViewRecord
 {
-    protected static string $resource = PostResource::class;
-
-    protected function beforeFill(): void
-    {
-        $this->record->update(['seen_status' => 1]);
-    }
+    protected static string $resource = RepliesResource::class;
 
     /**
      * Define custom header actions for the view page.

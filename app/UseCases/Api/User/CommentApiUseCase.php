@@ -18,12 +18,11 @@ class CommentApiUseCase
     public function createComment($data)
     {
         return $this->commentRepository->createComment([
-            'user_id'=>Auth::guard('api')->user()->id,
-            'post_id'=>$data['post_id'],
-            'content'=>$data['content'],
-            'parent_id'=>$data['parent_id']
+            'user_id' => Auth::guard('api')->user()->id,
+            'post_id' => $data['post_id'],
+            'content' => $data['content'],
+            'parent_id' => $data['parent_id']
         ]);
-
     }
 
     public function updateComment($data)
@@ -40,8 +39,4 @@ class CommentApiUseCase
     {
         return $this->commentRepository->commentLike($data);
     }
-
-
-
-
 }

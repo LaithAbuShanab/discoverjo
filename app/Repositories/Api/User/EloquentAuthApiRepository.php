@@ -21,6 +21,7 @@ use mysql_xdevapi\Exception;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Auth\Events\Registered;
 
 class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 {
@@ -63,7 +64,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                     ])
                     ->sendToDatabase($recipient);
             }
-
+            event(new Registered($user));
             return new UserResource($user);
         });
     }

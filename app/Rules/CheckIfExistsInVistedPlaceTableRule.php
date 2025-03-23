@@ -24,6 +24,7 @@ class CheckIfExistsInVistedPlaceTableRule implements ValidationRule
         }
         if (VisitedPlace::where('user_id', $userId)->where('place_id',$place->id)->exists()) {
             $fail(__('validation.api.this-place-already-in-your-visited-place'));
+            return;
         }
     }
 }

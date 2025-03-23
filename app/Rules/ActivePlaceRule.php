@@ -16,6 +16,7 @@ class ActivePlaceRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $place = Place::where('slug', $value)->first();
+        if(!$place) return;
         if (!$place->status) {
             $fail(__('validation.api.the-selected-place-is-not-active'));
         }

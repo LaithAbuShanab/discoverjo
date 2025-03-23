@@ -47,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'apiKey' => ApiKeyMiddleware::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'langApi' => \App\Http\Middleware\languageApi::class,
+            'signed'=>Illuminate\Routing\Middleware\ValidateSignature::class
         ]);
     })
     ->withProviders([

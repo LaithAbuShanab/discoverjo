@@ -21,3 +21,7 @@ Route::get('generate-slug', function () {
     ]);
 });
 
+Route::get('/check-time', function () {
+    return 'Laravel time: ' . now()->toDateTimeString();
+});
+

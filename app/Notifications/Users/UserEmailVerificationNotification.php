@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class UserEmailVerificationNotification extends Notification
@@ -40,6 +41,8 @@ class UserEmailVerificationNotification extends Notification
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+
+        Log::info('Generated signed URL:', ['url' => $url]);
 
         return (new MailMessage)
             ->subject(Lang::get('Verify Your Email Address'))

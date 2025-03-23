@@ -18,7 +18,6 @@ class EmailVerificationRequest extends FormRequest
     {
         $this->validateUser();
 
-        dd(hash_equals((string) $this->route('id'), (string) $this->user()->getKey()));
         if (! hash_equals((string) $this->route('id'),
             (string) $this->user()->getKey())) {
             return false;

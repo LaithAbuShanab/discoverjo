@@ -32,14 +32,14 @@ class UserEmailVerificationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $url = URL::temporarySignedRoute(
-                'api.verification.verify',
-                Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-                [
-                    'id' => $notifiable->getKey(),
-                    'hash' => sha1($notifiable->getEmailForVerification()),
-                ]
-            ) . '?lang=' . app()->getLocale();
-
+            'api.verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'lang' => app()->getLocale(),
+                'id' => $notifiable->getKey(),
+                'hash' => sha1($notifiable->getEmailForVerification()),
+            ]
+        );
 
         return (new MailMessage)
             ->subject(Lang::get('Verify Your Email Address'))

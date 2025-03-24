@@ -156,6 +156,14 @@
         .register-btn:active {
             transform: translateY(0);
         }
+        .responsive-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px; /* Center it and add some spacing */
+            max-width: 100%; /* Extra safety */
+            border-radius: 8px; /* Optional, if you want slightly rounded corners */
+        }
     </style>
 </head>
 
@@ -163,7 +171,8 @@
     <div class="container">
         <div class="form-box">
             <img src="{{ asset('assets/images/logo_yellow2.JPG') }}"
-                 alt="{{ __('app.logo') }}">
+                 alt="{{ __('app.logo') }}"
+                 class="responsive-logo">
 
             <h1>{{ __('app.reset_password') }}</h1>
             <p>{{ __('app.reset_password_description') }}</p>

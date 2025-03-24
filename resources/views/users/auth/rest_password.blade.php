@@ -162,8 +162,8 @@
 <body>
     <div class="container">
         <div class="form-box">
-            <img src="https://imgs.search.brave.com/LjbDTmdGnNX11RCeGZ7kTPdUMKtCgccfW9IV2GmuQWY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAxLzMyLzY3LzU0/LzM2MF9GXzEzMjY3/NTQ1Nl8ySTFUMlFv/MGcxZmQzbzVwVXBQ/djU5UlVyQ0g1c2JX/bC5qcGc"
-                alt="{{ __('app.logo') }}" class="logo">
+            <img src="{{ asset('assets/images/logo_yellow2.JPG') }}"
+                 alt="{{ __('app.logo') }}">
 
             <h1>{{ __('app.reset_password') }}</h1>
             <p>{{ __('app.reset_password_description') }}</p>

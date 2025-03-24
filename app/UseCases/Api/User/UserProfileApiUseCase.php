@@ -70,6 +70,14 @@ class UserProfileApiUseCase
         return $this->userProfileRepository->otherUserDetails($slug);
     }
 
+    public function allNotifications()
+    {
+        return $this->userProfileRepository->allNotifications();
+    }
 
+    public function readNotification($id)
+    {
+        return $this->userProfileRepository->readNotification($id);
+    }
 
 }

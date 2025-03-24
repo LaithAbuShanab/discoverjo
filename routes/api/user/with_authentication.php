@@ -26,6 +26,8 @@ Route::middleware(['firstLogin'])->group(function () {
     ///////////////////////////////////////////start review//////////////////////////////////////////////////////////
     Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
     Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
+    Route::get('all/user/notifications', [UserProfileController::class, 'allNotifications'])->name('.user.notifications');
+    Route::put('make/notification/as-read/{id}', [UserProfileController::class, 'readNotification'])->name('.user.notifications');
 
     //favorite system
     Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']);

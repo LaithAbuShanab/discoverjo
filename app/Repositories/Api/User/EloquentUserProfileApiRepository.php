@@ -10,11 +10,13 @@ use App\Http\Resources\PlaceResource;
 use App\Http\Resources\TagResource;
 use App\Http\Resources\UserFavoriteResource;
 use App\Http\Resources\UserFavoriteSearchResource;
+use App\Http\Resources\UserNotificationResource;
 use App\Http\Resources\UserProfileResource;
 use App\Http\Resources\UserResource;
 use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\UserProfileApiRepositoryInterface;
 use App\Models\Category;
+use App\Models\Notification;
 use App\Models\Place;
 use App\Models\Tag;
 use App\Models\User;
@@ -22,6 +24,8 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Notifications\DatabaseNotification;
+
 
 
 class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterface
@@ -224,5 +228,20 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
        return CurrentLocationPlacesResource::collection($places);
 
+    }
+
+    public function allNotifications()
+    {
+        $user= Auth::guard('api')->user();
+        $notifications = DatabaseNotification::where('notifiable_type','App\Models\User')->where('notifiable_id',$user->id)->orderBy('created_at', 'desc')->get();
+        return  UserNotificationResource::collection($notifications);
+    }
+
+    public function readNotification($id)
+    {
+        $user= Auth::guard('api')->user();
+        $notification = $user->notifications()->where('id', $id)->first();
+        $notification->markAsRead();
+        return $notification;
     }
 }

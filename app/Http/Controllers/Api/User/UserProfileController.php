@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Profile\SetLocationApiRequest;
 use App\Http\Requests\Api\User\Profile\UpdateProfileApiRequest;
 use App\Http\Requests\PlacesOfCurrentLocationRequest;
+use App\Rules\CheckIfNotificationBelongToUserRule;
 use App\Rules\CheckIfUserActiveRule;
 use App\UseCases\Api\User\UserProfileApiUseCase;
 use Illuminate\Http\Request;
@@ -154,4 +155,38 @@ class UserProfileController extends Controller
 
     }
 
+    public function allNotifications()
+    {
+        try {
+            $notifications = $this->userProfileApiUseCase->allNotifications();
+            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function readNotification($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => ['required', 'exists:notifications,id',new CheckIfNotificationBelongToUserRule()],
+        ] ,[
+            'id.required' => __('validation.api.user-id-is-required'),
+            'id.exists' => __('validation.api.user-id-does-not-exists'),
+
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        try {
+            $notifications = $this->userProfileApiUseCase->readNotification($validator->validated()['id']);
+            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
 }

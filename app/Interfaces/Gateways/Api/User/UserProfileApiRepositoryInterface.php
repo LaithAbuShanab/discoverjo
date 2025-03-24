@@ -14,6 +14,8 @@ interface UserProfileApiRepositoryInterface
     public function favSearch($query);
     public function allTags();
     public function otherUserDetails($slug);
+    public function allNotifications();
+    public function readNotification($id);
 
 
 

@@ -33,6 +33,7 @@ class CheckDeleteCounters extends Command
 
         $deletedCounters = DeleteCounter::where('deleted_count', 3)
             ->where('updated_at', '<', $thresholdDate)
+            ->where('duration', 0)
             ->get();
 
         foreach ($deletedCounters as $counter) {
@@ -42,7 +43,8 @@ class CheckDeleteCounters extends Command
                 $user->save();
             }
 
-            $counter->delete();
+            $counter->duration = 1;
+            $counter->save();
         }
 
         $this->info('User statuses updated successfully.');

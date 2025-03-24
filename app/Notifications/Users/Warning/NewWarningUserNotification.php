@@ -10,7 +10,7 @@ class NewWarningUserNotification extends Notification
     use Queueable;
 
     /**
-     * Type of the notification: 'warning' or 'blocked'.
+     * Type of the notification: 'warning', 'blocked', or 'blacklisted'.
      *
      * @var string
      */
@@ -19,7 +19,7 @@ class NewWarningUserNotification extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param string $type 'warning' or 'blocked'
+     * @param string $type 'warning', 'blocked', or 'blacklisted'
      */
     public function __construct(string $type = 'warning')
     {
@@ -51,6 +51,15 @@ class NewWarningUserNotification extends Notification
                 'title_ar' => 'تم حظر الحساب مؤقتاً',
                 'body_en' => 'Your account has been blocked for two weeks due to repeated violations of our policies.',
                 'body_ar' => 'تم حظر حسابك لمدة أسبوعين بسبب تكرار المخالفات لسياساتنا.',
+            ];
+        }
+
+        if ($this->type === 'blacklisted') {
+            return [
+                'title_en' => 'Account Blacklisted',
+                'title_ar' => 'تم إدراج الحساب في القائمة السوداء',
+                'body_en' => 'Your account has been permanently blacklisted due to severe violations of our policies.',
+                'body_ar' => 'تم إدراج حسابك في القائمة السوداء بشكل دائم بسبب انتهاكات جسيمة لسياساتنا.',
             ];
         }
 

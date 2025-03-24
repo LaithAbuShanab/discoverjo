@@ -124,6 +124,8 @@ return [
         'new-warning-body'              => 'You have received a warning due to unethical behavior. Please follow our community guidelines.',
         'new-blocked-two-weeks-title'   => 'Account Temporarily Blocked',
         'new-blocked-two-weeks-body'    => 'Your account has been blocked for two weeks due to repeated violations of our policies.',
+        'new-blacklisted-title'         => 'Account Blacklisted',
+        'new-blacklisted-body'          => 'Your account has been permanently blacklisted due to severe violations of our policies.',
     ],
 
     'auth' => [

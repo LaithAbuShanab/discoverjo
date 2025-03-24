@@ -1,13 +1,17 @@
 <?php
 
 use App\Models\Admin;
+use App\Models\DeleteCounter;
+use App\Notifications\Users\Warning\NewWarningUserNotification;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Auth;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 
 function AdminPermission($permission)
 {
@@ -136,5 +140,72 @@ function adminNotification($user)
                     ->url(route('filament.admin.resources.users.index')),
             ])
             ->sendToDatabase($recipient);
+    }
+}
+
+function handleWarning(object $record): void
+{
+    $latestCount = DeleteCounter::where('user_id', $record->user_id)
+        ->latest('created_at')
+        ->value('deleted_count') ?? 0;
+
+    DeleteCounter::create([
+        'typeable_type' => get_class($record),
+        'typeable_id'   => $record->id,
+        'user_id'       => $record->user_id,
+        'deleted_count' => $latestCount + 1,
+    ]);
+
+    $totalWarnings = $latestCount + 1;
+    $user = $record->user;
+    $deviceToken = optional($user->deviceToken)->token;
+    $receiverLanguage = in_array($user->lang, ['en', 'ar']) ? $user->lang : 'en';
+
+    if ($totalWarnings === 4) {
+        $user->status = 0;
+        $user->save();
+
+        // Insert into blocked_users table
+        DB::table('blocked_users')->insert([
+            'email' => $user->email,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        FacadesNotification::send($user, new NewWarningUserNotification('blacklisted'));
+
+        if ($deviceToken) {
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-blacklisted-title', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-blacklisted-body', ['username' => $user->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            sendNotification([$deviceToken], $notificationData);
+        }
+    } elseif ($totalWarnings >= 3) {
+        $user->status = 0;
+        $user->save();
+
+        FacadesNotification::send($user, new NewWarningUserNotification('blocked'));
+
+        if ($deviceToken) {
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-blocked-two-weeks-title', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-blocked-two-weeks-body', ['username' => $user->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            sendNotification([$deviceToken], $notificationData);
+        }
+    } else {
+        FacadesNotification::send($user, new NewWarningUserNotification('warning'));
+
+        if ($deviceToken) {
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-warning-title', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-warning-body', ['username' => $user->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            sendNotification([$deviceToken], $notificationData);
+        }
     }
 }

@@ -1,6 +1,32 @@
 <?php
 
 return [
+    //translation email verification
+    "verifyEmail" => "تأكيد بريدك الإلكتروني",
+    "logo" => "الشعار",
+    "verifyEmailMessage" => "لقد طلبت تأكيد بريدك الإلكتروني. يرجى النقر على الزر أدناه للتحقق من بريدك الإلكتروني:",
+    "verifyEmailButton" => "تأكيد البريد الإلكتروني",
+    "thankYou" => "إذا لم تطلب تأكيد البريد الإلكتروني، يمكنك تجاهل هذا البريد الإلكتروني.",
+    "allReserved" => "جميع الحقوق محفوظة لـ دسكوفر جو",
+    "yourNotVerified" => "لم يتم التحقق من بريدك الإلكتروني. يرجى تفعيل حسابك قبل تسجيل الدخول.",
+    //translation email reset password
+    'discover-jordan-logo' => 'شعار اكتشف الأردن',
+    'discover-jordan' => 'اكتشف الأردن',
+    'reset_password_notification' => 'إشعار إعادة تعيين كلمة المرور',
+    'received_password_reset_request' => 'تم استلام طلب إعادة تعيين كلمة المرور',
+    'reset_password' => 'إعادة تعيين كلمة المرور',
+    'password_reset_link_expire' => 'رابط إعادة تعيين كلمة المرور سينتهي خلال :count دقيقة',
+    'no_further_action_required' => 'لا حاجة لاتخاذ أي إجراء إذا لم تطلب إعادة تعيين كلمة المرور',
+    'all-rights-reserved' => 'جميع الحقوق محفوظة',
+    'all-copy-right-reserved-by-discover-jordan' => 'جميع الحقوق محفوظة لاكتشف الأردن',
+    'reset_password_title' => 'اكتشف الأردن | إعادة تعيين كلمة المرور',
+    'reset_password_description' => 'الحقول التالية مطلوبة لإعادة تعيين كلمة المرور',
+    'reset-button' => 'زر إعادة تعيين كلمة المرور',
+    'passwords_do_not_match' => 'كلمات المرور غير متطابقة',
+    'something_went_wrong' => 'حدث خطأ ما',
+    'password_reset_successfully' => 'تمت إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة',
+
+
     'event' => [
         'api' => [
             'events-retrieved-successfully' => 'تم استرجاع الفعاليات بنجاح',

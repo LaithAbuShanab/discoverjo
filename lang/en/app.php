@@ -1,6 +1,30 @@
 <?php
 
 return [
+    //translation email verification
+    "verifyEmail" => "Verify your email",
+    "logo" => "Logo",
+    "verifyEmailMessage" => "You have requested to verify your email. Please click the button below to verify your email:",
+    "verifyEmailButton" => "Verify Email",
+    "thankYou" => "If you did not request email verification, you can ignore this email.",
+    "allReserved" => "All rights reserved to Discover Jo",
+    "yourNotVerified" => "Your email has not been verified. Please activate your account before logging in.",
+    //translation email reset password
+    'discover-jordan-logo'=>'Discover Jordan logo',
+    'discover-jordan'=>'Discover Jordan',
+    'reset_password_notification' => 'Reset Password Notification',
+    'received_password_reset_request' => 'You are receiving this email because we received a password reset request for your account.',
+    'reset_password' => 'Reset Password',
+    'password_reset_link_expire' => 'This password reset link will expire in :count minutes.',
+    'no_further_action_required' => 'If you did not request a password reset, no further action is required.',
+    'all-rights-reserved'=>'All rights reserved',
+    'all-copy-right-reserved-by-discover-jordan' => 'All rights reserved by Discover Jordan',
+    'reset_password_title' => 'Discover Jordan | Reset Password',
+    'reset_password_description' => 'The Following Fields Are Required To Reset Your Password',
+    'reset-button' => 'Reset Password',
+    'passwords_do_not_match' => 'The Passwords Do Not Match',
+    'something_went_wrong' => 'Something went wrong',
+    'password_reset_successfully' => 'Password has been reset successfully! You can now login with your new password.',
 
     'event' => [
         'api' => [

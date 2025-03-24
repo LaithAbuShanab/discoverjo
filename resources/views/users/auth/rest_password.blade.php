@@ -35,11 +35,26 @@
             padding: 25px;
         }
 
+        /*.logo {*/
+        /*    width: 100px;*/
+        /*    height: 100px;*/
+        /*    margin: 0 auto;*/
+        /*    display: block;*/
+        /*}*/
+
         .logo {
             width: 100px;
             height: 100px;
             margin: 0 auto;
             display: block;
+        }
+
+        .responsive-logo {
+            width: 100%;
+            height: auto;
+            max-width: 250px; /* You can increase/decrease this based on your preference */
+            display: block;
+            margin: 0 auto 20px;
         }
 
         .form-box h1 {

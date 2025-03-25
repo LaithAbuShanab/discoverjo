@@ -185,7 +185,7 @@
 <body>
     <div class="container">
         <div class="form-box">
-            <img src="{{ asset('assets/images/logo_yellow2.JPG') }}"
+            <img src="{{ asset('assets/logo_black_cut.JPG') }}"
                  alt="{{ __('app.logo') }}"
                  class="responsive-logo">
 

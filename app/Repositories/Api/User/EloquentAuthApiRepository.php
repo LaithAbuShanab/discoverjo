@@ -85,18 +85,6 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            $user->tokens()->where('name', 'mobile')->delete();
-
-            // CHeck If This User Verify Email
-            if (!$user->hasVerifiedEmail()) {
-                $token = $user->createToken('mobile')->accessToken;
-                $tokenWebsite = $user->createToken('website')->accessToken;
-                $user->token = $token;
-                $user->token_website = $tokenWebsite;
-                $user->verified_email = false;
-                return new UserLoginResource($user);
-            }
-
             if ($user->status == 3) {
                 throw new \Exception(__('validation.api.you-deactivated-by-admin-wait-to-unlock-the-block'));
             }
@@ -126,6 +114,20 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 }
                 GuideTripUser::where('user_id', $user->id)->where('status',5)->update(['status' => 1]);
             }
+
+            $user->tokens()->where('name', 'mobile')->delete();
+
+            // CHeck If This User Verify Email
+            if (!$user->hasVerifiedEmail()) {
+                $token = $user->createToken('mobile')->accessToken;
+                $tokenWebsite = $user->createToken('website')->accessToken;
+                $user->token = $token;
+                $user->token_website = $tokenWebsite;
+                $user->verified_email = false;
+                return new UserLoginResource($user);
+            }
+
+
 
             $token = $user->createToken('mobile')->accessToken;
             $tokenWebsite = $user->createToken('website')->accessToken;

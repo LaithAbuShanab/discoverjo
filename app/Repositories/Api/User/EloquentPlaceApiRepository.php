@@ -45,7 +45,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->attach([$place->id]);
-        activityLog('Place', $place, 'The user create visited place', 'create');
+        activityLog('visited place', $place, 'The user create visited place', 'create');
 
     }
 
@@ -54,7 +54,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
-        activityLog('Place', $place, 'The user delete visited place', 'delete');
+        activityLog('visited place', $place, 'The user delete visited place', 'delete');
 
     }
     public function search($query)
@@ -181,6 +181,22 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $places = $query->paginate($perPage);
         $placesArray = $places->toArray();
 
+        activityLog(
+            'filter places',
+            $query->first(),
+            'The user filter the places',
+            'filter',
+            [
+                'categories'     => $categoriesSlugs,
+                'subcategories'  => $subcategoriesSlugs,
+                'features'       => $featuresSlugs,
+                'region'         => $regionSlug,
+                'min_cost'       => $minCost,
+                'max_cost'       => $maxCost,
+                'min_rating'     => $minRating,
+                'max_rating'     => $maxRating,
+            ]
+        );
         return [
             'places' => PlaceResource::collection($places),
             'pagination' => [

@@ -110,21 +110,24 @@ function sendNotification($deviceTokens, $data)
     return $response;
 }
 
-function activityLog($logName, $model, $description, $event)
+function activityLog($logName, $model, $description, $event, $extraProps = [])
 {
     $activity = activity($logName)
         ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
-        ->withProperties([
+        ->withProperties(array_merge([
             'ip' => request()->ip(),
             'user_agent' => request()->header('User-Agent'),
-        ]);
+        ], $extraProps));
+
     $activity->event($event);
+
     if ($model) {
         $activity->performedOn($model);
     }
 
     $activity->log($description);
 }
+
 
 function adminNotification($user)
 {

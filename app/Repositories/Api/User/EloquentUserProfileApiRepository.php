@@ -181,6 +181,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         if($userSlug == $slug){
             return new UserProfileResource($eloquentUser);
         }else{
+            activityLog('user',$eloquentUser,'the current user view this user','view');
             return new OtherUserProfileResource($eloquentUser);
         }
     }
@@ -225,6 +226,17 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         // Paginate the results
 //        $places = $query->limit(50)->get();
         $places = $query->get();
+        activityLog(
+            'places around',
+            $places->first(),
+            'The user viewed places around.',
+            'find',
+            [
+                'categories' => $request['categories'] ?? null,
+                'subcategories' => $request['subcategories'] ?? null,
+                'area' => $request['area'] ?? null,
+            ]
+        );
 
        return CurrentLocationPlacesResource::collection($places);
 

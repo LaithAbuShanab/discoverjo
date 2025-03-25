@@ -55,11 +55,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             'comment' => $data['comment']
         ]);
 
-//        $reviewRecord = $user->{$relationship}()
-//            ->wherePivot('favorable_id', $data['type_id'])
-//            ->wherePivot('favorable_type', get_class($user->{$relationship}()->getRelated()))
-//            ->first();
-//        activityLog('favorite',$reviewRecord ,'the user add delete favorite','delete');
+        activityLog('review',$reviewItem ,'the user add new review','create');
     }
 
     public function updateReview($data)
@@ -83,6 +79,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             'rating' => $data['rating'],
             'comment' => $data['comment'],
         ]);
+        activityLog('review',$reviewItem ,'the user updated review','update');
 
     }
 
@@ -92,6 +89,8 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         $reviewItem = $modelClass::findBySlug($data['slug']);
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
+        activityLog('review',$reviewItem ,'the user delete review','delete');
+
     }
 
     public function reviewsLike($data)
@@ -147,6 +146,9 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         if (!empty($notificationData)) {
             sendNotification($ownerToken, $notificationData);
         }
+
+        activityLog($data['status'],$review ,'the user '.$data['status'].' review',$data['status']);
+
     }
 
 }

@@ -36,7 +36,7 @@ class CheckUserInterestRule implements ValidationRule
             $fail(__('validation.api.you-already-make-this-as-interest'));
         }
 
-        $datetime = $type?->end_datetime;
+        $datetime = $type->end_datetime;
         $now = now()->setTimezone('Asia/Riyadh');
 
         if($datetime && $datetime < $now){

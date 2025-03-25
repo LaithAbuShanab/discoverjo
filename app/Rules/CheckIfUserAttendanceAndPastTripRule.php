@@ -19,7 +19,9 @@ class CheckIfUserAttendanceAndPastTripRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $attendance = UsersTrip::where('user_id', $userId)->where($attribute, $value)->where('status', '1')->exists();
-        $owner = Trip::find($value)?->user_id;
+        $currentTrip = Trip::find($value);
+        if(!$currentTrip)return;
+        $owner = $currentTrip->user_id;
         if (!$attendance && $owner != $userId) {
             $fail(__('validation.api.you_are_not_attendance_in_this'));
         }

@@ -18,8 +18,9 @@ class CheckRemoveUserTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $trip_id = Trip::where('slug', $value)->first()->id;
-        $user_id = User::where('slug', request('user_slug'))->first()->id;
-
+        $user = User::where('slug', request('user_slug'))->first();
+        if(!$user) return;
+        $user_id = $user->id;
         if (!UsersTrip::where('trip_id', $trip_id)->where('user_id', $user_id)->exists()) {
             $fail(__('validation.api.the-user-is-not-a-member-of-this-trip'));
         }

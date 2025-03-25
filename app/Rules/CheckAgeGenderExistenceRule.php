@@ -20,7 +20,7 @@ class CheckAgeGenderExistenceRule implements ValidationRule
     {
         $trip_id = Trip::where('slug', request()->trip_slug)->first()->id;
         $trip = Trip::find($trip_id);
-
+        if(!$trip) return;
         if ($trip) {
             $user = Auth::guard('api')->user();
             $birthday = $user->birthday;

@@ -17,7 +17,7 @@ class CheckIfUserActiveRule implements ValidationRule
     {
         $user = User::findBySlug($value);
         if(!$user) return;
-        if(!$user->status){
+        if($user->status != 1){
             $fail(__('validation.api.this-user-not-longer-active'));
         }
     }

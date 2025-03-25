@@ -23,6 +23,7 @@ class CheckUserTripStatus implements ValidationRule
         $userId = User::where('slug', request()->user_slug)->value('id');
         $tripId = Trip::where('slug', $value)->value('id');
         $userTrip = UsersTrip::where('user_id', $userId ?? Auth::guard('api')->user()->id)->where('trip_id', $tripId)->first();
+        if(!$userTrip) return;
 
         if ($userTrip) {
             if ($userTrip->status == '1') {

@@ -19,7 +19,7 @@ class CheckUserTripExistsRule implements ValidationRule
     {
         $userId = Auth::guard('api')->id();
         $trip = Trip::where('slug', $value)->first();
-
+        if(!$trip) return;
         // Case 1: If User is Owner
         if ($trip->user_id === $userId) {
             $fail(__('validation.api.you-are-owner-of-trip'));

@@ -20,9 +20,11 @@ class CheckIfPastEventOrVolunteering implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $date = $this->reviewable_type::find($value)?->start_datetime;
+        $review = $this->reviewable_type::find($value);
+        if(!$review) return;
+        $date=$review->start_datetime;
         $now = now()->setTimezone('Asia/Riyadh');
-        if ($date > $now && $this->reviewable_type::find($value)) {
+        if ($date > $now) {
             $fail(__('validation.api.you_cannot_make_review_for_upcoming_event'));
         }
     }

@@ -17,6 +17,7 @@ class CheckOwnerTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $trip = Trip::where('slug', $value)->first();
+        if(!$trip) return;
         if ($trip->user_id !== Auth::guard('api')->user()->id) {
             $fail(__('validation.api.you-are-not-owner-of-trip'));
         }

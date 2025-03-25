@@ -19,7 +19,9 @@ class CheckIfTheIdIsGuideRule implements ValidationRule
         if(!$user) return;
         if(!$user->is_guide){
             $fail(__('validation.api.the-provided-id-not-guide'));
-            return;
+        }
+        if( $user->status != 1){
+            $fail(__('validation.api.the-guide-not-active'));
         }
     }
 }

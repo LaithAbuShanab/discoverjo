@@ -7,18 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Auth\LoginApiUserRequest;
 use App\Http\Requests\Api\User\Auth\RegisterApiUserRequest;
 use App\Http\Resources\UserLoginResource;
-use App\Models\ThirdPartyProvider;
 use App\Models\User;
-use App\Models\UserThirdPartyData;
-use App\Rules\CheckEmailBelongToUser;
 use App\UseCases\Api\User\AuthApiUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthUserController extends Controller
@@ -34,7 +29,7 @@ class AuthUserController extends Controller
     {
         try {
             $user = $this->authApiUseCase->login($request->validated());
-            return ApiResponse::sendResponse(200,  __('app.auth.api.you-logged-in-successfully'), $user);
+            return ApiResponse::sendResponse(200,  __('app.api.you-logged-in-successfully'), $user);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(401, $e->getMessage());
         }
@@ -45,7 +40,7 @@ class AuthUserController extends Controller
         $lang = $request->header('Content-Language') ? $request->header('Content-Language') : 'ar';
         try {
             $user = $this->authApiUseCase->register($request->validated(), $lang);
-            return ApiResponse::sendResponse(200, __('app.auth.api.you-register-successfully'), $user);
+            return ApiResponse::sendResponse(200, __('app.api.you-register-successfully'), $user);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
@@ -55,7 +50,7 @@ class AuthUserController extends Controller
     {
         try {
             $this->authApiUseCase->logout();
-            return ApiResponse::sendResponse(200, __('app.auth.api.you-logged-out-successfully'), null);
+            return ApiResponse::sendResponse(200, __('app.api.you-logged-out-successfully'), null);
         } catch (\Exception $e) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
@@ -70,7 +65,7 @@ class AuthUserController extends Controller
     {
         try {
             $this->authApiUseCase->deleteAccount();
-            return ApiResponse::sendResponse(201, __('app.auth.api.your-account-deleted-successfully'), null);
+            return ApiResponse::sendResponse(201, __('app.api.your-account-deleted-successfully'), null);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
@@ -80,7 +75,7 @@ class AuthUserController extends Controller
     {
         try {
             $this->authApiUseCase->deactivateAccount();
-            return ApiResponse::sendResponse(200, __('app.auth.api.your-account-deactivated-successfully'), null);
+            return ApiResponse::sendResponse(200, __('app.api.your-account-deactivated-successfully'), null);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
@@ -182,7 +177,7 @@ class AuthUserController extends Controller
             $userModel->markEmailAsVerified();
             $userModel->token = $token;
 
-            return ApiResponse::sendResponse(200,    __('app.auth.api.you-logged-in-successfully'), new UserLoginResource($userModel));
+            return ApiResponse::sendResponse(200,    __('app.api.you-logged-in-successfully'), new UserLoginResource($userModel));
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(500, $e->getMessage());
         }
@@ -225,7 +220,7 @@ class AuthUserController extends Controller
             $userModel->verified_email = true;
             $userModel->token = $token;
 
-            return ApiResponse::sendResponse(200,   __('app.auth.api.you-logged-in-successfully'), new UserLoginResource($userModel));
+            return ApiResponse::sendResponse(200,   __('app.api.you-logged-in-successfully'), new UserLoginResource($userModel));
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(500, $e->getMessage());
         }

@@ -121,26 +121,6 @@ return [
 
     ],
 
-    'auth' => [
-        'api' => [
-            'you-register-successfully' => 'مبروك! تم تسجيلك بنجاح. استمتع برحلتك معنا.',
-            'you-logged-out-successfully' => 'تم تسجيل الخروج بنجاح. نأمل أن نراك مرة أخرى قريبًا. استمتع بوقتك!',
-            'you-logged-in-successfully' => 'لقد تم تسجيل دخولك بنجاح',
-            'your-account-deleted-successfully' => 'تم حذف حسابك بنجاح!',
-            'your-account-deactivated-successfully' => 'تم إلغاء تنشيط حسابك بنجاح!',
-            'email-already-verified' => 'تم التحقق من بريدك الإلكتروني بالفعل',
-            'your-password-reset-successfully' => 'لقد تم إعادة تعيين كلمة المرور الخاصة بك بنجاح! يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.',
-            'unable-to-reset-your-password' => 'غير قادر على إعادة تعيين كلمة المرور الخاصة بك',
-            'an-error-occurred-while-resetting-the-password' => 'حدث خطأ أثناء إعادة تعيين كلمة المرور',
-            "email-sent-successfully" => "تم إرسال البريد الإلكتروني بنجاح",
-            'the-link-for-reset-password-sent-successfully' => 'تم إرسال رابط إعادة تعيين كلمة المرور بنجاح',
-            'unable-to-send-the-link-for-reset-password' => 'تعذر إرسال الرابط لإعادة تعيين كلمة المرور',
-            'you-have-already-verify-your-email' => 'لقد قمت بالفعل بالتحقق من بريدك الإلكتروني',
-            'you-have-verify-your-email-successfully' => 'لقد تم التحقق من بريدك الالكتروني بنجاح',
-
-        ]
-    ],
-
     "api" => [
         /** for categories */
         'the-searched-categories-retrieved-successfully' => 'تم استرجاع الفئات التي تم البحث عنها بنجاح.',
@@ -205,29 +185,44 @@ return [
         'guide-trips-users-subscription-fetched-successfully' => ' تم استرجاع لائحة المستخدمين المشتركين في الرحة بنجاح',
         'the-interest-event-retrieved-successfully' => 'نم استرجاع لائحة الفعاليات التي اهتممت بها بنجاح',
 
+        // Auth Api
+        'you-logged-in-successfully'                        => 'لقد تم تسجيل دخولك بنجاح',
+        'you-register-successfully'                         => 'مبروك! تم تسجيلك بنجاح. استمتع برحلتك معنا.',
+        'you-logged-out-successfully'                       => 'تم تسجيل الخروج بنجاح. نأمل أن نراك مرة أخرى قريبًا. استمتع بوقتك!',
+        'your-account-deleted-successfully'                 => 'تم حذف حسابك بنجاح!',
+        'your-account-deactivated-successfully'             => 'تم إلغاء تنشيط حسابك بنجاح!',
+        'email-already-verified'                            => 'تم التحقق من بريدك الإلكتروني بالفعل',
+        "email-sent-successfully"                           => "تم إرسال البريد الإلكتروني بنجاح",
+        'the-link-for-reset-password-sent-successfully'     => 'تم إرسال رابط إعادة تعيين كلمة المرور بنجاح',
+        'unable-to-send-the-link-for-reset-password'        => 'تعذر إرسال الرابط لإعادة تعيين كلمة المرور',
+        'your-password-reset-successfully'                  => 'لقد تم إعادة تعيين كلمة المرور الخاصة بك بنجاح! يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.',
+        'unable-to-reset-your-password'                     => 'غير قادر على إعادة تعيين كلمة المرور الخاصة بك',
+        'an-error-occurred-while-resetting-the-password'    => 'حدث خطأ أثناء إعادة تعيين كلمة المرور',
+        'you-have-already-verify-your-email'                => 'لقد قمت بالفعل بالتحقق من بريدك الإلكتروني',
+        'you-have-verify-your-email-successfully'           => 'لقد تم التحقق من بريدك الالكتروني بنجاح',
         // Trip Api
-        'retrieved-successfully'                      => 'تم استرجاع البيانات بنجاح',
-        'trip-created-successfully'                   => 'تم إنشاء الرحلة بنجاح',
-        'the-status-change-successfully'              => 'تم تغيير حالة الرحلة بنجاح',
-        'you-join-to-trip-successfully'               => 'تم الانضمام للرحلة بنجاح',
-        'you-are-left-from-the-trip-successfully'     => 'تم الخروج من الرحلة بنجاح',
-        'the-trip-deleted-successfully'               => 'تم حذف الرحلة بنجاح',
-        'the-trip-updated-successfully'               => 'تم تعديل الرحلة بنجاح',
-        'the-user-deleted-successfully'               => 'تم حذف المستخدم بنجاح',
+        'retrieved-successfully'                            => 'تم استرجاع البيانات بنجاح',
+        'trip-created-successfully'                         => 'تم إنشاء الرحلة بنجاح',
+        'the-status-change-successfully'                    => 'تم تغيير حالة الرحلة بنجاح',
+        'you-join-to-trip-successfully'                     => 'تم الانضمام للرحلة بنجاح',
+        'you-are-left-from-the-trip-successfully'           => 'تم الخروج من الرحلة بنجاح',
+        'the-trip-deleted-successfully'                     => 'تم حذف الرحلة بنجاح',
+        'the-trip-updated-successfully'                     => 'تم تعديل الرحلة بنجاح',
+        'the-user-deleted-successfully'                     => 'تم حذف المستخدم بنجاح',
 
         // Plan Api
-        'plan-created-successfully'                   => 'تم انشاء الخطة بنجاح',
-        'plan-updated-successfully'                   => 'تم تعديل الخطة بنجاح',
-        'plan-deleted-successfully'                   => 'تم حذف الخطة بنجاح',
-        'plans-retrieved-successfully'                => 'تم استرجاع الخطط بنجاح',
+        'plan-created-successfully'                         => 'تم انشاء الخطة بنجاح',
+        'plan-updated-successfully'                         => 'تم تعديل الخطة بنجاح',
+        'plan-deleted-successfully'                         => 'تم حذف الخطة بنجاح',
+        'plans-retrieved-successfully'                      => 'تم استرجاع الخطط بنجاح',
 
         // Category Api
-        'categories-retrieved-successfully'           => 'تم استرجاع الفئات بنجاح.',
-        'all-subcategories-retrieved-successfully'    => 'جميع الفئات الفرعية تم استرجاعها بنجاح',
-        'places-subcategories-retrieved-successfully' => 'تم استرجاع الأماكن والفئات الفرعية بواسطة معرف الفئة بنجاح.',
+        'categories-retrieved-successfully'                 => 'تم استرجاع الفئات بنجاح.',
+        'all-subcategories-retrieved-successfully'          => 'جميع الفئات الفرعية تم استرجاعها بنجاح',
+        'places-subcategories-retrieved-successfully'       => 'تم استرجاع الأماكن والفئات الفرعية بواسطة معرف الفئة بنجاح.',
 
         // Place Api
-        'place-retrieved-by-id-successfully'          => 'تم استرجاع المكان بواسطة الهوية بنجاح',
+        'place-retrieved-by-id-successfully'                => 'تم استرجاع المكان بواسطة الهوية بنجاح',
 
     ],
 ];

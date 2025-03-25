@@ -71,6 +71,7 @@ class PlaceResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('business_status')->options(self::$statuses)->required()->default('2'),
                         Forms\Components\Select::make('region_id')->relationship('region', 'name')->required(),
+                        Forms\Components\Toggle::make('status')->required()->inline(false),
                         CheckboxList::make('Features')->relationship('features', 'name')->columnSpanFull()->columns(4),
                         SpatieMediaLibraryFileUpload::make('main_place')->collection('main_place')->columnSpanFull()->required(),
                         SpatieMediaLibraryFileUpload::make('place_gallery')->collection('place_gallery')->columnSpanFull()->multiple()->required()->panelLayout('grid')

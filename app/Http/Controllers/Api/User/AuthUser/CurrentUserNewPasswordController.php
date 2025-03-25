@@ -25,12 +25,12 @@ class CurrentUserNewPasswordController extends Controller
                 'remember_token' => Str::random(60),
             ])->save();
 
-            return response()->json(['message' => __('app.auth.api.your-password-reset-successfully')], 200);
+            return response()->json(['message' => __('app.api.your-password-reset-successfully')], 200);
 
         } catch (ValidationException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' => __('app.auth.api.an-error-occurred-while-resetting-the-password')], 500);
+            return response()->json(['message' => __('app.api.an-error-occurred-while-resetting-the-password')], 500);
         }
     }
 }

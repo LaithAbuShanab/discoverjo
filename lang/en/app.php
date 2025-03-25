@@ -128,27 +128,6 @@ return [
         'new-blacklisted-body'          => 'Your account has been permanently blacklisted due to severe violations of our policies.',
     ],
 
-    'auth' => [
-        'api' => [
-            'you-register-successfully' => 'Congratulations! Your registration was successful. Enjoy your journey with us.',
-            'you-logged-out-successfully' => 'Successfully logged out. We hope to see you again soon. Have a great time!',
-            'you-logged-in-successfully' => 'You have logged in successfully!',
-            'your-account-deleted-successfully' => 'Your account deleted successfully!',
-            'your-account-deactivated-successfully' => 'Your account deactivated successfully!',
-            'email-already-verified' => 'Your Email already verified',
-            'your-password-reset-successfully' => 'Your password has been reset successfully! You can now log in with your new password.',
-            'unable-to-reset-your-password' => 'Unable to reset your password',
-            'an-error-occurred-while-resetting-the-password' => 'An error occurred while resetting the password',
-            'the-link-for-reset-password-sent-successfully' => 'The link for reset password sent successfully',
-            'unable-to-send-the-link-for-reset-password' => 'Unable to send the link for reset password',
-            'you-have-already-verify-your-email' => 'You have already verify your email',
-            'you-have-verify-your-email-successfully' => 'your email verified successfully',
-            "email-sent-successfully" => "Email Sent Successfully",
-
-
-        ]
-    ],
-
     "api" => [
         /** for categories */
         'the-searched-categories-retrieved-successfully' => 'The searched categories retrieved successfully.',
@@ -213,29 +192,46 @@ return [
         'the-searched-favorite-retrieved-successfully' => 'the searched favorite retrieved successfully',
         'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
 
+        // Auth Api
+        'you-logged-in-successfully'                        => 'You logged in successfully',
+        'you-register-successfully'                         => 'Congratulations! Your registration was successful. Enjoy your journey with us.',
+        'you-logged-out-successfully'                       => 'Successfully logged out. We hope to see you again soon. Have a great time!',
+        'your-account-deleted-successfully'                 => 'Your account deleted successfully!',
+        'your-account-deactivated-successfully'             => 'Your account deactivated successfully!',
+        'email-already-verified'                            => 'Your Email already verified',
+        "email-sent-successfully"                           => "Email Sent Successfully",
+        'the-link-for-reset-password-sent-successfully'     => 'The link for reset password sent successfully',
+        'unable-to-send-the-link-for-reset-password'        => 'Unable to send the link for reset password',
+        'your-password-reset-successfully'                  => 'Your password has been reset successfully! You can now log in with your new password.',
+        'unable-to-reset-your-password'                     => 'Unable to reset your password',
+        'an-error-occurred-while-resetting-the-password'    => 'An error occurred while resetting the password',
+        'you-have-already-verify-your-email'                => 'You have already verify your email',
+        'you-have-verify-your-email-successfully'           => 'your email verified successfully',
+
+
         // Trip Api
-        'retrieved-successfully'                      => 'Data recovered successfully',
-        'trip-created-successfully'                   => 'Trip created successfully',
-        'the-status-change-successfully'              => 'The status change successfully',
-        'you-join-to-trip-successfully'               => 'You join to trip successfully',
-        'you-are-left-from-the-trip-successfully'     => 'You are left from the trip successfully',
-        'the-trip-deleted-successfully'               => 'The trip deleted successfully',
-        'the-trip-updated-successfully'               => 'The trip updated successfully',
-        'the-user-deleted-successfully'               => 'The user deleted successfully',
+        'retrieved-successfully'                            => 'Data recovered successfully',
+        'trip-created-successfully'                         => 'Trip created successfully',
+        'the-status-change-successfully'                    => 'The status change successfully',
+        'you-join-to-trip-successfully'                     => 'You join to trip successfully',
+        'you-are-left-from-the-trip-successfully'           => 'You are left from the trip successfully',
+        'the-trip-deleted-successfully'                     => 'The trip deleted successfully',
+        'the-trip-updated-successfully'                     => 'The trip updated successfully',
+        'the-user-deleted-successfully'                     => 'The user deleted successfully',
 
         // Plan Api
-        'plan-created-successfully'                   => 'Plan created successfully',
-        'plan-updated-successfully'                   => 'Plan updated successfully',
-        'plan-deleted-successfully'                   => 'Plan deleted successfully',
-        'plans-retrieved-successfully'                => 'Plans retrieved successfully',
+        'plan-created-successfully'                         => 'Plan created successfully',
+        'plan-updated-successfully'                         => 'Plan updated successfully',
+        'plan-deleted-successfully'                         => 'Plan deleted successfully',
+        'plans-retrieved-successfully'                      => 'Plans retrieved successfully',
 
         // Category Api
-        'categories-retrieved-successfully'           => 'Categories retrieved successfully',
-        'all-subcategories-retrieved-successfully'    => 'All subcategories retrieved successfully',
-        'places-subcategories-retrieved-successfully' => 'Places and SubCategories by Category id Retrieved Successfully.',
+        'categories-retrieved-successfully'                 => 'Categories retrieved successfully',
+        'all-subcategories-retrieved-successfully'          => 'All subcategories retrieved successfully',
+        'places-subcategories-retrieved-successfully'       => 'Places and SubCategories by Category id Retrieved Successfully.',
 
         // Place Api
-        'place-retrieved-by-id-successfully'          => 'Place retrieved by id successfully',
+        'place-retrieved-by-id-successfully'                => 'Place retrieved by id successfully',
 
     ],
 ];

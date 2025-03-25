@@ -12,7 +12,7 @@ class VerifyEmailController extends Controller
     {
         if ($request->user()->hasVerifiedEmail()) {
 
-            $message = __('app.auth.api.you-have-already-verify-your-email');
+            $message = __('app.api.you-have-already-verify-your-email');
             return view('users.auth.verify_email',compact('message'));
         }
 
@@ -20,7 +20,7 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user()));
         }
 
-        $message =__('app.auth.api.you-have-verify-your-email-successfully');
+        $message =__('app.api.you-have-verify-your-email-successfully');
         return view('users.auth.verify_email',compact('message'));
     }
 }

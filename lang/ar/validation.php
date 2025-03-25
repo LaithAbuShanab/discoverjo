@@ -396,37 +396,6 @@ return [
         'reply-id-is-required' => 'رقم معرف الرد مطلوب.',
         'reply-id-does-not-exists' => 'رقم معرف الرد غير موجود.',
 
-        // User Credentials Errors
-        "username-or-email-is-required" => "اسم المستخدم أو البريد الإلكتروني مطلوب.",
-        "username-or-email-must-be-string" => "يجب أن يكون اسم المستخدم أو البريد الإلكتروني نصًا.",
-        "username-or-email-max" => "يجب ألا يتجاوز اسم المستخدم أو البريد الإلكتروني :max حرفًا.",
-        "password-is-required" => "كلمة المرور مطلوبة.",
-        'old_password-is-required' => "كلمة المرور القديمة مطلوبة",
-        "password-must-comply-with-rules" => "يجب أن تفي كلمة المرور بمتطلبات الأمان.",
-        "device-token-is-required" => "رمز الجهاز مطلوب.",
-        "device-token-max" => "يجب ألا يتجاوز رمز الجهاز :max حرفًا.",
-        "token-is-required" => "الرمز مطلوب.",
-        "email-is-required" => "البريد الإلكتروني مطلوب.",
-        "email-must-be-valid" => "يجب أن يكون البريد الإلكتروني عنوانًا صالحًا.",
-        "password-confirmation-mismatch" => "تأكيد كلمة المرور غير متطابق.",
-        "username-is-required" => "اسم المستخدم مطلوب.",
-        "username-must-be-string" => "يجب أن يكون اسم المستخدم نصًا.",
-        "username-must-be-alpha-dash" => "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام وشرطات فقط.",
-        "username-min" => "يجب ألا يقل اسم المستخدم عن :min أحرف.",
-        "username-max" => "يجب ألا يتجاوز اسم المستخدم :max أحرف.",
-        "username-regex" => "يجب أن يبدأ اسم المستخدم بحرف ويحتوي فقط على أحرف وأرقام وشرطات.",
-        "username-no-whitespace" => "يجب ألا يحتوي اسم المستخدم على مسافات.",
-        "username-unique" => "اسم المستخدم مُستخدم بالفعل.",
-
-        // Email Errors
-        "email-must-be-string" => "يجب أن يكون البريد الإلكتروني نصًا.",
-        "email-must-be-lowercase" => "يجب أن يكون البريد الإلكتروني بأحرف صغيرة.",
-        "email-max" => "يجب ألا يتجاوز البريد الإلكتروني :max أحرف.",
-        "email-unique" => "البريد الإلكتروني مُستخدم بالفعل.",
-        "email-in-blacklist" => "البريد الإلكتروني في القائمة السوداء.",
-        "email-invalid-format" => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
-        "email-max-length" => "يجب ألا يزيد البريد الإلكتروني عن :max أحرف.",
-
         // Message Type Errors
         "message-type-is-required" => "نوع الرسالة مطلوب.",
         "message-type-must-be-string" => "يجب أن يكون نوع الرسالة نصًا.",
@@ -824,7 +793,6 @@ return [
         // Validation Errors
         'invalid-json-format' => 'البيانات المقدمة ليست بتنسيق JSON صالح.',
         'you-deactivated-by-admin-wait-to-unlock-the-block' => 'لقد تم حظرك من قبل المشرف انتظر حتى يتم الغاء حظرك',
-        'the-provided-old-password-is-incorrect' => 'كلمة المرور القديمة غير صحيحة.',
         'invalid-credentials' => 'بيانات المستخدم غير صحيحة.',
         'you-should-verify-email-first' => 'عليك ان تقوم بالتحقق من البريد الالكتروني.',
         'you-cannot-delete-this-interest' => 'لا يمكنك حذف هذا الاهتمام.',
@@ -834,6 +802,37 @@ return [
 
         // Additional Errors
         'wait-for-admin-to-accept-your-application' => 'انتظر حتى يقوم المسؤول على الموافقة على طلبك',
+
+        // Auth Validation
+        "username-or-email-is-required"                             => "الاسم المستخدم او البريد الالكتروني مطلوب.",
+        "username-or-email-must-be-string"                          => "الاسم المستخدم او البريد الالكتروني يجب ان يكون نصا.",
+        "username-or-email-max"                                     => "الاسم المستخدم او البريد الالكتروني يجب ان يكون اقل من :max حروف.",
+        "password-is-required"                                      => "كلمة المرور مطلوبة.",
+        "password-confirmation-mismatch"                            => "تأكيد كلمة المرور غير متطابق.",
+        "password-must-comply-with-rules"                           => "كلمة المرور يجب ان تتوافق مع القواعد.",
+        'old_password-is-required'                                  => "كلمة المرور القديمة مطلوبة",
+        "device-token-is-required"                                  => "رمز الجهاز مطلوب.",
+        "device-token-max"                                          => "يجب ألا يتجاوز رمز الجهاز :max حرفًا.",
+        "username-is-required"                                      => "الاسم المستخدم مطلوب.",
+        "username-must-be-string"                                   => "الاسم المستخدم يجب ان يكون نصا.",
+        "username-must-be-alpha-dash"                               => "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام وشرطات فقط.",
+        "username-min"                                              => "يجب ألا يقل اسم المستخدم عن :min أحرف.",
+        "username-max"                                              => "يجب ألا يتجاوز اسم المستخدم :max أحرف.",
+        "username-regex"                                            => "يجب أن يبدأ اسم المستخدم بحرف ويحتوي فقط على أحرف وأرقام وشرطات.",
+        "username-no-whitespace"                                    => "يجب ألا يحتوي اسم المستخدم على مسافات.",
+        "username-unique"                                           => "اسم المستخدم مُستخدم بالفعل.",
+        "email-is-required"                                         => "البريد الإلكتروني مطلوب.",
+        "email-must-be-string"                                      => "يجب أن يكون البريد الإلكتروني نصًا.",
+        "email-must-be-lowercase"                                   => "يجب أن يكون البريد الإلكتروني بأحرف صغيرة.",
+        "email-max"                                                 => "يجب ألا يتجاوز البريد الإلكتروني :max أحرف.",
+        "email-unique"                                              => "البريد الإلكتروني مُستخدم بالفعل.",
+        "email-in-blacklist"                                        => "البريد الإلكتروني في القائمة السوداء.",
+        "email-invalid-format"                                      => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
+        "email-max-length"                                          => "يجب ألا يزيد البريد الإلكتروني عن :max أحرف.",
+        'email-valid'                                               => 'البريد الالكتروني صالح',
+        "email-must-be-valid"                                       => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
+        "token-is-required"                                         => "الرمز مطلوب.",
+        'the-provided-old-password-is-incorrect'                    => 'كلمة المرور القديمة غير صحيحة.',
 
         // Trip Validation
         'trip_type_required'                                        => 'حقل نوع الرحلة مطلوب.',

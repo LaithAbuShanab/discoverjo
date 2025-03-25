@@ -3,35 +3,11 @@
 namespace App\Repositories\Api\User;
 
 use App\Http\Resources\AllGuideTripResource;
-use App\Http\Resources\LegalResource;
 use App\Http\Resources\SubscriptionResource;
-use App\Http\Resources\TopTenPlaceResource;
 use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\LegalDocumentApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\TopTenPlaceApiRepositoryInterface;
 use App\Models\GuideTrip;
-use App\Models\GuideTripActivity;
-use App\Models\GuideTripAssembly;
-use App\Models\GuideTripPriceAge;
-use App\Models\GuideTripPriceInclude;
-use App\Models\GuideTripRequirement;
-use App\Models\GuideTripTrail;
 use App\Models\GuideTripUser;
-use App\Models\LegalDocument;
-use App\Models\Reviewable;
-use App\Models\TopTen;
-use App\Notifications\Users\review\NewReviewDisLikeNotification;
-use App\Notifications\Users\review\NewReviewLikeNotification;
-use App\Pipelines\ContentFilters\ContentFilter;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-
 
 class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryInterface
 {
@@ -66,6 +42,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
 
     }
+
     public function storeSubscriberInTrip($data)
     {
         $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
@@ -97,6 +74,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         return ;
     }
+
     public function deleteSubscriberInTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);

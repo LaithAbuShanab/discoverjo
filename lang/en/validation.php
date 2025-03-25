@@ -292,7 +292,6 @@ return [
         'invalid-gallery-image-format' => 'Invalid Gallery Image Format',
         'place-type' => 'Place Type',
         'token-required' => 'Token Is Required',
-        'email-valid' => 'Email Is Valid',
         'password-required' => 'Password Is Required',
         'password-confirm' => 'Password Confirmation Is Required',
         'email-invalid' => 'Email Invalid',
@@ -350,42 +349,6 @@ return [
         'content-is-required' => 'Content is required',
         'subcategory-is-required' => 'Subcategory is required',
         'subcategory-does-not-exists' => 'Subcategory does not exists',
-        "username-or-email-is-required" => "Username or email is required.",
-        "username-or-email-must-be-string" => "Username or email must be a string.",
-        "username-or-email-max" => "Username or email must not exceed :max characters.",
-
-        "password-is-required" => "Password is required.",
-        'old_password-is-required' => "Old password is required",
-        "password-must-comply-with-rules" => "Password must meet the security requirements.",
-
-        "device-token-is-required" => "Device token is required.",
-        "device-token-max" => "Device token must not exceed :max characters.",
-        // Token
-        "token-is-required" => "Token is required.",
-
-        // Email
-        "email-is-required" => "Email is required.",
-        "email-must-be-valid" => "Email must be a valid email address.",
-
-        // Password
-        "password-confirmation-mismatch" => "Password confirmation does not match.",
-
-        // Username
-        "username-is-required" => "Username is required.",
-        "username-must-be-string" => "Username must be a string.",
-        "username-must-be-alpha-dash" => "Username may only contain letters, numbers, dashes, and underscores.",
-        "username-min" => "Username must be at least :min characters long.",
-        "username-max" => "Username must not exceed :max characters.",
-        "username-regex" => "Username must start with a letter and contain only letters, numbers, dashes, or underscores.",
-        "username-no-whitespace" => "Username must not contain spaces.",
-        "username-unique" => "Username has already been taken.",
-
-        // Email
-        "email-must-be-string" => "Email must be a string.",
-        "email-must-be-lowercase" => "Email must be in lowercase.",
-        "email-max" => "Email must not exceed :max characters.",
-        "email-unique" => "Email has already been taken.",
-        "email-in-blacklist" => "Email is blacklisted.",
 
         // Message Type
         "message-type-is-required" => "Message type is required.",
@@ -429,8 +392,6 @@ return [
 
         // Email
 
-        "email-invalid-format" => "Email must be a valid email address.",
-        "email-max-length" => "Email must not exceed :max characters.",
 
         // Phone Number
         "phone-number-is-required" => "Phone number is required.",
@@ -847,13 +808,43 @@ return [
         'this-name-en-and-location-exists' => 'A place with this name in English and the specified location already exists.',
         'priority-must-be-unique-within-same-parent-category' => 'The priority must be unique within the same parent category.',
         'you-deactivated-by-admin-wait-to-unlock-the-block' => 'You deactivated by admin so wait to unlock the block',
-        'the-provided-old-password-is-incorrect' => 'The provided old password is incorrect',
         'you-did-not-join-to-this-trip' => 'you did not join to this trip',
         'invalid-credentials' => 'Invalid credentials',
         'you-should-verify-email-first' => 'You should verify your email first',
         'something-went-wrong' => 'Something went wrong',
         'you_are_not_authorized_to_delete_this_media' => 'You are not authorized to delete this media.',
         'wait-for-admin-to-accept-your-application' => 'Wait for admin to accept your application',
+
+        // Auth Validation
+        "username-or-email-is-required"                             => "Username or email is required.",
+        "username-or-email-must-be-string"                          => "Username or email must be a string.",
+        "username-or-email-max"                                     => "Username or email must not exceed :max characters.",
+        "password-is-required"                                      => "Password is required.",
+        "password-confirmation-mismatch"                            => "Password confirmation does not match.",
+        "password-must-comply-with-rules"                           => "Password must meet the security requirements.",
+        'old_password-is-required'                                  => "Old password is required",
+        "device-token-is-required"                                  => "Device token is required.",
+        "device-token-max"                                          => "Device token must not exceed :max characters.",
+        "username-is-required"                                      => "Username is required.",
+        "username-must-be-string"                                   => "Username must be a string.",
+        "username-must-be-alpha-dash"                               => "Username may only contain letters, numbers, dashes, and underscores.",
+        "username-min"                                              => "Username must be at least :min characters long.",
+        "username-max"                                              => "Username must not exceed :max characters.",
+        "username-regex"                                            => "Username must start with a letter and contain only letters, numbers, dashes, or underscores.",
+        "username-no-whitespace"                                    => "Username must not contain spaces.",
+        "username-unique"                                           => "Username has already been taken.",
+        "email-is-required"                                         => "Email is required.",
+        "email-must-be-string"                                      => "Email must be a string.",
+        "email-must-be-lowercase"                                   => "Email must be in lowercase.",
+        "email-max"                                                 => "Email must not exceed :max characters.",
+        "email-unique"                                              => "Email has already been taken.",
+        "email-in-blacklist"                                        => "Email is blacklisted.",
+        "email-invalid-format"                                      => "Email must be a valid email address.",
+        "email-max-length"                                          => "Email must not exceed :max characters.",
+        'email-valid'                                               => 'Email Is Valid',
+        "email-must-be-valid"                                       => "Email must be a valid email address.",
+        "token-is-required"                                         => "Token is required.",
+        'the-provided-old-password-is-incorrect'                    => 'The provided old password is incorrect',
 
         // Trip Validation
         'trip_type_required'                                        => 'The trip type field is required.',

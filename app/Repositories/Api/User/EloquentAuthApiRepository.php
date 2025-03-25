@@ -5,7 +5,6 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\UserLoginResource;
 use App\Http\Resources\UserResource;
 use App\Interfaces\Gateways\Api\User\AuthApiRepositoryInterface;
-use App\Models\Admin;
 use App\Models\DeviceToken;
 use App\Models\Follow;
 use App\Models\GuideTrip;
@@ -19,8 +18,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Auth\Events\Registered;
 
 class EloquentAuthApiRepository implements AuthApiRepositoryInterface
@@ -51,19 +48,12 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             ]);
 
             // Notify an admin about the new user registration
-            $recipient = Admin::all();
-            if ($recipient) {
-                Notification::make()
-                    ->title('New User Registered')
-                    ->success()
-                    ->body("A new user ({$user->username}) (ID: {$user->id}) has just registered.")
-                    ->actions([
-                        Action::make('view_user')
-                            ->label('View User')
-                            ->url(route('filament.admin.resources.users.index')),
-                    ])
-                    ->sendToDatabase($recipient);
-            }
+            adminNotification(
+                'New User Registered',
+                "A new user ({$user->username}) (ID: {$user->id}) has just registered.",
+                ['action' => 'view_user', 'action_label' => 'View User', 'action_url' => route('filament.admin.resources.users.index')]
+            );
+
             event(new Registered($user));
             return new UserResource($user);
         });
@@ -91,28 +81,28 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             if ($user->status == 4) {
                 throw new \Exception(__('validation.api.wait-for-admin-to-accept-your-application'));
             }
-            if($user->status == 0){
+            if ($user->status == 0) {
                 $user->status = 1;
                 $user->save();
                 $userTrip = Trip::where('user_id', $user->id)->latest()->first();
-                if($userTrip){
-                    if ( $userTrip->date_time > $now && $userTrip->status ==4) {
+                if ($userTrip) {
+                    if ($userTrip->date_time > $now && $userTrip->status == 4) {
                         $userTrip->status = 1;
                         $userTrip->save();
-                        UsersTrip::where('trip_id', $userTrip->id)->where('status',5)->update(['status' => 1]);
+                        UsersTrip::where('trip_id', $userTrip->id)->where('status', 5)->update(['status' => 1]);
                     }
                 }
-                UsersTrip::where('user_id', $user->id)->where('status',5)->update(['status' => 1]);
+                UsersTrip::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
 
                 $guideTrip = GuideTrip::where('guide_id', $user->id)->latest()->first();
-                if($guideTrip){
-                    if ( $guideTrip->start_datetime > $now && $guideTrip->status ==4) {
+                if ($guideTrip) {
+                    if ($guideTrip->start_datetime > $now && $guideTrip->status == 4) {
                         $guideTrip->status = 1;
                         $guideTrip->save();
-                        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status',5)->update(['status' => 1]);
+                        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 5)->update(['status' => 1]);
                     }
                 }
-                GuideTripUser::where('user_id', $user->id)->where('status',5)->update(['status' => 1]);
+                GuideTripUser::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
             }
 
             $user->tokens()->where('name', 'mobile')->delete();
@@ -141,7 +131,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             } else {
                 DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
             }
-            activityLog('User',$user,'the user logged in','login');
+            activityLog('User', $user, 'the user logged in', 'login');
 
             return new UserLoginResource($user);
         } else {
@@ -153,10 +143,6 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
     {
         //to get logout from all devices
         $user = Auth::guard('api')->user();
-        //        $user->tokens()->each(function ($token) {
-        //            $token->delete();
-        //        });
-
         //logout from the current device
         $userToken = $user->token();
         $userToken->delete();
@@ -209,24 +195,24 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
         // ======================= Deactivate User Trips =======================
         $userTrip = Trip::where('user_id', $userId)->latest()->first();
-        if($userTrip){
-            if ( $userTrip->date_time > $now && $userTrip->status ==1) {
+        if ($userTrip) {
+            if ($userTrip->date_time > $now && $userTrip->status == 1) {
                 $userTrip->status = 4;
                 $userTrip->save();
-                UsersTrip::where('trip_id', $userTrip->id)->where('status',1)->update(['status' => 5]);
+                UsersTrip::where('trip_id', $userTrip->id)->where('status', 1)->update(['status' => 5]);
             }
         }
 
-        UsersTrip::where('user_id', $userId)->where('status',1)->update(['status' => 5]);
+        UsersTrip::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
         // ===================== End Deactivate User Trips ======================
         $guideTrip = GuideTrip::where('guide_id', $userId)->latest()->first();
-        if($guideTrip){
-            if ( $guideTrip->start_datetime > $now && $guideTrip->status ==1) {
+        if ($guideTrip) {
+            if ($guideTrip->start_datetime > $now && $guideTrip->status == 1) {
                 $guideTrip->status = 4;
                 $guideTrip->save();
-                GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status',1)->update(['status' => 5]);
+                GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 1)->update(['status' => 5]);
             }
         }
-        GuideTripUser::where('user_id', $userId)->where('status',1)->update(['status' => 5]);
+        GuideTripUser::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
     }
 }

@@ -22,15 +22,12 @@ class PasswordResetLinkController extends Controller
             );
 
             if ($status == Password::RESET_LINK_SENT) {
-                return ApiResponse::sendResponse(200,  __('app.auth.api.the-link-for-reset-password-sent-successfully'), null);
-
+                return ApiResponse::sendResponse(200,  __('app.api.the-link-for-reset-password-sent-successfully'), null);
             } else {
-                return ApiResponse::sendResponse(400, __('app.auth.api.unable-to-send-the-link-for-reset-password'), null);
-
+                return ApiResponse::sendResponse(400, __('app.api.unable-to-send-the-link-for-reset-password'), null);
             }
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 }

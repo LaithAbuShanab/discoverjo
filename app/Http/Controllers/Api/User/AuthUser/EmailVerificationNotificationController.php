@@ -16,11 +16,11 @@ class EmailVerificationNotificationController extends Controller
     {
         $user = Auth::guard('api')->user();
         if ($user->hasVerifiedEmail()) {
-            return response(['message' => __('app.auth.api.email-already-verified')]);
+            return response(['message' => __('app.api.email-already-verified')]);
         }
         $user->notify(new UserEmailVerificationNotification());
         return response()->json([
-            'message' => __('app.auth.api.email-sent-successfully'),
+            'message' => __('app.api.email-sent-successfully'),
         ], 200);
     }
 }

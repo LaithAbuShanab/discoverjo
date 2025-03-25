@@ -31,8 +31,8 @@ class PasswordRestLinkRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => __('validation.msg.email-required'),
-            'email.email' => __('validation.msg.email-valid'),
+            'email.required' => __('validation.api.email-is-required'),
+            'email.email' => __('validation.api.email-valid'),
 
         ];
     }

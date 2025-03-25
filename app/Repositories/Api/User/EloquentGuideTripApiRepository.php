@@ -6,11 +6,7 @@ use App\Http\Resources\AllGuideTripResource;
 use App\Http\Resources\GuideResource;
 use App\Http\Resources\GuideTripResource;
 use App\Http\Resources\GuideTripUserResource;
-use App\Http\Resources\LegalResource;
-use App\Http\Resources\TopTenPlaceResource;
 use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\LegalDocumentApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\TopTenPlaceApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripActivity;
 use App\Models\GuideTripAssembly;
@@ -19,14 +15,11 @@ use App\Models\GuideTripPriceInclude;
 use App\Models\GuideTripRequirement;
 use App\Models\GuideTripTrail;
 use App\Models\GuideTripUser;
-use App\Models\LegalDocument;
-use App\Models\TopTen;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-
 
 class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 {
@@ -83,7 +76,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
 
     }
-
 
     public function showGuideTrip($slug)
     {
@@ -191,7 +183,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         }
     }
 
-
     public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)
     {
         DB::beginTransaction();
@@ -203,7 +194,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             $guideTrip->setTranslations('description', $mainData['description']);
 
             if ($gallery !== null) {
-//                $guideTrip->clearMediaCollection('guide_trip_gallery');
                 foreach ($gallery as $image) {
                     $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
                     $filename = Str::random(10) . '_' . time() . '.' . $extension;
@@ -315,7 +305,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         return GuideTripUserResource::collection($usersInGuideTrip);
     }
 
-
     public function changeJoinRequestStatus($request)
     {
         $status = $request['status'] == 'confirmed'?1:2;
@@ -324,7 +313,5 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'status'=>$status
         ]);
     }
-
-
 
 }

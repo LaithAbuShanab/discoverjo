@@ -29,14 +29,14 @@ class NewPasswordController extends Controller
             );
 
             if ($status == Password::PASSWORD_RESET) {
-                return response()->json(['message' => __('app.auth.api.your-password-reset-successfully')], 200);
+                return response()->json(['message' => __('app.api.your-password-reset-successfully')], 200);
             } else {
-                return response()->json(['message' => __('app.auth.api.unable-to-reset-your-password')], 400);
+                return response()->json(['message' => __('app.api.unable-to-reset-your-password')], 400);
             }
         } catch (ValidationException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' =>  __('app.auth.api.an-error-occurred-while-resetting-the-password')], 500);
+            return response()->json(['message' =>  __('app.api.an-error-occurred-while-resetting-the-password')], 500);
         }
     }
 }

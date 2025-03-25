@@ -129,18 +129,18 @@ function activityLog($logName, $model, $description, $event, $extraProps = [])
 }
 
 
-function adminNotification($user)
+function adminNotification($title = null, $body = null, $options = [])
 {
     $recipient = Admin::all();
     if ($recipient) {
         Notification::make()
-            ->title('New User Registered')
+            ->title($title)
             ->success()
-            ->body("A new user ({$user->username}) (ID: {$user->id}) has just registered.")
+            ->body($body)
             ->actions([
-                Action::make('view_user')
-                    ->label('View User')
-                    ->url(route('filament.admin.resources.users.index')),
+                Action::make($options['action'])
+                    ->label($options['action_label'])
+                    ->url($options['action_url']),
             ])
             ->sendToDatabase($recipient);
     }

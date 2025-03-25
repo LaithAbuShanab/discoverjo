@@ -43,6 +43,8 @@
             display: block;
             margin: 0 0 20px auto;
             border-radius: 10px; /* Rounded corners */
+            width: 9.375em;      /* 150px ÷ 16 = 9.375em */
+            height: 9.375em;
         }
 
         .email-body {

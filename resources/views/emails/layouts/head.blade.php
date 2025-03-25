@@ -20,7 +20,7 @@
             width: 90%;
             max-width: 800px; /* Increased max-width for larger desktop size */
             margin: 0 auto;
-            background-image: url('{{ asset('assets/background_email.png') }}');
+            background-image: url('{{ asset('assets/background_email2.png') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center top;
@@ -80,7 +80,7 @@
 
         .email-footer {
             background-color: #FFD700;
-            background-image: url('{{ asset('assets/background_email.png') }}');
+            background-image: url('{{ asset('assets/background_email2.png') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;

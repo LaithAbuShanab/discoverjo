@@ -41,7 +41,7 @@
         .email-header img {
             max-width: 200px; /* Increased max-width for larger desktop size */
             display: block;
-            margin: 0 auto 1.25em 0;
+            margin: 0 auto 1.25em auto;
             border-radius: 10px; /* Rounded corners */
             width: 8em;      /* 150px ÷ 16 = 9.375em */
             height: 8em;

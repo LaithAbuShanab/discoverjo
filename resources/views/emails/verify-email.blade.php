@@ -3,7 +3,7 @@
 @section('content')
     <!-- Header -->
     <div class="email-header">
-        <img src="{{ asset('assets/logo_black_without_background.png') }}"
+        <img src="{{ asset('assets/logo_eyes_yellow.jpeg') }}"
              alt="{{ __('app.logo') }}">
     </div>
 

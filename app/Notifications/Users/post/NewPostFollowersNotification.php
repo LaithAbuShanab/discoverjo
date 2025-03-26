@@ -39,8 +39,8 @@ class NewPostFollowersNotification extends Notification
         return [
             "title_en" => "New Post Alert!",
             "title_ar" => "تنبيه: منشور جديد!",
-            "body_en" => "Exciting news! " . $this->user->name . " has just shared a new post. Stay updated and check it out!",
-            "body_ar" => "خبر رائع! قام " . $this->user->name . " بنشر منشور جديد. ابقَ على اطلاع وتصفحه الآن!"
+            "body_en" => "Exciting news! " . $this->user->username . " has just shared a new post. Stay updated and check it out!",
+            "body_ar" => "خبر رائع! قام " . $this->user->username . " بنشر منشور جديد. ابقَ على اطلاع وتصفحه الآن!"
         ];
     }
 }

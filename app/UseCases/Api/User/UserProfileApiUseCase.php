@@ -31,7 +31,6 @@ class UserProfileApiUseCase
             'username'=>$request['username']??$user->username,
             'birthday'=>$request['birthday'],
             'sex'=>$request['gender'],
-//            'email'=>$request['email']??$user->email,
             'description'=>$request['description']??$user->description,
             'phone_number'=>$request['phone_number']??$user->phone_number,
             'status'=>'1'

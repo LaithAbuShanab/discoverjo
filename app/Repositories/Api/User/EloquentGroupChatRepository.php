@@ -9,10 +9,14 @@ use App\Interfaces\Gateways\Api\User\GroupChatRepositoryInterface;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use App\Notifications\Users\chat\NewMessageNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Notification;
+
 
 class EloquentGroupChatRepository implements GroupChatRepositoryInterface
 {
@@ -63,6 +67,21 @@ class EloquentGroupChatRepository implements GroupChatRepositoryInterface
                     ->setTimezone('Asia/Amman')
                     ->format('g:i A'),
             ];
+
+            // Send Notification For All Group Members
+            $eloquentConversation = Conversation::find($request->conversation_id);
+            foreach ($eloquentConversation->members->where('user_id', '!=', Auth::guard('api')->user()->id) as $member) {
+                $user = User::find($member->user_id);
+                $token = $user->DeviceToken->token;
+                $receiverLanguage = $user->lang;
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-message', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-user-message', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                    'icon'  => asset('assets/icon/new.png'),
+                    'sound' => 'default',
+                ];
+                sendNotification([$token], $notificationData);
+            }
 
             Broadcast(new GroupMessageEvent($data))->toOthers();
 

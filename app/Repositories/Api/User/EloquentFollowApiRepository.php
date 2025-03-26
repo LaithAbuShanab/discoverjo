@@ -2,16 +2,13 @@
 
 namespace App\Repositories\Api\User;
 
-//use App\Http\Resources\AllFollowsResource;
 use App\Http\Resources\FollowerResource;
 use App\Http\Resources\FollowingResource;
-//use App\Http\Resources\FollowResource;
 use App\Interfaces\Gateways\Api\User\FollowApiRepositoryInterface;
 use App\Models\Follow;
 use App\Models\User;
 use App\Notifications\Users\follow\AcceptFollowRequestNotification;
 use App\Notifications\Users\follow\NewFollowRequestNotification;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
@@ -21,18 +18,19 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 {
     public function follow($request)
     {
-        $eloquentFollows = Follow::create($request);
+        Follow::create($request);
         $followingUser = User::find($request['following_id']);
+
         $ownerToken = $followingUser->DeviceToken->token;
         $receiverLanguage = $followingUser->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.new-following-request', [], $receiverLanguage),
-            'body' => Lang::get('app.notifications.new-user-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'body'  => Lang::get('app.notifications.new-user-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'icon'  => asset('assets/icon/new.png'),
             'sound' => 'default',
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user()));
-        sendNotification($ownerToken, $notificationData);
-
+        sendNotification([$ownerToken], $notificationData);
     }
 
     public function unfollow($following_slug)
@@ -57,11 +55,12 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $receiverLanguage = $followerUser->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.accept-your-following-request', [], $receiverLanguage),
-            'body' => Lang::get('app.notifications.the-following-accept-your-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'body'  => Lang::get('app.notifications.the-following-accept-your-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'icon' => asset('assets/icon/speaker.png'),
             'sound' => 'default',
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
-        sendNotification($ownerToken, $notificationData);
+        sendNotification([$ownerToken], $notificationData);
     }
 
     public function unacceptedFollower($follower_slug)
@@ -83,7 +82,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
                 $query->where('status', 1);
             })
             ->get();
-        activityLog('follow',$followers->first(), 'the user view follower request ','view');
+        activityLog('follow', $followers->first(), 'the user view follower request ', 'view');
         return FollowerResource::collection($followers);
     }
 
@@ -91,18 +90,17 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 
     public function followers($user_slug)
     {
-        $followingUser=User::findBySlug($user_slug);
+        $followingUser = User::findBySlug($user_slug);
         $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->get();
-        activityLog('follow',$followingUser, 'the user view followers of this user ','view');
+        activityLog('follow', $followingUser, 'the user view followers of this user ', 'view');
         return FollowerResource::collection($followers);
-
     }
 
     public function followings($user_slug)
     {
         $follower = User::findBySlug($user_slug);
         $followers = Follow::where('follower_id', $follower->id)->where('status', 1)->get();
-        activityLog('follow',$follower, 'the user view followings of this user ','view');
+        activityLog('follow', $follower, 'the user view followings of this user ', 'view');
         return FollowingResource::collection($followers);
     }
 }

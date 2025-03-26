@@ -35,16 +35,13 @@ Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->n
 Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places'); //
 // GET TOP PLACES
 Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places'); //
-Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places'); //
 
-//////////////////////////////////////// event api //////////////////////////////////////////////////////////////////
-// this api for all event active and inactive order by start_time old to new
+Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places'); //
 Route::get('all/events', [EventApiController::class, 'index'])->name('events'); //
 Route::get('all/active/events', [EventApiController::class, 'activeEvents'])->name('active.events'); //
 Route::get('event/{event_slug}', [EventApiController::class, 'event'])->name('single.events'); //
 Route::get('date/events', [EventApiController::class, 'dateEvents'])->name('date.events'); //
 
-///////////////////////////////////volunteering api /////////////////////////////////////////////////////
 Route::get('all/volunteering', [VolunteeringApiController::class, 'index'])->name('volunteering'); //
 Route::get('all/active/volunteering', [VolunteeringApiController::class, 'activeVolunteerings'])->name('active.volunteering'); //
 Route::get('volunteering/{volunteering_slug}', [VolunteeringApiController::class, 'volunteering'])->name('single.volunteering'); //
@@ -56,7 +53,6 @@ Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store'])
 
 Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips'); ////
 
-//////////////////////////////////search and filter /////////////////////////////////////////
 Route::get('all/places/search', [PlaceApiController::class, 'search']); //
 Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']); //
 Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']); //
@@ -74,7 +70,6 @@ Route::get('user/current-location/places', [UserProfileController::class, 'curre
 
 Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']); //
 
-///////////////////////////////////Guide trips ///////////////////////////////////////////
 Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']); ////
 Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']); ////
 Route::get('all/guides', [GuideTripApiController::class, 'allGuides']); ////
@@ -84,8 +79,6 @@ Route::get('/guides/trips', [GuideTripApiController::class, 'index']); ////
 Route::get('all/regions', [RegionsApiController::class, 'index']);
 Route::get('all/features', [FeaturesApiController::class, 'index']);
 
-
-//end review
 
 
 Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');

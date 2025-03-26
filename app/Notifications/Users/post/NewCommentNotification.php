@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\post;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewCommentNotification extends Notification
@@ -41,8 +39,8 @@ class NewCommentNotification extends Notification
         return [
             "title_en" => "There is a new comment",
             "title_ar" => "يوجد تعليق جديد",
-            "body_en" => "The User " . $this->user->name . " has add new comment",
-            "body_ar" => "تم إنشاء تعليق جديد بواسطة المستخدم " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has add new comment",
+            "body_ar" => "تم إنشاء تعليق جديد بواسطة المستخدم " . $this->user->username
         ];
     }
 }

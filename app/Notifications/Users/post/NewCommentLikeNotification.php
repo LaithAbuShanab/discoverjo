@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\post;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewCommentLikeNotification extends Notification
@@ -41,8 +39,8 @@ class NewCommentLikeNotification extends Notification
         return [
             "title_en" => "New Like",
             "title_ar" => "اعجاب جديد",
-            "body_en" => "The User " . $this->user->name . " has liked your post",
-            "body_ar" => "المستخدم اعجب بمنشورك " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has liked your Comment",
+            "body_ar" => "المستخدم اعجب بتعليقك " . $this->user->username
         ];
     }
 }

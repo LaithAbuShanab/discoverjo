@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\Trip;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewTripNotification extends Notification
@@ -43,15 +41,15 @@ class NewTripNotification extends Notification
             return [
                 "title_en" => "There is a new trip",
                 "title_ar" => "يوجد رحلة جديدة",
-                "body_en" => "The User " . $this->user->name . " has created a new trip",
-                "body_ar" => "تم إنشاء رحلة جديدة بواسطة المستخدم " . $this->user->name
+                "body_en" => "The User " . $this->user->username . " has created a new trip",
+                "body_ar" => "تم إنشاء رحلة جديدة بواسطة المستخدم " . $this->user->username
             ];
         } elseif ($this->type == 2) {
             return [
                 "title_en" => "New Trip Invitation",
                 "title_ar" => "دعوة رحلة جديدة",
-                "body_en" => $this->user->name . " has invited you to join a trip.",
-                "body_ar" => $this->user->name . " دعاك للانضمام إلى رحلة."
+                "body_en" => $this->user->username . " has invited you to join a trip.",
+                "body_ar" => $this->user->username . " دعاك للانضمام إلى رحلة."
             ];
         }
     }

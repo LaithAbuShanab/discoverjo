@@ -5,9 +5,7 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\SinglePostResource;
 use App\Http\Resources\UserPostResource;
 use App\Interfaces\Gateways\Api\User\PostApiRepositoryInterface;
-use App\Models\Admin;
 use App\Models\Post;
-use App\Models\User;
 use App\Notifications\Users\post\NewPostDisLikeNotification;
 use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
@@ -18,8 +16,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
@@ -75,19 +72,11 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         }
 
         // Dashboard notification for new post
-        $recipient = Admin::all();
-        if ($recipient) {
-            FilamentNotification::make()
-                ->title('New User post')
-                ->success()
-                ->body("A new user ({$eloquentPost->user->username}) (ID: {$eloquentPost->user->id}) has just registered.")
-                ->actions([
-                    Action::make('view_post')
-                        ->label('View Post')
-                        ->url(route('filament.admin.resources.posts.view', $eloquentPost)),
-                ])
-                ->sendToDatabase($recipient);
-        }
+        adminNotification(
+            'New Post',
+            'a new post has been created by ' . $eloquentPost->user->username . ' (ID: ' . $eloquentPost->user->id . ')',
+            ['action' => 'view_post', 'action_label' => 'View Post', 'action_url' => route('filament.admin.resources.posts.view', $eloquentPost)]
+        );
 
         // Notification for followers if the privacy not equal 0
         if ($eloquentPost->privacy) {
@@ -107,7 +96,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 $receiverLanguage = $follower->lang;
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
-                    'body' => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                    'icon'  => asset('assets/icon/new.png'),
                     'sound' => 'default',
                 ];
 
@@ -176,48 +166,78 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function postLike($data)
     {
-        $post = Post::find($data['post_id']);
-        $status = $data['status'] == "like" ? '1' : '0';
-        $ownerToken = $post->user->DeviceToken->token;
-        $receiverLanguage = $post->user->lang;
-        $notificationData = [];
-        $userPostId = $post->user_id;
+        DB::beginTransaction();
 
-        $existingLike = $post->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
+        try {
+            $post = Post::findOrFail($data['post_id']);
+            $status = $data['status'] == "like" ? '1' : '0';
+            $userPost = $post->user;
+            $receiverLanguage = $userPost->lang;
+            $ownerToken = $userPost->DeviceToken->token;
+            $notificationData = [];
 
-        if ($existingLike) {
-            if ($existingLike->status != $status) {
-                $existingLike->update(['status' => $status]);
+            $authUser = Auth::guard('api')->user();
+            $existingLike = $post->likes()->where('user_id', $authUser->id)->first();
 
-                if ($data->status == "like") {
+            if ($existingLike) {
+                if ($existingLike->status != $status) {
+                    $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
+
+                    if ($status === '1') {
+                        $notificationData = [
+                            'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-user-like-in-post', ['username' => $authUser->username], $receiverLanguage),
+                            'icon'  => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ];
+                        Notification::send($userPost, new NewPostLikeNotification($authUser));
+                    } else {
+                        $notificationData = [
+                            'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => $authUser->username], $receiverLanguage),
+                            'icon'  => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ];
+                        Notification::send($userPost, new NewPostDisLikeNotification($authUser));
+                    }
+                } else {
+                    $post->likes()->where('user_id', $authUser->id)->delete();
+                }
+            } else {
+                $post->likes()->create([
+                    'user_id' => $authUser->id,
+                    'status' => $status,
+                ]);
+
+                if ($status === '1') {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-like-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                        'body'  => Lang::get('app.notifications.new-user-like-in-post', ['username' => $authUser->username], $receiverLanguage),
+                        'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send(User::find($userPostId), new NewPostLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userPost, new NewPostLikeNotification($authUser));
                 } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
-                        'body' => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                        'body'  => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => $authUser->username], $receiverLanguage),
+                        'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send(User::find($userPostId), new NewPostDisLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userPost, new NewPostDisLikeNotification($authUser));
                 }
-            } else {
-                $existingLike->delete();
             }
-        } else {
-            $post->likes()->create([
-                'user_id' => Auth::guard('api')->user()->id,
-                'status' => $status,
-            ]);
-        }
 
-        activityLog('post', $post, 'the user ' . $data['status'] . ' the post', $data['status']);
+            if (!empty($notificationData)) {
+                sendNotification([$ownerToken], $notificationData);
+            }
 
-        if (!empty($notificationData)) {
-            sendNotification($ownerToken, $notificationData);
+            activityLog($data['status'], $post, 'the user ' . $data['status'] . ' the post', $data['status']);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 }

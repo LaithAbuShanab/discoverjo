@@ -41,8 +41,8 @@ class NewReviewLikeNotification extends Notification
         return [
             "title_en" => "New Like",
             "title_ar" => "اعجاب جديد",
-            "body_en" => "The User " . $this->user->name . " has liked your review",
-            "body_ar" => "المستخدم اعجب بمراجعتك " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has liked your review",
+            "body_ar" => "المستخدم اعجب بمراجعتك " . $this->user->username
         ];
     }
 }

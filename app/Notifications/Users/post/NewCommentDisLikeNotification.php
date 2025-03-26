@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\post;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewCommentDisLikeNotification extends Notification
@@ -41,8 +39,8 @@ class NewCommentDisLikeNotification extends Notification
         return [
             "title_en" => "New dislike",
             "title_ar" => "عدم اعجاب جديد",
-            "body_en" => "The User " . $this->user->name . " has dislike your comment",
-            "body_ar" => "المستخدم لم يعجب بتعليقك " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has dislike your comment",
+            "body_ar" => "المستخدم لم يعجب بتعليقك " . $this->user->username
         ];
     }
 }

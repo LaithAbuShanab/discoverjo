@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\follow;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewFollowRequestNotification extends Notification
@@ -41,8 +39,8 @@ class NewFollowRequestNotification extends Notification
         return [
             "title_en" => "New following request",
             "title_ar" => "عدم طلب متابعة جديد",
-            "body_en" => "The User " . $this->user->name . " has send your new following request",
-            "body_ar" => "المستخدم قام بارسال طلب متابعة جديد " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has send your new following request",
+            "body_ar" => "المستخدم قام بارسال طلب متابعة جديد " . $this->user->username
         ];
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\follow;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AcceptFollowRequestNotification extends Notification
@@ -41,8 +39,8 @@ class AcceptFollowRequestNotification extends Notification
         return [
             "title_en" => "Acceptance following request",
             "title_ar" => "موافقة على طلب المتابعة",
-            "body_en" => "The User " . $this->user->name . " has accept your following request",
-            "body_ar" => "المستخدم قام بالموافقة على طلب المتابعة " . $this->user->name
+            "body_en" => "The User " . $this->user->username . " has accept your following request",
+            "body_ar" => "المستخدم قام بالموافقة على طلب المتابعة " . $this->user->username
         ];
     }
 }

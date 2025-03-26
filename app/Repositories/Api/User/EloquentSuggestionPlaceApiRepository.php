@@ -4,12 +4,7 @@ namespace App\Repositories\Api\User;
 
 
 use App\Interfaces\Gateways\Api\User\SuggestionPlaceApiRepositoryInterface;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
-use App\Models\Admin;
-use App\Notifications\Admin\NewContactNotification;
 use App\Models\SuggestionPlace;
-use App\Notifications\Admin\NewSuggestionNotification;
 use Illuminate\Support\Str;
 
 
@@ -25,9 +20,13 @@ class EloquentSuggestionPlaceApiRepository implements SuggestionPlaceApiReposito
                 $suggestionPlace->addMedia($image)->usingFileName($filename)->toMediaCollection('suggestion_place');
             }
         }
-        Notification::send(Admin::all(), new NewSuggestionNotification($suggestionPlace));
 
-        //Http::post('http://127.0.0.1:3000/notifications');
+        adminNotification(
+            'New Suggestion Place',
+            'There is a new suggestion place',
+            ['action' => 'view_place', 'action_label' => 'View Place', 'action_url' => route('filament.admin.resources.suggestion-places.view', $suggestionPlace)]
+        );
+
         return $suggestionPlace;
     }
 }

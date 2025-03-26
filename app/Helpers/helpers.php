@@ -128,7 +128,6 @@ function activityLog($logName, $model, $description, $event, $extraProps = [])
     $activity->log($description);
 }
 
-
 function adminNotification($title = null, $body = null, $options = [])
 {
     $recipient = Admin::all();

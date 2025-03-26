@@ -121,7 +121,7 @@ class CommentApiController extends Controller
 
         try {
             $this->commentApiUseCase->commentLike($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.the-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 

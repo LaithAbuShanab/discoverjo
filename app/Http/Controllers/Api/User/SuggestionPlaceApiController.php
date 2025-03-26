@@ -6,7 +6,6 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Suggestion\StoreSuggestionPlaceApiRequest;
 use App\UseCases\Api\User\SuggestionPlaceApiUseCase;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 

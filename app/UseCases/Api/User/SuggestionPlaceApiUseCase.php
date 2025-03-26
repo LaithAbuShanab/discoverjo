@@ -3,7 +3,6 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\SuggestionPlaceApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\LegalDocumentApiRepositoryInterface;
 
 class SuggestionPlaceApiUseCase
 {
@@ -13,8 +12,6 @@ class SuggestionPlaceApiUseCase
     {
         $this->suggestionPlaceApiRepositoryInterface = $suggestionPlaceApiRepositoryInterface;
     }
-
-
 
     public function createSuggestionPlace($request)
     {

@@ -177,19 +177,11 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $createdTrip = Trip::find($trip->id);
 
         // Notify an admin about the new user registration
-        $recipient = Admin::where('email', 'asma.abughaith@gmail.com')->first();
-        if ($recipient) {
-            FilamentNotification::make()
-                ->title('New Trip')
-                ->success()
-                ->body('A new trip has been create by ' . Auth::guard('api')->user()->username)
-                ->actions([
-                    Action::make('view_trip')
-                        ->label('View Trip')
-                        ->url(route('filament.admin.resources.trips.view', $trip)),
-                ])
-                ->sendToDatabase($recipient);
-        }
+        adminNotification(
+            'New Trip',
+            'A new trip has been create by ' . Auth::guard('api')->user()->username,
+            ['action' => 'view_trip', 'action_label' => 'View Trip', 'action_url' => route('filament.admin.resources.trips.view', $trip)]
+        );
 
         //send notification for specific user & Followers of this user
         $this->handleTripTypeNotifications($request, $trip);
@@ -266,11 +258,12 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     ['username' => Auth::guard('api')->user()->username, 'trip_name' => $trip->name],
                     $receiverLanguage
                 ),
+                'icon'  => asset('assets/icon/trip.png'),
                 'sound' => 'default',
             ];
 
             if ($user->DeviceToken) {
-                sendNotification($user->DeviceToken->token, $notificationData);
+                sendNotification([$user->DeviceToken->token], $notificationData);
             }
 
             // Return the updated user trip
@@ -298,9 +291,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $notificationData = [
             'title' => Lang::get('app.notifications.new-request', [], $receiverLanguage),
             'body' => Lang::get('app.notifications.new-user-request-from-trip', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];
-        sendNotification($ownerToken, $notificationData);
+        sendNotification([$ownerToken], $notificationData);
     }
 
     public function changeStatusInvitation($request)
@@ -325,6 +319,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         $trip = Trip::find($trip_id);
         $user = User::find($trip->user_id);
+
+        // To Save Notification In Database
         Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
@@ -332,9 +328,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $notificationData = [
             'title' => Lang::get($request->status == 'accept' ? 'app.notifications.accepted-invitation-trip' : 'app.notifications.rejected-invitation-trip', [], $receiverLanguage),
             'body' => Lang::get($request->status == 'accept' ? 'app.notifications.accepted-invitation-trip-body' : 'app.notifications.rejected-invitation-trip-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+            'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];
-        sendNotification($user->DeviceToken->token, $notificationData);
+        sendNotification([$user->DeviceToken->token], $notificationData);
     }
 
     public function tripDetails($slug)
@@ -520,45 +517,55 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         ];
     }
 
-
     private function handleTripTypeNotifications($request, $trip)
     {
         $user = Auth::guard('api')->user();
         if ($request->trip_type == 1) {
-            $receiverLanguage = $user->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-trip-title', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-trip-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
             $followers = $user->followers()->get();
-            Notification::send($followers, new TripNewTripNotification($user, $request->trip_type));
-            $this->sendFirebaseNotifications($followers->pluck('id')->toArray(), $notificationData);
+
+            foreach ($followers as $follower) {
+                $receiverLanguage = $follower->lang;
+
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-trip-title', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-trip-body', ['username' => $user->username], $receiverLanguage),
+                    'icon'  => asset('assets/icon/trip.png'),
+                    'sound' => 'default',
+                ];
+
+                Notification::send($follower, new TripNewTripNotification($user, $request->trip_type));
+
+                if ($follower->DeviceToken?->token) {
+                    sendNotification([$follower->DeviceToken->token], $notificationData);
+                }
+            }
         } elseif ($request->trip_type == 2) {
-            $receiverLanguage = $user->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-trip-invitation-title', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-trip-invitation-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
             $slugs = explode(',', $request->users);
-            $users = User::whereIn('slug', $slugs)->get();
-            foreach ($users as $user) {
+            $invitedUsers = User::whereIn('slug', $slugs)->get();
+
+            foreach ($invitedUsers as $invitedUser) {
+
+                $receiverLanguage = $invitedUser->lang;
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-trip-invitation-title', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-trip-invitation-body', ['username' => $user->username], $receiverLanguage),
+                    'icon'  => asset('assets/icon/trip.png'),
+                    'sound' => 'default',
+                ];
+
                 UsersTrip::create([
                     'trip_id' => $trip->id,
-                    'user_id' => $user->id,
+                    'user_id' => $invitedUser->id,
                     'status' => '0',
                 ]);
-            }
-            Notification::send($users, new TripNewTripNotification($user, $request->trip_type));
-            $this->sendFirebaseNotifications($users->pluck('id')->toArray(), $notificationData);
-        }
-    }
 
-    private function sendFirebaseNotifications(array $userIds, array $notificationData)
-    {
-        $tokens = DeviceToken::whereIn('user_id', $userIds)->pluck('token')->toArray();
-        sendNotification($tokens, $notificationData);
+                Notification::send($invitedUser, new TripNewTripNotification($user, $request->trip_type));
+
+                if ($invitedUser->DeviceToken?->token) {
+                    sendNotification([$invitedUser->DeviceToken->token], $notificationData);
+                }
+            }
+        }
     }
 
     private function checkIfTheUserHasAlreadyJoined($user_id, $trip_id)

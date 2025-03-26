@@ -21,14 +21,14 @@ class UserNotificationResource extends JsonResource
 
         // Define icon map
         $iconMap = [
-            'NewPostFollowersNotification'     => 'speaker.png',
-            'AcceptFollowRequestNotification'  => 'correct_sign.png',
-            'NewFollowRequestNotification'     => 'new.png',
-            'NewWarningUserNotification'       => 'warning.png',
-            'AcceptCancelInvitationNotification' => 'trip.png',
-            'AcceptCancelNotification'         => 'trip.png',
-            'NewRequestNotification'           => 'trip.png',
-            'NewTripNotification'              => 'trip.png',
+            'NewPostFollowersNotification'        => 'speaker.png',
+            'AcceptFollowRequestNotification'     => 'correct_sign.png',
+            'NewFollowRequestNotification'        => 'new.png',
+            'NewWarningUserNotification'          => 'warning.png',
+            'AcceptCancelInvitationNotification'  => 'trip.png',
+            'AcceptCancelNotification'            => 'trip.png',
+            'NewRequestNotification'              => 'trip.png',
+            'NewTripNotification'                 => 'trip.png',
         ];
 
         $engagementTypes = [

@@ -95,54 +95,69 @@ return [
     ],
 
     "notifications" => [
-        "new-request"                                 => "طلب جديد للإنضمام للرحلة",
-        'new-user-request-from-trip'                  => 'المستخدم :username قام بارسال طلب للإنضمام للرحلة"',
-        "accepted-trip"                               => "تم قبول طلبك للإنضمام للرحلة",
-        "rejected-trip"                               => "تم رفض طلبك للإنضمام للرحلة",
-        "accepted-trip-body"                          => "قام المستخدم :username بقبول طلبك في الرحلة :trip_name",
-        "rejected-trip-body"                          => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
-        "new-trip-title"                              => "يوجد رحلة جديدة",
-        "new-trip-body"                               => "تم انشاء رحلة جديدة بواسطة المستخدم :username",
-        'new-trip-invitation-title'                   => 'دعوة رحلة جديدة',
-        'new-trip-invitation-body'                    => ':username دعاك للانضمام إلى رحلة.',
-        "accepted-invitation-trip"                    => "تم قبول الدعوة",
-        "rejected-invitation-trip"                    => "تم رفض الدعوة",
-        "accepted-invitation-trip-body"               => "وافق المستخدم :username على الدعوة",
-        "rejected-invitation-trip-body"               =>  "رفض المستخدم :username الدعوة",
 
-        'new-post-title'                              => 'تنبيه: منشور جديد!',
-        'new-post-body'                               => 'خبر رائع! قام :username بمشاركة منشور جديد. ابقَ على اطلاع وتصفحه الآن!',
-        'new-post-like'                               => 'اعجاب جديد',
-        'new-user-like-in-post'                       => 'المستخدم :username اعجب بمنشورك',
-        'new-post-dislike'                            => 'عدم اعجاب جديد',
-        'new-user-dislike-in-post'                    => 'المستخدم :username لم يعجب بمنشورك',
-        'new-comment'                                 => 'يوجد تعليق جديد',
-        'new-user-comment-in-post'                    => 'تم إنشاء تعليق جديد بواسطة المستخدم :username',
-        'new-comment-like'                            => 'اعجاب جديد',
-        'new-user-like-in-comment'                    => 'المستخدم :username اعجب بتعليقك',
-        'new-comment-dislike'                         => 'عدم اعجاب جديد',
-        'new-user-dislike-in-comment'                 => 'المستخدم :username لم يعجب بتعليقك',
-        'new-warning-title'                           => 'تحذير جديد',
-        'new-warning-body'                            => 'لقد تلقيت تحذيراً بسبب سلوك غير أخلاقي. يرجى الالتزام بإرشادات المجتمع.',
-        'new-blocked-two-weeks-title'                 => 'تم حظر الحساب مؤقتاً',
-        'new-blocked-two-weeks-body'                  => 'تم حظر حسابك لمدة أسبوعين بسبب تكرار المخالفات لسياساتنا.',
-        'new-blacklisted-title'                       => 'تم إدراج الحساب في القائمة السوداء',
-        'new-blacklisted-body'                        => 'تم إدراج حسابك في القائمة السوداء بشكل دائم بسبب انتهاكات جسيمة لسياساتنا.',
-        'new-review-like'                             => 'اعجاب جديد',
-        'new-user-like-in-review'                     => 'المستخدم :username اعجب بمراجعتك',
-        'new-review-dislike'                          => 'عدم اعجاب جديد',
-        'new-user-dislike-in-review'                  => 'المستخدم :username لم يعجب بمراجعتك',
-        'new-review'                                  => 'مراجعة جديدة',
-        'new-user-review-in-trip'                     => 'قام المستخدم :username بإضافة مراجعة على رحلتك',
-        'new-user-review-in-guideTrip'                => 'قام المستخدم :username بإضافة مراجعة على الرحلة الإرشادية الخاصة بك',
-        'new-following-request'                       => 'طلب متابعة جديد',
-        'new-user-following-request'                  => 'المستخدم :username قام بإرسال طلب متابعة جديد',
-        'accept-your-following-request'               => 'موافقة على طلب المتابعة',
-        'the-following-accept-your-following-request' => 'المستخدم :username قام بالموافقة على طلب المتابعة',
-        'new-message'                                 => 'رسالة جديدة',
-        'new-user-message'                            => 'المستخدم :username قام بإرسال رسالة جديدة',
+        // الطلبات المتعلقة بالرحلات
+        "new-request"                                   => "طلب جديد للإنضمام للرحلة",
+        "new-user-request-from-trip"                    => 'المستخدم :username قام بارسال طلب للإنضمام للرحلة"',
+        "accepted-trip"                                 => "تم قبول طلبك للإنضمام للرحلة",
+        "rejected-trip"                                 => "تم رفض طلبك للإنضمام للرحلة",
+        "accepted-trip-body"                            => "قام المستخدم :username بقبول طلبك في الرحلة :trip_name",
+        "rejected-trip-body"                            => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
 
+        // إنشاء الرحلات والدعوات
+        "new-trip-title"                                => "يوجد رحلة جديدة",
+        "new-trip-body"                                 => "تم انشاء رحلة جديدة بواسطة المستخدم :username",
+        "new-trip-invitation-title"                     => "دعوة رحلة جديدة",
+        "new-trip-invitation-body"                      => ":username دعاك للانضمام إلى رحلة.",
+        "accepted-invitation-trip"                      => "تم قبول الدعوة",
+        "rejected-invitation-trip"                      => "تم رفض الدعوة",
+        "accepted-invitation-trip-body"                 => "وافق المستخدم :username على الدعوة",
+        "rejected-invitation-trip-body"                 => "رفض المستخدم :username الدعوة",
+
+        // المنشورات
+        "new-post-title"                                => "تنبيه: منشور جديد!",
+        "new-post-body"                                 => "خبر رائع! قام :username بمشاركة منشور جديد. ابقَ على اطلاع وتصفحه الآن!",
+        "new-post-like"                                 => "اعجاب جديد",
+        "new-user-like-in-post"                         => "المستخدم :username اعجب بمنشورك",
+        "new-post-dislike"                              => "عدم اعجاب جديد",
+        "new-user-dislike-in-post"                      => "المستخدم :username لم يعجب بمنشورك",
+
+        // التعليقات
+        "new-comment"                                   => "يوجد تعليق جديد",
+        "new-user-comment-in-post"                      => "تم إنشاء تعليق جديد بواسطة المستخدم :username",
+        "new-comment-like"                              => "اعجاب جديد",
+        "new-user-like-in-comment"                      => "المستخدم :username اعجب بتعليقك",
+        "new-comment-dislike"                           => "عدم اعجاب جديد",
+        "new-user-dislike-in-comment"                   => "المستخدم :username لم يعجب بتعليقك",
+
+        // التحذيرات وحالة الحساب
+        "new-warning-title"                             => "تحذير جديد",
+        "new-warning-body"                              => "لقد تلقيت تحذيراً بسبب سلوك غير أخلاقي. يرجى الالتزام بإرشادات المجتمع.",
+        "new-blocked-two-weeks-title"                   => "تم حظر الحساب مؤقتاً",
+        "new-blocked-two-weeks-body"                    => "تم حظر حسابك لمدة أسبوعين بسبب تكرار المخالفات لسياساتنا.",
+        "new-blacklisted-title"                         => "تم إدراج الحساب في القائمة السوداء",
+        "new-blacklisted-body"                          => "تم إدراج حسابك في القائمة السوداء بشكل دائم بسبب انتهاكات جسيمة لسياساتنا.",
+
+        // المراجعات
+        "new-review"                                    => "مراجعة جديدة",
+        "new-user-review-in-trip"                       => "قام المستخدم :username بإضافة مراجعة على رحلتك",
+        "new-user-review-in-guideTrip"                  => "قام المستخدم :username بإضافة مراجعة على الرحلة الإرشادية الخاصة بك",
+        "new-review-like"                               => "اعجاب جديد",
+        "new-user-like-in-review"                       => "المستخدم :username اعجب بمراجعتك",
+        "new-review-dislike"                            => "عدم اعجاب جديد",
+        "new-user-dislike-in-review"                    => "المستخدم :username لم يعجب بمراجعتك",
+
+        // طلبات المتابعة
+        "new-following-request"                         => "طلب متابعة جديد",
+        "new-user-following-request"                    => "المستخدم :username قام بإرسال طلب متابعة جديد",
+        "accept-your-following-request"                 => "موافقة على طلب المتابعة",
+        "the-following-accept-your-following-request"   => "المستخدم :username قام بالموافقة على طلب المتابعة",
+
+        // الرسائل الخاصة
+        "new-message"                                   => "رسالة جديدة",
+        "new-user-message"                              => "المستخدم :username قام بإرسال رسالة جديدة",
     ],
+
 
     "api" => [
         /** for categories */

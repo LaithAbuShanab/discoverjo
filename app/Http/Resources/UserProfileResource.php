@@ -31,8 +31,8 @@ class UserProfileResource extends JsonResource
             'en'=>[1=>'Male', 2 =>'Female']
         ];
 
-        $posts = $this->posts()->paginate($paginationPerPage);
-        $reviews = $this->reviews()->paginate($paginationPerPage);
+        $posts = $this->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
+        $reviews = $this->reviews()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
         return [
             'id' => $this->id,
             'slug'=>$this->slug,

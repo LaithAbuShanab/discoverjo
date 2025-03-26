@@ -173,7 +173,7 @@ class AuthUserController extends Controller
                 $userModel->addMediaFromUrl($user->avatar)->toMediaCollection('avatar');
             }
 
-            $token = $userModel->createToken('asma')->accessToken;
+            $token = $userModel->createToken('mobile')->accessToken;
             $userModel->markEmailAsVerified();
             $userModel->token = $token;
 
@@ -215,7 +215,7 @@ class AuthUserController extends Controller
                 adminNotification($userModel);
             }
 
-            $token = $userModel->createToken('asma')->accessToken;
+            $token = $userModel->createToken('mobile')->accessToken;
             $userModel->markEmailAsVerified();
             $userModel->verified_email = true;
             $userModel->token = $token;
@@ -246,7 +246,7 @@ class AuthUserController extends Controller
             Auth::login($authUser);
 
             // Generate access token
-            $token = $authUser->createToken('asma')->accessToken;
+            $token = $authUser->createToken('mobile')->accessToken;
             $authUser->token = $token;
 
             return ApiResponse::sendResponse(200, 'User logged in successfully', new UserLoginResource($authUser));

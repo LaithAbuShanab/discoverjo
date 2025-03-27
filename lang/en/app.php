@@ -161,6 +161,12 @@ return [
         // Messaging
         'new-message'                                   => 'New Message',
         'new-user-message'                              => 'The User :username has sent you a new message',
+
+        // Gide Trips
+        'accepted-guide-trip-title'                     => ':username was accepted on the trip.',
+        'accepted-guide-trip-body'                      => ':username was accepted on the trip :trip_name.',
+        'declined-guide-trip-title'                     => ':username was rejected on the trip.',
+        'declined-guide-trip-body'                      => ':username was rejected on the trip :trip_name.',
     ],
 
 

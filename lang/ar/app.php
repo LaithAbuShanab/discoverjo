@@ -156,6 +156,13 @@ return [
         // الرسائل الخاصة
         "new-message"                                   => "رسالة جديدة",
         "new-user-message"                              => "المستخدم :username قام بإرسال رسالة جديدة",
+
+        // الرحلات الإرشادية
+        'accepted-guide-trip-title'                     => 'تم قبول :username من الرحلة.',
+        'accepted-guide-trip-body'                      => 'تم قبول :username من الرحلة :trip_name.',
+        'declined-guide-trip-title'                     => 'تم رفض :username من الرحلة.',
+        'declined-guide-trip-body'                      => 'تم رفض :username من الرحلة :trip_name.',
+
     ],
 
 

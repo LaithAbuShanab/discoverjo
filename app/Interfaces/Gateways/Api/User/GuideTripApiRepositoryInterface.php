@@ -2,18 +2,12 @@
 
 namespace App\Interfaces\Gateways\Api\User;
 
-
-use App\Models\GuideTrip;
-use Illuminate\Support\Facades\DB;
-
 interface GuideTripApiRepositoryInterface
 {
     public function AllGuideTrip();
     public function allGuides();
     public function storeGuideTrip($mainData, $gallery,$activities, $priceInclude,$priceAge,$assembly,$requiredItem, $trail);
-
     public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail);
-
     public function deleteGuideTrip($slug);
     public function deleteImage($id);
     public function showGuideTrip($slug);

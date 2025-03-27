@@ -5,25 +5,17 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\GuideTrip\CreateGuideTripUserRequest;
-use App\Http\Requests\Api\User\GuideTrip\UpdateGuideTripRequest;
 use App\Http\Requests\Api\User\GuideTrip\UpdateGuideTripUserRequest;
-use App\Rules\CheckIfExistsInFavoratblesRule;
-use App\Rules\CheckIfExistsInReviewsRule;
-use App\Rules\CheckIfExistsInToUpdateReviewsRule;
 use App\Rules\CheckIfGuideActiveRule;
 use App\Rules\CheckIfGuideTripActiveOrInFuture;
 use App\Rules\CheckIfGuideTripUserExistRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
-use App\Rules\CheckIfPastEventOrVolunteering;
 use App\Rules\CheckIfUserHasJoinedInTripRule;
 use App\Rules\CheckIfUserHasJoinedRule;
-use App\Rules\CheckUserTripExistsRule;
 use App\UseCases\Api\User\GuideTripUserApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class GuideTripUserApiController extends Controller
 {
@@ -45,14 +37,14 @@ class GuideTripUserApiController extends Controller
         }
     }
 
-    public function allSubscription(Request $request,$guide_trip_slug)
+    public function allSubscription(Request $request, $guide_trip_slug)
     {
 
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule(),new CheckIfGuideActiveRule()],
-        ],[
-            'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
-            'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'guide_trip_slug' => ['required', 'exists:guide_trips,slug', new CheckIfUserHasJoinedRule(), new CheckIfGuideActiveRule()],
+        ], [
+            'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -66,16 +58,15 @@ class GuideTripUserApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function store(CreateGuideTripUserRequest $request,$guide_trip_slug)
+    public function store(CreateGuideTripUserRequest $request, $guide_trip_slug)
     {
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['bail','required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture(),new CheckIfGuideTripUserExistRule(),new CheckIfGuideActiveRule()],
-        ],[
-            'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
-            'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'guide_trip_slug' => ['bail', 'required', 'exists:guide_trips,slug', new CheckIfGuideTripActiveOrInFuture(), new CheckIfGuideTripUserExistRule(), new CheckIfGuideActiveRule()],
+        ], [
+            'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -92,20 +83,20 @@ class GuideTripUserApiController extends Controller
         }
     }
 
-    public function update(UpdateGuideTripUserRequest $request,$guide_trip_slug)
+    public function update(UpdateGuideTripUserRequest $request, $guide_trip_slug)
     {
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['bail','required','exists:guide_trips,slug',new CheckIfGuideTripActiveOrInFuture() ,new CheckIfUserHasJoinedInTripRule(),new CheckIfGuideActiveRule()],
-        ],[
-            'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
-            'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'guide_trip_slug' => ['bail', 'required', 'exists:guide_trips,slug', new CheckIfGuideTripActiveOrInFuture(), new CheckIfUserHasJoinedInTripRule(), new CheckIfGuideActiveRule()],
+        ], [
+            'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
-        $data =  array_merge($request->validated(), $validator->validated());;
+        $data =  array_merge($request->validated(), $validator->validated());
         try {
             $createGuideTripUsers = $this->guideTripUserApiUseCase->updateSubscriberInTrip($data);
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-updated-successfully'), $createGuideTripUsers);
@@ -113,17 +104,16 @@ class GuideTripUserApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function delete(Request $request,$guide_trip_slug)
+    public function delete(Request $request, $guide_trip_slug)
     {
 
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
-            'guide_trip_slug' => ['bail','required', 'exists:guide_trips,slug',new CheckIfUserHasJoinedRule(),new CheckIfGuideActiveRule()],
-        ],[
-            'guide_trip_slug.required'=>__('validation.api.guide-trip-id-required'),
-            'guide_trip_slug.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'guide_trip_slug' => ['bail', 'required', 'exists:guide_trips,slug', new CheckIfUserHasJoinedRule(), new CheckIfGuideActiveRule()],
+        ], [
+            'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -137,7 +127,6 @@ class GuideTripUserApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function search(Request $request)
@@ -151,5 +140,4 @@ class GuideTripUserApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
-
 }

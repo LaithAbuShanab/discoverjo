@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
+use App\Http\Controllers\Api\User\AuthUser\AuthUserController;
 use App\Http\Controllers\Api\User\UserProfileController;
 use App\Http\Controllers\Api\User\PlaceApiController;
 use App\Http\Controllers\Api\User\TripApiController;
@@ -8,7 +10,6 @@ use App\Http\Controllers\Api\User\EventApiController;
 use App\Http\Controllers\Api\User\VolunteeringApiController;
 use App\Http\Controllers\Api\User\PlanApiController;
 use App\Http\Controllers\Api\User\PostApiController;
-use App\Http\Controllers\Api\User\AuthUser\AuthUserController;
 use App\Http\Controllers\Api\User\FollowApiController;
 use App\Http\Controllers\Api\User\CommentApiController;
 use App\Http\Controllers\Api\User\GameApiController;
@@ -18,8 +19,6 @@ use App\Http\Controllers\Api\User\GuideRatingController;
 use App\Http\Controllers\Api\User\GroupChatController;
 use App\Http\Controllers\Api\User\FavoriteApiController;
 use App\Http\Controllers\Api\User\ReviewApiController;
-use Illuminate\Support\Facades\Broadcast;
-
 
 Route::middleware(['firstLogin'])->group(function () {
     Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
@@ -83,12 +82,12 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']);
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
         Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']);
-        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']);
+        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // NOTIFICATION(15)
     });
 
     Route::group(['prefix' => 'user/guide-trip'], function () {
         Route::get('/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'allSubscription']);
-        Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']);
+        Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']); // NOTIFICATION(14)
         Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']);
         Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']);
     });
@@ -127,7 +126,7 @@ Route::middleware(['firstLogin'])->group(function () {
         // Private Trips
         Route::get('/private', [TripApiController::class, 'privateTrips']); // DONE ✅
         // User Trips Requests
-        Route::post('/user/{status}', [TripApiController::class, 'acceptCancel']); // DONE ✅ // NOTIFICATION(11)
+        Route::post('/user/{status}', [TripApiController::class, 'acceptCancel']); // DONE ✅ // NOTIFICATION(14)
         // Invitations Trips
         Route::get('/invitations', [TripApiController::class, 'invitationTrips']); // DONE ✅
 

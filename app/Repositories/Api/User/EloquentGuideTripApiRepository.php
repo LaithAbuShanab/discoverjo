@@ -16,7 +16,11 @@ use App\Models\GuideTripRequirement;
 use App\Models\GuideTripTrail;
 use App\Models\GuideTripUser;
 use App\Models\User;
+use App\Notifications\Users\guide\AcceptCancelNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -40,8 +44,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $tripsArray = $guidesTrips->toArray();
 
         $pagination = [
-            'next_page_url'=>$tripsArray['next_page_url'],
-            'prev_page_url'=>$tripsArray['next_page_url'],
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
 
@@ -51,36 +55,32 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'trips' => AllGuideTripResource::collection($guidesTrips),
             'pagination' => $pagination
         ];
-
-
     }
 
     public function allGuides()
     {
         $perPage = config('app.pagination_per_page');
-        $guides=User::where('status',1)->where('is_guide',1)->paginate($perPage);
+        $guides = User::where('status', 1)->where('is_guide', 1)->paginate($perPage);
         $guidesArray = $guides->toArray();
 
         $pagination = [
-            'next_page_url'=>$guidesArray['next_page_url'],
-            'prev_page_url'=>$guidesArray['next_page_url'],
+            'next_page_url' => $guidesArray['next_page_url'],
+            'prev_page_url' => $guidesArray['next_page_url'],
             'total' => $guidesArray['total'],
         ];
-        activityLog('guide',$guides->first(), 'the user view all guide ','view');
+        activityLog('guide', $guides->first(), 'the user view all guide ', 'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
             'guides' => GuideResource::collection($guides),
             'pagination' => $pagination
         ];
-
-
     }
 
     public function showGuideTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
-        activityLog('Guide Trip',$guideTrip,'The user viewed guide trip','View');
+        activityLog('Guide Trip', $guideTrip, 'The user viewed guide trip', 'View');
         return new GuideTripResource($guideTrip);
     }
 
@@ -101,29 +101,26 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 }
             }
 
-            foreach($activities as $activity){
-                $activityTranslate = ['en'=>$activity->en, 'ar'=>$activity->ar];
+            foreach ($activities as $activity) {
+                $activityTranslate = ['en' => $activity->en, 'ar' => $activity->ar];
                 $guideTripActivity = new GuideTripActivity();
                 $guideTripActivity->guide_trip_id = $guideTrip->id;
                 $guideTripActivity->activity = $activityTranslate;
                 $guideTripActivity->save();
                 $guideTripActivity->activity = $guideTripActivity->setTranslations('activity', $activityTranslate);
-
             }
 
             foreach ($priceInclude as $include) {
-                $priceIncludeTranslate = ['en'=>$include->en, 'ar'=>$include->ar];
+                $priceIncludeTranslate = ['en' => $include->en, 'ar' => $include->ar];
                 $guidePriceInclude = new GuideTripPriceInclude();
                 $guidePriceInclude->guide_trip_id = $guideTrip->id;
                 $guidePriceInclude->include = $priceIncludeTranslate;
                 $guidePriceInclude->save();
                 $guidePriceInclude->include = $guidePriceInclude->setTranslations('include', $priceIncludeTranslate);
-
             }
 
-            if($priceAge)
-            {
-                foreach ($priceAge as $singlePrice){
+            if ($priceAge) {
+                foreach ($priceAge as $singlePrice) {
                     $createPriceAge = new GuideTripPriceAge();
                     $createPriceAge->guide_trip_id = $guideTrip->id;
                     $createPriceAge->min_age = $singlePrice->min_age;
@@ -133,37 +130,34 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 }
             }
 
-            foreach ($assembly as $singleAssembly){
-                $assemblyTranslate = ['en'=>$singleAssembly->place_en, 'ar'=>$singleAssembly->place_ar];
+            foreach ($assembly as $singleAssembly) {
+                $assemblyTranslate = ['en' => $singleAssembly->place_en, 'ar' => $singleAssembly->place_ar];
                 $assemblies = new GuideTripAssembly();
                 $assemblies->guide_trip_id = $guideTrip->id;
                 $assemblies->time = $singleAssembly->time;
                 $assemblies->place = $assemblyTranslate;
                 $assemblies->save();
                 $assemblies->place = $assemblies->setTranslations('place', $assemblyTranslate);
-
             }
 
-            if($requiredItem){
-                foreach ($requiredItem as $singleRequiredItem){
-                    $requiredItemTranslate = ['en'=>$singleRequiredItem->en, 'ar'=>$singleRequiredItem->ar];
+            if ($requiredItem) {
+                foreach ($requiredItem as $singleRequiredItem) {
+                    $requiredItemTranslate = ['en' => $singleRequiredItem->en, 'ar' => $singleRequiredItem->ar];
                     $createRequiredItem = new GuideTripRequirement();
                     $createRequiredItem->guide_trip_id = $guideTrip->id;
                     $createRequiredItem->item = $requiredItemTranslate;
                     $createRequiredItem->save();
                     $createRequiredItem->item = $createRequiredItem->setTranslations('item', $requiredItemTranslate);
-
                 }
             }
 
-            if($trail)
-            {
+            if ($trail) {
                 $tripTrail = new GuideTripTrail();
-                $tripTrail->guide_trip_id =$guideTrip->id;
-                $tripTrail->min_duration_in_minute =$trail->min_duration_in_minute;
-                $tripTrail->max_duration_in_minute =$trail->max_duration_in_minute;
-                $tripTrail->distance_in_meter =$trail->distance_in_meter;
-                $tripTrail->difficulty =$trail->difficulty;
+                $tripTrail->guide_trip_id = $guideTrip->id;
+                $tripTrail->min_duration_in_minute = $trail->min_duration_in_minute;
+                $tripTrail->max_duration_in_minute = $trail->max_duration_in_minute;
+                $tripTrail->distance_in_meter = $trail->distance_in_meter;
+                $tripTrail->difficulty = $trail->difficulty;
                 $tripTrail->save();
             }
 
@@ -173,13 +167,11 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             DB::commit();
 
             return $guideTrip;
-
         } catch (\Exception $e) {
             // If there is an error, rollback the transaction
             DB::rollback();
 
-            throw new HttpException(404,$e->getMessage());
-
+            throw new HttpException(404, $e->getMessage());
         }
     }
 
@@ -202,7 +194,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             }
 
             GuideTripActivity::where('guide_trip_id', $guideTrip->id)->delete();
-            foreach($activities as $activity){
+            foreach ($activities as $activity) {
                 $activityTranslate = ['en' => $activity->en, 'ar' => $activity->ar];
                 $guideTripActivity = new GuideTripActivity();
                 $guideTripActivity->guide_trip_id = $guideTrip->id;
@@ -221,7 +213,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 $guidePriceInclude->include = $guidePriceInclude->setTranslations('include', $priceIncludeTranslate);
             }
 
-            if($priceAge) {
+            if ($priceAge) {
                 GuideTripPriceAge::where('guide_trip_id', $guideTrip->id)->delete();
                 foreach ($priceAge as $singlePrice) {
                     $createPriceAge = new GuideTripPriceAge();
@@ -244,7 +236,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 $assemblies->place = $assemblies->setTranslations('place', $assemblyTranslate);
             }
 
-            if($requiredItem) {
+            if ($requiredItem) {
                 GuideTripRequirement::where('guide_trip_id', $guideTrip->id)->delete();
                 foreach ($requiredItem as $singleRequiredItem) {
                     $requiredItemTranslate = ['en' => $singleRequiredItem->en, 'ar' => $singleRequiredItem->ar];
@@ -256,7 +248,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 }
             }
 
-            if($trail) {
+            if ($trail) {
                 GuideTripTrail::where('guide_trip_id', $guideTrip->id)->delete();
                 $tripTrail = new GuideTripTrail();
                 $tripTrail->guide_trip_id = $guideTrip->id;
@@ -271,13 +263,11 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             DB::commit();
 
             return $guideTrip;
-
         } catch (\Exception $e) {
             // If there is an error, rollback the transaction
             DB::rollback();
 
-            throw new HttpException(404,$e->getMessage());
-
+            throw new HttpException(404, $e->getMessage());
         }
     }
 
@@ -286,7 +276,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTrip = GuideTrip::findBySlug($slug);
         $guideTrip->clearMediaCollection('guide_trip_gallery');
         $guideTrip->delete();
-
     }
 
     public function deleteImage($id)
@@ -300,18 +289,58 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $usersInGuideTrip =  $guideTrip->guideTripUsers()->whereHas('user', function ($query) {
             $query->where('status', 1);
         })->get();
-        activityLog('Guide trip',$usersInGuideTrip->first(), 'the guide view join request ','view');
+        activityLog('Guide trip', $usersInGuideTrip->first(), 'the guide view join request ', 'view');
 
         return GuideTripUserResource::collection($usersInGuideTrip);
     }
 
     public function changeJoinRequestStatus($request)
     {
-        $status = $request['status'] == 'confirmed'?1:2;
-        $guideTripUser = GuideTripUser::findOrFail($request['guide_trip_user_id']);
-        $guideTripUser->update([
-            'status'=>$status
-        ]);
-    }
+        return DB::transaction(function () use ($request) {
 
+            $status = $request['status'] === 'confirmed' ? 1 : 2;
+            $guideTripUser = GuideTripUser::findOrFail($request['guide_trip_user_id']);
+            $guideTripUser->update([
+                'status' => $status
+            ]);
+
+            $userMember = $guideTripUser->user;
+            $receiverLanguage = $userMember->lang ?? 'en';
+            $guideUserToken = optional($userMember->DeviceToken)->token;
+
+            $trip = $guideTripUser->guideTrip;
+
+            // Save notification in DB (to the user)
+            Notification::send($userMember, new AcceptCancelNotification($trip, $status, $guideTripUser));
+
+            $fullName = $guideTripUser->first_name . ' ' . $guideTripUser->last_name;
+
+            // Send push notification
+            if ($status == 1) {
+                $notification = [
+                    'title' => Lang::get('app.notifications.accepted-guide-trip-title', ['username' => $fullName], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.accepted-guide-trip-body', [
+                        'username'  => $fullName,
+                        'trip_name' => $trip->name
+                    ], $receiverLanguage),
+                    'icon'  => asset('assets/icon/trip.png'),
+                    'sound' => 'default',
+                ];
+            } else {
+                $notification = [
+                    'title' => Lang::get('app.notifications.declined-guide-trip-title', ['username' => $fullName], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.declined-guide-trip-body', [
+                        'username'  => $fullName,
+                        'trip_name' => $trip->name
+                    ], $receiverLanguage),
+                    'icon'  => asset('assets/icon/trip.png'),
+                    'sound' => 'default',
+                ];
+            }
+
+            if ($guideUserToken) {
+                sendNotification([$guideUserToken], $notification);
+            }
+        });
+    }
 }

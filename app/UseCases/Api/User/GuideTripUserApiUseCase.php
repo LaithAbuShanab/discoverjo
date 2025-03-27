@@ -3,7 +3,6 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
 
 class GuideTripUserApiUseCase
 {
@@ -14,8 +13,6 @@ class GuideTripUserApiUseCase
         $this->guideTripUserApiRepository = $guideTripUserApiRepository;
     }
 
-
-
     public function allUsersForGuideTrip()
     {
         return $this->guideTripUserApiRepository->allUsersForGuideTrip();
@@ -25,20 +22,24 @@ class GuideTripUserApiUseCase
     {
         return $this->guideTripUserApiRepository->storeSubscriberInTrip($data);
     }
+
     public function updateSubscriberInTrip($data)
     {
         return $this->guideTripUserApiRepository->updateSubscriberInTrip($data);
     }
+
     public function deleteSubscriberInTrip($slug)
     {
         return $this->guideTripUserApiRepository->deleteSubscriberInTrip($slug);
-    }public function allSubscription($slug)
+    }
+
+    public function allSubscription($slug)
     {
         return $this->guideTripUserApiRepository->allSubscription($slug);
     }
 
-    public function search($query){
+    public function search($query)
+    {
         return $this->guideTripUserApiRepository->search($query);
     }
-
 }

@@ -29,7 +29,6 @@ class GuideTripApiUseCase
     public function showGuideTrip($slug)
     {
         return $this->guideTripApiRepository->showGuideTrip($slug);
-
     }
 
     public function storeGuideTrip($data)
@@ -38,24 +37,26 @@ class GuideTripApiUseCase
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
         $trailData =  $data['is_trail'] ? $data['trail'] : null;
 
-        return $this->guideTripApiRepository->storeGuideTrip([
-            'name' => $translator,
-            'guide_id'=>Auth::guard('api')->user()->id,
-            'description' => $translatorDescription,
-            'main_price' => $data['main_price'],
-            'start_datetime' => $data['start_datetime'],
-            'end_datetime' => $data['end_datetime'],
-            'max_attendance' => $data['max_attendance']
-        ],
+        return $this->guideTripApiRepository->storeGuideTrip(
+            [
+                'name' => $translator,
+                'guide_id' => Auth::guard('api')->user()->id,
+                'description' => $translatorDescription,
+                'main_price' => $data['main_price'],
+                'start_datetime' => $data['start_datetime'],
+                'end_datetime' => $data['end_datetime'],
+                'max_attendance' => $data['max_attendance']
+            ],
 
-             isset($data['gallery']) ? $data['gallery'] : null,
+            isset($data['gallery']) ? $data['gallery'] : null,
             json_decode($data['activities']),
             json_decode($data['price_include']),
-             isset($data['price_age']) ? json_decode($data['price_age']) : null,
+            isset($data['price_age']) ? json_decode($data['price_age']) : null,
             json_decode($data['assembly']),
             isset($data['required_items']) ? json_decode($data['required_items']) : null,
 
-            json_decode($trailData));
+            json_decode($trailData)
+        );
     }
 
 
@@ -65,21 +66,24 @@ class GuideTripApiUseCase
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
         $trailData = $data['is_trail'] ? $data['trail'] : null;
 
-        return $this->guideTripApiRepository->updateGuideTrip([
-            'name' => $translator,
-            'description' => $translatorDescription,
-            'main_price' => $data['main_price'],
-            'start_datetime' => $data['start_datetime'],
-            'end_datetime' => $data['end_datetime'],
-            'max_attendance' => $data['max_attendance']
-        ], $slug,
+        return $this->guideTripApiRepository->updateGuideTrip(
+            [
+                'name' => $translator,
+                'description' => $translatorDescription,
+                'main_price' => $data['main_price'],
+                'start_datetime' => $data['start_datetime'],
+                'end_datetime' => $data['end_datetime'],
+                'max_attendance' => $data['max_attendance']
+            ],
+            $slug,
             isset($data['gallery']) ? $data['gallery'] : null,
             json_decode($data['activities']),
             json_decode($data['price_include']),
             isset($data['price_age']) ? json_decode($data['price_age']) : null,
             json_decode($data['assembly']),
             isset($data['required_items']) ? json_decode($data['required_items']) : null,
-            json_decode($trailData));
+            json_decode($trailData)
+        );
     }
 
     public function deleteGuideTrip($id)
@@ -99,7 +103,4 @@ class GuideTripApiUseCase
     {
         return $this->guideTripApiRepository->changeJoinRequestStatus($request);
     }
-
-
-
 }

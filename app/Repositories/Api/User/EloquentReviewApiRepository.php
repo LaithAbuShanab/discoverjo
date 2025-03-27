@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
 {
@@ -85,6 +86,10 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 sendNotification([$ownerToken], $firebaseNotification);
             }
 
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
+
             activityLog('review', $reviewItem, 'the user add new review', 'create');
 
             DB::commit();
@@ -92,6 +97,8 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             DB::rollBack();
             throw $e; // Or handle the error accordingly
         }
+
+
     }
 
     public function updateReview($data)
@@ -124,7 +131,10 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         $reviewItem = $modelClass::findBySlug($data['slug']);
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
-        activityLog('review', $reviewItem, 'the user delete review', 'delete');
+
+        activityLog('review',$reviewItem ,'the user delete review','delete');
+        $user->deductPoints(10);
+
     }
 
     public function reviewsLike($data)
@@ -188,13 +198,18 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             if (!empty($notificationData)) {
                 sendNotification([$ownerToken], $notificationData);
             }
+            activityLog($data['status'],$review ,'the user '.$data['status'].' review',$data['status']);
 
-            activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
 
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
+
     }
 }

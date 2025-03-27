@@ -22,6 +22,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInterface
@@ -102,6 +103,11 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         ActivityLog('volunteering',$volunteering,'the user interested in the volunteering','interest');
 
         $user->volunteeringInterestables()->attach([$volunteeringId]);
+
+        //add points and streak
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
     public function disinterestVolunteering($slug)
     {
@@ -110,7 +116,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         $volunteeringId =$volunteering->id;
         $user->volunteeringInterestables()->detach($volunteeringId);
         ActivityLog('volunteering',$volunteering,'the user disinterest in the volunteering','disinterest');
-
+        $user->deductPoints(10);
     }
 
     public function search($query)

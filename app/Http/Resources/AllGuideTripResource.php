@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use LevelUp\Experience\Models\Activity;
 
 class AllGuideTripResource extends JsonResource
 {
@@ -15,6 +16,8 @@ class AllGuideTripResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $activity= Activity::find(1);
+
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -28,6 +31,8 @@ class AllGuideTripResource extends JsonResource
                 ->count(),
             'guide_username' => $this->guide->username,
             'guide_slug' => $this->guide->slug,
+            'guide_points' => $this->guide->getPoints(),
+            'guide_streak' => $this->guide->getCurrentStreakCount($activity),
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar', 'avatar_app'),
             'status'=>$this->status,

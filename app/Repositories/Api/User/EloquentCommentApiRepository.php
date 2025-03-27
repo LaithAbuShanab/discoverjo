@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Pipeline\Pipeline;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentCommentApiRepository implements CommentApiRepositoryInterface
@@ -47,6 +48,11 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         ];
 
         sendNotification([$ownerToken], $notificationData);
+        //add points and streak
+        $user = User::find($data['user_id']);
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
 
         return $comment;
     }
@@ -68,7 +74,11 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
     }
     public function deleteComment($id)
     {
-        Comment::find($id)->delete();
+        $comment = Comment::find($id);
+        //add points and streak
+        $user = User::find($comment->user_id);
+        $user->deductPoints(10);
+        $comment->delete();
     }
 
     public function commentLike($data)
@@ -138,7 +148,10 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         if (!empty($notificationData)) {
             sendNotification([$ownerToken], $notificationData);
         }
-
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
         ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Lang;
+use LevelUp\Experience\Models\Activity;
 
 class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryInterface
 {
@@ -76,10 +77,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
             sendNotification([$guideUserToken], $notificationData);
 
-            activityLog('Guide trip user', $joinGuideTrip->first(), 'the user join guide trip', 'create');
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
 
+            activityLog('Guide trip user', $joinGuideTrip->first(), 'the user join guide trip', 'create');
             return;
         });
+
     }
 
     public function updateSubscriberInTrip($data)
@@ -101,7 +107,11 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         $guideTrip = GuideTrip::findBySlug($slug);
         $guideTripUser = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->first();
         $guideTripUser->delete();
-        return;
+
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
+        return ;
+
     }
 
     public function allSubscription($slug)

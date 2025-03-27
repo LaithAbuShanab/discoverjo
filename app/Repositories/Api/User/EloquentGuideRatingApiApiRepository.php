@@ -18,12 +18,17 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentGuideRatingApiApiRepository implements GuideRatingApiRepositoryInterface
 {
     public function createGuideRating($data)
     {
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
         $createGuideRating = RatingGuide::create($data);
     }
     public function updateGuideRating($data)
@@ -37,11 +42,13 @@ class EloquentGuideRatingApiApiRepository implements GuideRatingApiRepositoryInt
     }
     public function deleteGuideRating($slug)
     {
-        $userId = Auth::guard('api')->user()->id;
+        $user = Auth::guard('api')->user();
+        $userId = $user->id;
         $guide =User::findBySlug($slug);
         $deleteRatingGuide = RatingGuide::where('guide_id',$guide->id)->where('user_id',$userId)->first();
         $deleteRatingGuide->delete();
 
+        $user->deductPoints(10);
     }
 
     public function showGuideRating($slug)

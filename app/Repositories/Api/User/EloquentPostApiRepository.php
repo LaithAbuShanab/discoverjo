@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use LevelUp\Experience\Models\Activity;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Support\Facades\DB;
 
@@ -103,6 +104,11 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
                 sendNotification($token, $notificationData);
             }
+
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
         }
     }
 
@@ -146,6 +152,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
     public function delete($id)
     {
         Post::find($id)->delete();
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function favorite($id)
@@ -154,6 +162,10 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $post = Post::find($id);
         activityLog('post', $post, 'the user favorite the post', 'favorite');
         $user->favoritePosts()->attach($id);
+
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function deleteFavorite($id)
@@ -162,6 +174,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $post = Post::find($id);
         activityLog('post', $post, 'the user unfavored the post', 'unfavored');
         $user->favoritePosts()->detach($id);
+        $user->deductPoints(10);
+
     }
 
     public function postLike($data)
@@ -232,6 +246,11 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 sendNotification([$ownerToken], $notificationData);
             }
 
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
+
             activityLog($data['status'], $post, 'the user ' . $data['status'] . ' the post', $data['status']);
 
             DB::commit();
@@ -239,5 +258,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             DB::rollBack();
             throw $e;
         }
+
     }
 }

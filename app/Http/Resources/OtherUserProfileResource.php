@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use LevelUp\Experience\Models\Activity;
 
 class OtherUserProfileResource extends JsonResource
 {
@@ -33,6 +34,7 @@ class OtherUserProfileResource extends JsonResource
 
         $posts = $this->posts()->paginate($paginationPerPage);
         $reviews = $this->reviews()->paginate($paginationPerPage);
+        $activity= Activity::find(1);
 
         return [
             'id' => $this->id,
@@ -43,7 +45,8 @@ class OtherUserProfileResource extends JsonResource
             'is_guide'=>$this->is_guide,
             'guide_rating' => $this->is_guide?$this->guideRatings->avg('rating'):false,
             'gender' => $gender[$this->lang][$this->sex],
-            'points' => $this->points,
+            'points' => $this->getPoints(),
+            'streak' => $this->getCurrentStreakCount($activity),
             'status' => $this->status,
             'description'=>$this->description,
             'following_number' => $this->acceptedFollowing()->count(),

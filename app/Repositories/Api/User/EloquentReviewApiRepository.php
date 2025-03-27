@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
 {
@@ -56,6 +57,10 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         ]);
 
         activityLog('review',$reviewItem ,'the user add new review','create');
+
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function updateReview($data)
@@ -90,6 +95,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         $reviewItem = $modelClass::findBySlug($data['slug']);
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
         activityLog('review',$reviewItem ,'the user delete review','delete');
+        $user->deductPoints(10);
 
     }
 
@@ -148,7 +154,10 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         }
 
         activityLog($data['status'],$review ,'the user '.$data['status'].' review',$data['status']);
-
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
 }

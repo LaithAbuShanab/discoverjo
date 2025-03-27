@@ -16,6 +16,7 @@ use App\Models\UsersTrip;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LevelUp\Experience\Models\Activity;
 use mysql_xdevapi\Exception;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Auth\Events\Registered;
@@ -31,7 +32,9 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
             // Create the user
             $user = User::create($userData);
-
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
             // Save device token if available
             if ($token) {
                 DeviceToken::create([
@@ -54,7 +57,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 ['action' => 'view_user', 'action_label' => 'View User', 'action_url' => route('filament.admin.resources.users.index')]
             );
 
-            event(new Registered($user));
+//            event(new Registered($user));
             return new UserResource($user);
         });
     }

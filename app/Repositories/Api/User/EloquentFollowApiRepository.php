@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentFollowApiRepository implements FollowApiRepositoryInterface
@@ -32,7 +33,11 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user()));
         sendNotification($ownerToken, $notificationData);
-
+        //add points and streak
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function unfollow($following_slug)
@@ -62,6 +67,11 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
         sendNotification($ownerToken, $notificationData);
+
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function unacceptedFollower($follower_slug)

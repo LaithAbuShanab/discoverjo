@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use LevelUp\Experience\Models\Activity;
 
 class VolunteeringResource extends JsonResource
 {
@@ -15,15 +16,18 @@ class VolunteeringResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $activity= Activity::find(1);
         $startDatetime = dateTime($this->start_datetime);
         $endDateTime =  dateTime($this->end_datetime);
 
-        $interestedUsers = $this->interestedUsers->map(function ($interestedUser) {
+        $interestedUsers = $this->interestedUsers->map(function ($interestedUser)  use ($activity){
             return [
                 'id' => $interestedUser->id,
                 'slug'=>$interestedUser->slug,
                 'name' => $interestedUser->username,
-                'image' => $interestedUser->getFirstMediaUrl('avatar', 'avatar_app')
+                'image' => $interestedUser->getFirstMediaUrl('avatar', 'avatar_app'),
+                'points' => $this->getPoints(),
+                'streak' => $this->getCurrentStreakCount($activity),
             ];
         });
 

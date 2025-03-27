@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use LevelUp\Experience\Models\Activity;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryInterface
@@ -18,6 +19,9 @@ class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryIn
         DB::beginTransaction();
         try {
             $user = User::create($userData);
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
             $device_token = new DeviceToken();
             $device_token->user_id = $user->id;
             $device_token->token = $token;

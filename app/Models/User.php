@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use LevelUp\Experience\Concerns\GiveExperience;
+use LevelUp\Experience\Concerns\HasStreaks;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
@@ -22,7 +24,7 @@ use Spatie\Translatable\HasTranslations;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity,GiveExperience,HasStreaks;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.

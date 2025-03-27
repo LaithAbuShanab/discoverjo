@@ -28,6 +28,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
@@ -47,6 +48,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $user->visitedPlace()->attach([$place->id]);
         activityLog('visited place', $place, 'The user create visited place', 'create');
 
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function deleteVisitedPlace($slug)
@@ -55,6 +59,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
         activityLog('visited place', $place, 'The user delete visited place', 'delete');
+        $user->deductPoints(10);
 
     }
     public function search($query)

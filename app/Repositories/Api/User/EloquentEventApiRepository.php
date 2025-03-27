@@ -8,6 +8,7 @@ use App\Interfaces\Gateways\Api\User\EventApiRepositoryInterface;
 use App\Models\Event;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use LevelUp\Experience\Models\Activity;
 
 
 class EloquentEventApiRepository implements EventApiRepositoryInterface
@@ -95,6 +96,10 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
         $user->eventInterestables()->attach([$eventId]);
         ActivityLog('event',$event,'the user interested in the event','interest');
 
+        //add points and streak
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function disinterestEvent($slug)
@@ -104,7 +109,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
         $eventId = $event?->id;
         $user->eventInterestables()->detach($eventId);
         ActivityLog('event',$event,'the user disinterest in the event','disinterest');
-
+        $user->deductPoints(10);
     }
 
     public function search($query)

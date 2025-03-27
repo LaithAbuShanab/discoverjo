@@ -10,6 +10,7 @@ use App\Models\Plan;
 use App\Models\Region;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LevelUp\Experience\Models\Activity;
 
 class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 {
@@ -62,6 +63,10 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
                     $activity->save();
                 }
             }
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
         });
     }
 
@@ -138,6 +143,9 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     {
         $plan = Plan::where('slug', $slug) - first();
         $plan->delete();
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
+
     }
 
     public function show($slug)

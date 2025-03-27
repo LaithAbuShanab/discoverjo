@@ -10,6 +10,7 @@ use App\Models\Feature;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use LevelUp\Experience\Models\Activity;
 
 class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
 {
@@ -24,6 +25,9 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $user->{$relationship}()->attach($data['type_id']);
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         activityLog('favorite',$modelClass::find($data['type_id']) ,'the user add new favorite','create');
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
     public function unfavored($data)
@@ -36,7 +40,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $user->{$relationship}()->detach($data['type_id']);
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         activityLog('favorite',$modelClass::find($data['type_id']) ,'the user delete favorite','delete');
-
+        $user->deductPoints(10);
     }
 
     public function allUserFavorite()

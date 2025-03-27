@@ -16,8 +16,10 @@ use App\Models\GuideTripRequirement;
 use App\Models\GuideTripTrail;
 use App\Models\GuideTripUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use LevelUp\Experience\Models\Activity;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -172,6 +174,11 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             // If everything is fine, commit the transaction
             DB::commit();
 
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
+
             return $guideTrip;
 
         } catch (\Exception $e) {
@@ -287,6 +294,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTrip->clearMediaCollection('guide_trip_gallery');
         $guideTrip->delete();
 
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function deleteImage($id)
@@ -312,6 +321,11 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTripUser->update([
             'status'=>$status
         ]);
+
+        $user = Auth::guard('api')->user();
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 
 }

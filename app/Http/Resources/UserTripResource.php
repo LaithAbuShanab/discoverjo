@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use LevelUp\Experience\Models\Activity;
 
 class UserTripResource extends JsonResource
 {
@@ -14,6 +15,7 @@ class UserTripResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $activity= Activity::find(1);
         return [
             'id' => $this->user->id,
             'slug'=>$this->user->slug,
@@ -21,6 +23,8 @@ class UserTripResource extends JsonResource
             'email' => $this->user->email,
             'status'=>$this->status,
             'image' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
+            'points' => $this->getPoints(),
+            'streak' => $this->getCurrentStreakCount($activity),
         ];
     }
 }

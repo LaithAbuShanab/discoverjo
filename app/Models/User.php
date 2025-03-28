@@ -24,7 +24,7 @@ use Spatie\Translatable\HasTranslations;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity,GiveExperience,HasStreaks;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.

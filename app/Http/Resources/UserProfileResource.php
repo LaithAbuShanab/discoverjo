@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use LevelUp\Experience\Models\Activity;
 
 class UserProfileResource extends JsonResource
@@ -20,25 +21,33 @@ class UserProfileResource extends JsonResource
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
-                'slug'=>$tag->slug,
+                'slug' => $tag->slug,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
-                'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
+                'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
         });
 
         $gender = [
-            'ar'=>[
-                1 => 'ذكر', 2=>'انثى'],
-            'en'=>[1=>'Male', 2 =>'Female']
+            'ar' => [
+                1 => 'ذكر',
+                2 => 'انثى'
+            ],
+            'en' => [1 => 'Male', 2 => 'Female']
         ];
 
 
-        $activity= Activity::find(1);
-        $posts = $this->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
+        $activity = Activity::find(1);
+
+        // Check If User Have Streak
+        $streak = DB::table('streaks')
+            ->where('user_id', $this->id)
+            ->where('activity_id', $activity->id)
+            ->exists();
+
         $reviews = $this->reviews()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
         return [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
@@ -48,21 +57,21 @@ class UserProfileResource extends JsonResource
             'gender' => $gender[$this->lang][$this->sex],
             'birth_of_day' => $this->birthday,
             'points' => $this->getPoints(),
-            'streak' => $this->getCurrentStreakCount($activity),
-            'has_streak_today'=>$this->hasStreakToday($activity),
+            'streak' =>  $streak ? $this->getCurrentStreakCount($activity) : 0,
+            'has_streak_today' => $streak ? $this->hasStreakToday($activity) : false,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
             'address' => $this->address,
-            'is_guide'=>$this->is_guide,
-            'guide_rating' => $this->is_guide?$this->guideRatings->avg('rating'):false,
+            'is_guide' => $this->is_guide,
+            'guide_rating' => $this->is_guide ? $this->guideRatings->avg('rating') : false,
             'status' => $this->status,
-            'description'=>$this->description,
+            'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
-            'tags'=>$tags,
-            'reviews' =>ReviewResource::collection($reviews),
-            'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
+            'tags' => $tags,
+            'reviews' => ReviewResource::collection($reviews),
+            'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
+            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
         ];
     }
 }

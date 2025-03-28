@@ -21,41 +21,42 @@ class OtherUserProfileResource extends JsonResource
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
-                'slug'=>$tag->slug,
+                'slug' => $tag->slug,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
-                'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
+                'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
         });
         $gender = [
-            'ar'=>[
-                1 => 'ذكر', 2=>'انثى'],
-            'en'=>[1=>'Male', 2 =>'Female']
+            'ar' => [
+                1 => 'ذكر',
+                2 => 'انثى'
+            ],
+            'en' => [1 => 'Male', 2 => 'Female']
         ];
 
-        $posts = $this->posts()->paginate($paginationPerPage);
         $reviews = $this->reviews()->paginate($paginationPerPage);
-        $activity= Activity::find(1);
+        $activity = Activity::find(1);
 
         return [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
-            'is_guide'=>$this->is_guide,
-            'guide_rating' => $this->is_guide?$this->guideRatings->avg('rating'):false,
+            'is_guide' => $this->is_guide,
+            'guide_rating' => $this->is_guide ? $this->guideRatings->avg('rating') : false,
             'gender' => $gender[$this->lang][$this->sex],
             'points' => $this->getPoints(),
             'streak' => $this->getCurrentStreakCount($activity),
             'status' => $this->status,
-            'description'=>$this->description,
+            'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
             'is_following' => Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists(),
-            'tags'=>$tags,
+            'tags' => $tags,
             'reviews' =>  ReviewResource::collection($reviews),
-            'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
+            'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
+            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
         ];
     }
 }

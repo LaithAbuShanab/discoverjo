@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Notification as FacadesNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Http;
+
 
 function AdminPermission($permission)
 {
@@ -211,3 +213,21 @@ function handleWarning(object $record): void
         }
     }
 }
+
+function getAddressFromCoordinates($lat, $lng,$language): string
+{
+    $apiKey = env('GOOGLE_API_KEY');
+
+    $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
+        'latlng' => "{$lat},{$lng}",
+        'language' => $language,
+        'key' => $apiKey,
+    ]);
+
+    if ($response->successful() && isset($response['results'][0]['formatted_address'])) {
+        return $response['results'][0]['formatted_address'];
+    }
+
+    return 'Not Found';
+}
+

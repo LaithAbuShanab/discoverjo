@@ -28,8 +28,6 @@ class SetLocationApiRequest extends FormRequest
         return [
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'address_en'=>'required',
-            'address_ar'=>'required',
         ];
     }
 

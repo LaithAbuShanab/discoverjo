@@ -63,7 +63,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             'longitude'=>$request['longitude'],
 
         ]);
-        $translator = ['en' => $request['address_en'], 'ar' => $request['address_ar']];
+        $translator = ['en' => getAddressFromCoordinates($request['latitude'],$request['longitude'],"en"), 'ar' => getAddressFromCoordinates($request['latitude'],$request['longitude'],"ar")];
         $eloquentUser->setTranslations('address', $translator);
         $eloquentUser->save();
 

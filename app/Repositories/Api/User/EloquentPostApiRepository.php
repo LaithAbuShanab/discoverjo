@@ -90,7 +90,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 ->get();
 
             // To Save Notification In Database
-            Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user()));
+            Notification::send($followers, new NewPostFollowersNotification(Auth::guard('api')->user(), $eloquentPost->id));
 
             // Send Notification Via Firebase
             foreach ($followers as $follower) {
@@ -176,7 +176,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         activityLog('post', $post, 'the user unfavored the post', 'unfavored');
         $user->favoritePosts()->detach($id);
         $user->deductPoints(10);
-
     }
 
     public function postLike($data)
@@ -205,7 +204,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-                        Notification::send($userPost, new NewPostLikeNotification($authUser));
+                        Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
                     } else {
                         $notificationData = [
                             'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
@@ -213,7 +212,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-                        Notification::send($userPost, new NewPostDisLikeNotification($authUser));
+                        Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
                     }
                 } else {
                     $post->likes()->where('user_id', $authUser->id)->delete();
@@ -231,7 +230,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                         'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send($userPost, new NewPostLikeNotification($authUser));
+                    Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
                 } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
@@ -239,7 +238,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                         'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send($userPost, new NewPostDisLikeNotification($authUser));
+                    Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
                 }
             }
 
@@ -259,7 +258,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             DB::rollBack();
             throw $e;
         }
-
     }
 
     public function currentUserPosts()
@@ -277,7 +275,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 'total' => $postsArray['total'],
             ],
         ];
-
     }
 
     public function otherUserPosts($slug)
@@ -295,6 +292,5 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 'total' => $postsArray['total'],
             ],
         ];
-
     }
 }

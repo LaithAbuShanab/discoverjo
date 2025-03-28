@@ -10,13 +10,15 @@ class NewPostFollowersNotification extends Notification
     use Queueable;
 
     public $user;
+    public $postId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct($user, $postId)
     {
         $this->user = $user;
+        $this->postId = $postId;
     }
 
     /**
@@ -40,7 +42,12 @@ class NewPostFollowersNotification extends Notification
             "title_en" => "New Post Alert!",
             "title_ar" => "تنبيه: منشور جديد!",
             "body_en" => "Exciting news! " . $this->user->username . " has just shared a new post. Stay updated and check it out!",
-            "body_ar" => "خبر رائع! قام " . $this->user->username . " بنشر منشور جديد. ابقَ على اطلاع وتصفحه الآن!"
+            "body_ar" => "خبر رائع! قام " . $this->user->username . " بنشر منشور جديد. ابقَ على اطلاع وتصفحه الآن!",
+            'options' => [
+                'type'      => 'single_post',
+                'slug'      => null,
+                'post_id'   => $this->postId
+            ]
         ];
     }
 }

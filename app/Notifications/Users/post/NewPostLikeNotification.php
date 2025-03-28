@@ -10,13 +10,15 @@ class NewPostLikeNotification extends Notification
     use Queueable;
 
     public $user;
+    public $postId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct($user, $postId)
     {
         $this->user = $user;
+        $this->postId = $postId;
     }
 
     /**
@@ -40,7 +42,12 @@ class NewPostLikeNotification extends Notification
             "title_en" => "New Like",
             "title_ar" => "اعجاب جديد",
             "body_en" => "The User " . $this->user->username . " has liked your post",
-            "body_ar" => "المستخدم اعجب بمنشورك " . $this->user->username
+            "body_ar" => "المستخدم اعجب بمنشورك " . $this->user->username,
+            'options' => [
+                'type'      => 'single_post',
+                'slug'      => null,
+                'post_id'   => $this->postId
+            ]
         ];
     }
 }

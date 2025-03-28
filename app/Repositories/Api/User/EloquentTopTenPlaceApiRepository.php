@@ -28,7 +28,10 @@ class EloquentTopTenPlaceApiRepository implements TopTenPlaceApiRepositoryInterf
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
             });
         })->get();
-        activityLog('top ten',$places->first(),$query,'search');
+
+        if($query) {
+            activityLog('top ten', $places->first(), $query, 'search');
+        }
         return new TopTenPlaceResource($places);
     }
 

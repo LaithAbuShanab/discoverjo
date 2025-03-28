@@ -206,8 +206,9 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'prev_page_url' => $plansArray['next_page_url'],
             'total' => $plansArray['total'],
         ];
-        activityLog('plan', $plans->first(), $query, 'search');
-
+        if($query) {
+            activityLog('plan', $plans->first(), $query, 'search');
+        }
         // Pass user coordinates to the PlaceResource collection
         return [
             'plans' => PlanResource::collection($plans),

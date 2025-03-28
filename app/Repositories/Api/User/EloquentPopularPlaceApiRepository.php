@@ -35,8 +35,9 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
             });
         })->get();
-
-        activityLog('popular place',$places->first(),$query,'search');
+        if($query) {
+            activityLog('popular place', $places->first(), $query, 'search');
+        }
         return new PopularPlaceResource($places);
     }
 

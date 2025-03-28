@@ -94,8 +94,9 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             'prev_page_url'=>$usersArray['next_page_url'],
             'total' => $usersArray['total'],
         ];
-        activityLog('user',$users->first(),$query,'search');
-
+        if($query) {
+            activityLog('user', $users->first(), $query, 'search');
+        }
         // Pass user coordinates to the PlaceResource collection
         return [
             'users' => UserResource::collection($users),

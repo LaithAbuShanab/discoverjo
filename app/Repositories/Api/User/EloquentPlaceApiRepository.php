@@ -91,7 +91,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
         }
 
-        activityLog('Place', $places->first(), $query, 'search');
+        if($query) {
+            activityLog('Place', $places->first(), $query, 'search');
+        }
 
         // Convert pagination result to array and include pagination metadata
         $pagination = [
@@ -362,8 +364,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'total'         => $plansArray['total'],
         ];
 
-        activityLog('all', $places->first(), $query, 'search');
-
+        if($query) {
+            activityLog('all', $places->first(), $query, 'search');
+        }
 
         /**
          * Combine all results in one JSON response.

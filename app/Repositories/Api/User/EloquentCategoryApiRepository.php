@@ -87,8 +87,10 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
             $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
         })->whereNull('parent_id')->get();
+        if($query){
+            activityLog('category ',$categories->first(), $query,'search',);
 
-        activityLog('category ',$categories->first(), $query,'search');
+        }
 
         return AllCategoriesResource::collection($categories);
     }

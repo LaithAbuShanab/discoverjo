@@ -137,8 +137,9 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-        activityLog('volunteering',$eloquentVolunteerings->first(),$query,'search');
-
+        if($query) {
+            activityLog('volunteering', $eloquentVolunteerings->first(), $query, 'search');
+        }
         // Pass user coordinates to the PlaceResource collection
         return [
             'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),

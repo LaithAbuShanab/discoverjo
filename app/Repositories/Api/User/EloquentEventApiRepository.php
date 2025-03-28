@@ -128,7 +128,9 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        activityLog('event',$eloquentEvents->first(), $query,'search');
+        if($query) {
+            activityLog('event', $eloquentEvents->first(), $query, 'search');
+        }
         // Pass user coordinates to the PlaceResource collection
         return [
             'events' => EventResource::collection($eloquentEvents),

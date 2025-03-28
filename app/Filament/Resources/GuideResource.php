@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Illuminate\Support\Facades\Hash;
 
 class GuideResource extends Resource
 {
@@ -80,7 +81,10 @@ class GuideResource extends Resource
                                 TextInput::make('password')
                                     ->label('Password')
                                     ->password()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                                    ->dehydrated(fn ($state) => filled($state))
+                                    ->required(fn (string $operation): bool => $isCreating = $operation === 'create'),
 
                                 DateTimePicker::make('email_verified_at')
                                     ->label('Email Verified At'),

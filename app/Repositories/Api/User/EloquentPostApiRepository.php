@@ -6,6 +6,7 @@ use App\Http\Resources\SinglePostResource;
 use App\Http\Resources\UserPostResource;
 use App\Interfaces\Gateways\Api\User\PostApiRepositoryInterface;
 use App\Models\Post;
+use App\Models\User;
 use App\Notifications\Users\post\NewPostDisLikeNotification;
 use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
@@ -258,6 +259,42 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             DB::rollBack();
             throw $e;
         }
+
+    }
+
+    public function currentUserPosts()
+    {
+        $paginationPerPage = config('app.pagination_per_page');
+        $user = Auth::guard('api')->user();
+        $posts = $user->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
+        $postsArray = $posts->toArray();
+
+        return [
+            'places' => UserPostResource::collection($posts),
+            'pagination' => [
+                'next_page_url' => $posts->nextPageUrl(),
+                'prev_page_url' => $posts->previousPageUrl(),
+                'total' => $postsArray['total'],
+            ],
+        ];
+
+    }
+
+    public function otherUserPosts($slug)
+    {
+        $paginationPerPage = config('app.pagination_per_page');
+        $user = User::findBySlug($slug);
+        $posts = $user->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
+        $postsArray = $posts->toArray();
+
+        return [
+            'posts' => UserPostResource::collection($posts),
+            'pagination' => [
+                'next_page_url' => $posts->nextPageUrl(),
+                'prev_page_url' => $posts->previousPageUrl(),
+                'total' => $postsArray['total'],
+            ],
+        ];
 
     }
 }

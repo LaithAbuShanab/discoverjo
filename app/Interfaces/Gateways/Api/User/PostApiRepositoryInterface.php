@@ -14,4 +14,6 @@ interface PostApiRepositoryInterface
     public function favorite($id);
     public function deleteFavorite($id);
     public function postLike($data);
+    public function currentUserPosts();
+    public function otherUserPosts($slug);
 }

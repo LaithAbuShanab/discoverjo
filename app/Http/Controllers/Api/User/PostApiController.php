@@ -8,8 +8,10 @@ use App\Http\Requests\Api\User\Post\CreatePostApiRequest;
 use App\Http\Requests\Api\User\Post\UpdatePostApiRequest;
 use App\Models\Post;
 use App\Rules\CheckIfExistsInFavoratblesRule;
+use App\Rules\CheckIfFollowerFollowingExistsRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfPostCreateorActiveRule;
+use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckMediaBelongsToUserRule;
 use App\Rules\CheckPostBelongToUser;
 use App\UseCases\Api\User\PostApiUseCase;
@@ -249,5 +251,42 @@ class PostApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
+    }
+
+    public function currentUserPosts()
+    {
+        try {
+            $posts = $this->postApiUseCase->currentUserPosts();
+            return ApiResponse::sendResponse(200, __('app.post-retrieved-successfully'), $posts);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+
+    }
+
+    public function otherUserPosts($slug)
+    {
+        $validator = Validator::make(['slug' => $slug], [
+            'slug' => ['required', 'exists:users,slug',new CheckIfUserActiveRule()],
+        ],
+            [
+                'slug.required'=>__('validation.api.the-user-id-is-required'),
+                'slug.exists'=>__('validation.api.the-user-id-does-not-exists'),
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        try {
+            $posts = $this->postApiUseCase->otherUserPosts($validator->validated()['slug']);
+            return ApiResponse::sendResponse(200, __('app.post-retrieved-successfully'), $posts);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+
     }
 }

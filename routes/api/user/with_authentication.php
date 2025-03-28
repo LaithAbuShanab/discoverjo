@@ -177,4 +177,9 @@ Route::post('user/set-location', [UserProfileController::class, 'setLocation']);
 Route::delete('delete/account', [AuthUserController::class, 'deleteAccount']);
 Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
 
+
+Route::get('current/user/posts', [PostApiController::class, 'currentUserPosts']);
+Route::get('other/user/posts/{slug}', [PostApiController::class, 'otherUserPosts']);
+
+
 Broadcast::routes();

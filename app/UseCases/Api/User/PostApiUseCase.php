@@ -121,4 +121,14 @@ class PostApiUseCase
     {
         return $this->postRepository->postLike($data);
     }
+
+    public function currentUserPosts()
+    {
+        return $this->postRepository->currentUserPosts();
+    }
+
+    public function otherUserPosts($slug)
+    {
+        return $this->postRepository->otherUserPosts($slug);
+    }
 }

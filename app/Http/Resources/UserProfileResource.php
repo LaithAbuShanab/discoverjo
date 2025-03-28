@@ -60,22 +60,7 @@ class UserProfileResource extends JsonResource
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
             'tags'=>$tags,
-            'posts' => [
-                'data' => UserPostResource::collection($posts),
-                'pagination' => [
-                    'next_page_url' => $posts->nextPageUrl(),
-                    'prev_page_url' => $posts->previousPageUrl(),
-                    'total' => $posts->total(),
-                ]
-            ],
-            'reviews' => [
-                'data' => ReviewResource::collection($reviews),
-                'pagination' => [
-                    'next_page_url' => $posts->nextPageUrl(),
-                    'prev_page_url' => $posts->previousPageUrl(),
-                    'total' => $posts->total(),
-                ]
-            ],
+            'reviews' =>ReviewResource::collection($reviews),
             'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
             'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
         ];

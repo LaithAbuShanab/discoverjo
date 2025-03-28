@@ -16,7 +16,6 @@ class UserNotificationResource extends JsonResource
     public function toArray(Request $request): array
     {
         $userLang = Auth::guard('api')->user()->lang ?? 'en';
-//        $data = json_decode($this->data, true) ?? [];
         $type = class_basename($this->type);
 
         // Define icon map
@@ -52,11 +51,10 @@ class UserNotificationResource extends JsonResource
             'type'  => $type,
             'title' => $this->data['title_' . $userLang] ??  $this->data['title_en'],
             'body' => $this->data['body_' . $userLang] ?? $this->data['body_en'],
+            'options' => $this->data['options'],
             'icon'  => $iconFile ? asset('assets/icon/' . $iconFile) : null,
-            'is_read'=>$this->read_at,
+            'is_read' => $this->read_at,
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }
-
-
 }

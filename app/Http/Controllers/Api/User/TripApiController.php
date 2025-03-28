@@ -165,7 +165,6 @@ class TripApiController extends Controller
             return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

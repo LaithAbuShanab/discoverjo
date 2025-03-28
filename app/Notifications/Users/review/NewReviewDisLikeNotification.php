@@ -3,8 +3,6 @@
 namespace App\Notifications\Users\review;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewReviewDisLikeNotification extends Notification
@@ -12,13 +10,24 @@ class NewReviewDisLikeNotification extends Notification
     use Queueable;
 
     public $user;
+    public $review;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct($user, $review)
     {
         $this->user = $user;
+
+        $type = $review->reviewable_type == "App\Models\Trip" ? "trip" : "guide_trip";
+        $slug = $review->reviewable_type == "App\Models\Trip" ? $review->reviewable->slug : $review->reviewable->trip->slug;
+        $review_id = $review->id;
+
+        $this->review = [
+            "type" => 'review_' . $type,
+            "slug" => $slug,
+            "review_id" => $review_id
+        ];
     }
 
     /**
@@ -42,7 +51,8 @@ class NewReviewDisLikeNotification extends Notification
             "title_en" => "New dislike",
             "title_ar" => "عدم اعجاب جديد",
             "body_en" => "The User " . $this->user->username . " has dislike your review",
-            "body_ar" => "المستخدم لم يعجب بمراجعتك " . $this->user->username
+            "body_ar" => "المستخدم لم يعجب بمراجعتك " . $this->user->username,
+            "options" => $this->review
         ];
     }
 }

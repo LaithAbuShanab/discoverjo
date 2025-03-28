@@ -55,6 +55,16 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 'comment' => $data['comment']
             ]);
 
+            $reviewPivotTable = $user->{$relationship}()->getTable(); // e.g., 'review_trip'
+            $reviewType = get_class($reviewItem); // e.g., App\Models\Trip
+
+            $reviewPivotId = DB::table($reviewPivotTable)
+                ->where('user_id', $user->id)
+                ->where('reviewable_id', $reviewItem->id)
+                ->where('reviewable_type', $reviewType)
+                ->latest('created_at') // Make sure this column exists
+                ->value('id');
+
             if (in_array($data['type'], ['trip', 'guideTrip'])) {
                 $userPost = $reviewItem->user;
                 $ownerToken = $userPost->DeviceToken->token;
@@ -69,6 +79,10 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                     'body_ar'      => Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
                         'username' => Auth::guard('api')->user()->username
                     ], 'ar'),
+
+                    'type'         => 'review_' . $data['type'],
+                    'slug'         => $data['slug'],
+                    'review_id'    => $reviewPivotId
                 ];
 
                 $title = Lang::get('app.notifications.new-review', [], $receiverLanguage);
@@ -97,8 +111,6 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             DB::rollBack();
             throw $e; // Or handle the error accordingly
         }
-
-
     }
 
     public function updateReview($data)
@@ -132,9 +144,8 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         $reviewItem = $modelClass::findBySlug($data['slug']);
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
 
-        activityLog('review',$reviewItem ,'the user delete review','delete');
+        activityLog('review', $reviewItem, 'the user delete review', 'delete');
         $user->deductPoints(10);
-
     }
 
     public function reviewsLike($data)
@@ -161,7 +172,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                             'icon' => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-                        Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
+                        Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user(), $review));
                     } else {
                         $notificationData = [
                             'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
@@ -169,7 +180,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-                        Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
+                        Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user(), $review));
                     }
                 } else {
                     $review->like()->detach(Auth::guard('api')->user()->id);
@@ -183,7 +194,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                         'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user(), $review));
                 } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
@@ -191,14 +202,14 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                         'icon'  => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user(), $review));
                 }
             }
 
             if (!empty($notificationData)) {
                 sendNotification([$ownerToken], $notificationData);
             }
-            activityLog($data['status'],$review ,'the user '.$data['status'].' review',$data['status']);
+            activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
 
             $user = Auth::guard('api')->user();
             $user->addPoints(10);
@@ -210,6 +221,5 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             DB::rollBack();
             throw $e;
         }
-
     }
 }

@@ -28,6 +28,11 @@ class NewReviewNotification extends Notification
             'title_ar' => $this->data['title_ar'] ?? '',
             'body_en'  => $this->data['body_en'] ?? '',
             'body_ar'  => $this->data['body_ar'] ?? '',
+            'options'  => [
+                'type'        => $this->data['type'] ?? '',
+                'slug'        => $this->data['slug'] ?? '',
+                'review_id'   => $this->data['review_id'] ?? ''
+            ]
         ];
     }
 }

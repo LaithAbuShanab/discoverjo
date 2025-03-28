@@ -15,16 +15,16 @@ class UserTripResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $activity= Activity::find(1);
+        $activity = Activity::find(1);
         return [
             'id' => $this->user->id,
-            'slug'=>$this->user->slug,
+            'slug' => $this->user->slug,
             'username' => $this->user->username,
             'email' => $this->user->email,
-            'status'=>$this->status,
+            'status' => $this->status,
             'image' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
-            'points' => $this->getPoints(),
-            'streak' => $this->getCurrentStreakCount($activity),
+            // 'points' => $this->user->getPoints(),
+            // 'streak' => $this->user->getCurrentStreakCount($activity),
         ];
     }
 }

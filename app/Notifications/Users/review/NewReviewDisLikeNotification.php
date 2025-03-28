@@ -19,7 +19,7 @@ class NewReviewDisLikeNotification extends Notification
     {
         $this->user = $user;
 
-        $type = $review->reviewable_type == "App\Models\Trip" ? "trip" : "guide_trip";
+        $type = $review->reviewable_type == "App\Models\Trip" ? "trip" : "guideTrip";
         $slug = $review->reviewable_type == "App\Models\Trip" ? $review->reviewable->slug : $review->reviewable->trip->slug;
         $review_id = $review->id;
 

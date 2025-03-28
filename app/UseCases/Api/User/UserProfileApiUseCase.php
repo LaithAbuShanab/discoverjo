@@ -41,10 +41,12 @@ class UserProfileApiUseCase
     {
         return $this->userProfileRepository->setLocation($request);
     }
+
     public function PlacesCurrentLocation($request)
     {
         return $this->userProfileRepository->PlacesCurrentLocation($request);
     }
+
     public function allFavorite()
     {
         return $this->userProfileRepository->allFavorite();
@@ -79,4 +81,13 @@ class UserProfileApiUseCase
         return $this->userProfileRepository->readNotification($id);
     }
 
+    public function unreadNotifications()
+    {
+        return $this->userProfileRepository->unreadNotifications();
+    }
+
+    public function deleteNotifications($id)
+    {
+        return $this->userProfileRepository->deleteNotifications($id);
+    }
 }

@@ -16,7 +16,6 @@ interface UserProfileApiRepositoryInterface
     public function otherUserDetails($slug);
     public function allNotifications();
     public function readNotification($id);
-
-
-
+    public function unreadNotifications();
+    public function deleteNotifications($id);
 }

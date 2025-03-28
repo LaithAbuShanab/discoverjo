@@ -46,7 +46,6 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function setLocation(SetLocationApiRequest $request)
@@ -59,7 +58,6 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function allFavorite()
@@ -72,7 +70,6 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
     public function search(Request $request)
     {
@@ -114,12 +111,12 @@ class UserProfileController extends Controller
         }
     }
 
-    public function otherUserProfile(Request $request,$slug)
+    public function otherUserProfile(Request $request, $slug)
     {
 
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:users,slug',new CheckIfUserActiveRule()],
-        ] ,[
+            'slug' => ['required', 'exists:users,slug', new CheckIfUserActiveRule()],
+        ], [
             'slug.required' => __('validation.api.user-id-is-required'),
             'slug.exists' => __('validation.api.user-id-does-not-exists'),
 
@@ -133,13 +130,12 @@ class UserProfileController extends Controller
         try {
             $data = $validator->validated();
             $userDetails = $this->userProfileApiUseCase->otherUserDetails($data['slug']);
-            return ApiResponse::sendResponse(200,__('app.api.user-details-retrieved-successfully'), $userDetails);
+            return ApiResponse::sendResponse(200, __('app.api.user-details-retrieved-successfully'), $userDetails);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
-
     }
 
     public function currentLocation(PlacesOfCurrentLocationRequest $request)
@@ -152,7 +148,6 @@ class UserProfileController extends Controller
 
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function allNotifications()
@@ -170,8 +165,8 @@ class UserProfileController extends Controller
     public function readNotification($id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['required', 'exists:notifications,id',new CheckIfNotificationBelongToUserRule()],
-        ] ,[
+            'id' => ['required', 'exists:notifications,id', new CheckIfNotificationBelongToUserRule()],
+        ], [
             'id.required' => __('validation.api.user-id-is-required'),
             'id.exists' => __('validation.api.user-id-does-not-exists'),
 
@@ -186,6 +181,39 @@ class UserProfileController extends Controller
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function unreadNotifications()
+    {
+        try {
+            $notifications = $this->userProfileApiUseCase->unreadNotifications();
+            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function deleteNotifications($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => ['bail', 'required', 'exists:notifications,id', new CheckIfNotificationBelongToUserRule()],
+        ], [
+            'id.required' => __('validation.api.notification-id-is-required'),
+            'id.exists' => __('validation.api.notification-id-does-not-exists'),
+
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        try {
+            $notifications = $this->userProfileApiUseCase->deleteNotifications($validator->validated()['id']);
+            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

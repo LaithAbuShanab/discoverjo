@@ -52,8 +52,8 @@ class UserNotificationResource extends JsonResource
             'title' => $this->data['title_' . $userLang] ??  $this->data['title_en'],
             'body' => $this->data['body_' . $userLang] ?? $this->data['body_en'],
             'options' => $this->data['options'] ?? [],
-            'icon'  => $iconFile ? asset('assets/icon/' . $iconFile) : null,
-            'is_read' => $this->read_at,
+            'icon'  => $iconFile ? asset('assets/icon/' . $iconFile) : asset('assets/icon/speaker.png'),
+            'is_read' => $this->read_at ? true : false,
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }

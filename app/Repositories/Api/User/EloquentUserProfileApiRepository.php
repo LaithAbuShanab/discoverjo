@@ -2,30 +2,23 @@
 
 namespace App\Repositories\Api\User;
 
-use App\Http\Resources\AllCategoriesResource;
-use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CurrentLocationPlacesResource;
 use App\Http\Resources\OtherUserProfileResource;
-use App\Http\Resources\PlaceResource;
 use App\Http\Resources\TagResource;
 use App\Http\Resources\UserFavoriteResource;
 use App\Http\Resources\UserFavoriteSearchResource;
 use App\Http\Resources\UserNotificationResource;
 use App\Http\Resources\UserProfileResource;
 use App\Http\Resources\UserResource;
-use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\UserProfileApiRepositoryInterface;
 use App\Models\Category;
-use App\Models\Notification;
 use App\Models\Place;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Notifications\DatabaseNotification;
-
 
 
 class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterface
@@ -59,14 +52,13 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $userId = Auth::guard('api')->user()->id;
         $eloquentUser = User::find($userId);
         $eloquentUser->update([
-            'latitude'=>$request['latitude'],
-            'longitude'=>$request['longitude'],
+            'latitude' => $request['latitude'],
+            'longitude' => $request['longitude'],
 
         ]);
-        $translator = ['en' => getAddressFromCoordinates($request['latitude'],$request['longitude'],"en"), 'ar' => getAddressFromCoordinates($request['latitude'],$request['longitude'],"ar")];
+        $translator = ['en' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "en"), 'ar' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "ar")];
         $eloquentUser->setTranslations('address', $translator);
         $eloquentUser->save();
-
     }
 
     public function allFavorite()
@@ -79,7 +71,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $perPage = config('app.pagination_per_page');
 
-        $users = User::where('status',1)->where(function ($queryBuilder) use ($query) {
+        $users = User::where('status', 1)->where(function ($queryBuilder) use ($query) {
             $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
                 ->orWhere('last_name', 'LIKE', "%{$query}%")
                 ->orWhere('username', 'LIKE', "%{$query}%");
@@ -90,11 +82,11 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $usersArray = $users->toArray();
 
         $pagination = [
-            'next_page_url'=>$usersArray['next_page_url'],
-            'prev_page_url'=>$usersArray['next_page_url'],
+            'next_page_url' => $usersArray['next_page_url'],
+            'prev_page_url' => $usersArray['next_page_url'],
             'total' => $usersArray['total'],
         ];
-        if($query) {
+        if ($query) {
             activityLog('user', $users->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
@@ -154,8 +146,8 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $favoritesArray = $favorites->toArray();
 
         $pagination = [
-            'next_page_url'=>$favoritesArray['next_page_url'],
-            'prev_page_url'=>$favoritesArray['next_page_url'],
+            'next_page_url' => $favoritesArray['next_page_url'],
+            'prev_page_url' => $favoritesArray['next_page_url'],
             'total' => $favoritesArray['total'],
         ];
 
@@ -164,8 +156,6 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             'favorites' => UserFavoriteSearchResource::collection($favorites),
             'pagination' => $pagination
         ];
-
-
     }
 
     public function allTags()
@@ -179,10 +169,10 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $eloquentUser = User::findBySlug($slug);
         $userSlug = Auth::guard('api')->user()->slug;
-        if($userSlug == $slug){
+        if ($userSlug == $slug) {
             return new UserProfileResource($eloquentUser);
-        }else{
-            activityLog('user',$eloquentUser,'the current user view this user','view');
+        } else {
+            activityLog('user', $eloquentUser, 'the current user view this user', 'view');
             return new OtherUserProfileResource($eloquentUser);
         }
     }
@@ -200,7 +190,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $subcategoriesIds = Category::whereIn('slug', $subcategoriesSlugs)->pluck('id')->toArray();
 
 
-        $query = Place::where('status',1)->selectRaw(
+        $query = Place::where('status', 1)->selectRaw(
             'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
             [$userLat, $userLng, $userLat]
         )->having('distance', '<=', $distanceKm)->orderBy('distance', 'asc');
@@ -212,8 +202,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
                     $subQuery->whereHas('categories', function ($subQuery) use ($subcategoriesIds) {
                         $subQuery->whereIn('place_categories.category_id', $subcategoriesIds);
                     });
-                }
-                else {
+                } else {
                     $subQuery->whereHas('categories', function ($subQuery) use ($categoriesIds) {
                         $subQuery->whereIn('place_categories.category_id', $categoriesIds)
                             ->orWhereIn('categories.parent_id', $categoriesIds);
@@ -225,7 +214,6 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
         // Execute the query and paginate
         // Paginate the results
-//        $places = $query->limit(50)->get();
         $places = $query->get();
         activityLog(
             'places around',
@@ -239,22 +227,35 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             ]
         );
 
-       return CurrentLocationPlacesResource::collection($places);
-
+        return CurrentLocationPlacesResource::collection($places);
     }
 
     public function allNotifications()
     {
-        $user= Auth::guard('api')->user();
-        $notifications = DatabaseNotification::where('notifiable_type','App\Models\User')->where('notifiable_id',$user->id)->orderBy('created_at', 'desc')->get();
+        $user = Auth::guard('api')->user();
+        $notifications = DatabaseNotification::where('notifiable_type', 'App\Models\User')->where('notifiable_id', $user->id)->orderBy('created_at', 'desc')->get();
         return  UserNotificationResource::collection($notifications);
     }
 
     public function readNotification($id)
     {
-        $user= Auth::guard('api')->user();
+        $user = Auth::guard('api')->user();
         $notification = $user->notifications()->where('id', $id)->first();
         $notification->markAsRead();
         return $notification;
+    }
+
+    public function unreadNotifications()
+    {
+        $user = Auth::guard('api')->user();
+        $notifications = $user->notifications()->where('read_at', null)->count();
+        return ['count' => $notifications];
+    }
+
+    public function deleteNotifications($id)
+    {
+        $user = Auth::guard('api')->user();
+        $notification = $user->notifications()->where('id', $id)->first();
+        $notification->delete();
     }
 }

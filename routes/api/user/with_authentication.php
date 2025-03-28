@@ -23,8 +23,12 @@ use App\Http\Controllers\Api\User\ReviewApiController;
 Route::middleware(['firstLogin'])->group(function () {
     Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
     Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
+
+    // NOTIFICATION API
     Route::get('all/user/notifications', [UserProfileController::class, 'allNotifications'])->name('user.notifications');
-    Route::put('make/notification/as-read/{id}', [UserProfileController::class, 'readNotification'])->name('user.notifications');
+    Route::put('make/notification/as-read/{id}', [UserProfileController::class, 'readNotification'])->name('user.read.notifications');
+    Route::get('unread/user/notifications', [UserProfileController::class, 'unreadNotifications'])->name('user.unread.notifications');
+    Route::delete('delete/notifications/{id}', [UserProfileController::class, 'deleteNotifications'])->name('user.delete.notifications');
 
     //favorite system
     Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']);

@@ -71,39 +71,33 @@ class PlaceResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('business_status')->options(self::$statuses)->required()->default('2'),
                         Forms\Components\Select::make('region_id')->relationship('region', 'name')->required(),
+                        Section::make('Slug & Tags')->schema([
+                            Forms\Components\TextInput::make('slug')->label('Slug')->maxLength(255)->placeholder('Please Enter Slug'),
+                            Select::make('tags')->preload()->relationship('tags', 'name')->multiple()->searchable(),
+                        ]),
+                        Section::make('openingHours')->schema([
+                            Repeater::make('openingHours')
+                                ->schema([
+                                    Select::make('day_of_week')->options([
+                                        'Monday' => 'Monday',
+                                        'Tuesday' => 'Tuesday',
+                                        'Wednesday' => 'Wednesday',
+                                        'Thursday' => 'Thursday',
+                                        'Friday' => 'Friday',
+                                        'Saturday' => 'Saturday',
+                                        'Sunday' => 'Sunday',
+                                    ])->required()->multiple()->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                                    TimePicker::make('opening_time')->required(),
+                                    TimePicker::make('closing_time')->required(),
+                                ])->addActionLabel('Add Opening Hours')
+                        ]),
                         Forms\Components\Toggle::make('status')->required()->inline(false),
                         CheckboxList::make('Features')->relationship('features', 'name')->columnSpanFull()->columns(4),
                         SpatieMediaLibraryFileUpload::make('main_place')->collection('main_place')->columnSpanFull()->required(),
-                        SpatieMediaLibraryFileUpload::make('place_gallery')->collection('place_gallery')->columnSpanFull()->multiple()->required()->panelLayout('grid')
-                    ])->columnSpan(2)->columns(2),
-                Group::make()->schema([
-                    Section::make('Slug & Tags')->schema([
-                        Forms\Components\TextInput::make('slug')->label('Slug')->maxLength(255)->placeholder('Please Enter Slug'),
-                        Select::make('tags')->preload()->relationship('tags', 'name')->multiple()->searchable(),
-                    ]),
-                    Section::make('openingHours')->schema([
-                        Repeater::make('openingHours')
-                            ->schema([
-                                Select::make('day_of_week')->options([
-                                    'Monday' => 'Monday',
-                                    'Tuesday' => 'Tuesday',
-                                    'Wednesday' => 'Wednesday',
-                                    'Thursday' => 'Thursday',
-                                    'Friday' => 'Friday',
-                                    'Saturday' => 'Saturday',
-                                    'Sunday' => 'Sunday',
-                                ])->required()->multiple()->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-                                TimePicker::make('opening_time')->required(),
-                                TimePicker::make('closing_time')->required(),
-                            ])->addActionLabel('Add Opening Hours')
-                    ]),
+                        SpatieMediaLibraryFileUpload::make('place_gallery')->collection('place_gallery')->columnSpanFull()->multiple()->required()->panelLayout('grid'),
 
-                ]),
-            ])->columns([
-                'default' => 3,
-                'sm' => 3,
-                'md' => 3,
-                'lg' => 3,
+                    ])->columnSpan(2)->columns(2),
+
             ]);
     }
 

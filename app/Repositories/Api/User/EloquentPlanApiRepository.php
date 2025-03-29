@@ -75,7 +75,8 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         return DB::transaction(function () use ($validatedData) {
             // Fetch the plan
             $plan = Plan::where('slug', $validatedData['plan_slug'])->firstOrFail();
-
+            $plan->creator_type = 'App\Models\User';
+            $plan->creator_id = Auth::guard('api')->user()->id;
             // Update Plan Details
             $plan->setTranslations('name', ['ar' => $validatedData['name'], 'en' => $validatedData['name']]);
             $plan->setTranslations('description', ['ar' => $validatedData['description'], 'en' => $validatedData['description']]);
@@ -141,11 +142,8 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
     public function deletePlan($slug)
     {
-        $plan = Plan::where('slug', $slug) - first();
+        $plan = Plan::where('slug', $slug)->first();
         $plan->delete();
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
-
     }
 
     public function show($slug)
@@ -280,6 +278,17 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         ];
 
         // activityLog('plan', $plans->first(), $data['region'], 'filter');
+        activityLog(
+            'filter plans',
+            $plans->first(),
+            'The user filter the places',
+            'filter',
+            [
+                'number_of_days'     => $numberOfDays??null,
+                'region'  => $regionSlug?? null,
+
+            ]
+        );
 
         return $response;
     }

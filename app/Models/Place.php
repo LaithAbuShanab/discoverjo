@@ -21,7 +21,7 @@ class Place extends Model implements HasMedia
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
 
-    protected static $logAttributes = ['slug','google_map_url','price_level','website','rating','status'];
+    protected static $logAttributes = ['slug','name','description','google_map_url','price_level','website','rating','status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'place';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -39,7 +39,7 @@ class Place extends Model implements HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('place')
-            ->logOnly(['slug','google_map_url','price_level','website','rating','status'])
+            ->logOnly(['slug','name','description','google_map_url','price_level','website','rating','status'])
             ->logOnlyDirty();
     }
 

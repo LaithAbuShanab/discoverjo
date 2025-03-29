@@ -40,7 +40,6 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $user->{$relationship}()->detach($data['type_id']);
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         activityLog('favorite',$modelClass::find($data['type_id']) ,'the user delete favorite','delete');
-        $user->deductPoints(10);
     }
 
     public function allUserFavorite()

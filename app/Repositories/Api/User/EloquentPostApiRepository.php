@@ -174,7 +174,6 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $post = Post::find($id);
         activityLog('post', $post, 'the user unfavored the post', 'unfavored');
         $user->favoritePosts()->detach($id);
-        $user->deductPoints(10);
     }
 
     public function postLike($data)

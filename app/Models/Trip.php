@@ -16,7 +16,22 @@ class Trip extends Model
 
     protected $guarded = [];
     protected $table = 'trips';
-
+    public $translatable = ['name', 'description'];
+    protected static $logAttributes = ['place_id','trip_type','name','description','cost','age_range','sex','date_time','attendance_number','status'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'trip';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('trip')
+            ->logOnly(['place_id','trip_type','name','description','cost','age_range','sex','date_time','attendance_number','status'])
+            ->logOnlyDirty();
+    }
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -70,9 +85,5 @@ class Trip extends Model
         return $this->belongsTo(Conversation::class, 'id', 'trip_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->useLogName('trip');
-    }
+
 }

@@ -59,7 +59,6 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
         activityLog('visited place', $place, 'The user delete visited place', 'delete');
-        $user->deductPoints(10);
 
     }
     public function search($query)

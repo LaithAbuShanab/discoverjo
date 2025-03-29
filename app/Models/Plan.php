@@ -12,7 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Plan extends Model
 {
-    use HasFactory, HasTranslations, HasSlug , LogsActivity;
+    use HasFactory, HasTranslations, HasSlug ,LogsActivity;
 
     public $translatable = ['name', 'description'];
     public $guarded = [];
@@ -21,6 +21,23 @@ class Plan extends Model
         'activity_name' => 'array',
         'notes' => 'array',
     ];
+    protected static $logAttributes = ['slug','name','description'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'plan';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('plan')
+            ->logOnly( ['slug','name','description'])
+            ->logOnlyDirty();
+    }
 
     public function getSlugOptions(): SlugOptions
     {
@@ -52,9 +69,4 @@ class Plan extends Model
         return $this->morphMany(Post::class, 'visitable');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->useLogName('plan');
-    }
 }

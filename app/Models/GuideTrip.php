@@ -20,7 +20,7 @@ class GuideTrip extends Model implements HasMedia
     protected $guarded = [];
 
     public $translatable = ['name', 'description'];
-    protected static $logAttributes = ['slug','start_datetime','end_datetime','main_price','max_attendance','status'];
+    protected static $logAttributes = ['slug','name','description','start_datetime','end_datetime','main_price','max_attendance','status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'guide trip';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -37,7 +37,7 @@ class GuideTrip extends Model implements HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('guide trip')
-            ->logOnly( ['slug','start_datetime','end_datetime','main_price','max_attendance','status'])
+            ->logOnly(  ['slug','name','description','start_datetime','end_datetime','main_price','max_attendance','status'])
             ->logOnlyDirty();
     }
 

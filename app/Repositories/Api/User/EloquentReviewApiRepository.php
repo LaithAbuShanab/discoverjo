@@ -145,7 +145,6 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
 
         activityLog('review', $reviewItem, 'the user delete review', 'delete');
-        $user->deductPoints(10);
     }
 
     public function reviewsLike($data)

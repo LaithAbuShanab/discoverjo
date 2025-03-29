@@ -10,13 +10,15 @@ class NewFollowRequestNotification extends Notification
     use Queueable;
 
     public $user;
+    public $following;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct($user, $following)
     {
         $this->user = $user;
+        $this->following = $following;
     }
 
     /**
@@ -38,9 +40,14 @@ class NewFollowRequestNotification extends Notification
     {
         return [
             "title_en" => "New following request",
-            "title_ar" => "عدم طلب متابعة جديد",
+            "title_ar" => "طلب متابعة جديد",
             "body_en" => "The User " . $this->user->username . " has send your new following request",
-            "body_ar" => "المستخدم قام بارسال طلب متابعة جديد " . $this->user->username
+            "body_ar" => "المستخدم قام بارسال طلب متابعة جديد " . $this->user->username,
+            "options" => [
+                'type'    => 'follow',
+                'slug'    => $this->following->slug,
+                'user_id' => $this->following->id
+            ]
         ];
     }
 }

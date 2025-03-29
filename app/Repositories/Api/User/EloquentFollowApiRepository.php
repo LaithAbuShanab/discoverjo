@@ -30,7 +30,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'icon'  => asset('assets/icon/new.png'),
             'sound' => 'default',
         ];
-        Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user()));
+        Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user(), $followingUser));
         sendNotification([$ownerToken], $notificationData);
 
         //add points and streak

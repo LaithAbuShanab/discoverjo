@@ -10,13 +10,17 @@ class NewCommentNotification extends Notification
     use Queueable;
 
     public $user;
+    public $commentId;
+    public $postId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
+    public function __construct($user, $commentId, $postId)
     {
         $this->user = $user;
+        $this->commentId = $commentId;
+        $this->postId = $postId;
     }
 
     /**
@@ -40,7 +44,13 @@ class NewCommentNotification extends Notification
             "title_en" => "There is a new comment",
             "title_ar" => "يوجد تعليق جديد",
             "body_en" => "The User " . $this->user->username . " has add new comment",
-            "body_ar" => "تم إنشاء تعليق جديد بواسطة المستخدم " . $this->user->username
+            "body_ar" => "تم إنشاء تعليق جديد بواسطة المستخدم " . $this->user->username,
+            'options' => [
+                'type'       => 'comment',
+                'slug'       => null,
+                'post_id'    => $this->postId,
+                'comment_id' => $this->commentId,
+            ]
         ];
     }
 }

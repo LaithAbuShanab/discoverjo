@@ -273,7 +273,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function joinTrip($slug)
     {
-        $trip_id = Trip::where('slug', $slug)->first()->id;
+        $trip = Trip::where('slug', $slug)->first();
+        $trip_id = $trip->id;
         $checkUser = $this->checkIfTheUserHasAlreadyJoined(Auth::guard('api')->user()->id, $trip_id);
         if ($checkUser) {
             $eloquentJoinTrip = new UsersTrip();
@@ -283,7 +284,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         }
 
         // To Save Notification In Database
-        Notification::send(Trip::find($trip_id)->user, new NewRequestNotification(Auth::guard('api')->user()));
+        Notification::send(Trip::find($trip_id)->user, new NewRequestNotification(Auth::guard('api')->user(), $trip));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
         $ownerToken = Trip::find($trip_id)->user->DeviceToken->token;
@@ -301,7 +302,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $userId = Auth::guard('api')->user()->id;
         $status = $request->status == 'accept' ? '1' : '2';
-        $trip_id = Trip::where('slug', $request->trip_slug)->first()->id;
+        $trip = Trip::where('slug', $request->trip_slug)->first();
+        $trip_id = $trip->id;
 
         $userTrip = UsersTrip::where('user_id', $userId)->where('trip_id', $trip_id)->first();
         $userTrip->status = $status;
@@ -321,7 +323,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $user = User::find($trip->user_id);
 
         // To Save Notification In Database
-        Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username));
+        Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username , $trip));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
         $receiverLanguage = $user->lang;
@@ -508,7 +510,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'prev_page_url' => $tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
-        if($query) {
+        if ($query) {
             activityLog('trip', $trips->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
@@ -534,7 +536,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     'sound' => 'default',
                 ];
 
-                Notification::send($follower, new TripNewTripNotification($user, $request->trip_type));
+                Notification::send($follower, new TripNewTripNotification($user, $trip));
 
                 if ($follower->DeviceToken?->token) {
                     sendNotification([$follower->DeviceToken->token], $notificationData);
@@ -560,7 +562,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     'status' => '0',
                 ]);
 
-                Notification::send($invitedUser, new TripNewTripNotification($user, $request->trip_type));
+                Notification::send($invitedUser, new TripNewTripNotification($user, $trip));
 
                 if ($invitedUser->DeviceToken?->token) {
                     sendNotification([$invitedUser->DeviceToken->token], $notificationData);

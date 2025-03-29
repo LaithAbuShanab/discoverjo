@@ -48,6 +48,11 @@ class AcceptCancelNotification extends Notification
                 'title_ar' => "تم قبول $fullName من الرحلة",
                 'body_en'  => "$fullName was accepted on the trip $tripNameEn",
                 'body_ar'  => "تم قبول $fullName من الرحلة $tripNameAr",
+                'options'  => [
+                    'type'    => 'guide_trip',
+                    'slug'    => $this->trip->slug,
+                    'trip_id' => $this->trip->id,
+                ]
             ];
         } else {
             return [
@@ -55,6 +60,11 @@ class AcceptCancelNotification extends Notification
                 'title_ar' => "تم رفض $fullName من الرحلة",
                 'body_en'  => "$fullName was rejected on the trip $tripNameEn",
                 'body_ar'  => "تم رفض $fullName من الرحلة $tripNameAr",
+                'options'  => [
+                    'type'    => 'guide_trip',
+                    'slug'    => $this->trip->slug,
+                    'trip_id' => $this->trip->id,
+                ]
             ];
         }
     }

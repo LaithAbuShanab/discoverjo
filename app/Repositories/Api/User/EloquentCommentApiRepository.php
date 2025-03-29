@@ -5,7 +5,6 @@ namespace App\Repositories\Api\User;
 use App\Interfaces\Gateways\Api\User\CommentApiRepositoryInterface;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Trip;
 use App\Models\User;
 use App\Notifications\Users\post\NewCommentDisLikeNotification;
 use App\Notifications\Users\post\NewCommentLikeNotification;
@@ -35,7 +34,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $userPost = Post::find($data['post_id'])->user;
 
         // To Save Notification In Database
-        Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user()));
+        Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
         $ownerToken = $userPost->DeviceToken->token;
@@ -105,7 +104,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                         'icon' => asset('assets/icon/speaker.png'),
                         'sound' => 'default',
                     ];
-                    Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
                 } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
@@ -114,7 +113,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                         'sound' => 'default',
                     ];
 
-                    Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user()));
+                    Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
                 }
             } else {
                 $existingLike->delete();
@@ -132,7 +131,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                     'icon' => asset('assets/icon/speaker.png'),
                     'sound' => 'default',
                 ];
-                Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user()));
+                Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
             } else {
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
@@ -141,7 +140,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                     'sound' => 'default',
                 ];
 
-                Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user()));
+                Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
             }
         }
 

@@ -85,8 +85,8 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']);
         Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']);
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
-        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']); // NOTIFICATION(16)
-        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // NOTIFICATION(17)
+        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']);
+        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // NOTIFICATION(16)
     });
 
     Route::group(['prefix' => 'user/guide-trip'], function () {

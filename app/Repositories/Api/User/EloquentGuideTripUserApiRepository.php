@@ -65,7 +65,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             $guideUserToken = $guideUser->DeviceToken->token;
 
             // Save notification in DB
-            Notification::send($guideUser, new NewRequestNotification(Auth::guard('api')->user()));
+            Notification::send($guideUser, new NewRequestNotification(Auth::guard('api')->user(), $guideTrip));
 
             // Send push notification
             $notificationData = [
@@ -85,7 +85,6 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             activityLog('Guide trip user', $joinGuideTrip->first(), 'the user join guide trip', 'create');
             return;
         });
-
     }
 
     public function updateSubscriberInTrip($data)
@@ -110,8 +109,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         $user = Auth::guard('api')->user();
         $user->deductPoints(10);
-        return ;
-
+        return;
     }
 
     public function allSubscription($slug)
@@ -147,7 +145,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'prev_page_url' => $tripsArray['next_page_url'],
             'total' => $tripsArray['total'],
         ];
-        if($query) {
+        if ($query) {
             activityLog('Guide Trip', $trips->first(), $query, 'Search');
         }
         // Pass user coordinates to the PlaceResource collection

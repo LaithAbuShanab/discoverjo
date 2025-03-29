@@ -42,7 +42,7 @@ class AcceptFollowRequestNotification extends Notification
             "body_en" => "The User " . $this->user->username . " has accept your following request",
             "body_ar" => "المستخدم قام بالموافقة على طلب المتابعة " . $this->user->username,
             "options" => [
-                'type'    => 'follow',
+                'type'    => 'follow_profile',
                 'slug'    => $this->user->slug,
                 'user_id' => $this->user->id
             ]

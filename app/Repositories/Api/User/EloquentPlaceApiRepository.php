@@ -365,7 +365,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         ];
 
         if($query) {
-            activityLog('all', $places->first(), $query, 'search');
+            activityLog('all search for places', $places->first(), $query, 'search');
         }
 
         /**

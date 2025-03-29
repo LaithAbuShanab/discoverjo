@@ -14,11 +14,19 @@ class Post extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia,LogsActivity;
     protected $guarded = [];
+    protected static $logAttributes = ['visitable_type','visitable_id','content','privacy'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'post';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
 
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['content'])
+            ->logOnly(['visitable_type','visitable_id','content','privacy'])
             ->logOnlyDirty()
             ->useLogName('post');
     }

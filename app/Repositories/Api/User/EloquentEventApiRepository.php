@@ -63,7 +63,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function event($slug)
     {
         $eloquentEvents = Event::where('slug', $slug)->first();
-        activityLog('event',$eloquentEvents,'The user viewed event','view');
+        activityLog('view specific event',$eloquentEvents,'The user viewed event','view');
         return new SingleEventResource($eloquentEvents);
     }
 
@@ -79,7 +79,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'total' => $eventsArray['total'],
         ];
 
-        activityLog('event',$query->first(),'The user viewed event in specific date '.$date['date'],'view');
+        activityLog('view event in specific date',$query->first(),'The user viewed event in specific date '.$date['date'],'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -129,7 +129,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'total' => $eventsArray['total'],
         ];
         if($query) {
-            activityLog('event', $eloquentEvents->first(), $query, 'search');
+            activityLog('search for specific event', $eloquentEvents->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -155,7 +155,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        activityLog('event',$query->first(), 'the user view his events interest list','view');
+        activityLog('show his interested list for events',$query->first(), 'the user view his events interest list','view');
         // Pass user coordinates to the PlaceResource collection
         return [
             'events' => EventResource::collection($eloquentEvents),

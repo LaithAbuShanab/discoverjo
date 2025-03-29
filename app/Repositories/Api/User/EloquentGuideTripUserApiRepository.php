@@ -82,7 +82,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             $activity = Activity::find(1);
             $user->recordStreak($activity);
 
-            activityLog('Guide trip user', $joinGuideTrip->first(), 'the user join guide trip', 'create');
+            activityLog('join guide trip', $joinGuideTrip->first(), 'the user join guide trip', 'create');
             return;
         });
 
@@ -98,7 +98,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             return $subscriber;
         }, $data['subscribers']);
         $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
-        activityLog('Guide trip user', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
+        activityLog('join guide trip', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
         return;
     }
 
@@ -107,18 +107,13 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         $guideTrip = GuideTrip::findBySlug($slug);
         $guideTripUser = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->first();
         $guideTripUser->delete();
-
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
-        return ;
-
     }
 
     public function allSubscription($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
         $subscription = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->get();
-        activityLog('Guide trip user', $subscription->first(), 'the user viewed join guide trip', 'view');
+        activityLog('Guide trip user', $subscription->first(), 'the user viewed his joined guide trip request', 'view');
 
         return  SubscriptionResource::collection($subscription);
     }
@@ -148,7 +143,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'total' => $tripsArray['total'],
         ];
         if($query) {
-            activityLog('Guide Trip', $trips->first(), $query, 'Search');
+            activityLog('search for guide trips', $trips->first(), $query, 'Search');
         }
         // Pass user coordinates to the PlaceResource collection
         return [

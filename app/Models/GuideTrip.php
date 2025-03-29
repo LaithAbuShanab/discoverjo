@@ -20,17 +20,27 @@ class GuideTrip extends Model implements HasMedia
     protected $guarded = [];
 
     public $translatable = ['name', 'description'];
-
+    protected static $logAttributes = ['slug','start_datetime','end_datetime','main_price','max_attendance','status'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'guide trip';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
     ];
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Guide trip');
+            ->useLogName('guide trip')
+            ->logOnly( ['slug','start_datetime','end_datetime','main_price','max_attendance','status'])
+            ->logOnlyDirty();
     }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

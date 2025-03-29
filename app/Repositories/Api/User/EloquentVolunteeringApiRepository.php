@@ -70,7 +70,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function volunteering($slug)
     {
         $eloquentVolunteerings = Volunteering::findBySlug($slug);
-        activityLog('volunteering',$eloquentVolunteerings,'The user viewed volunteering','view');
+        activityLog('view specific volunteering',$eloquentVolunteerings,'The user viewed volunteering','view');
         return new SingleVolunteeringResource($eloquentVolunteerings);
     }
 
@@ -86,7 +86,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-        activityLog('volunteering',$query->first(),'The user viewed volunteering in specific date '.$date['date'],'view');
+        activityLog('view volunteering in specific date',$query->first(),'The user viewed volunteering in specific date '.$date['date'],'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -138,7 +138,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'total' => $volunteeringArray['total'],
         ];
         if($query) {
-            activityLog('volunteering', $eloquentVolunteerings->first(), $query, 'search');
+            activityLog('search for specific volunteering', $eloquentVolunteerings->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -164,7 +164,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
             'prev_page_url' => $volunteeringArray['next_page_url'],
             'total' => $volunteeringArray['total'],
         ];
-        activityLog('volunteering',$query->first(), 'the user view his volunteering interest list','view');
+        activityLog('show his interested list for volunteering',$query->first(), 'the user view his volunteering interest list','view');
         // Pass user coordinates to the PlaceResource collection
         return [
             'volunteering' => VolunteeringResource::collection($eloquentVolunteerings),

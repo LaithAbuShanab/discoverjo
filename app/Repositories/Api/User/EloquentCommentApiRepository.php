@@ -75,9 +75,6 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
     public function deleteComment($id)
     {
         $comment = Comment::find($id);
-        //add points and streak
-        $user = User::find($comment->user_id);
-        $user->deductPoints(10);
         $comment->delete();
     }
 
@@ -91,8 +88,6 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $status = $data['status'] == "like" ? '1' : '0';
 
         $existingLike = $comment->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
-
-
 
         if ($existingLike) {
             if ($existingLike->status != $status) {
@@ -152,6 +147,6 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $user->addPoints(10);
         $activity = Activity::find(1);
         $user->recordStreak($activity);
-        ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
+        ActivityLog(  'comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
     }
 }

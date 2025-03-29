@@ -69,7 +69,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'prev_page_url' => $guidesArray['next_page_url'],
             'total' => $guidesArray['total'],
         ];
-        activityLog('guide', $guides->first(), 'the user view all guide ', 'view');
+        activityLog('guide', $guides->first(), 'the user view all guides ', 'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -81,7 +81,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     public function showGuideTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
-        activityLog('Guide Trip', $guideTrip, 'The user viewed guide trip', 'View');
+        activityLog('Guide Trip', $guideTrip, 'The user viewed spcific guide trip', 'View');
         return new GuideTripResource($guideTrip);
     }
 
@@ -282,8 +282,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTrip = GuideTrip::findBySlug($slug);
         $guideTrip->clearMediaCollection('guide_trip_gallery');
         $guideTrip->delete();
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
     }
 
     public function deleteImage($id)
@@ -297,7 +295,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $usersInGuideTrip =  $guideTrip->guideTripUsers()->whereHas('user', function ($query) {
             $query->where('status', 1);
         })->get();
-        activityLog('Guide trip', $usersInGuideTrip->first(), 'the guide view join request ', 'view');
+        activityLog('Guide trip', $usersInGuideTrip->first(), 'the guide view join requests for trip', 'view');
 
         return GuideTripUserResource::collection($usersInGuideTrip);
     }

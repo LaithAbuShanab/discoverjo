@@ -21,15 +21,26 @@ class Place extends Model implements HasMedia
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
 
+    protected static $logAttributes = ['slug','google_map_url','price_level','website','rating','status'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'place';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
     ];
 
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('place');
+            ->useLogName('place')
+            ->logOnly(['slug','google_map_url','price_level','website','rating','status'])
+            ->logOnlyDirty();
     }
 
     public function getSlugOptions(): SlugOptions

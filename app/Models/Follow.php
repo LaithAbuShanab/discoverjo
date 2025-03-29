@@ -11,11 +11,22 @@ class Follow extends Model
 {
     use HasFactory,LogsActivity;
     protected $guarded = [];
+    protected static $logAttributes = ['following_id'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'follow';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('follow');
+            ->useLogName('follow')
+            ->logOnly(['following_id'])
+            ->logOnlyDirty();
     }
     public function followingUser()
     {

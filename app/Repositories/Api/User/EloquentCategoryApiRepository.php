@@ -22,7 +22,9 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
         $subcategories = Category::whereIn('slug', $data)->with('children')->get();
         $allChildren = $subcategories->pluck('children')->flatten();
         $stringData = implode(", ", $data);
-        activityLog('category',$subcategories->first(), 'the user view these categories '.$stringData,'view');
+        activityLog('view specific categories ',$subcategories->first(), 'the user view these categories','view',[
+            'categories'     => $stringData,
+        ]);
         return CategoryResource::collection($allChildren);
     }
 
@@ -71,7 +73,7 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
             'prev_page_url' => $parameterPrevious,
             'total' => $placesArray['total'],
         ];
-        activityLog('category ',$category, 'the user view this category ','view');
+        activityLog('category',$category, 'the user view this category ','view');
 
         return [
             'category' => new AllCategoriesResource($category),
@@ -88,7 +90,7 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
                 ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
         })->whereNull('parent_id')->get();
         if($query){
-            activityLog('category ',$categories->first(), $query,'search',);
+            activityLog('search for category ',$categories->first(), $query,'search',);
 
         }
 

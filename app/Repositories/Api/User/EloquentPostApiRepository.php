@@ -47,7 +47,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             'total' => $postsArray['total'],
         ];
 
-        activityLog('post', $posts->first(), 'the user view all post belong followings', 'view all');
+        activityLog('view followings posts', $posts->first(), 'the user view all post belong followings', 'view');
 
         return [
             'posts' => UserPostResource::collection($posts),
@@ -152,9 +152,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function delete($id)
     {
-        Post::find($id)->delete();
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
+        $post=Post::find($id);
+        $post->delete();
     }
 
     public function favorite($id)

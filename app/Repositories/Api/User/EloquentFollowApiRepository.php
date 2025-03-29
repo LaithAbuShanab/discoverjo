@@ -94,7 +94,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
                 $query->where('status', 1);
             })
             ->get();
-        activityLog('follow', $followers->first(), 'the user view follower request ', 'view');
+        activityLog('follow', $followers->first(), 'the user view follower request ', 'view followers');
         return FollowerResource::collection($followers);
     }
 
@@ -104,7 +104,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
     {
         $followingUser = User::findBySlug($user_slug);
         $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->get();
-        activityLog('follow', $followingUser, 'the user view followers of this user ', 'view');
+        activityLog('view other users follows', $followingUser, 'the user view followers of this user ', 'view');
         return FollowerResource::collection($followers);
     }
 
@@ -112,7 +112,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
     {
         $follower = User::findBySlug($user_slug);
         $followers = Follow::where('follower_id', $follower->id)->where('status', 1)->get();
-        activityLog('follow', $follower, 'the user view followings of this user ', 'view');
+        activityLog('view other users followings', $follower, 'the user view followings of this user ', 'view');
         return FollowingResource::collection($followers);
     }
 }

@@ -12,10 +12,21 @@ class RatingGuide extends Model
     use HasFactory,LogsActivity;
     protected $guarded = [];
 
+    protected static $logAttributes = ['guide_id','rating'];
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'guide rating';
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A user has been {$eventName}";
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('guide-rating');
+            ->useLogName('guide rating')
+            ->logOnlyDirty()
+            ->useLogName('guide rating');
     }
     public function user()
     {

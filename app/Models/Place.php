@@ -114,8 +114,9 @@ class Place extends Model implements HasMedia
 
     public function favoritedBy()
     {
-        return $this->morphToMany(User::class, 'favorable');
+        return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
     }
+
 
     public function visitors()
     {

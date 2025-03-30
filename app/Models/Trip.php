@@ -85,5 +85,9 @@ class Trip extends Model
         return $this->belongsTo(Conversation::class, 'id', 'trip_id');
     }
 
+    public function favoritedBy()
+    {
+        return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
+    }
 
 }

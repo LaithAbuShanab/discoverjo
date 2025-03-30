@@ -68,4 +68,9 @@ class Volunteering extends Model implements HasMedia
             })
             ->saveSlugsTo('slug');
     }
+
+    public function favoritedBy()
+    {
+        return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
+    }
 }

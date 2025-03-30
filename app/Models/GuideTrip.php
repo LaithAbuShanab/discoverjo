@@ -126,4 +126,9 @@ class GuideTrip extends Model implements HasMedia
     {
         return $this->morphMany(Reviewable::class, 'reviewable');
     }
+
+    public function favoritedBy()
+    {
+        return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
+    }
 }

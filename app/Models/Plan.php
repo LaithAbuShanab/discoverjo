@@ -61,7 +61,7 @@ class Plan extends Model
 
     public function favoritedBy()
     {
-        return $this->morphToMany(User::class, 'favorable');
+        return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
     }
 
     public function posts()

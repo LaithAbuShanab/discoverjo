@@ -80,6 +80,10 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
                 $join->on('favorables.favorable_id', '=', 'posts.id')
                     ->where('favorables.favorable_type', '=', 'App\Models\Post');
             })
+            ->leftJoin('guide_trips', function ($join) {
+                $join->on('favorables.favorable_id', '=', 'guide_trips.id')
+                    ->where('favorables.favorable_type', '=', 'App\Models\GuideTrip');
+            })
             ->where(function ($query) use ($searchTerm) {
                 $query->WhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(plans.name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(plans.name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
@@ -90,7 +94,9 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(events.name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(volunteerings.name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
                     ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(volunteerings.name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%'])
-                    ->orWhere('posts.content', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('posts.content', 'like', '%' . $searchTerm . '%')
+                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(guide_trips.name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(guide_trips.name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%']);
             })
             ->select('favorables.*')
             ->paginate($perPage);

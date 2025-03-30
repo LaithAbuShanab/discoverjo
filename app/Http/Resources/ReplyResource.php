@@ -38,6 +38,7 @@ class ReplyResource extends JsonResource
                 'total_disliked' => $filteredDisLike->count(),
                 'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike)
             ],
+            // 'replies' => ReplyResource::collection($this->replies)
         ];
     }
 }

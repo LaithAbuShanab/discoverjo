@@ -235,7 +235,6 @@ class AuthUserController extends Controller
 
     public function handleProviderCallback($provider): JsonResponse
     {
-        dd('hi');
         try {
             $socialUser = Socialite::driver($provider)->stateless()->user();
             $authUser = $this->findOrCreateUser($socialUser, $provider);

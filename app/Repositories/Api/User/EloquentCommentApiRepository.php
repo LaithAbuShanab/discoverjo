@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\Users\post\NewCommentDisLikeNotification;
 use App\Notifications\Users\post\NewCommentLikeNotification;
 use App\Notifications\Users\post\NewCommentNotification;
+use App\Notifications\Users\post\NewReplyNotification;
 use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
@@ -33,20 +34,39 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $comment = Comment::create($data);
         $userPost = Post::find($data['post_id'])->user;
 
-        // To Save Notification In Database
-        Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
+        if ($data['parent_id'] == null) {
+            // To Save Notification In Database
+            Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
 
-        // To Send Notification To Owner Using Firebase Cloud Messaging
-        $ownerToken = $userPost->DeviceToken->token;
-        $receiverLanguage = $userPost->lang;
-        $notificationData = [
-            'title' => Lang::get('app.notifications.new-comment', [], $receiverLanguage),
-            'body'  => Lang::get('app.notifications.new-user-comment-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-            'icon'  => asset('assets/icon/new.png'),
-            'sound' => 'default',
-        ];
+            // To Send Notification To Owner Using Firebase Cloud Messaging
+            $ownerToken = $userPost->DeviceToken->token;
+            $receiverLanguage = $userPost->lang;
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-comment', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-user-comment-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                'icon'  => asset('assets/icon/new.png'),
+                'sound' => 'default',
+            ];
 
-        sendNotification([$ownerToken], $notificationData);
+            sendNotification([$ownerToken], $notificationData);
+        } else {
+            $parentComment = Comment::find($data['parent_id']);
+            $userParentComment = User::find($parentComment->user_id);
+            $ownerToken = $userParentComment->DeviceToken->token;
+            $receiverLanguage = $userParentComment->lang;
+
+            // To Save Notification In Database
+            Notification::send($userParentComment, new NewReplyNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
+
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-reply', [], $receiverLanguage),
+                'body' => Lang::get('app.notifications.new-user-reply-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                'sound' => 'default',
+            ];
+            sendNotification([$ownerToken], $notificationData);
+        }
+
+
         //add points and streak
         $user = User::find($data['user_id']);
         $user->addPoints(10);
@@ -87,11 +107,40 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $status = $data['status'] == "like" ? '1' : '0';
 
         $existingLike = $comment->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
-
         if ($existingLike) {
             if ($existingLike->status != $status) {
                 $existingLike->update(['status' => $status]);
 
+                if ($comment->user_id != Auth::guard('api')->user()->id) {
+                    if ($data['status'] == "like") {
+                        $notificationData = [
+                            'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                            'icon' => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ];
+                        Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
+                    } else {
+                        $notificationData = [
+                            'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                            'icon' => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ];
+
+                        Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
+                    }
+                }
+            } else {
+                $existingLike->delete();
+            }
+        } else {
+            $comment->likes()->create([
+                'user_id' => Auth::guard('api')->user()->id,
+                'status' => $status,
+            ]);
+
+            if ($comment->user_id != Auth::guard('api')->user()->id) {
                 if ($data['status'] == "like") {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
@@ -110,42 +159,17 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 
                     Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
                 }
-            } else {
-                $existingLike->delete();
-            }
-        } else {
-            $comment->likes()->create([
-                'user_id' => Auth::guard('api')->user()->id,
-                'status' => $status,
-            ]);
-
-            if ($data['status'] == "like") {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
-                    'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'icon' => asset('assets/icon/speaker.png'),
-                    'sound' => 'default',
-                ];
-                Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
-            } else {
-                $notificationData = [
-                    'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
-                    'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'icon' => asset('assets/icon/speaker.png'),
-                    'sound' => 'default',
-                ];
-
-                Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
             }
         }
 
-        if (!empty($notificationData)) {
+        if (!empty($notificationData) && $comment->user_id != Auth::guard('api')->user()->id) {
             sendNotification([$ownerToken], $notificationData);
         }
+
         $user = Auth::guard('api')->user();
         $user->addPoints(10);
         $activity = Activity::find(1);
         $user->recordStreak($activity);
-        ActivityLog(  'comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
+        ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
     }
 }

@@ -247,7 +247,6 @@ class AuthUserController extends Controller
             // Generate access token
             $token = $authUser->createToken('mobile')->accessToken;
             $authUser->token = $token;
-            dd($authUser);
 
             return ApiResponse::sendResponse(200, 'User logged in successfully', new UserLoginResource($authUser));
         } catch (\Exception $e) {

@@ -214,20 +214,62 @@ function handleWarning(object $record): void
     }
 }
 
-function getAddressFromCoordinates($lat, $lng,$language): string
+function getAddressFromCoordinates(float $lat, float $lng, string $language): string
 {
-    $apiKey = env('GOOGLE_API_KEY');
-
-    $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
-        'latlng' => "{$lat},{$lng}",
-        'language' => $language,
-        'key' => $apiKey,
-    ]);
-
-    if ($response->successful() && isset($response['results'][0]['formatted_address'])) {
-        return $response['results'][0]['formatted_address'];
+    // Validate input coordinates
+    if (!is_numeric($lat) || !is_numeric($lng) || $lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
+        return 'Invalid Coordinates';
     }
 
-    return 'Not Found';
+    $apiKey = config('app.GOOGLE_API_KEY');
+
+    try {
+        $response = Http::timeout(10)->retry(3, 100)->get('https://maps.googleapis.com/maps/api/geocode/json', [
+            'latlng'   => "{$lat},{$lng}",
+            'language' => $language,
+            'key'      => $apiKey,
+        ]);
+
+        if (!$response->successful()) {
+            return 'API Request Failed';
+        }
+
+        $data = $response->json();
+
+        if (
+            !isset($data['results'][0]['address_components']) ||
+            empty($data['results'][0]['address_components'])
+        ) {
+            return 'No Address Components Found';
+        }
+
+        $components = $data['results'][0]['address_components'];
+        $locality = '';
+        $subLocality = '';
+
+        foreach ($components as $component) {
+            $types = $component['types'];
+
+            if (in_array('sublocality', $types) || in_array('sublocality_level_1', $types)) {
+                $subLocality = $component['long_name'];
+            }
+
+            if (in_array('locality', $types)) {
+                $locality = $component['long_name'];
+            }
+
+            // Early exit if both are found
+            if ($locality && $subLocality) {
+                break;
+            }
+        }
+
+        $result = trim("{$subLocality}, {$locality}", ', ');
+        return $result !== '' ? $result : 'Address Not Found';
+
+    } catch (\Exception $e) {
+        // You could log the exception here if needed
+        return 'Error Fetching Address';
+    }
 }
 

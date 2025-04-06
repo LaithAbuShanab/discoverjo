@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Follow;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use LevelUp\Experience\Models\Activity;
 
@@ -68,6 +70,7 @@ class UserProfileResource extends JsonResource
             'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
+            'request_following_count' =>  $this->requestFollowers()->count(),
             'tags' => $tags,
             'reviews' => ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),

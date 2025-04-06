@@ -275,6 +275,16 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->followers()->wherePivot('status', 1);
     }
 
+    public function requestFollowers()
+    {
+        return $this->hasMany(Follow::class, 'following_id')
+            ->where('status', 0)
+            ->whereHas('followerUser', function ($query) {
+                $query->where('status', 1);
+            });
+    }
+
+
     public function guideTrips()
     {
         return $this->hasMany(GuideTrip::class, 'guide_id');

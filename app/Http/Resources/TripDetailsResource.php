@@ -64,6 +64,10 @@ class TripDetailsResource extends JsonResource
             $data['reviews'] = ReviewResource::collection($filteredReviews);
         }
 
+        if ($this->trip_type != 2) {
+            $data['request_count'] = $this->usersTrip->where('status', '0')->count();
+        }
+
         return $data;
     }
 }

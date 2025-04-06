@@ -66,6 +66,16 @@ class TripApiController extends Controller
         }
     }
 
+    public function invitationCount(){
+        try {
+            $count = $this->tripApiUseCase->invitationCount();
+            return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $count);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
     public function acceptCancelInvitation(AcceptCancelInvitationsRequest $request)
     {
         $validator = Validator::make(

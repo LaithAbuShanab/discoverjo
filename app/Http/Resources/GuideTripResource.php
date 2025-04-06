@@ -15,6 +15,7 @@ class GuideTripResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $countRequest = null;
         $activities = [];
         foreach ($this->activities as $activity) {
             $activities[] = $activity->activity;
@@ -41,6 +42,10 @@ class GuideTripResource extends JsonResource
         $joined = Auth::guard('api')->check()
             ? Auth::guard('api')->user()->guideTripUsers->contains('guide_trip_id', $this->id)
             : false;
+        if(Auth::guard('api')->user()->id == $this->guide_id)
+        {
+            $countRequest= $this->requestGuideTripUsers()->count();
+        }
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -58,6 +63,7 @@ class GuideTripResource extends JsonResource
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar', 'avatar_app'),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->guide_id,
+            'request_count'=>$countRequest,
             "activities"=>$activities,
             "assemblies"=>GuideTripAssemblyResource::collection($this->assemblies),
             "age_price"=>GuideTripPriceAgeResource::collection($this->priceAges),

@@ -295,6 +295,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->hasMany(GuideTripUser::class);
     }
 
+
+
     // Define a relationship with the GuideTrip model through the GuideTripUser model
     public function TripsOfGuide()
     {

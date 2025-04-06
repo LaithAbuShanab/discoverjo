@@ -116,6 +116,15 @@ class GuideTrip extends Model implements HasMedia
         return $this->hasMany(GuideTripUser::class);
     }
 
+    public function requestGuideTripUsers()
+    {
+        return $this->hasMany(GuideTripUser::class)
+            ->where('status', 0)
+            ->whereHas('user', function ($query) {
+                $query->where('status', 1);
+            });
+    }
+
     // Define a relationship with the User model through the GuideTripUser model
     public function users()
     {

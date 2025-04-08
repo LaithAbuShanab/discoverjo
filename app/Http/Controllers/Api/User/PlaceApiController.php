@@ -7,22 +7,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
 use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
-use App\Rules\CheckIfExistsInToUpdateReviewsRule;
 use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
 use App\UseCases\Api\User\PlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class PlaceApiController extends Controller
 {
-    protected $placeApiUseCase;
-    public function __construct( PlaceApiUseCase $placeApiUseCase)
+    public function __construct(protected PlaceApiUseCase $placeApiUseCase)
     {
         $this->placeApiUseCase = $placeApiUseCase;
     }
+
     public function singlePlaces(Request $request)
     {
         $slug = $request->place_slug;
@@ -99,7 +97,7 @@ class PlaceApiController extends Controller
         $query = $request->input('query');
         try {
             $places = $this->placeApiUseCase->search($query);
-            return ApiResponse::sendResponse(200, __('app.place.api.the-searched-place-retrieved-successfully'), $places);
+            return ApiResponse::sendResponse(200, __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -110,7 +108,7 @@ class PlaceApiController extends Controller
     {
         try {
             $places = $this->placeApiUseCase->filter($request->validated());
-            return ApiResponse::sendResponse(200,  __('app.place.api.the-searched-place-retrieved-successfully'), $places);
+            return ApiResponse::sendResponse(200,  __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -122,7 +120,7 @@ class PlaceApiController extends Controller
         $query = $request->input('query');
         try {
             $places = $this->placeApiUseCase->allSearch($query);
-            return ApiResponse::sendResponse(200, __('app.place.api.the-searched-place-retrieved-successfully'), $places);
+            return ApiResponse::sendResponse(200, __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

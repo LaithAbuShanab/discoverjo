@@ -37,7 +37,7 @@ class FilterPlaceRequest extends FormRequest
                 foreach ($values as $slug) {
                     $category = Category::findBySlug($slug);
                     if (!$category) {
-                        return $fail(__('validation.api.the-category-does-not-exist'));
+                        return $fail(__('validation.api.the-category-does-not-exists'));
                     }
                     if ($category->parent_id !== null) {
                         return $fail(__('validation.api.the-selected-category-must-be-main'));

@@ -24,9 +24,7 @@ use Illuminate\Validation\Rule;
 
 class TripApiController extends Controller
 {
-    protected $tripApiUseCase;
-
-    public function __construct(TripApiUseCase $tripApiUseCase)
+    public function __construct(protected TripApiUseCase $tripApiUseCase)
     {
         $this->tripApiUseCase = $tripApiUseCase;
     }
@@ -46,7 +44,7 @@ class TripApiController extends Controller
     {
         try {
             $trips = $this->tripApiUseCase->allTrips();
-            return ApiResponse::sendResponse(200, __('app.trips-retrieved-successfully'), $trips);
+            return ApiResponse::sendResponse(200, __('app.api.trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -66,7 +64,8 @@ class TripApiController extends Controller
         }
     }
 
-    public function invitationCount(){
+    public function invitationCount()
+    {
         try {
             $count = $this->tripApiUseCase->invitationCount();
             return ApiResponse::sendResponse(200, __('app.api.retrieved-successfully'), $count);
@@ -183,7 +182,7 @@ class TripApiController extends Controller
     {
         $slug = $request->trip_slug;
         $validator = Validator::make(['trip_slug' => $slug], [
-            'trip_slug' => ['required', 'exists:trips,slug',new CheckIfTheOwnerOfTripActiveRule()],
+            'trip_slug' => ['required', 'exists:trips,slug', new CheckIfTheOwnerOfTripActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -363,10 +362,9 @@ class TripApiController extends Controller
         $query = $request->input('query');
         try {
             $places = $this->tripApiUseCase->search($query);
-            return ApiResponse::sendResponse(200, __('app.the-searched-trip-retrieved-successfully'), $places);
+            return ApiResponse::sendResponse(200, __('app.api.the-searched-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

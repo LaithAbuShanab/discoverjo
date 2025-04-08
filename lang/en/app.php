@@ -39,10 +39,6 @@ return [
 
     'event' => [
         'api' => [
-            'events-retrieved-successfully' => 'Events retrieved successfully',
-            'active-events-retrieved-successfully' => 'Active events retrieved successfully',
-            'event-retrieved-successfully' => 'Event retrieved successfully',
-            'events-of-specific-date-retrieved-successfully' => 'Events of specific date retrieved successfully',
             'you-add-this-event-to-interest-successfully' => 'You added this event to your interests successfully',
             'you-already-make-this-as-interest' => 'You have already marked this as an interest',
             'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'You can\'t mark this as an interest because it\'s in the past',
@@ -59,18 +55,10 @@ return [
             'you-update-your-review-successfully' => 'You updated your review successfully',
             'you-deleted-your-review-successfully' => 'You deleted your review successfully',
             'the-likable-status-change-successfully' => 'The likable status was changed successfully',
-            'the-searched-event-retrieved-successfully' => 'The searched event was retrieved successfully',
             'user-details-retrieved-successfully' => 'User details retrieved successfully',
             'the-interest-event-retrieved-successfully' => 'The interest event list retrieved successfully',
 
         ],
-    ],
-
-    'legal' => [
-        'api' => [
-            'legal-retrieved-successfully' => 'Legal Documentation Retrieved Successfully',
-        ],
-
     ],
 
     'place' => [
@@ -83,9 +71,6 @@ return [
             'you-added-review-for-this-place-successfully' => 'You added review for this place successfully',
             'you-updated-review-for-this-place-successfully' => 'You updated review for this place successfully',
             'you-remove-review-for-this-place-successfully' => 'You remove review for this place successfully',
-            'the-searched-place-retrieved-successfully' => 'The searched place retrieved successfully',
-
-
         ],
 
     ],
@@ -95,7 +80,6 @@ return [
             'favorite-plan-created-successfully' => 'You added this plan to favorite list',
             'you-remove-plan-from-favorite-list' => 'You removed this plan from favorite list',
             'the-likable-status-change-successfully' => 'The likable status changed successfully',
-            'the-searched-plan-retrieved-successfully' => 'The searched plans retrieved successfully',
         ]
     ],
 
@@ -172,7 +156,6 @@ return [
 
     "api" => [
         /** for categories */
-        'the-searched-categories-retrieved-successfully' => 'The searched categories retrieved successfully.',
         'comment-created-successfully' => 'Comment created successfully',
         'comment-updated-successfully' => 'Comment updated successfully',
         'comment-deleted-successfully' => 'Comment deleted successfully',
@@ -206,12 +189,8 @@ return [
         'your-review-in-this-trip-updated-successfully' => 'Yor review in this trip updated successfully',
         'your-review-updated-successfully' => 'Yor review updated successfully',
         'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
-        'the-searched-guide-trip-retrieved-successfully' => 'The Searched guide trip retrieved successfully',
-        'legal-retrieved-successfully' => 'legal documentation retrieved successfully',
         'the-plan-retrieved-successfully' => 'The plan retrieved successfully',
         'plan-deleted-successfully' => 'Plan deleted successfully',
-        'popular-places-retrieved-successfully' => 'Popular places retrieved successfully',
-        'the-searched-places-retrieved-successfully' => 'The searched places retrieved successfully',
         'post-retrieved-successfully' => 'Post retrieved successfully',
         'post-created-successfully' => 'Post created successfully',
         'post-updated-successfully' => 'Post updated successfully',
@@ -221,11 +200,6 @@ return [
         'reply-updated-successfully' => 'Reply updated successfully',
         'reply-deleted-successfully' => 'Reply deleted successfully',
         'onboardings-retrieved-successfully' => 'Onboardings retrieved successfully',
-        'places-of-subcategories-retrieved-successfully' => 'Places of subcategories retrieved successfully',
-        'suggestion-place-created-successfully' => 'Suggestion place created successfully',
-        'this-is-main-category' => 'This is main category you need subcategory',
-        'top-ten-places-retrieved-successfully' => 'Top ten places retrieved successfully',
-        'searched-top-ten-places-retrieved-successfully' => 'Searched top ten places retrieved successfully',
         'user-details-retrieved-successfully' => 'User details retrieved successfully',
         'your-profile-updated-successfully' => 'Your profile updated successfully',
         'your-location-set-successfully' => 'Your location sat successfully',
@@ -235,45 +209,89 @@ return [
         'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
 
         // Auth Api
-        'you-logged-in-successfully'                        => 'You logged in successfully',
-        'you-register-successfully'                         => 'Congratulations! Your registration was successful. Enjoy your journey with us.',
-        'you-logged-out-successfully'                       => 'Successfully logged out. We hope to see you again soon. Have a great time!',
-        'your-account-deleted-successfully'                 => 'Your account deleted successfully!',
-        'your-account-deactivated-successfully'             => 'Your account deactivated successfully!',
-        'email-already-verified'                            => 'Your Email already verified',
-        "email-sent-successfully"                           => "Email Sent Successfully",
-        'the-link-for-reset-password-sent-successfully'     => 'The link for reset password sent successfully',
-        'unable-to-send-the-link-for-reset-password'        => 'Unable to send the link for reset password',
-        'your-password-reset-successfully'                  => 'Your password has been reset successfully! You can now log in with your new password.',
-        'unable-to-reset-your-password'                     => 'Unable to reset your password',
-        'an-error-occurred-while-resetting-the-password'    => 'An error occurred while resetting the password',
-        'you-have-already-verify-your-email'                => 'You have already verify your email',
-        'you-have-verify-your-email-successfully'           => 'your email verified successfully',
-
+        'you-logged-in-successfully'                                   => 'You logged in successfully',
+        'you-register-successfully'                                    => 'Congratulations! Your registration was successful. Enjoy your journey with us.',
+        'you-logged-out-successfully'                                  => 'Successfully logged out. We hope to see you again soon. Have a great time!',
+        'your-account-deleted-successfully'                            => 'Your account deleted successfully!',
+        'your-account-deactivated-successfully'                        => 'Your account deactivated successfully!',
+        'email-already-verified'                                       => 'Your Email already verified',
+        "email-sent-successfully"                                      => "Email Sent Successfully",
+        'the-link-for-reset-password-sent-successfully'                => 'The link for reset password sent successfully',
+        'unable-to-send-the-link-for-reset-password'                   => 'Unable to send the link for reset password',
+        'your-password-reset-successfully'                             => 'Your password has been reset successfully! You can now log in with your new password.',
+        'unable-to-reset-your-password'                                => 'Unable to reset your password',
+        'an-error-occurred-while-resetting-the-password'               => 'An error occurred while resetting the password',
+        'you-have-already-verify-your-email'                           => 'You have already verify your email',
+        'you-have-verify-your-email-successfully'                      => 'your email verified successfully',
 
         // Trip Api
-        'retrieved-successfully'                            => 'Data recovered successfully',
-        'trip-created-successfully'                         => 'Trip created successfully',
-        'the-status-change-successfully'                    => 'The status change successfully',
-        'you-join-to-trip-successfully'                     => 'You join to trip successfully',
-        'you-are-left-from-the-trip-successfully'           => 'You are left from the trip successfully',
-        'the-trip-deleted-successfully'                     => 'The trip deleted successfully',
-        'the-trip-updated-successfully'                     => 'The trip updated successfully',
-        'the-user-deleted-successfully'                     => 'The user deleted successfully',
+        'retrieved-successfully'                                       => 'Data recovered successfully',
+        'trip-created-successfully'                                    => 'Trip created successfully',
+        'the-status-change-successfully'                               => 'The status change successfully',
+        'you-join-to-trip-successfully'                                => 'You join to trip successfully',
+        'you-are-left-from-the-trip-successfully'                      => 'You are left from the trip successfully',
+        'the-trip-deleted-successfully'                                => 'The trip deleted successfully',
+        'the-trip-updated-successfully'                                => 'The trip updated successfully',
+        'the-user-deleted-successfully'                                => 'The user deleted successfully',
+        'trips-retrieved-successfully'                                 => 'Trips retrieved successfully',
+        'the-searched-trip-retrieved-successfully'                     => 'The searched trip retrieved successfully',
 
         // Plan Api
-        'plan-created-successfully'                         => 'Plan created successfully',
-        'plan-updated-successfully'                         => 'Plan updated successfully',
-        'plan-deleted-successfully'                         => 'Plan deleted successfully',
-        'plans-retrieved-successfully'                      => 'Plans retrieved successfully',
+        'plan-created-successfully'                                    => 'Plan created successfully',
+        'plan-updated-successfully'                                    => 'Plan updated successfully',
+        'plan-deleted-successfully'                                    => 'Plan deleted successfully',
+        'plans-retrieved-successfully'                                 => 'Plans retrieved successfully',
+        'the-searched-plan-retrieved-successfully'                     => 'The searched plan retrieved successfully',
 
         // Category Api
-        'categories-retrieved-successfully'                 => 'Categories retrieved successfully',
-        'all-subcategories-retrieved-successfully'          => 'All subcategories retrieved successfully',
-        'places-subcategories-retrieved-successfully'       => 'Places and SubCategories by Category id Retrieved Successfully.',
+        'categories-retrieved-successfully'                            => 'Categories retrieved successfully',
+        'all-subcategories-retrieved-successfully'                     => 'All subcategories retrieved successfully',
+        'places-subcategories-retrieved-successfully'                  => 'Places and SubCategories by Category id Retrieved Successfully.',
+        'the-searched-categories-retrieved-successfully'               => 'The searched categories retrieved successfully.',
 
         // Place Api
-        'place-retrieved-by-id-successfully'                => 'Place retrieved by id successfully',
+        'place-retrieved-by-id-successfully'                           => 'Place retrieved by id successfully',
+        'the-searched-place-retrieved-successfully'                    => 'The searched place retrieved successfully',
 
+        // SubCategory Api
+        'places-of-subcategories-retrieved-successfully'               => 'Places of SubCategories retrieved successfully',
+        'this-is-main-category'                                        => 'This is main category you need subcategory',
+
+        // TopTen Api
+        'top-ten-places-retrieved-successfully'                        => 'Top ten places retrieved successfully',
+        'searched-top-ten-places-retrieved-successfully'               => 'Searched top ten places retrieved successfully',
+
+        // Popular Api
+        'popular-places-retrieved-successfully'                        => 'Popular places retrieved successfully',
+        'the-searched-places-retrieved-successfully'                   => 'The searched places retrieved successfully',
+
+        // Event Api
+        'events-retrieved-successfully'                                => 'Events retrieved successfully',
+        'active-events-retrieved-successfully'                         => 'Active events retrieved successfully',
+        'event-retrieved-successfully'                                 => 'Event retrieved successfully',
+        'events-of-specific-date-retrieved-successfully'               => 'Events of specific date retrieved successfully',
+        'the-searched-event-retrieved-successfully'                    => 'The searched event was retrieved successfully',
+
+        // Volunteering Api
+        'volunteering-retrieved-successfully'                          => 'Volunteering retrieved successfully',
+        'active-volunteering-retrieved-successfully'                   => 'Active volunteering retrieved successfully',
+        'volunteering-of-specific-date-retrieved-successfully'         => 'Volunteering of specific date retrieved successfully',
+        'the-searched-volunteering-retrieved-successfully'             => 'The searched volunteering was retrieved successfully',
+
+        // Legal Api
+        'legal-retrieved-successfully'                                 => 'Legal retrieved successfully',
+
+        // Contact Api
+        'contact-us-created-successfully'                              => 'Contact us created successfully',
+
+        // Suggestion Api
+        'suggestion-place-created-successfully'                        => 'Suggestion place created successfully',
+
+        // Guide Trip Api
+        'the-searched-guide-trip-retrieved-successfully'               => 'The searched guide trip retrieved successfully',
+
+        // User Api
+        'the-users-retried-successfully'                               => 'The users retried successfully',
+        'your-place-current-location-retrieved-successfully'            => 'Your place current location retrieved successfully',
     ],
 ];

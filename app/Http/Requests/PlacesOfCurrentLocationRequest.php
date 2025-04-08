@@ -8,7 +8,6 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 
 
 class PlacesOfCurrentLocationRequest extends FormRequest
@@ -45,7 +44,7 @@ class PlacesOfCurrentLocationRequest extends FormRequest
                 foreach ($values as $slug) {
                     $category = Category::findBySlug($slug);
                     if (!$category) {
-                        return $fail(__('validation.api.the-category-does-not-exist'));
+                        return $fail(__('validation.api.the-category-does-not-exists'));
                     }
                     if ($category->parent_id !== null) {
                         return $fail(__('validation.api.the-selected-category-must-be-main'));
@@ -71,7 +70,6 @@ class PlacesOfCurrentLocationRequest extends FormRequest
         ];
     }
 
-
     public function messages()
     {
         return [
@@ -81,8 +79,6 @@ class PlacesOfCurrentLocationRequest extends FormRequest
             'subcategories_id.*' => __('validation.api.subcategories-id-invalid'),
         ];
     }
-
-
 
     protected function failedValidation(Validator $validator)
     {

@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserProfileController extends Controller
 {
-    protected $userProfileApiUseCase;
-
-    public function __construct(UserProfileApiUseCase $userProfileApiUseCase)
+    public function __construct(protected UserProfileApiUseCase $userProfileApiUseCase)
     {
 
         $this->userProfileApiUseCase = $userProfileApiUseCase;
@@ -76,7 +74,6 @@ class UserProfileController extends Controller
         $query = $request->input('query');
         try {
             $users = $this->userProfileApiUseCase->search($query);
-
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

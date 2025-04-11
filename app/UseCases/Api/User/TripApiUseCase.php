@@ -28,6 +28,11 @@ class TripApiUseCase
         return $this->tripApiRepository->invitationTrips();
     }
 
+    public function invitationCount()
+    {
+        return $this->tripApiRepository->invitationCount();
+    }
+
     public function changeStatusInvitation($request)
     {
         return $this->tripApiRepository->changeStatusInvitation($request);

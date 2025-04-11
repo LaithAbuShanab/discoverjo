@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryApiController extends Controller
 {
-
     public function __construct(protected CategoryApiUseCase $categoryApiUseCase)
     {
         $this->categoryApiUseCase = $categoryApiUseCase;
@@ -86,7 +85,6 @@ class CategoryApiController extends Controller
             return ApiResponse::sendResponse(200, __('app.api.the-searched-categories-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

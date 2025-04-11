@@ -165,50 +165,34 @@ return [
     */
 
     'attributes' => [
-        // Basic Information
-        'name' => 'الاسم',
-        'name-en' => 'الاسم بالإنجليزية',
-        'name-ar' => 'الاسم بالعربية',
-        'email' => 'البريد الإلكتروني',
-        'password' => 'كلمة المرور',
-        'password_confirmation' => 'تأكيد كلمة المرور',
-        'role' => 'الدور',
-
-        // Descriptions and Addresses
-        'description-en' => 'الوصف بالإنجليزية',
-        'description-ar' => 'الوصف بالعربية',
-        'address-en' => 'العنوان بالإنجليزية',
-        'address-ar' => 'العنوان بالعربية',
-
-        // Contact and Location Information
-        'phone-number' => 'رقم الهاتف',
-        'longitude' => 'خط الطول',
-        'latitude' => 'خط العرض',
-
-        // Business and Website Information
-        'google-map-url' => 'رابط خرائط جوجل',
-        'website' => 'الموقع الإلكتروني',
-        'business_status' => 'حالة العمل',
-        'price-level' => 'مستوى السعر',
-
-        // Images and Media
-        'image' => 'الصورة',
-        'main-image' => 'الصورة الرئيسية',
-        'gallery-images' => 'صور المعرض',
-
-        // Ratings and User Feedback
-        'rating' => 'التقييم',
-        'total-user-rating' => 'إجمالي تقييم المستخدم',
-
-        // Categories and Tags
-        'sub_category_id' => 'الفئة الفرعية',
-        'tags-id' => 'العلامات',
-        'region-id' => 'المنطقة',
-
-        // Miscellaneous
-        'subject' => 'الموضوع',
-        'message' => 'الرسالة',
-
+        'name'                                      => 'الاسم',
+        'name-en'                                   => 'الاسم بالإنجليزية',
+        'name-ar'                                   => 'الاسم بالعربية',
+        'email'                                     => 'البريد الإلكتروني',
+        'password'                                  => 'كلمة المرور',
+        'password_confirmation'                     => 'تأكيد كلمة المرور',
+        'role'                                      => 'الدور',
+        'description-en'                            => 'الوصف بالإنجليزية',
+        'description-ar'                            => 'الوصف بالعربية',
+        'address-en'                                => 'العنوان بالإنجليزية',
+        'address-ar'                                => 'العنوان بالعربية',
+        'phone-number'                              => 'رقم الهاتف',
+        'longitude'                                 => 'خط الطول',
+        'latitude'                                  => 'خط العرض',
+        'google-map-url'                            => 'رابط خرائط جوجل',
+        'website'                                   => 'الموقع الإلكتروني',
+        'business_status'                           => 'حالة العمل',
+        'price-level'                               => 'مستوى السعر',
+        'image'                                     => 'الصورة',
+        'main-image'                                => 'الصورة الرئيسية',
+        'gallery-images'                            => 'صور المعرض',
+        'rating'                                    => 'التقييم',
+        'total-user-rating'                         => 'إجمالي تقييم المستخدم',
+        'sub_category_id'                           => 'الفئة الفرعية',
+        'tags-id'                                   => 'العلامات',
+        'region-id'                                 => 'المنطقة',
+        'subject'                                   => 'الموضوع',
+        'message'                                   => 'الرسالة',
         'description'                               => 'الوصف',
         'days'                                      => 'أيام الخطة',
         'days.*.activities'                         => 'الأنشطة',
@@ -217,6 +201,10 @@ return [
         'days.*.activities.*.end_time'              => 'وقت انتهاء النشاط',
         'days.*.activities.*.place_slug'            => 'مكان النشاط',
         'days.*.activities.*.note'                  => 'ملاحظة النشاط',
+        'min_cost'                                  => 'الحد الأدنى للتكلفة',
+        'max_cost'                                  => 'الحد الأقصى للتكلفة',
+        'min_rate'                                  => 'الحد الأدنى للتقييم',
+        'max_rate'                                  => 'الحد الأقصى للتقييم',
     ],
 
     'msg' => [
@@ -321,10 +309,7 @@ return [
 
     'api' => [
         'relationship_not_exist' => "العلاقة :relationship غير موجودة في نموذج المستخدم",
-        // Category Errors
 
-        'subcategory-is-required' => 'التصنيف الفرعي مطلوب.',
-        'subcategory-does-not-exists' => 'رقم التصنيف الفرعي غير موجود.',
 
         // Place Errors
         'this-place-already-in-your-visited-place' => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
@@ -432,22 +417,10 @@ return [
         // Image Errors
         "image-is-required" => "الصورة مطلوبة.",
         "image-must-be-an-image" => "يجب أن يكون الملف صورة.",
-        "images-optional" => "الصور اختيارية.",
-        "images-must-be-an-image" => "يجب أن تكون كل ملف صورة.",
-        "images-invalid-format" => "يجب أن تكون الصورة من نوع: jpeg، png، jpg، gif، svg، webp، bmp، tiff، ico، svgz.",
 
         // Professional File Errors
         "professional-file-is-required" => "الملف المهني مطلوب.",
         "professional-file-invalid-format" => "يجب أن يكون الملف المهني من أحد الأنواع التالية: pdf، jpeg، png، jpg، gif، svg، webp، bmp، tiff، ico، svgz.",
-
-        // General Errors
-        "name-is-required" => "الاسم مطلوب.",
-        "subject-nullable" => "الموضوع اختياري.",
-        "message-is-required" => "الرسالة مطلوبة.",
-
-        // Date Errors
-        "date-is-required" => "التاريخ مطلوب.",
-        "date-invalid-format" => "يجب أن يكون التاريخ بتنسيق صالح.",
 
         // Following ID Errors
         "following-id-is-required" => "معرف المتابعة مطلوب.",
@@ -563,7 +536,6 @@ return [
         'region-id-exists' => 'معرف المنطقة المحدد غير موجود.',
 
         // Cost Errors
-        'min-cost-nullable' => 'حقل التكلفة الدنيا اختياري.',
         'max-cost-nullable' => 'حقل التكلفة القصوى اختياري.',
 
         // Feature Errors
@@ -648,10 +620,6 @@ return [
 
         // Image Validation Errors
         'image-image' => 'يجب أن تكون الصورة ملف صورة صالح.',
-        'place_name-required' => 'حقل اسم المكان مطلوب.',
-        'address-required' => 'حقل العنوان مطلوب.',
-        'images-image' => 'يجب أن تكون كل صورة ملف صورة صالح.',
-        'images-mimes' => 'يجب أن تكون كل صورة بأحد التنسيقات التالية: jpeg، png، jpg، gif، svg، webp.',
 
         // Trip Errors
         'trip_id-required' => 'حقل معرف الرحلة مطلوب.',
@@ -723,14 +691,6 @@ return [
         // Password Errors
         'password-required' => 'حقل كلمة المرور مطلوب.',
         'password-string' => 'يجب أن تكون كلمة المرور نصًا.',
-
-        // Geolocation Errors
-        'lng-required' => 'حقل الطول (الطول الجغرافي) مطلوب.',
-        'lat-required' => 'حقل العرض (العرض الجغرافي) مطلوب.',
-
-        // Category and Subcategory Errors
-        'categories-id-invalid' => 'الفئة المحددة غير موجودة أو ليست فئة رئيسية.',
-        'subcategories-id-invalid' => 'الفئة الفرعية المحددة غير موجودة أو ليست فئة فرعية صالحة.',
 
         // Custom Category Errors
         'the-selected-subcategory-it-is-main-category' => 'الفئة الفرعية المختارة هي الفئة الرئيسية',
@@ -821,18 +781,18 @@ return [
         "username-regex"                                            => "يجب أن يبدأ اسم المستخدم بحرف ويحتوي فقط على أحرف وأرقام وشرطات.",
         "username-no-whitespace"                                    => "يجب ألا يحتوي اسم المستخدم على مسافات.",
         "username-unique"                                           => "اسم المستخدم مُستخدم بالفعل.",
-        "email-is-required"                                         => "البريد الإلكتروني مطلوب.",
         "email-must-be-string"                                      => "يجب أن يكون البريد الإلكتروني نصًا.",
         "email-must-be-lowercase"                                   => "يجب أن يكون البريد الإلكتروني بأحرف صغيرة.",
         "email-max"                                                 => "يجب ألا يتجاوز البريد الإلكتروني :max أحرف.",
         "email-unique"                                              => "البريد الإلكتروني مُستخدم بالفعل.",
         "email-in-blacklist"                                        => "البريد الإلكتروني في القائمة السوداء.",
-        "email-invalid-format"                                      => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
         "email-max-length"                                          => "يجب ألا يزيد البريد الإلكتروني عن :max أحرف.",
         'email-valid'                                               => 'البريد الالكتروني صالح',
         "email-must-be-valid"                                       => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
         "token-is-required"                                         => "الرمز مطلوب.",
         'the-provided-old-password-is-incorrect'                    => 'كلمة المرور القديمة غير صحيحة.',
+        'lng-required'                                              => 'حقل الطول (الطول الجغرافي) مطلوب.',
+        'lat-required'                                              => 'حقل العرض (العرض الجغرافي) مطلوب.',
 
         // Trip Validation
         'trip_type_required'                                        => 'حقل نوع الرحلة مطلوب.',
@@ -930,13 +890,53 @@ return [
         'the-selected-category-id-does-not-exists'                  => 'الفئة المحددة غير موجودة.',
         'the-category-id-required'                                  => 'معرّف الفئة مطلوب.',
         'invalid-category-id-not-main-category'                     => 'معرف الفئة غير صالح، فهي ليست الفئة الرئيسية.',
+        'the-selected-category-must-be-main'                        => 'الفئة المحددة يجب أن تكون الفئة الرئيسية.',
+        'the-categories-be-string-separated-by-comma'               => 'يجب أن تكون الفئات عبارة عن سلسلة مفصولة بفواصل.',
+        'categories-id-invalid'                                     => 'الفئة المحددة غير موجودة أو ليست فئة رئيسية.',
 
         // Place Validation
         'the-selected-place-is-not-active'                          => 'المكان المحدد غير نشط.',
         'place-id-invalid'                                          => 'معرّف المكان غير صالح.',
         'place-id-does-not-exists'                                  => 'معرف المكان غير موجود.',
 
+        // Subcategory Validation
+        'subcategory-is-required'                                   => 'التصنيف الفرعي مطلوب.',
+        'subcategory-does-not-exists'                               => 'رقم التصنيف الفرعي غير موجود.',
+        'the-subcategories-must-be-string-separated-by-comma'       => 'يجب أن تكون التصنيفات الفرعية عبارة عن سلسلة مفصولة بفواصل.',
+        'the-subcategory-does-not-exist'                            => 'التصنيف الفرعي غير موجود.',
+        'the-selected-subcategory-must-not-be-main'                 => 'التصنيف الفرعي المحدد يجب أن لا يكون الفئة الرئيسية.',
+        'subcategories-id-invalid'                                  => 'الفئة الفرعية المحددة غير موجودة أو ليست فئة فرعية صالحة.',
 
+        // Event Validation
+        'event-id-is-required'                                      => 'معرّف الحدث مطلوب.',
+        'event-id-does-not-exists'                                  => 'معرّف الحدث غير موجود.',
+        "date-is-required"                                          => "التاريخ مطلوب.",
+        "date-invalid-format"                                       => "يجب أن يكون التاريخ بتنسيق صالح.",
+
+        // Volunteering Api
+        'volunteering-id-is-required'                               => 'معرّف التطوع مطلوب.',
+        'volunteering-id-does-not-exist'                            => 'معرّف التطوع غير موجود.',
+
+        // Contact Us Api
+        'name-is-required'                                          => 'حقل الاسم مطلوب.',
+        'email-is-required'                                         => 'حقل البريد الإلكتروني مطلوب.',
+        'email-invalid-format'                                      => 'يجب أن يكون البريد الإلكتروني بتنسيق صحيح.',
+        'subject-nullable'                                          => 'حقل الموضوع اختياري.', // اختياري؛ ربما لا يظهر
+        'message-is-required'                                       => 'حقل الرسالة مطلوب.',
+        'images-optional'                                           => 'الصور اختيارية.',
+        'images-must-be-an-image'                                   => 'يجب أن تكون كل صورة من نوع صورة.',
+        'images-invalid-format'                                     => 'يجب أن تكون كل صورة من الأنواع التالية: jpeg، png، jpg، gif، svg.',
+
+        // Suggestion Place Api
+        'place_name-required'                                       => 'حقل اسم المكان مطلوب.',
+        'address-required'                                          => 'حقل العنوان مطلوب.',
+        'images-image'                                              => 'يجب أن تكون كل صورة ملف صورة صالح.',
+        'images-mimes'                                              => 'يجب أن تكون كل صورة بأحد التنسيقات التالية: jpeg، png، jpg، gif، svg، webp.',
+
+        // Featured Api
+        'the-features-must-be-string-separated-by-comma'            => 'يجب أن تكون المميزات عبارة عن سلسلة مفصولة بفواصل.',
+        'the-feature-does-not-exist'                                => 'المميزة غير موجودة.',
     ],
+
 
 ];

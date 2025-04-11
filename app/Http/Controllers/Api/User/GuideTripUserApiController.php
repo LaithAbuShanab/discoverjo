@@ -19,9 +19,7 @@ use Illuminate\Support\Facades\Validator;
 
 class GuideTripUserApiController extends Controller
 {
-    protected $guideTripUserApiUseCase;
-
-    public function __construct(GuideTripUserApiUseCase $guideTripUserApiUseCase)
+    public function __construct(protected GuideTripUserApiUseCase $guideTripUserApiUseCase)
     {
         $this->guideTripUserApiUseCase = $guideTripUserApiUseCase;
     }

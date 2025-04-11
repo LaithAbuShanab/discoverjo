@@ -5,27 +5,23 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\UseCases\Api\User\PopularPlaceApiUseCase;
-
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class PopularPlaceApiController extends Controller
 {
-    protected $popularPlaceApiUseCase;
-
-    public function __construct(PopularPlaceApiUseCase $popularPlaceApiUseCase) {
-
+    public function __construct(protected PopularPlaceApiUseCase $popularPlaceApiUseCase)
+    {
         $this->popularPlaceApiUseCase = $popularPlaceApiUseCase;
-
     }
+
     /**
      * Display a listing of the resource.
      */
-
     public function popularPlaces()
     {
-        try{
+        try {
             $popularPlaces = $this->popularPlaceApiUseCase->popularPlaces();
 
             return ApiResponse::sendResponse(200, __('app.api.popular-places-retrieved-successfully'), $popularPlaces);
@@ -34,7 +30,6 @@ class PopularPlaceApiController extends Controller
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
-
 
     public function search(Request $request)
     {

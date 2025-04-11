@@ -32,55 +32,70 @@ Route::get('places/category/{category_slug}', [CategoryApiController::class, 'ca
 // GET ALL PLACES BY SLUG
 Route::get('place/{place_slug}', [PlaceApiController::class, 'singlePlaces'])->name('place'); // DONE ✅
 // GET ALL PLACES BY SUBCATEGORY
-Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places'); //
+Route::get('places/subcategory/{subcategory_slug}', [SubCategoryApiController::class, 'singleSubCategory'])->name('subcategories.places'); // DONE ✅
 // GET TOP PLACES
-Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places'); //
-
-Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places'); //
-Route::get('all/events', [EventApiController::class, 'index'])->name('events'); //
-Route::get('all/active/events', [EventApiController::class, 'activeEvents'])->name('active.events'); //
-Route::get('event/{event_slug}', [EventApiController::class, 'event'])->name('single.events'); //
-Route::get('date/events', [EventApiController::class, 'dateEvents'])->name('date.events'); //
-
-Route::get('all/volunteering', [VolunteeringApiController::class, 'index'])->name('volunteering'); //
-Route::get('all/active/volunteering', [VolunteeringApiController::class, 'activeVolunteerings'])->name('active.volunteering'); //
-Route::get('volunteering/{volunteering_slug}', [VolunteeringApiController::class, 'volunteering'])->name('single.volunteering'); //
-Route::get('date/volunteering', [VolunteeringApiController::class, 'dateVolunteering'])->name('date.volunteering'); //
-
-Route::get('legal/document', [LegalDocumentApiController::class, 'index'])->name('legal.index'); //
-Route::post('contact-us', [ContactUsApiController::class, 'store'])->name('contact.store'); //
-Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store']); //
-
-Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips'); ////
-
-Route::get('all/places/search', [PlaceApiController::class, 'search']); //
-Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']); //
-Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']); //
-Route::get('categories/search', [CategoryApiController::class, 'search']); //
-Route::get('all/event/search', [EventApiController::class, 'search']); //
-Route::get('all/volunteering/search', [VolunteeringApiController::class, 'search']); //
-Route::get('all/trip/search', [TripApiController::class, 'search']); ////
-Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']); ////
-Route::get('all/plan/search', [PlanApiController::class, 'search']); //
-Route::get('user/search', [UserProfileController::class, 'search']); ////
-Route::get('all/search', [PlaceApiController::class, 'allSearch']); ////
-
-Route::get('places/filter', [PlaceApiController::class, 'filter']); ////
-Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']); ////
+Route::get('top-ten-places', [TopTenPlaceApiController::class, 'topTenPlaces'])->name('topTen.places'); // DONE ✅
+// GET POPULAR PLACES
+Route::get('popular/places', [PopularPlaceApiController::class, 'popularPlaces'])->name('popular.places'); // DONE ✅
+// GET ALL EVENTS
+Route::get('all/events', [EventApiController::class, 'index'])->name('events'); // DONE ✅
+// GET ALL ACTIVE EVENTS
+Route::get('all/active/events', [EventApiController::class, 'activeEvents'])->name('active.events'); // DONE ✅
+// GET SINGLE EVENT
+Route::get('event/{event_slug}', [EventApiController::class, 'event'])->name('single.events'); // DONE ✅
+// GET DATE EVENTS
+Route::get('date/events', [EventApiController::class, 'dateEvents'])->name('date.events'); // DONE ✅
+// GET ALL VOLUNTEERINGS
+Route::get('all/volunteering', [VolunteeringApiController::class, 'index'])->name('volunteering'); // DONE ✅
+// GET ALL ACTIVE VOLUNTEERINGS
+Route::get('all/active/volunteering', [VolunteeringApiController::class, 'activeVolunteerings'])->name('active.volunteering'); // DONE ✅
+// GET SINGLE VOLUNTEERING
+Route::get('volunteering/{volunteering_slug}', [VolunteeringApiController::class, 'volunteering'])->name('single.volunteering'); // DONE ✅
+// GET DATE VOLUNTEERING
+Route::get('date/volunteering', [VolunteeringApiController::class, 'dateVolunteering'])->name('date.volunteering'); // DONE ✅
+// GET ALL LEGAL DOCUMENT
+Route::get('legal/document', [LegalDocumentApiController::class, 'index'])->name('legal.index'); // DONE ✅
+// POST CONTACT US
+Route::post('contact-us', [ContactUsApiController::class, 'store'])->name('contact.store'); // DONE ✅
+// POST SUGGESTION
+Route::post('suggestion/places', [SuggestionPlaceApiController::class, 'store']); // DONE ✅
+// GET ALL TRIPS
+Route::get('all/trips', [TripApiController::class, 'allTrip'])->name('trips'); // DONE ✅
+// GET SEARCHABLE PLACES
+Route::get('all/places/search', [PlaceApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE POPULAR PLACES
+Route::get('popular/places/search', [PopularPlaceApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE TOP TEN PLACES
+Route::get('top-ten/places/search', [TopTenPlaceApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE CATEGORIES
+Route::get('categories/search', [CategoryApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE EVENT
+Route::get('all/event/search', [EventApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE VOLUNTEERING
+Route::get('all/volunteering/search', [VolunteeringApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE TRIPS
+Route::get('all/trip/search', [TripApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE GUIDES
+Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE PLANS
+Route::get('all/plan/search', [PlanApiController::class, 'search']); // DONE ✅
+// GET SEARCHABLE USERS
+Route::get('user/search', [UserProfileController::class, 'search']); // DONE ✅
+// GET ALL SEARCHABLE
+Route::get('all/search', [PlaceApiController::class, 'allSearch']); // DONE ✅
+// GET FILTERED PLACES
+Route::get('places/filter', [PlaceApiController::class, 'filter']); // DONE ✅
+// GET USER CURRENT LOCATION
+Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']); // DONE ✅
 
 Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']); //
-
 Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']); ////
 Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']); ////
 Route::get('all/guides', [GuideTripApiController::class, 'allGuides']); ////
 Route::post('guide/register', [RegisterGuideApiController::class, 'register']); //
 Route::get('/guides/trips', [GuideTripApiController::class, 'index']); ////
-
 Route::get('all/regions', [RegionsApiController::class, 'index']);
 Route::get('all/features', [FeaturesApiController::class, 'index']);
-
-
-
 Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
 Route::get('plan/filter', [PlanApiController::class, 'filter']);
 

@@ -187,37 +187,37 @@ return [
     */
 
     'attributes' => [
-        'name' => 'Name',
-        'name-en' => 'English Name',
-        'name-ar' => 'Arabic Name',
-        'email' => 'Email',
-        'password' => 'Password',
-        'image' => 'Image',
-        'priority' => 'Priority',
-        'password_confirmation' => 'Password Confirmation',
-        'role' => 'Role',
-        'description-en' => 'English Description',
-        'description-ar' => 'Arabic Description',
-        'address-en' => 'English Address',
-        'address-ar' => 'Arabic Address',
-        'google-map-url' => 'Google Map URL',
-        'phone-number' => 'Phone Number',
-        'longitude' => 'Longitude',
-        'latitude' => 'Latitude',
-        'price-level' => 'Price Level',
-        'website' => 'Website',
-        'rating' => 'Rating',
-        'total-user-rating' => 'Total User Rating',
-        'sub_category_id' => 'Subcategory',
-        'region-id' => 'Region',
-        'business_status' => 'Business Status',
-        'tags-id' => 'Tags',
-        'main-image' => 'Main Image',
-        'gallery-images' => 'Gallery Images',
-        'place-type' => 'Place Type',
-        'token' => 'Token',
-        'subject' => 'Subject',
-        'message' => 'Message',
+        'name'                                      => 'Name',
+        'name-en'                                   => 'English Name',
+        'name-ar'                                   => 'Arabic Name',
+        'email'                                     => 'Email',
+        'password'                                  => 'Password',
+        'image'                                     => 'Image',
+        'priority'                                  => 'Priority',
+        'password_confirmation'                     => 'Password Confirmation',
+        'role'                                      => 'Role',
+        'description-en'                            => 'English Description',
+        'description-ar'                            => 'Arabic Description',
+        'address-en'                                => 'English Address',
+        'address-ar'                                => 'Arabic Address',
+        'google-map-url'                            => 'Google Map URL',
+        'phone-number'                              => 'Phone Number',
+        'longitude'                                 => 'Longitude',
+        'latitude'                                  => 'Latitude',
+        'price-level'                               => 'Price Level',
+        'website'                                   => 'Website',
+        'rating'                                    => 'Rating',
+        'total-user-rating'                         => 'Total User Rating',
+        'sub_category_id'                           => 'Subcategory',
+        'region-id'                                 => 'Region',
+        'business_status'                           => 'Business Status',
+        'tags-id'                                   => 'Tags',
+        'main-image'                                => 'Main Image',
+        'gallery-images'                            => 'Gallery Images',
+        'place-type'                                => 'Place Type',
+        'token'                                     => 'Token',
+        'subject'                                   => 'Subject',
+        'message'                                   => 'Message',
         'description'                               => 'Description',
         'days'                                      => 'Days',
         'days.*.activities'                         => 'Activities',
@@ -226,6 +226,10 @@ return [
         'days.*.activities.*.end_time'              => 'Activity End Time',
         'days.*.activities.*.place_slug'            => 'Activity Place',
         'days.*.activities.*.note'                  => 'Activity Note',
+        'min_cost'                                  => 'Min Cost',
+        'max_cost'                                  => 'Max Cost',
+        'min_rate'                                  => 'Min Rate',
+        'max_rate'                                  => 'Max Rate',
     ],
 
     "msg" => [
@@ -347,8 +351,6 @@ return [
         'reply-id-is-required' => 'Reply id is required',
         'reply-id-does-not-exists' => 'Reply id does not exists',
         'content-is-required' => 'Content is required',
-        'subcategory-is-required' => 'Subcategory is required',
-        'subcategory-does-not-exists' => 'Subcategory does not exists',
 
         // Message Type
         "message-type-is-required" => "Message type is required.",
@@ -418,24 +420,6 @@ return [
         // Professional File
         "professional-file-is-required" => "Professional file is required.",
         "professional-file-invalid-format" => "The professional file must be one of the following types: pdf, jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz.",
-
-
-        // Name
-        "name-is-required" => "Name is required.",
-
-        // Subject (optional)
-        "subject-nullable" => "Subject is optional.",
-
-        // Message
-        "message-is-required" => "Message is required.",
-
-        // Images
-        "images-optional" => "Images are optional.",
-        "images-must-be-an-image" => "Each file must be an image.",
-        "images-invalid-format" => "Each image must be of type: jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz.",
-
-        "date-is-required" => "The date is required.",
-        "date-invalid-format" => "The date must be a valid date format.",
 
         // Following ID
         "following-id-is-required" => "The following ID is required.",
@@ -595,8 +579,6 @@ return [
         'subcategory-main' => 'The selected subcategory must be a valid subcategory.',
 
         'region-id-nullable' => 'The region ID field is optional.',
-
-        'min-cost-nullable' => 'The minimum cost field is optional.',
         'max-cost-nullable' => 'The maximum cost field is optional.',
 
         'features-id-nullable' => 'The features ID field is optional.',
@@ -678,11 +660,6 @@ return [
         'username-not-regex' => 'The username may not contain spaces.',
         'image-image' => 'The image must be a valid image file.',
 
-        'place_name-required' => 'The place name field is required.',
-        'address-required' => 'The address field is required.',
-        'images-image' => 'Each image must be a valid image file.',
-        'images-mimes' => 'Each image must be one of the following formats: jpeg, png, jpg, gif, svg, webp.',
-
         'trip_id-required' => 'The trip ID field is required.',
         'trip_id-integer' => 'The trip ID must be an integer.',
         'trip_id-exists' => 'The selected trip ID does not exist.',
@@ -733,15 +710,8 @@ return [
         'password-required' => 'The password field is required.',
         'password-string' => 'The password must be a string.',
 
-        'lng-required' => 'The longitude field is required.',
-        'lat-required' => 'The latitude field is required.',
-        'categories-id-invalid' => 'The selected category does not exist or is not a main category.',
-        'subcategories-id-invalid' => 'The selected subcategory does not exist or is not a valid subcategory.',
-
-
 
         'email-lowercase' => 'The email must be lowercase.',
-
         'the-selected-category-does-not-main-category' => 'The selected category does not main category',
         'the-selected-subcategory-it-is-main-category' => 'The selected subcategory it is main category',
         'the-subcategories-should-be-array' => 'The subcategories should be array',
@@ -845,6 +815,8 @@ return [
         "email-must-be-valid"                                       => "Email must be a valid email address.",
         "token-is-required"                                         => "Token is required.",
         'the-provided-old-password-is-incorrect'                    => 'The provided old password is incorrect',
+        'lng-required'                                              => 'The longitude field is required.',
+        'lat-required'                                              => 'The latitude field is required.',
 
         // Trip Validation
         'trip_type_required'                                        => 'The trip type field is required.',
@@ -944,12 +916,50 @@ return [
         'the-selected-category-id-does-not-exists'                  => 'The selected category does not exist.',
         'the-category-id-required'                                  => 'The category ID is required.',
         'invalid-category-id-not-main-category'                     => 'Invalid category Id, it is not main category',
+        'the-selected-category-must-be-main'                        => 'The selected category must be a main category.',
+        'the-categories-be-string-separated-by-comma'               => 'The categories must be a string separated by commas.',
+        'categories-id-invalid'                                     => 'The selected category does not exist or is not a main category.',
 
         // Place Validation
         'the-selected-place-is-not-active'                          => 'The selected place is not active.',
         'place-id-invalid'                                          => 'Place id invalid',
         'place-id-does-not-exists'                                  => 'Place id does not exists',
 
+        // Subcategory Validation
+        'subcategory-is-required'                                   => 'Subcategory is required',
+        'subcategory-does-not-exists'                               => 'Subcategory does not exists',
+        'the-subcategories-must-be-string-separated-by-comma'       => 'The subcategories must be a string separated by commas.',
+        'the-subcategory-does-not-exist'                            => 'The subcategory does not exist.',
+        'the-selected-subcategory-must-not-be-main'                 => 'The selected subcategory must not be a main category.',
+        'subcategories-id-invalid'                                  => 'The selected subcategory does not exist or is not a valid subcategory.',
+
+        // Event Validation
+        'event-id-is-required'                                      => 'Event ID is required',
+        'event-id-does-not-exists'                                  => 'Event ID does not exists',
+        "date-is-required"                                          => "Date is required",
+        "date-invalid-format"                                       => "Date invalid format",
+
+        // Volunteering Api
+        'volunteering-id-is-required'                               => 'Volunteering ID is required',
+        'volunteering-id-does-not-exist'                            => 'Volunteering ID does not exist',
+
+        // Contact Us Api
+        'name-is-required'                                          => 'The name field is required.',
+        'subject-nullable'                                          => 'The subject field is optional.', // Optional; may not be shown
+        'message-is-required'                                       => 'The message field is required.',
+        'images-optional'                                           => 'Images are optional.',
+        'images-must-be-an-image'                                   => 'Each uploaded file must be an image.',
+        'images-invalid-format'                                     => 'Each image must be a file of type: jpeg, png, jpg, gif, svg.',
+
+        // Suggestion Place Api
+        'place_name-required'                                       => 'The place name field is required.',
+        'address-required'                                          => 'The address field is required.',
+        'images-image'                                              => 'Each image must be a valid image file.',
+        'images-mimes'                                              => 'Each image must be one of the following formats: jpeg, png, jpg, gif, svg, webp.',
+
+        // Featured Api
+        'the-features-must-be-string-separated-by-comma'            => 'The features must be a string separated by commas.',
+        'the-feature-does-not-exist'                                => 'The feature does not exist.',
     ]
 
 ];

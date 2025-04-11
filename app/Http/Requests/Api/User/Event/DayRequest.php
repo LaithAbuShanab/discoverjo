@@ -37,15 +37,6 @@ class DayRequest extends FormRequest
         ];
     }
 
-
-    public function attributes()
-    {
-        return [
-            'date' => __('validation.attributes.date'),
-
-        ];
-    }
-
     /**
      * Handle a failed validation attempt.
      *
@@ -60,5 +51,4 @@ class DayRequest extends FormRequest
             ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $errors)
         );
     }
-
 }

@@ -5,11 +5,6 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Event\DayRequest;
-use App\Rules\CheckIfExistsInFavoratblesRule;
-use App\Rules\CheckIfExistsInReviewsRule;
-use App\Rules\CheckIfExistsInToUpdateReviewsRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
-use App\Rules\CheckIfPastEventOrVolunteering;
 use App\Rules\CheckUserInterestExistsRule;
 use App\Rules\CheckUserInterestRule;
 use App\UseCases\Api\User\EventApiUseCase;
@@ -18,15 +13,11 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class EventApiController extends Controller
 {
-    protected $eventApiUseCase;
-
-    public function __construct(EventApiUseCase $eventApiUseCase)
+    public function __construct(protected EventApiUseCase $eventApiUseCase)
     {
-
         $this->eventApiUseCase = $eventApiUseCase;
     }
 
@@ -34,10 +25,9 @@ class EventApiController extends Controller
     {
         try {
             $events = $this->eventApiUseCase->allEvents();
-            return ApiResponse::sendResponse(200, __('app.event.api.events-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.events-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -46,10 +36,9 @@ class EventApiController extends Controller
     {
         try {
             $events = $this->eventApiUseCase->activeEvents();
-            return ApiResponse::sendResponse(200, __('app.event.api.active-events-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.active-events-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
@@ -64,13 +53,13 @@ class EventApiController extends Controller
             'event_slug.exists' => __('validation.api.event-id-does-not-exists'),
         ]);
 
-        $data =$validator->validated();
+        $data = $validator->validated();
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors());
         }
         try {
             $events = $this->eventApiUseCase->event($data['event_slug']);
-            return ApiResponse::sendResponse(200, __('app.event.api.event-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.event-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -80,10 +69,9 @@ class EventApiController extends Controller
 
     public function dateEvents(DayRequest $request)
     {
-
         try {
             $events = $this->eventApiUseCase->dateEvents($request->validated());
-            return ApiResponse::sendResponse(200, __('app.event.api.events-of-specific-date-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.events-of-specific-date-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -91,7 +79,7 @@ class EventApiController extends Controller
         }
     }
 
-    public function interest(Request $request,$slug)
+    public function interest(Request $request, $slug)
     {
         $validator = Validator::make(['slug' => $slug], [
             'slug' => ['required', 'exists:events,slug', new CheckUserInterestRule('App\Models\Event')],
@@ -114,7 +102,7 @@ class EventApiController extends Controller
         }
     }
 
-    public function disinterest(Request $request,$slug)
+    public function disinterest(Request $request, $slug)
     {
         $validator = Validator::make(['slug' => $slug], [
             'slug' => ['required', 'exists:events,slug', new CheckUserInterestExistsRule('App\Models\Event')],
@@ -142,10 +130,9 @@ class EventApiController extends Controller
         $query = $request->input('query');
         try {
             $events = $this->eventApiUseCase->search($query);
-            return ApiResponse::sendResponse(200, __('app.event.api.the-searched-event-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.the-searched-event-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }

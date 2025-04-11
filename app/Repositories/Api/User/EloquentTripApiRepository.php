@@ -118,7 +118,21 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     ->where('status', '0');
             })->get();
 
+
         return TripResource::collection($trips);
+    }
+
+    public function invitationCount()
+    {
+        $userId = Auth::guard('api')->user()->id;
+        $trips = Trip::where('trip_type', '2')
+            ->where('status', '1')
+            ->whereHas('usersTrip', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->where('status', '0');
+            })->count();
+
+        return ['count' => $trips];
     }
 
     public function privateTrips()
@@ -323,7 +337,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $user = User::find($trip->user_id);
 
         // To Save Notification In Database
-        Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username , $trip));
+        Notification::send($user, new AcceptCancelInvitationNotification($request->status, Auth::guard('api')->user()->username, $trip));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
         $receiverLanguage = $user->lang;

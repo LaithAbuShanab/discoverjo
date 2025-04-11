@@ -35,25 +35,19 @@ class StoreContactUsApiRequest extends FormRequest
         ];
     }
 
-
     public function messages()
     {
         return [
             'name.required' => __('validation.api.name-is-required'),
-
             'email.required' => __('validation.api.email-is-required'),
             'email.email' => __('validation.api.email-invalid-format'),
-
             'subject.nullable' => __('validation.api.subject-nullable'),
-
             'message.required' => __('validation.api.message-is-required'),
-
             'images.array' => __('validation.api.images-optional'),
             'images.*.image' => __('validation.api.images-must-be-an-image'),
             'images.*.mimes' => __('validation.api.images-invalid-format'),
         ];
     }
-
 
     public function attributes()
     {
@@ -65,7 +59,6 @@ class StoreContactUsApiRequest extends FormRequest
             'images' => __('validation.attributes.images'),
         ];
     }
-
 
     protected function failedValidation(Validator $validator)
     {

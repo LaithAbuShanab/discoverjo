@@ -13,6 +13,8 @@ interface TripApiRepositoryInterface
 
     public function invitationTrips();
 
+    public function invitationCount();
+
     public function changeStatusInvitation($data);
 
     public function privateTrips();

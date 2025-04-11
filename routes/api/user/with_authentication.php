@@ -132,7 +132,9 @@ Route::middleware(['firstLogin'])->group(function () {
         // User Trips Requests
         Route::post('/user/{status}', [TripApiController::class, 'acceptCancel']); // DONE ✅ // NOTIFICATION(14)
         // Invitations Trips
-        Route::get('/invitations', [TripApiController::class, 'invitationTrips']); // DONE ✅
+        Route::get('/invitations', [TripApiController::class, 'invitationTrips']); // DONE
+        // Invitation Count
+        Route::get('/invitation_count', [TripApiController::class, 'invitationCount']); // DONE ✅
 
         // Middleware Grouped Routes
         Route::middleware('CheckTripStatus')->group(function () {

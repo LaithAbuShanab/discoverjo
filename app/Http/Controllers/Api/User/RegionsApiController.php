@@ -6,16 +6,12 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\UseCases\Api\User\RegionsApiUseCase;
 use Illuminate\Http\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class RegionsApiController extends Controller
 {
-    protected $RegionsApiUseCase;
-
-    public function __construct(RegionsApiUseCase $RegionsApiUseCase)
+    public function __construct(protected RegionsApiUseCase $RegionsApiUseCase)
     {
-
         $this->RegionsApiUseCase = $RegionsApiUseCase;
     }
 
@@ -23,7 +19,7 @@ class RegionsApiController extends Controller
     {
         try {
             $regions = $this->RegionsApiUseCase->allRegions();
-            return ApiResponse::sendResponse(200, __('app.regions-retrieved-successfully'), $regions);
+            return ApiResponse::sendResponse(200, __('app.api.regions-retrieved-successfully'), $regions);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

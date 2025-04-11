@@ -172,8 +172,6 @@ return [
         'rating-created-successfully' => 'Your rating created successfully',
         'rating-updated-successfully' => 'Your rating updated successfully',
         'rating-deleted-successfully' => 'Your rating deleted successfully',
-        'guide-trips-retrieved-successfully' => 'Guides trips retrieved successfully',
-        'trip-retrieved-successfully' => 'Trip retrieved successfully',
         'trip-created-successfully' => 'Trip created successfully',
         'trip-updated-successfully' => 'Trip updated successfully',
         'trip-deleted-successfully' => 'Trip deleted successfully',
@@ -199,7 +197,6 @@ return [
         'reply-created-successfully' => 'Reply created successfully',
         'reply-updated-successfully' => 'Reply updated successfully',
         'reply-deleted-successfully' => 'Reply deleted successfully',
-        'onboardings-retrieved-successfully' => 'Onboardings retrieved successfully',
         'user-details-retrieved-successfully' => 'User details retrieved successfully',
         'your-profile-updated-successfully' => 'Your profile updated successfully',
         'your-location-set-successfully' => 'Your location sat successfully',
@@ -289,9 +286,21 @@ return [
 
         // Guide Trip Api
         'the-searched-guide-trip-retrieved-successfully'               => 'The searched guide trip retrieved successfully',
+        'guide-trips-retrieved-successfully'                           => 'Guide trips retrieved successfully',
+        'trip-retrieved-successfully'                                  => 'Trip retrieved successfully',
+        'guide-users-retrieved-successfully'                           => 'Guide users retrieved successfully',
 
         // User Api
         'the-users-retried-successfully'                               => 'The users retried successfully',
         'your-place-current-location-retrieved-successfully'            => 'Your place current location retrieved successfully',
+
+        // Slider Api
+        'onboardings-retrieved-successfully'                           => 'Onboardings retrieved successfully',
+
+        // Region Api
+        'regions-retrieved-successfully'                               => 'Regions retrieved successfully',
+
+        // Feature Api'
+        'features-retrieved-successfully'                              => 'Features retrieved successfully',
     ],
 ];

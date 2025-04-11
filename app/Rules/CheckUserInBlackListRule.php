@@ -20,5 +20,4 @@ class CheckUserInBlackListRule implements ValidationRule
             $fail(__('validation.api.this_email_in_black_list'));
         }
     }
-
 }

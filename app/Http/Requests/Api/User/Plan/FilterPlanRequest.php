@@ -26,8 +26,8 @@ class FilterPlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'region'=>['nullable','exists:regions,slug'],
-            'number_of_days'=>'nullable',
+            'region' => ['nullable', 'exists:regions,slug'],
+            'number_of_days' => 'nullable|integer|min:1',
         ];
     }
 
@@ -35,6 +35,7 @@ class FilterPlanRequest extends FormRequest
     {
         return [
             'region.exists' => __('validation.api.region-id-exists'),
+            'number_of_days.nullable' => __('validation.api.number-of-days-nullable'),
             'number_of_days.integer' => __('validation.api.number-of-days-integer'),
             'number_of_days.min' => __('validation.api.number-of-days-min'),
         ];

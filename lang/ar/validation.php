@@ -349,7 +349,6 @@ return [
         "you-made-rating-already" => "لقد قمت بالفعل بتقييم المرشد",
         "guide-id-not-exists" => "الدليل المحدد غير موجود.",
         "guide-already-joined" => "لقد انضممت إلى هذا الدليل من قبل.",
-        'guide-trip-id-required' => 'رقم معرف الرحلة السياحية مطلوب.',
 
         'status-is-required' => 'الحالة مطلوبة',
         'guide-trip-user-id-required' => 'رقم معرف طلب الانضمام مطلوب ',
@@ -393,34 +392,6 @@ return [
         "file-must-be-valid" => "يجب أن يكون الملف المرفوع صالحًا.",
         "file-invalid-type" => "يجب أن يكون الملف من الأنواع التالية: jpg، jpeg، png، gif، mp3، wav، mp4، mov، avi.",
         "file-max-size" => "يجب ألا يتجاوز حجم الملف :max كيلوبايت.",
-
-        // Personal Info Errors
-        "first-name-is-required" => "الاسم الأول مطلوب.",
-        "first-name-must-be-string" => "يجب أن يكون الاسم الأول نصًا.",
-        "last-name-is-required" => "اسم العائلة مطلوب.",
-        "last-name-must-be-string" => "يجب أن يكون اسم العائلة نصًا.",
-        "birthday-is-required" => "تاريخ الميلاد مطلوب.",
-        "birthday-invalid-age" => "يجب أن يكون عمرك على الأقل :min_age سنوات.",
-        "gender-is-required" => "الجنس مطلوب.",
-        "gender-must-be-valid" => "يجب أن يكون الجنس إما 1 (ذكر) أو 2 (أنثى).",
-
-        // Contact Info Errors
-        "phone-number-is-required" => "رقم الهاتف مطلوب.",
-        "phone-number-must-be-string" => "يجب أن يكون رقم الهاتف نصًا.",
-        "description-is-required" => "الوصف مطلوب.",
-        "description-must-be-string" => "يجب أن يكون الوصف نصًا.",
-
-        // Tag Errors
-        "tags-id-is-required" => "العلامات مطلوبة.",
-        "tags-id-must-exist" => "واحدة أو أكثر من العلامات المحددة غير موجودة.",
-
-        // Image Errors
-        "image-is-required" => "الصورة مطلوبة.",
-        "image-must-be-an-image" => "يجب أن يكون الملف صورة.",
-
-        // Professional File Errors
-        "professional-file-is-required" => "الملف المهني مطلوب.",
-        "professional-file-invalid-format" => "يجب أن يكون الملف المهني من أحد الأنواع التالية: pdf، jpeg، png، jpg، gif، svg، webp، bmp، tiff، ico، svgz.",
 
         // Following ID Errors
         "following-id-is-required" => "معرف المتابعة مطلوب.",
@@ -529,11 +500,6 @@ return [
         'subcategories-id-array' => 'يجب أن يكون حقل معرف الفئات الفرعية مصفوفة.',
         'subcategory-exists' => 'واحدة أو أكثر من الفئات الفرعية غير موجودة.',
         'subcategory-main' => 'يجب أن تكون الفئة الفرعية المحددة فئة فرعية صحيحة.',
-
-        // Region ID Errors
-        'region-id-nullable' => 'حقل معرف المنطقة اختياري.',
-        'region-id-integer' => 'يجب أن يكون معرف المنطقة عددًا صحيحًا.',
-        'region-id-exists' => 'معرف المنطقة المحدد غير موجود.',
 
         // Cost Errors
         'max-cost-nullable' => 'حقل التكلفة القصوى اختياري.',
@@ -913,11 +879,11 @@ return [
         "date-is-required"                                          => "التاريخ مطلوب.",
         "date-invalid-format"                                       => "يجب أن يكون التاريخ بتنسيق صالح.",
 
-        // Volunteering Api
+        // Volunteering Validation
         'volunteering-id-is-required'                               => 'معرّف التطوع مطلوب.',
         'volunteering-id-does-not-exist'                            => 'معرّف التطوع غير موجود.',
 
-        // Contact Us Api
+        // Contact Us Validation
         'name-is-required'                                          => 'حقل الاسم مطلوب.',
         'email-is-required'                                         => 'حقل البريد الإلكتروني مطلوب.',
         'email-invalid-format'                                      => 'يجب أن يكون البريد الإلكتروني بتنسيق صحيح.',
@@ -927,16 +893,55 @@ return [
         'images-must-be-an-image'                                   => 'يجب أن تكون كل صورة من نوع صورة.',
         'images-invalid-format'                                     => 'يجب أن تكون كل صورة من الأنواع التالية: jpeg، png، jpg، gif، svg.',
 
-        // Suggestion Place Api
+        // Suggestion Place Validation
         'place_name-required'                                       => 'حقل اسم المكان مطلوب.',
         'address-required'                                          => 'حقل العنوان مطلوب.',
         'images-image'                                              => 'يجب أن تكون كل صورة ملف صورة صالح.',
         'images-mimes'                                              => 'يجب أن تكون كل صورة بأحد التنسيقات التالية: jpeg، png، jpg، gif، svg، webp.',
 
-        // Featured Api
+        // Featured Validation
         'the-features-must-be-string-separated-by-comma'            => 'يجب أن تكون المميزات عبارة عن سلسلة مفصولة بفواصل.',
         'the-feature-does-not-exist'                                => 'المميزة غير موجودة.',
+
+        // Guide Trip Validation
+        'the-guide-not-longer-active'                               => 'الدليل لم يتم تحديثه بعد.',
+        'guide-trip-id-required'                                    => 'رقم معرف الرحلة السياحية مطلوب.',
+        'guide-trip-id-does-not-exists'                             => 'رقم معرف الرحلة السياحية غير موجود.',
+        'first-name-is-required'                                    => 'الاسم الأول مطلوب.',
+        'first-name-must-be-string'                                 => 'يجب أن يكون الاسم الأول نصًا.',
+        'last-name-is-required'                                     => 'اسم العائلة مطلوب.',
+        'last-name-must-be-string'                                  => 'يجب أن يكون اسم العائلة نصًا.',
+        'username-min-length'                                       => 'يجب أن يكون اسم المستخدم على الأقل :min أحرف.',
+        'username-max-length'                                       => 'يجب ألا يزيد اسم المستخدم عن :max أحرف.',
+        'username-must-match-regex'                                 => 'يجب أن يبدأ اسم المستخدم بحرف ويحتوي فقط على حروف وأرقام وشرطات وشرطات سفلية.',
+        'username-must-not-contain-spaces'                          => 'يجب ألا يحتوي اسم المستخدم على مسافات.',
+        'birthday-is-required'                                      => 'تاريخ الميلاد مطلوب.',
+        'birthday-invalid-age'                                      => 'يجب أن يكون عمرك على الأقل :min_age سنوات.',
+        'gender-is-required'                                        => 'الجنس مطلوب.',
+        'gender-must-be-valid'                                      => 'يجب أن يكون الجنس إما 1 (ذكر) أو 2 (أنثى).',
+        'phone-number-is-required'                                  => 'رقم الهاتف مطلوب.',
+        'phone-number-must-be-string'                               => 'يجب أن يكون رقم الهاتف نصًا.',
+        'description-is-required'                                   => 'الوصف مطلوب.',
+        'description-must-be-string'                                => 'يجب أن يكون الوصف نصًا.',
+        'tags-id-is-required'                                       => 'العلامات مطلوبة.',
+        'tags-id-must-exist'                                        => 'واحدة أو أكثر من العلامات المحددة غير موجودة.',
+        'image-is-required'                                         => 'الصورة مطلوبة.',
+        'image-must-be-an-image'                                    => 'يجب أن يكون الملف صورة.',
+        'password-confirmed'                                        => 'تأكيد كلمة المرور غير مطابق.',
+        'device-token-max-length'                                   => 'يجب ألا يتجاوز رمز الجهاز :max حرفًا.',
+        'professional-file-is-required'                             => 'الملف المهني مطلوب.',
+        'professional-file-invalid-format'                          => 'يجب أن يكون الملف المهني من أحد الأنواع التالية: pdf، jpeg، png، jpg، gif، svg، webp، bmp، tiff، ico، svgz.',
+        'the-attribute-must-be-at-least-7-years-ago'                => 'يجب أن يكون :attribute قبل 7 سنوات على الأقل.',
+        'this_email_in_black_list'                                  => 'هذا البريد الإلكتروني موجود في القائمة السوداء.',
+
+        // Region Validation
+        'region-id-nullable'                                        => 'حقل معرف المنطقة اختياري.',
+        'region-id-integer'                                         => 'يجب أن يكون معرف المنطقة عددًا صحيحًا.',
+        'region-id-exists'                                          => 'معرف المنطقة المحدد غير موجود.',
+
+        // Day Validation
+        'number-of-days-integer'                                    => 'يجب أن يكون عدد الأيام عددًا صحيحًا.',
+        'number-of-days-min'                                        => 'يجب أن يكون عدد الأيام على الأقل 1.',
+        'number-of-days-nullable'                                   => 'حقل عدد الأيام اختياري.',
     ],
-
-
 ];

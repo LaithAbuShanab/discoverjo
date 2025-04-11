@@ -20,5 +20,4 @@ class MinAgeRule implements ValidationRule
             $fail(__('validation.api.the-attribute-must-be-at-least-7-years-ago', ['attribute' => $attribute]));
         }
     }
-
 }

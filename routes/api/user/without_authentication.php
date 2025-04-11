@@ -87,17 +87,26 @@ Route::get('all/search', [PlaceApiController::class, 'allSearch']); // DONE ✅
 Route::get('places/filter', [PlaceApiController::class, 'filter']); // DONE ✅
 // GET USER CURRENT LOCATION
 Route::get('user/current-location/places', [UserProfileController::class, 'currentLocation']); // DONE ✅
-
-Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']); //
-Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']); ////
-Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']); ////
-Route::get('all/guides', [GuideTripApiController::class, 'allGuides']); ////
-Route::post('guide/register', [RegisterGuideApiController::class, 'register']); //
-Route::get('/guides/trips', [GuideTripApiController::class, 'index']); ////
-Route::get('all/regions', [RegionsApiController::class, 'index']);
-Route::get('all/features', [FeaturesApiController::class, 'index']);
-Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans');
-Route::get('plan/filter', [PlanApiController::class, 'filter']);
+// GET ALL SLIDER
+Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']); // DONE ✅
+// GET ALL USER GUIDES TRIPS
+Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']); // DONE ✅
+// GET SINGLE GUIDE TRIP
+Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']); // DONE ✅
+// GET ALL GUIDE USERS
+Route::get('all/guides', [GuideTripApiController::class, 'allGuides']); // DONE ✅
+// POST GUIDE REGISTER
+Route::post('guide/register', [RegisterGuideApiController::class, 'register']); // DONE ✅
+// GET GUIDE TRIPS
+Route::get('/guides/trips', [GuideTripApiController::class, 'index']); // DONE ✅
+// GET ALL REGIONS
+Route::get('all/regions', [RegionsApiController::class, 'index']); // DONE ✅
+// GET ALL FEATURES
+Route::get('all/features', [FeaturesApiController::class, 'index']); // DONE ✅
+// GET ALL PLANS
+Route::get('all/plans', [PlanApiController::class, 'allPlans'])->name('plans'); // DONE ✅
+// GET FILTERED PLANS
+Route::get('plan/filter', [PlanApiController::class, 'filter']); // DONE ✅
 
 require __DIR__ . '/auth_user.php';
 

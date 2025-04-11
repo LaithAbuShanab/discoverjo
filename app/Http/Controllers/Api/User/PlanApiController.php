@@ -63,7 +63,7 @@ class PlanApiController extends Controller
     {
         try {
             $plans = $this->planApiUseCase->plans();
-            return ApiResponse::sendResponse(200, __('app.plan.api.plans-retrieved-successfully'), $plans);
+            return ApiResponse::sendResponse(200, __('app.api.plans-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -210,7 +210,7 @@ class PlanApiController extends Controller
     {
         try {
             $plans = $this->planApiUseCase->filter($request->validated());
-            return ApiResponse::sendResponse(200, __('app.plan.api.the-searched-plan-retrieved-successfully'), $plans);
+            return ApiResponse::sendResponse(200, __('app.api.the-searched-plan-retrieved-successfully'), $plans);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

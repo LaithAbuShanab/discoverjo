@@ -10,23 +10,19 @@ use Illuminate\Http\Response;
 
 class RegisterGuideApiController extends Controller
 {
-    protected $registerGuideApiUseCase;
-
-    public function __construct(RegisterGuideApiUseCase $registerGuideApiUseCase)
+    public function __construct(protected RegisterGuideApiUseCase $registerGuideApiUseCase)
     {
         $this->registerGuideApiUseCase = $registerGuideApiUseCase;
     }
 
     public function register(RegisterGuideApiRequest $request)
     {
-        $lang = $request->header('Content-Language','ar');
+        $lang = $request->header('Content-Language', 'ar');
         try {
             $user = $this->registerGuideApiUseCase->register($request->validated(), $lang);
-            return ApiResponse::sendResponse(200, __('app.auth.api.you-register-successfully'), $user);
+            return ApiResponse::sendResponse(200, __('app.api.you-register-successfully'), $user);
         } catch (\Exception $e) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
-
-
 }

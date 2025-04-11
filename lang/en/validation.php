@@ -334,7 +334,6 @@ return [
         'user-id-does-not-exists' => 'user id does not exists',
         'conversation-id-is-required' => 'Conversation id is required',
         'conversation-id-does-not-exists' => 'Conversation id does not exists',
-        'guide-trip-id-required' => 'guide trip id is required',
         'status-is-required' => 'Status is required',
         'guide-trip-user-id-required' => 'Guide trip user id required',
         'guide-trip-user-id-does-not-exists' => 'Guide trip user id does not exists',
@@ -370,56 +369,6 @@ return [
         "file-must-be-valid" => "The uploaded file must be a valid file.",
         "file-invalid-type" => "The file must be one of the following types: jpg, jpeg, png, gif, mp3, wav, mp4, mov, avi.",
         "file-max-size" => "The file must not exceed :max kilobytes.",
-        // First Name
-        "first-name-is-required" => "First name is required.",
-        "first-name-must-be-string" => "First name must be a string.",
-
-        // Last Name
-        "last-name-is-required" => "Last name is required.",
-        "last-name-must-be-string" => "Last name must be a string.",
-
-        // Username
-        "username-min-length" => "Username must be at least :min characters.",
-        "username-max-length" => "Username must not exceed :max characters.",
-        "username-must-match-regex" => "Username must start with a letter and contain only letters, numbers, dashes, and underscores.",
-        "username-must-not-contain-spaces" => "Username must not contain spaces.",
-
-        // Birthday
-        "birthday-is-required" => "Birthday is required.",
-        "birthday-invalid-age" => "You must be at least :min_age years old.",
-
-        // Gender
-        "gender-is-required" => "Gender is required.",
-        "gender-must-be-valid" => "Gender must be either 1 (male) or 2 (female).",
-
-        // Email
-
-
-        // Phone Number
-        "phone-number-is-required" => "Phone number is required.",
-        "phone-number-must-be-string" => "Phone number must be a string.",
-
-        // Description
-        "description-is-required" => "Description is required.",
-        "description-must-be-string" => "Description must be a string.",
-
-        // Tags ID
-        "tags-id-is-required" => "Tags are required.",
-        "tags-id-must-exist" => "One or more of the selected tags do not exist.",
-
-        // Image
-        "image-is-required" => "Image is required.",
-        "image-must-be-an-image" => "The file must be an image.",
-
-        // Password
-        "password-confirmed" => "Password confirmation does not match.",
-
-        // Device Token
-        "device-token-max-length" => "Device token must not exceed :max characters.",
-
-        // Professional File
-        "professional-file-is-required" => "Professional file is required.",
-        "professional-file-invalid-format" => "The professional file must be one of the following types: pdf, jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz.",
 
         // Following ID
         "following-id-is-required" => "The following ID is required.",
@@ -578,7 +527,6 @@ return [
         'subcategory-exists' => 'One or more subcategories do not exist.',
         'subcategory-main' => 'The selected subcategory must be a valid subcategory.',
 
-        'region-id-nullable' => 'The region ID field is optional.',
         'max-cost-nullable' => 'The maximum cost field is optional.',
 
         'features-id-nullable' => 'The features ID field is optional.',
@@ -608,11 +556,6 @@ return [
         'activity-note-max' => 'The activity note may not be greater than 255 characters.',
 
         'day-total-duration' => 'The total duration of activities in a single day cannot exceed 24 hours.',
-
-        'region-id-integer' => 'The region ID must be an integer.',
-        'region-id-exists' => 'The selected region ID does not exist.',
-        'number-of-days-integer' => 'The number of days must be an integer.',
-        'number-of-days-min' => 'The number of days must be at least 1.',
 
         'plan-id-required' => 'The plan ID is required.',
         'plan-id-exists' => 'The selected plan does not exist or does not belong to you.',
@@ -763,7 +706,6 @@ return [
         'you_should_be_guide_to_create_guide_trip' => 'You must be a guide to create a guide trip.',
         'you_are_not_the_owner_of_this_post' => 'You are not the owner of this post.',
         'invalid_json_format' => 'The provided data is not a valid JSON format.',
-        'this_email_in_black_list' => 'This email is in the blacklist.',
         'you-didn\'t-make-this-to-interest-to-delete-interest' => 'You didn\'t mark this as interesting to delete the interest.',
         'you-already-make-this-as-interest' => 'You have already marked this as interesting.',
         'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'You can’t mark this as interesting because it is in the past.',
@@ -772,7 +714,6 @@ return [
         'you-are-not-a-member-of-this-conversation' => 'You are not a member of this conversation.',
         'this-post-is-private' => 'This post is private.',
         'you-are-not-following-this-user' => 'You are not following this user.',
-        'the-attribute-must-be-at-least-7-years-ago' => 'The :attribute must be at least 7 years ago.',
         'your-attribute-is-required' => 'The :attribute is required.',
         'combination-of-question-answer-and-next-question-must-be-unique' => 'The combination of question, answer, and next question must be unique.',
         'this-name-en-and-location-exists' => 'A place with this name in English and the specified location already exists.',
@@ -939,11 +880,11 @@ return [
         "date-is-required"                                          => "Date is required",
         "date-invalid-format"                                       => "Date invalid format",
 
-        // Volunteering Api
+        // Volunteering Validation
         'volunteering-id-is-required'                               => 'Volunteering ID is required',
         'volunteering-id-does-not-exist'                            => 'Volunteering ID does not exist',
 
-        // Contact Us Api
+        // Contact Us Validation
         'name-is-required'                                          => 'The name field is required.',
         'subject-nullable'                                          => 'The subject field is optional.', // Optional; may not be shown
         'message-is-required'                                       => 'The message field is required.',
@@ -951,15 +892,55 @@ return [
         'images-must-be-an-image'                                   => 'Each uploaded file must be an image.',
         'images-invalid-format'                                     => 'Each image must be a file of type: jpeg, png, jpg, gif, svg.',
 
-        // Suggestion Place Api
+        // Suggestion Place Validation
         'place_name-required'                                       => 'The place name field is required.',
         'address-required'                                          => 'The address field is required.',
         'images-image'                                              => 'Each image must be a valid image file.',
         'images-mimes'                                              => 'Each image must be one of the following formats: jpeg, png, jpg, gif, svg, webp.',
 
-        // Featured Api
+        // Featured Validation
         'the-features-must-be-string-separated-by-comma'            => 'The features must be a string separated by commas.',
         'the-feature-does-not-exist'                                => 'The feature does not exist.',
-    ]
 
+        // Guide Trip Validation
+        'the-guide-not-longer-active'                               => 'The guide trip is not longer active.',
+        'guide-trip-id-required'                                    => 'Guide trip id is required.',
+        'guide-trip-id-does-not-exists'                             => 'Guide trip id does not exist.',
+        'first-name-is-required'                                    => 'The first name field is required.',
+        'first-name-must-be-string'                                 => 'First name must be a string.',
+        'last-name-is-required'                                     => 'Last name is required.',
+        'last-name-must-be-string'                                  => 'Last name must be a string.',
+        'username-min-length'                                       => 'Username must be at least :min characters.',
+        'username-max-length'                                       => 'Username must not exceed :max characters.',
+        'username-must-match-regex'                                 => 'Username must start with a letter and contain only letters, numbers, dashes, and underscores.',
+        'username-must-not-contain-spaces'                          => 'Username must not contain spaces.',
+        'birthday-is-required'                                      => 'Birthday is required.',
+        'birthday-invalid-age'                                      => 'You must be at least :min_age years old.',
+        'gender-is-required'                                        => 'Gender is required.',
+        'gender-must-be-valid'                                      => 'Gender must be either 1 (male) or 2 (female).',
+        'phone-number-is-required'                                  => 'Phone number is required.',
+        'phone-number-must-be-string'                               => 'Phone number must be a string.',
+        'description-is-required'                                   => 'Description is required.',
+        'description-must-be-string'                                => 'Description must be a string.',
+        'tags-id-is-required'                                       => 'Tags are required.',
+        'tags-id-must-exist'                                        => 'One or more of the selected tags do not exist.',
+        'image-is-required'                                         => 'Image is required.',
+        'image-must-be-an-image'                                    => 'The file must be an image.',
+        'password-confirmed'                                        => 'Password confirmation does not match.',
+        'device-token-max-length'                                   => 'Device token must not exceed :max characters.',
+        'professional-file-is-required'                             => 'Professional file is required.',
+        'professional-file-invalid-format'                          => 'The professional file must be one of the following types: pdf, jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz.',
+        'the-attribute-must-be-at-least-7-years-ago'                => 'The :attribute must be at least 7 years ago.',
+        'this_email_in_black_list'                                  => 'This email is in the blacklist.',
+
+        // Region Validation
+        'region-id-nullable'                                       => 'The region ID field is optional.',
+        'region-id-integer'                                        => 'The region ID must be an integer.',
+        'region-id-exists'                                         => 'The selected region ID does not exist.',
+
+        // Day Validation
+        'number-of-days-integer'                                   => 'The number of days must be an integer.',
+        'number-of-days-min'                                       => 'The number of days must be at least 1.',
+        'number-of-days-nullable'                                  => 'The number of days field is optional.',
+    ]
 ];

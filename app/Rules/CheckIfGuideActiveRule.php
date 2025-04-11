@@ -16,9 +16,9 @@ class CheckIfGuideActiveRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $guideTrip = GuideTrip::findBySlug($value);
-        if(!$guideTrip) return;
+        if (!$guideTrip) return;
         $guideStatus = $guideTrip->guide?->status;
-        if(!$guideStatus){
+        if (!$guideStatus) {
             $fail(__('validation.api.the-guide-not-longer-active'));
         }
     }

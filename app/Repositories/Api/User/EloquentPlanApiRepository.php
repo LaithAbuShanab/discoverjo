@@ -204,7 +204,7 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'prev_page_url' => $plansArray['next_page_url'],
             'total' => $plansArray['total'],
         ];
-        if($query) {
+        if ($query) {
             activityLog('plan', $plans->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
@@ -277,19 +277,26 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'pagination' => $pagination
         ];
 
-        // activityLog('plan', $plans->first(), $data['region'], 'filter');
-        activityLog(
-            'filter plans',
-            $plans->first(),
-            'The user filter the places',
-            'filter',
-            [
-                'number_of_days'     => $numberOfDays??null,
-                'region'  => $regionSlug?? null,
-
-            ]
-        );
+        $this->logFilteredPlans($baseQuery->get(), $numberOfDays, $regionSlug);
 
         return $response;
+    }
+
+    private function logFilteredPlans($plans, $numberOfDays, $regionSlug): void
+    {
+        foreach ($plans as $plan) {
+            if ($plan instanceof \Illuminate\Database\Eloquent\Model) {
+                activityLog(
+                    'filter plans',
+                    $plan,
+                    'The user filtered the places',
+                    'filter',
+                    [
+                        'number_of_days' => $numberOfDays,
+                        'region'         => $regionSlug,
+                    ]
+                );
+            }
+        }
     }
 }

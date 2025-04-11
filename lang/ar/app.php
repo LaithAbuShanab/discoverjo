@@ -171,8 +171,6 @@ return [
         'rating-created-successfully' => 'تم انشاء تقييمك بنجاح',
         'rating-updated-successfully' => 'تم تعديل تقييمك بنجاح',
         'rating-deleted-successfully' => 'تم حذف تقييمك بنجاح',
-        'guide-trips-retrieved-successfully' => 'تم استرجاع رحلات المرشدين السياحيين بنجاح',
-        'trip-retrieved-successfully' => 'تم استرجاع رحلة المرشدين السياحيين بنجاح',
         'trip-updated-successfully' => 'تم تعديل رحلة مرشد سياحي بنجاح',
         'trip-deleted-successfully' => 'تم حذف رحلة مرشد سياحي بنجاح',
         'trip-image-deleted-successfully' => 'تم حذف صورة رحلة مرشد سياحي بنجاح',
@@ -196,7 +194,6 @@ return [
         'reply-created-successfully' => 'تم انشاء الرد بنجاح',
         'reply-updated-successfully' => 'تم تعديل الرد بنجاح',
         'reply-deleted-successfully' => 'تم حذف الرد بنجاح',
-        'onboardings-retrieved-successfully' => 'تم استرجاع الصور بنجاح',
         'user-details-retrieved-successfully' => 'تم استرجاع تفاصيل المستخدم بنجاح',
         'your-profile-updated-successfully' => 'تم تعديل ملفك الشخصي بنجاح',
         'your-location-set-successfully' => 'تم تحديد موقعك بنجاح',
@@ -287,10 +284,22 @@ return [
 
         // Guide Trip Api
         'the-searched-guide-trip-retrieved-successfully'               => 'تم استرجاع الرحلات المبحوث عنها بنجاح',
+        'guide-trips-retrieved-successfully'                           => 'تم استرجاع رحلات المرشدين السياحيين بنجاح',
+        'trip-retrieved-successfully'                                  => 'تم استرجاع رحلة المرشدين السياحيين بنجاح',
+        'guide-users-retrieved-successfully'                           => 'تم استرجاع المرشدين السياحيين بنجاح',
 
         // User Api
         'the-users-retried-successfully'                               => 'تم استرجاع المستخدمين بنجاح',
-        'your-place-current-location-retrieved-successfully'            => 'تم استرجاع موقعك الحالي بنجاح',
+        'your-place-current-location-retrieved-successfully'           => 'تم استرجاع موقعك الحالي بنجاح',
+
+        // Slider Api
+        'onboardings-retrieved-successfully'                           => 'تم استرجاع الصور بنجاح',
+
+        // Region Api
+        'regions-retrieved-successfully'                               => 'تم استرجاع المناطق بنجاح',
+
+        // Feature Api'
+        'features-retrieved-successfully'                              => 'تم استرجاع الميزات بنجاح',
 
     ],
 ];

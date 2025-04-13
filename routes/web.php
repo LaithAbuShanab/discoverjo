@@ -25,3 +25,6 @@ Route::get('/check-time', function () {
     return 'Laravel time: ' . now()->toDateTimeString();
 });
 
+Route::get('generate-places', [\App\Http\Controllers\AutomaticPlaceController::class,'insertPlacesFromJson']);
+
+

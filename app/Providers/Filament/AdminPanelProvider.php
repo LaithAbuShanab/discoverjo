@@ -79,6 +79,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setIcon('heroicon-o-user')
                     ->setSort(10)
                     ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowBrowserSessionsForm()
             ])
             ->userMenuItems([
                 'profile' => MenuItem::make()

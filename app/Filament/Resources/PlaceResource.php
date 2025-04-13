@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Mokhosh\FilamentRating\Columns\RatingColumn;
 use Mokhosh\FilamentRating\RatingTheme;
 use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
@@ -119,7 +120,14 @@ class PlaceResource extends Resource
             ])
             ->actions(ActionGroup::make([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        if($record->google_place_id){
+                            DB::table('trash_places')->insert([
+                                'google_place_id' => $record->google_place_id,
+                            ]);
+                        }
+                    }),
                 ActivityLogTimelineTableAction::make('Activities'),
             ]))
             ->bulkActions([

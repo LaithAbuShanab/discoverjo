@@ -13,6 +13,7 @@
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "filament/widgets": "^3.2",
         "filipfonal/filament-log-manager": "^2.1",
+        "joaopaulolndev/filament-edit-profile": "^1.0",
         "kreait/laravel-firebase": "^6.0",
         "laravel/framework": "^11.31",
         "laravel/passport": "^12.0",

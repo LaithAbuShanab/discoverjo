@@ -82,6 +82,7 @@ Route::middleware(['firstLogin'])->group(function () {
 
     Route::group(['prefix' => 'guide'], function () {
         Route::post('/trips/store', [GuideTripApiController::class, 'store']);
+        Route::get('/trips/{guide_slug}', [GuideTripApiController::class, 'tripsOfGuide']);
         Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']);
         Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']);
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);

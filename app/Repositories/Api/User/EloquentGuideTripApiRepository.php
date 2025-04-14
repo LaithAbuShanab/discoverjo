@@ -353,4 +353,24 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             $user->recordStreak($activity);
         });
     }
+
+    public function tripsOfGuide($slug)
+    {
+        $guide = User::findBySlug($slug);
+        $guideTrips= GuideTrip::where('guide_id',$guide->id)->get();
+        $tripsArray = $guideTrips->toArray();
+
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
+            'total' => $tripsArray['total'],
+        ];
+
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'trips' => AllGuideTripResource::collection($guideTrips),
+            'pagination' => $pagination
+        ];
+    }
 }

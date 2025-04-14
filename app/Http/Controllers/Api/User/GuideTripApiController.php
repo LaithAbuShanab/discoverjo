@@ -10,6 +10,7 @@ use App\Rules\CheckIfGuideActiveRule;
 use App\Rules\CheckIfGuideIsOwnerOfTrip;
 use App\Rules\CheckIfImageBelongToGuideRule;
 use App\Rules\CheckIfTheUserOwnTheTripRule;
+use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckIfUserJoinedToTripActiveRule;
 use App\UseCases\Api\User\GuideTripApiUseCase;
 use Illuminate\Http\Request;
@@ -203,4 +204,28 @@ class GuideTripApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
+
+    public function tripsOfGuide( $guide_slug)
+    {
+
+        $validator = Validator::make(['guide_slug' => $guide_slug], [
+            'guide_slug' => ['required', 'exists:users,slug', new CheckIfUserActiveRule()],
+        ], [
+            'guide_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        try {
+            $updateTrip = $this->guideTripApiUseCase->tripsOfGuide($validator->validated()['guide_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.trip-updated-successfully'), $updateTrip);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
+        }
+    }
+
 }

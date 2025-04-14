@@ -103,4 +103,9 @@ class GuideTripApiUseCase
     {
         return $this->guideTripApiRepository->changeJoinRequestStatus($request);
     }
+
+    public function tripsOfGuide($slug)
+    {
+        return $this->guideTripApiRepository->tripsOfGuide($slug);
+    }
 }

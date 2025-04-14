@@ -13,6 +13,7 @@ interface GuideTripApiRepositoryInterface
     public function showGuideTrip($slug);
     public function joinRequests($slug);
     public function changeJoinRequestStatus($request);
+    public function tripsOfGuide($slug);
 
 
 }

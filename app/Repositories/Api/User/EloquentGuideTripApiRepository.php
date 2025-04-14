@@ -358,7 +358,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $guide = User::findBySlug($slug);
-        $guideTrips= GuideTrip::where('guide_id',$guide->id)->orderBy('start_datetime')
+        $guideTrips= GuideTrip::where('guide_id',$guide->id)->orderBy('start_datetime', 'desc')
             ->paginate($perPage);
         $tripsArray = $guideTrips->toArray();
 

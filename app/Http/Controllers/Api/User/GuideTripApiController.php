@@ -221,7 +221,7 @@ class GuideTripApiController extends Controller
         }
         try {
             $updateTrip = $this->guideTripApiUseCase->tripsOfGuide($validator->validated()['guide_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.trip-updated-successfully'), $updateTrip);
+            return ApiResponse::sendResponse(200, __('app.api.trips-retrieved-successfully'), $updateTrip);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());

@@ -2,13 +2,6 @@
 
 namespace App\Rules;
 
-use App\Models\Place;
-use App\Models\Plan;
-use App\Models\Trip;
-use App\Models\Event;
-use App\Models\Volunteering;
-use App\Models\GuideTrip;
-
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -32,9 +25,9 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip','event','volunteering','plan','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'];
 
-        if(!in_array($this->data['type'],$acceptableType)){
+        if (!in_array($this->data['type'], $acceptableType)) {
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
@@ -43,18 +36,19 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
         $favorableItem = $modelClass::findBySlug($value);
 
         if (!$favorableItem) {
-            $fail(__('validation.api.id-does-not-exists'));
+            $fail(__('validation.api.favorite-id-does-not-exists'));
             return;
         }
 
-        if($this->data['type']=='place'){
-            if($favorableItem->status != 1){
+        if ($this->data['type'] == 'place') {
+            if ($favorableItem->status != 1) {
                 $fail(__('validation.api.the-selected-place-is-not-active'));
+                return;
             }
         }
 
 
-            $exists = DB::table('favorables')
+        $exists = DB::table('favorables')
             ->where('user_id', Auth::guard('api')->id())
             ->where('favorable_type', $modelClass)
             ->where('favorable_id', $favorableItem->id)
@@ -62,6 +56,7 @@ class CheckIfExistsInFavoratblesRule implements ValidationRule, DataAwareRule
 
         if ($exists) {
             $fail(__('validation.api.you-already-make-this-as-favorite'));
+            return;
         }
     }
 }

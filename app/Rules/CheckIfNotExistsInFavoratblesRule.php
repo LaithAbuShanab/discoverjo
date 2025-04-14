@@ -24,9 +24,9 @@ class CheckIfNotExistsInFavoratblesRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip','event','volunteering','plan','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'];
 
-        if(!in_array($this->data['type'],$acceptableType)){
+        if (!in_array($this->data['type'], $acceptableType)) {
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
@@ -35,7 +35,7 @@ class CheckIfNotExistsInFavoratblesRule implements ValidationRule, DataAwareRule
         $favorableItem = $modelClass::findBySlug($value);
 
         if (!$favorableItem) {
-            $fail(__('validation.api.id-does-not-exists'));
+            $fail(__('validation.api.favorite-id-does-not-exists'));
             return;
         }
         $exists = DB::table('favorables')
@@ -44,7 +44,7 @@ class CheckIfNotExistsInFavoratblesRule implements ValidationRule, DataAwareRule
             ->where('favorable_id', $favorableItem->id)
             ->exists();
 
-        if (!$exists ) {
+        if (!$exists) {
             $fail(__('validation.api.this_is_not_in_favorite_list'));
         }
     }

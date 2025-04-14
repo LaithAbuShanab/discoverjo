@@ -40,11 +40,9 @@ return [
 
     'event' => [
         'api' => [
-            'you-add-this-event-to-interest-successfully' => 'تمت إضافة هذه الفعالية إلى قائمة اهتماماتك بنجاح',
             'you-already-make-this-as-interest' => 'لقد قمت بتحديد هذه كاهتمام بالفعالية بالفعل',
             'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'لا يمكنك تحديد هذه كاهتمام بالفعالية لأنها في الماضي',
             'you-didn\'t-make-this-to-interest-to-delete-interest' => 'لم تقم بتحديد هذه كاهتمام بالفعالية لحذفها',
-            'you-remove-this-event-from-interested-list' => 'تمت إزالة هذه الفعالية من قائمة اهتماماتك بنجاح',
             'you-already-make-this-as-favorite' => 'لقد قمت بتحديد هذه كمفضلة بالفعل',
             'you-added-event-in-favorite-successfully' => 'تمت إضافة هذه الفعالية إلى قائمة المفضلة بنجاح',
             'this-is-not-in-favorite-list-to-delete-it-from-list' => 'هذه الفعالية ليست في قائمة المفضلة لحذفها',
@@ -54,19 +52,13 @@ return [
             'you-added-review-for-this-event-successfully' => 'تمت إضافة مراجعة لهذه الفعالية بنجاح',
             'you-do-not-have-review' => 'ليس لديك مراجعة لتحديثها',
             'you-update-your-review-successfully' => 'تم تحديث مراجعتك بنجاح',
-            'you-deleted-your-review-successfully' => 'تم حذف مراجعتك بنجاح',
-            'the-likable-status-change-successfully' => 'تم تغيير حالة الإعجاب بنجاح',
         ],
     ],
 
     'place' => [
         'api' => [
-            'you-put-this-place-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
             'you-put-this-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
-            'you-delete-this-from-favorite-list' => 'لقد حذفت هذه من قائمة المفضلة',
             'you-remove-this-place-in-favorite-list' => 'لقد قمت بإزالة هذا المكان من قائمة المفضلة بنجاح',
-            'you-put-this-place-in-visited-place-list' => 'لقد وضعت هذا المكان في قائمة الأماكن التي تمت زيارتها بنجاح',
-            'remove-place-form-visited-places-list-successfully' => 'لقد قمت بإزالة هذا المكان من قائمة الأماكن التي تمت زيارتها بنجاح',
             'you-added-review-for-this-place-successfully' => 'لقد أضفت مراجعة لهذا المكان بنجاح',
             'you-updated-review-for-this-place-successfully' => 'لقد قمت بتحديث المراجعة لهذا المكان بنجاح',
             'you-remove-review-for-this-place-successfully' => 'لقد قمت بإزالة المراجعة لهذا المكان بنجاح',
@@ -77,7 +69,6 @@ return [
         'api' => [
             'favorite-plan-created-successfully' => 'لقد أضفت هذه الخطة إلى قائمة المفضلة',
             'you-remove-plan-from-favorite-list' => 'لقد قمت بإزالة هذه الخطة من قائمة المفضلة',
-            'the-likable-status-change-successfully' => 'تم تغيير حالة الإعجاب بنجاح',
         ]
     ],
 
@@ -183,25 +174,17 @@ return [
         'you-deleted-the-trip-from-favorite-Successfully' => 'لقد تم حذف هذه الرحلة من لائحة المفضلة بنجاح',
         'you-added-review-for-this-trip-successfully' => 'تمت اضافة مراجعة لهذه الرحلة بنجاح',
         'your-review-in-this-trip-updated-successfully' => 'تمت تعديل مراجعة لهذه الرحلة بنجاح',
-        'your-review-updated-successfully' => 'تم تعديل مراجعتك بنجاح',
         'the-plan-retrieved-successfully' => 'تم استرجاع الخطة بنجاح',
         'plan-deleted-successfully' => 'تم حذف الخطة بنجاح',
-        'post-retrieved-successfully' => 'تم استرجاع المنشورات بنجاح',
-        'post-created-successfully' => 'تم انشاء المنشور بنجاح',
-        'post-updated-successfully' => 'تم تعديل المنشور بنجاح',
         'favorite-post-created-successfully' => 'تم اضافة المنشور للائحة المفضلة',
         'favorite-post-deleted-successfully' => 'تمت إزالة المنشور من قائمة المفضلة بنجاح',
         'reply-created-successfully' => 'تم انشاء الرد بنجاح',
         'reply-updated-successfully' => 'تم تعديل الرد بنجاح',
         'reply-deleted-successfully' => 'تم حذف الرد بنجاح',
-        'user-details-retrieved-successfully' => 'تم استرجاع تفاصيل المستخدم بنجاح',
         'your-profile-updated-successfully' => 'تم تعديل ملفك الشخصي بنجاح',
         'your-location-set-successfully' => 'تم تحديد موقعك بنجاح',
-        'your-all-favorite-retrieved-successfully' => 'تم استرجاع قائمة مفضلتك بنجاع',
-        'the-searched-favorite-retrieved-successfully' => 'تم استرجاع المفضلة المبحوث عنها',
         'all-tags-retrieved-successfully' => 'تم استرجاع الاوسمة بنجاح',
         'guide-trips-users-subscription-fetched-successfully' => ' تم استرجاع لائحة المستخدمين المشتركين في الرحة بنجاح',
-        'the-interest-event-retrieved-successfully' => 'نم استرجاع لائحة الفعاليات التي اهتممت بها بنجاح',
 
         // Auth Api
         'you-logged-in-successfully'                                   => 'لقد تم تسجيل دخولك بنجاح',
@@ -247,6 +230,8 @@ return [
         // Place Api
         'place-retrieved-by-id-successfully'                           => 'تم استرجاع المكان بواسطة الهوية بنجاح',
         'the-searched-place-retrieved-successfully'                    => 'تم استرجاع المكان المبحوث بنجاح',
+        'you-put-this-place-in-visited-place-list'                     => 'لقد وضعت هذا المكان في قائمة الأماكن التي تمت زيارتها بنجاح',
+        'remove-place-form-visited-places-list-successfully'           => 'لقد قمت بإزالة هذا المكان من قائمة الأماكن التي تمت زيارتها بنجاح',
 
         // SubCategory Api
         'places-of-subcategories-retrieved-successfully'               => 'تم استرجاع الاماكن للتصنيف الفرعي بنجاح',
@@ -266,12 +251,18 @@ return [
         'event-retrieved-successfully'                                 => 'تم استرجاع الفعالية بنجاح',
         'events-of-specific-date-retrieved-successfully'               => 'تم استرجاع الفعاليات لتاريخ محدد بنجاح',
         'the-searched-event-retrieved-successfully'                    => 'تم استرجاع الفعالية المطلوبة بنجاح',
+        'the-interest-event-retrieved-successfully'                    => 'نم استرجاع لائحة الفعاليات التي اهتممت بها بنجاح',
+        'you-add-this-event-to-interest-successfully'                  => 'تمت إضافة هذه الفعالية إلى قائمة اهتماماتك بنجاح',
+        'you-remove-this-event-from-interested-list'                   => 'تمت إزالة هذه الفعالية من قائمة اهتماماتك بنجاح',
 
         // Volunteering Api
         'volunteering-retrieved-successfully'                          => 'تم استرجاع التطوع بنجاح',
         'active-volunteering-retrieved-successfully'                   => 'تم استرجاع التطوع النشط بنجاح',
         'volunteering-of-specific-date-retrieved-successfully'         => 'تم استرجاع التطوع لتاريخ محدد بنجاح',
         'the-searched-volunteering-retrieved-successfully'             => 'تم استرجاع التطوع المطلوب بنجاح',
+        'the-interest-volunteering-retrieved-successfully'             => 'تم استرجاع لائحة التطوع التي اهتممت بها بنجاح',
+        'you-add-this-volunteering-to-interest-successfully'           => 'تمت إضافة هذا التطوع إلى قائمة اهتماماتك بنجاح',
+        'you-remove-this-volunteering-to-interest-successfully'        => 'تمت إزالة هذا التطوع من قائمة اهتماماتك بنجاح',
 
         // Legal Api
         'legal-retrieved-successfully'                                 => 'تم استرجاع الوثائق القانونية بنجاح',
@@ -291,6 +282,7 @@ return [
         // User Api
         'the-users-retried-successfully'                               => 'تم استرجاع المستخدمين بنجاح',
         'your-place-current-location-retrieved-successfully'           => 'تم استرجاع موقعك الحالي بنجاح',
+        'user-details-retrieved-successfully'                          => 'تم استرجاع تفاصيل المستخدم بنجاح',
 
         // Slider Api
         'onboardings-retrieved-successfully'                           => 'تم استرجاع الصور بنجاح',
@@ -301,5 +293,28 @@ return [
         // Feature Api'
         'features-retrieved-successfully'                              => 'تم استرجاع الميزات بنجاح',
 
+        // Notification Api
+        'your-notification-retrieved-successfully'                     => 'تم استرجاع اشعاراتك بنجاح',
+        'notification-read-successfully'                               => 'تم قراءة الاشعار بنجاح',
+        'your-unread-notification-retrieved-successfully'              => 'تم استرجاع الاشعارات الغير مقروءة بنجاح',
+        'notification-deleted-successfully'                            => 'تم حذف الاشعار بنجاح',
+
+        // Favorite Api
+        'you-put-this-place-in-favorite-list'                          => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
+        'you-delete-this-from-favorite-list'                           => 'لقد حذفت هذه من قائمة المفضلة',
+        'your-all-favorite-retrieved-successfully'                     => 'تم استرجاع قائمة مفضلتك بنجاع',
+        'the-searched-favorite-retrieved-successfully'                 => 'تم استرجاع المفضلة المبحوث عنها',
+
+        // Review Api
+        'reviews-retrieved-successfully'                               => 'تم استرجاع التقييمات بنجاح',
+        'you-added-review-successfully'                                => 'تم اضافة التقييم بنجاح',
+        'your-review-updated-successfully'                             => 'تم تعديل مراجعتك بنجاح',
+        'you-deleted-your-review-successfully'                         => 'تم حذف مراجعتك بنجاح',
+        'the-likable-status-change-successfully'                       => 'تم تغيير حالة الإعجاب بنجاح',
+
+        // Post Api
+        'post-retrieved-successfully'                                  => 'تم استرجاع المنشورات بنجاح',
+        'post-created-successfully'                                    => 'تم انشاء المنشور بنجاح',
+        'post-updated-successfully'                                    => 'تم تعديل المنشور بنجاح',
     ],
 ];

@@ -19,10 +19,10 @@ class CheckIfNotExistsInVistedPlaceTableRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $place = Place::findBySlug($value);
-        if(!$place){
+        if (!$place) {
             return;
         }
-        if (!VisitedPlace::where('user_id', $userId)->where('place_id',$place->id)->exists()) {
+        if (!VisitedPlace::where('user_id', $userId)->where('place_id', $place->id)->exists()) {
             $fail(__('validation.api.this_place_not_in_your_visited_place_list'));
         }
     }

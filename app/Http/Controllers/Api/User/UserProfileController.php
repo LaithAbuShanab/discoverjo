@@ -174,7 +174,7 @@ class UserProfileController extends Controller
         }
         try {
             $notifications = $this->userProfileApiUseCase->readNotification($validator->validated()['id']);
-            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+            return ApiResponse::sendResponse(200,  __('app.api.notification-read-successfully'), $notifications);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -186,7 +186,7 @@ class UserProfileController extends Controller
     {
         try {
             $notifications = $this->userProfileApiUseCase->unreadNotifications();
-            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+            return ApiResponse::sendResponse(200,  __('app.api.your-unread-notification-retrieved-successfully'), $notifications);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -208,7 +208,7 @@ class UserProfileController extends Controller
         }
         try {
             $notifications = $this->userProfileApiUseCase->deleteNotifications($validator->validated()['id']);
-            return ApiResponse::sendResponse(200,  __('app.api.your-notification-retrieved-successfully'), $notifications);
+            return ApiResponse::sendResponse(200,  __('app.api.notification-deleted-successfully'), $notifications);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

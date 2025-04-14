@@ -16,69 +16,72 @@ use Illuminate\Validation\Rule;
 
 class FavoriteApiController extends Controller
 {
-    protected $favoriteApiUseCase;
-
-    public function __construct(FavoriteApiUseCase $favoriteApiUseCase)
+    public function __construct(protected FavoriteApiUseCase $favoriteApiUseCase)
     {
-
         $this->favoriteApiUseCase = $favoriteApiUseCase;
     }
 
-
-    public function favorite(Request $request,$type,$slug)
+    public function favorite(Request $request, $type, $slug)
     {
         $validator = Validator::make(
             [
-                'type'=>$type,
+                'type' => $type,
                 'slug' => $slug
             ],
             [
-                'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','plan','guideTrip'])],
-                'slug' => ['required', new CheckIfExistsInFavoratblesRule(),new CheckIfUserTypeActiveRule()],
-        ],[
-            'slug.required'=>__('validation.api.id-does-not-exists'),
-        ]);
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'])],
+                'slug' => ['bail', 'required', new CheckIfExistsInFavoratblesRule(), new CheckIfUserTypeActiveRule()],
+            ],
+            [
+                'slug.required' => __('validation.api.favorite-id-does-not-exists'),
+                'type.in' => __('validation.api.not-acceptable-type'),
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
         }
 
         try {
-            $data= $validator->validated();
+            $data = $validator->validated();
             $createFavPlace = $this->favoriteApiUseCase->createFavorite($data);
 
-            return ApiResponse::sendResponse(200,  __('app.place.api.you-put-this-place-in-favorite-list'), $createFavPlace);
+            return ApiResponse::sendResponse(200,  __('app.api.you-put-this-place-in-favorite-list'), $createFavPlace);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
 
-    public function unfavored(Request $request,$type,$slug)
+    public function unfavored(Request $request, $type, $slug)
     {
         $validator = Validator::make(
             [
-                'type'=>$type,
+                'type' => $type,
                 'slug' => $slug
             ],
             [
-                'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','plan','guideTrip'])],
-                'slug' => ['required', new CheckIfNotExistsInFavoratblesRule()
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'])],
+                'slug' => [
+                    'required',
+                    new CheckIfNotExistsInFavoratblesRule()
                 ],
-            ],[
-            'slug.required'=>__('validation.api.id-does-not-exists'),
-                'type.in'=>__('validation.api.not-acceptable-type'),
-        ]);
+            ],
+            [
+                'slug.required' => __('validation.api.favorite-id-does-not-exists'),
+                'type.in' => __('validation.api.not-acceptable-type'),
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug'][0]);
         }
 
         try {
-            $data= $validator->validated();
+            $data = $validator->validated();
             $createFavPlace = $this->favoriteApiUseCase->unfavored($data);
 
-            return ApiResponse::sendResponse(200,  __('app.place.api.you-delete-this-from-favorite-list'), $createFavPlace);
+            return ApiResponse::sendResponse(200,  __('app.api.you-delete-this-from-favorite-list'), $createFavPlace);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -94,7 +97,6 @@ class FavoriteApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function favSearch(Request $request)

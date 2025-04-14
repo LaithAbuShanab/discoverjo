@@ -21,59 +21,63 @@ use App\Http\Controllers\Api\User\FavoriteApiController;
 use App\Http\Controllers\Api\User\ReviewApiController;
 
 Route::middleware(['firstLogin'])->group(function () {
-    Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile');
-    Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile');
+
+    // USER PROFILE
+    Route::get('/user/profile', [UserProfileController::class, 'userDetails'])->name('user.profile'); // DONE ✅
+    Route::get('other/user/profile/{slug}', [UserProfileController::class, 'otherUserProfile'])->name('other.user.profile'); // DONE ✅
 
     // NOTIFICATION API
-    Route::get('all/user/notifications', [UserProfileController::class, 'allNotifications'])->name('user.notifications');
-    Route::put('make/notification/as-read/{id}', [UserProfileController::class, 'readNotification'])->name('user.read.notifications');
-    Route::get('unread/user/notifications', [UserProfileController::class, 'unreadNotifications'])->name('user.unread.notifications');
-    Route::delete('delete/notifications/{id}', [UserProfileController::class, 'deleteNotifications'])->name('user.delete.notifications');
+    Route::get('all/user/notifications', [UserProfileController::class, 'allNotifications'])->name('user.notifications'); // DONE ✅
+    Route::put('make/notification/as-read/{id}', [UserProfileController::class, 'readNotification'])->name('user.read.notifications'); // DONE ✅
+    Route::get('unread/user/notifications', [UserProfileController::class, 'unreadNotifications'])->name('user.unread.notifications'); // DONE ✅
+    Route::delete('delete/notifications/{id}', [UserProfileController::class, 'deleteNotifications'])->name('user.delete.notifications'); // DONE ✅
 
-    //favorite system
-    Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']);
-    Route::delete('favorite/{type}/{slug}/delete', [FavoriteApiController::class, 'unfavored']);
-    Route::get('user/all/favorite', [FavoriteApiController::class, 'allUserFavorites']);
-    Route::get('user/favorite/search', [FavoriteApiController::class, 'favSearch']);
+    // FAVORITE SYSTEM
+    Route::post('favorite/{type}/{slug}', [FavoriteApiController::class, 'favorite']); // DONE ✅
+    Route::delete('favorite/{type}/{slug}/delete', [FavoriteApiController::class, 'unfavored']); // DONE ✅
+    Route::get('user/all/favorite', [FavoriteApiController::class, 'allUserFavorites']); // DONE ✅
+    Route::get('user/favorite/search', [FavoriteApiController::class, 'favSearch']); // DONE ✅
 
-    //review system
+    // REVIEW SYSTEM
     Route::group(['prefix' => 'review'], function () {
-        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']);
-        Route::post('add/{type}/{slug}', [ReviewApiController::class, 'addReview']); // NOTIFICATION(1)
-        Route::put('update/{type}/{slug}', [ReviewApiController::class, 'updateReview']);
-        Route::delete('delete/{type}/{slug}', [ReviewApiController::class, 'deleteReview']);
-        Route::post('{status}/{review_id}', [ReviewApiController::class, 'likeDislike']); // NOTIFICATION(2)
+        Route::get('all/{type}/{slug}', [ReviewApiController::class, 'reviews']); // DONE ✅
+        Route::post('add/{type}/{slug}', [ReviewApiController::class, 'addReview']); // DONE ✅
+        Route::put('update/{type}/{slug}', [ReviewApiController::class, 'updateReview']); // DONE ✅
+        Route::delete('delete/{type}/{slug}', [ReviewApiController::class, 'deleteReview']); // DONE ✅
+        Route::post('{status}/{review_id}', [ReviewApiController::class, 'likeDislike']); // DONE ✅
     });
 
-    Route::post('visited/place/{slug}', [PlaceApiController::class, 'createVisitedPlace']);
-    Route::delete('visited/place/{slug}/delete', [PlaceApiController::class, 'deleteVisitedPlace']);
+    // VISITED PLACES
+    Route::post('visited/place/{slug}', [PlaceApiController::class, 'createVisitedPlace']); // DONE ✅
+    Route::delete('visited/place/{slug}/delete', [PlaceApiController::class, 'deleteVisitedPlace']); // DONE ✅
 
-    // All Routes For event
+    // ALL ROUTES FOR INTEREST EVENT
     Route::group(['prefix' => 'event'], function () {
-        Route::get('/interested/list', [EventApiController::class, 'interestList']);
-        Route::post('/interest/{slug}', [EventApiController::class, 'interest']);
-        Route::delete('/disinterest/{slug}', [EventApiController::class, 'disinterest']);
+        Route::get('/interested/list', [EventApiController::class, 'interestList']); // DONE ✅
+        Route::post('/interest/{slug}', [EventApiController::class, 'interest']); // DONE ✅
+        Route::delete('/disinterest/{slug}', [EventApiController::class, 'disinterest']); // DONE ✅
     });
 
-    // All Routes For event
+    // ALL ROUTES FOR INTEREST VOLUNTEERING
     Route::group(['prefix' => 'volunteering'], function () {
-        Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']);
-        Route::post('/interest/{slug}', [VolunteeringApiController::class, 'interest']);
-        Route::delete('/disinterest/{slug}', [VolunteeringApiController::class, 'disinterest']);
+        Route::get('/interested/list', [VolunteeringApiController::class, 'interestedList']); // DONE ✅
+        Route::post('/interest/{slug}', [VolunteeringApiController::class, 'interest']); // DONE ✅
+        Route::delete('/disinterest/{slug}', [VolunteeringApiController::class, 'disinterest']); // DONE ✅
     });
 
+    // ALL ROUTES FOR POST
     Route::prefix('post')->group(function () {
-        Route::get('/followings', [PostApiController::class, 'followingPost']);
-        Route::post('/store', [PostApiController::class, 'store']); // NOTIFICATION(3)
-        Route::post('/update/{post_id}', [PostApiController::class, 'update']);
-        Route::get('show/{post_id}', [PostApiController::class, 'show']);
+        Route::get('/followings', [PostApiController::class, 'followingPost']); // DONE ✅
+        Route::post('/store', [PostApiController::class, 'store']); // DONE ✅
+        Route::post('/update/{post_id}', [PostApiController::class, 'update']); // DONE ✅
+        Route::get('show/{post_id}', [PostApiController::class, 'show']); // DONE ✅
         Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
         Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
         Route::post('favorite/{post_id}', [PostApiController::class, 'createFavoritePost']);
         Route::delete('favorite/{post_id}/delete', [PostApiController::class, 'deleteFavoritePost']);
         Route::post('/like-dislike/{status}/{post_id}', [PostApiController::class, 'likeDislike']);  // NOTIFICATION(4)
 
-        //comment system
+        // COMMENTS SYSTEM
         Route::post('/comment/store', [CommentApiController::class, 'commentStore']); // NOTIFICATION(5)
         Route::put('/comment/update/{comment_id}', [CommentApiController::class, 'commentUpdate']);
         Route::delete('/comment/delete/{comment_id}', [CommentApiController::class, 'commentDelete']);
@@ -120,7 +124,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/store', [GroupChatController::class, 'store']); // NOTIFICATION(9)
     });
 
-    // All Routes For Trip
+    // ALL ROUTES FOR TRIP
     Route::group(['prefix' => 'trip'], function () {
         // Get Tags
         Route::get('/tags', [TripApiController::class, 'tags']); // DONE ✅
@@ -156,7 +160,7 @@ Route::middleware(['firstLogin'])->group(function () {
         });
     });
 
-    // All Routes For Plan
+    // ALL ROUTES FOR PLAN
     Route::group(['prefix' => 'plan'], function () {
         Route::get('/', [PlanApiController::class, 'index']); // DONE ✅
         Route::post('/create', [PlanApiController::class, 'create']); // DONE ✅

@@ -19,7 +19,7 @@ class CheckIfNotificationBelongToUserRule implements ValidationRule
             ->where('notifiable_id', auth()->id())
             ->where('notifiable_type', get_class(auth()->user()))
             ->first();
-        if(!$notification){
+        if (!$notification) {
             $fail(__('validation.api.this-notification-did-not-belong-to-this-user'));
         }
     }

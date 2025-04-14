@@ -7,8 +7,6 @@ use App\Models\Trip;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
 {
@@ -26,27 +24,27 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip','event','volunteering','plan','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'];
         $type = $this->data['type'];
-        if(!in_array($type,$acceptableType)){
+        if (!in_array($type, $acceptableType)) {
             return;
         }
 
-        if($type == 'trip'){
+        if ($type == 'trip') {
             $trip = Trip::findBySlug($value);
-            if(!$trip) return;
+            if (!$trip) return;
             $ownerStatus = $trip->user?->status;
-            if(!$ownerStatus){
+            if (!$ownerStatus) {
                 $fail(__('validation.api.the-user-owner-this-trip-not-longer-active'));
                 return;
             }
         }
 
-        if($type == 'guideTrip'){
+        if ($type == 'guideTrip') {
             $guideTrip = GuideTrip::findBySlug($value);
-            if(!$guideTrip) return;
+            if (!$guideTrip) return;
             $ownerStatus = $guideTrip->guide?->status;
-            if(!$ownerStatus){
+            if (!$ownerStatus) {
                 $fail(__('validation.api.the-user-owner-this-trip-not-longer-active'));
                 return;
             }

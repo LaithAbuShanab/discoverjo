@@ -82,14 +82,18 @@ class VolunteeringApiController extends Controller
     {
         $validator = Validator::make(['slug' => $slug], [
             'slug' =>  ['required', 'exists:volunteerings,slug', new CheckUserInterestRule('App\Models\Volunteering')],
+        ], [
+            'slug.required' => __('validation.api.volunteering-id-is-required'),
+            'slug.exists' => __('validation.api.volunteering-id-does-not-exist'),
         ]);
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
+
         try {
             $events = $this->volunteeringApiUseCase->interestVolunteering($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, 'You Add Volunteering in Interest  Successfully', $events);
+            return ApiResponse::sendResponse(200, __('app.api.you-add-this-volunteering-to-interest-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -100,14 +104,18 @@ class VolunteeringApiController extends Controller
     {
         $validator = Validator::make(['slug' => $slug], [
             'slug' => ['required', 'exists:volunteerings,slug', new CheckUserInterestExistsRule('App\Models\Volunteering')],
+        ], [
+            'slug.required' => __('validation.api.volunteering-id-is-required'),
+            'slug.exists' => __('validation.api.volunteering-id-does-not-exist'),
         ]);
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
+
         try {
             $events = $this->volunteeringApiUseCase->disinterestVolunteering($validator->validate()['slug']);
-            return ApiResponse::sendResponse(200, 'You delete volunteering in Interest  Successfully', $events);
+            return ApiResponse::sendResponse(200, __('app.api.you-remove-this-volunteering-to-interest-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -131,7 +139,7 @@ class VolunteeringApiController extends Controller
         try {
             $id = Auth::guard('api')->user()->id;
             $volunteering = $this->volunteeringApiUseCase->interestedList($id);
-            return ApiResponse::sendResponse(200, 'Volunteering Retrieved Successfully', $volunteering);
+            return ApiResponse::sendResponse(200, __('app.api.the-interest-volunteering-retrieved-successfully'), $volunteering);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

@@ -187,6 +187,7 @@ return [
         'main-image'                                => 'الصورة الرئيسية',
         'gallery-images'                            => 'صور المعرض',
         'rating'                                    => 'التقييم',
+        'comment'                                   => 'التعليق',
         'total-user-rating'                         => 'إجمالي تقييم المستخدم',
         'sub_category_id'                           => 'الفئة الفرعية',
         'tags-id'                                   => 'العلامات',
@@ -310,31 +311,20 @@ return [
     'api' => [
         'relationship_not_exist' => "العلاقة :relationship غير موجودة في نموذج المستخدم",
 
-
         // Place Errors
-        'this-place-already-in-your-visited-place' => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
         'this-place-not-in-your-visited-place-list' => 'هذا المكان غير موجود في قائمة الأماكن التي قمت بزيارتها لإزالته من القائمة.',
         'id-does-not-exists' => 'المعرف غير موجود.',
-        'you-did-not-make-review-for-this' => 'انت لم تقم بمراجعة لهذه.',
-
 
         // Comment Errors
         'the-selected-comment-id-does-not-exists' => 'معرف التعليق المحدد غير موجود.',
         'the-comment-id-required' => 'معرف التعليق مطلوب.',
         'the-content-required' => 'المحتوى مطلوب.',
         'you_can_not_delete_the_comment' => 'لا يمكنك حذف التعليق.',
-        'the-status-required' => 'الحالة بالاعجاب او عدم الاعجاب مطلوبة.',
         'comment-should-be-string' => 'التعليق يجب ان يكون نص.',
-
-        // Review Errors
-        'the-selected-review-id-does-not-exists' => 'معرف التعليق غير موجود.',
-        'the-review-id-required' => 'معرف التعليق مطلوب.',
 
         // User Errors
         'the-following-id-is-required' => 'معرف المتبوع مطلوب.',
         'the-following-id-does-not-exists' => 'معرف المتبوع غير موجود بلائحة المستخدمين.',
-        'user-id-is-required' => 'رقم معرف للمستخدم مطلوب.',
-        'user-id-does-not-exists' => 'معرف المستخدم غير موجود.',
 
         // Conversation Errors
         'conversation-id-is-required' => 'معرف المحادثة مطلوب.',
@@ -353,13 +343,10 @@ return [
         'status-is-required' => 'الحالة مطلوبة',
         'guide-trip-user-id-required' => 'رقم معرف طلب الانضمام مطلوب ',
         'guide-trip-user-id-does-not-exists' => 'رقم معرف طلب الانضمام غير موجود',
-        'you_cant_make_review_for_upcoming_trip' => 'هذه الرحلة لا زالت نشطة لا يمكنك عمل مراجهة عليها الان',
-        'this-trip-was-deleted' => 'هذه الرحلة تم حذفها',
 
         'guide-trip-id-does-not-exists' => 'رقم معرف الرحلة السياحية غير موجود.',
         'media-id-required' => 'رقم معرف صورة الرحلة السياحية مطلوب.',
         'media-id-does-not-exists' => 'رقم معرف صورة الرحلة السياحية غير موجود.',
-        'this_is_not_in_favorite_list' => 'هذه غير موجودة في لائحة المفضلة',
         "guide-update-not-allowed" => "لا يُسمح لك بتحديث هذا الدليل.",
         'guide_trip_id.required' => 'معرف رحلة الدليل مطلوب.',
         'guide_trip_id.exists' => 'معرف رحلة الدليل المحدد غير صحيح.',
@@ -375,8 +362,6 @@ return [
         'guide-trip-user-joined' => 'يجب أن يكون المستخدم قد انضم إلى رحلة الدليل.',
 
         // Post Errors
-        'post-id-does-not-exists' => 'معرف المنشور غير موجود.',
-        'post-id-invalid' => 'معرف المنشور غير صالح.',
         'reply-id-is-required' => 'رقم معرف الرد مطلوب.',
         'reply-id-does-not-exists' => 'رقم معرف الرد غير موجود.',
 
@@ -389,7 +374,6 @@ return [
 
         // File Upload Errors
         "file-is-required-if-media" => "الملف مطلوب عندما يكون نوع الرسالة صورة أو صوت أو فيديو.",
-        "file-must-be-valid" => "يجب أن يكون الملف المرفوع صالحًا.",
         "file-invalid-type" => "يجب أن يكون الملف من الأنواع التالية: jpg، jpeg، png، gif، mp3، wav، mp4، mov، avi.",
         "file-max-size" => "يجب ألا يتجاوز حجم الملف :max كيلوبايت.",
 
@@ -542,21 +526,8 @@ return [
         'activity-note-max' => 'لا يمكن أن يكون الملاحظة أطول من 255 حرفًا.',
 
         // Post Errors
-        'post-id-required' => 'معرف المنشور مطلوب.',
         'post-id-exists' => 'المنشور المحدد غير موجود.',
         'post-id-can-make-comment' => 'لا يمكنك التعليق على هذا المنشور.',
-        'content-required' => 'محتوى التعليق مطلوب.',
-        'content-string' => 'يجب أن يكون المحتوى نصًا.',
-
-        // Visitable Errors
-        'visitable-type-required' => 'نوع العنصر القابل للزيارة مطلوب.',
-        'visitable-type-in' => 'يجب أن يكون نوع العنصر القابل للزيارة أحد الخيارات التالية: مكان، خطة، رحلة، حدث، تطوع.',
-        'visitable-id-required' => 'معرف العنصر القابل للزيارة مطلوب.',
-        'visitable-id-exists' => 'العنصر القابل للزيارة المحدد غير موجود.',
-
-        // Privacy Errors
-        'privacy-required' => 'إعداد الخصوصية مطلوب.',
-        'privacy-in' => 'يجب أن يكون إعداد الخصوصية أحد الخيارات التالية: عام، خاص، الأصدقاء فقط.',
 
         // Comment Errors
         'comment-id-required' => 'معرف التعليق مطلوب.',
@@ -688,8 +659,6 @@ return [
         // User and Profile Errors
         'wrong-email' => 'البريد الإلكتروني المدخل غير صحيح.',
         'this-is-not-in-favorite-list-to-delete' => 'هذا العنصر غير موجود في قائمة المفضلة الخاصة بك ولا يمكن حذفه.',
-        'you-already-make-this-as-favorite' => 'لقد قمت بالفعل بإضافتها إلى المفضلة.',
-        'you-already-make-review-for-this' => 'لقد قمت بالفعل بكتابة مراجعة لهذا.',
         'you-do-not-have-review' => 'ليس لديك مراجعة لهذا.',
         'you-already-make-request-to-this-user-wait-for-accept-id' => 'لقد قمت بالفعل بإرسال طلب لهذا المستخدم، انتظر القبول.',
         'you-already-follow-this-user' => 'أنت تتابع هذا المستخدم بالفعل.',
@@ -702,7 +671,6 @@ return [
         'you-are-not-following-this-user' => 'أنت لا تتابع هذا المستخدم.',
         'you-cannot-make-review-for-upcoming-event' => 'لا يمكنك كتابة تقييم لهذا الحدث القادم.',
         'you-cannot-make-review-for-upcoming-trip' => 'لا يمكنك كتابة مراجعة لرحلة قادمة.',
-        'this_place_not_in_your_visited_place_list' => 'هذا المكان ليس في قائمة الاماكن التي زرتها',
 
         // Media, Post, and Tag Errors
         'this-place-not-in-your-visited-place-list' => 'هذا المكان ليس في قائمة الأماكن التي زرتها.',
@@ -710,9 +678,6 @@ return [
         'you-are-not-authorized-to-delete-this-media' => 'لا تستطيح حذف هذه الوسائط.',
         'this-post-is-private' => 'هذه المشاركة خاصة.',
         'this-comment-did-not-belong-to-you' => 'هذا التعليق لا ينتمي اليك.',
-        'you-did-not-make-this-to-interest-to-delete-interest' => 'لم تقم بإضافة هذا كشيء مثير للاهتمام لحذفه.',
-        'you-already-make-this-as-interest' => 'لقد قمت بالفعل بوضع علامة على هذا كشيء مثير للاهتمام.',
-        'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'لا يمكنك وضع علامة على هذا كشيء مثير للاهتمام لأنه في الماضي.',
         'this-email-in-black-list' => 'هذا البريد الإلكتروني موجود في القائمة السوداء.',
         'you-should-verify-email-first' => 'عليك ان تقوم بالتحقق من البريد الالكتروني.',
 
@@ -759,6 +724,9 @@ return [
         'the-provided-old-password-is-incorrect'                    => 'كلمة المرور القديمة غير صحيحة.',
         'lng-required'                                              => 'حقل الطول (الطول الجغرافي) مطلوب.',
         'lat-required'                                              => 'حقل العرض (العرض الجغرافي) مطلوب.',
+        'this-user-not-longer-active'                               => 'هذا المستخدم لم يعد نشطًا.',
+        'user-id-is-required'                                       => 'رقم معرف للمستخدم مطلوب.',
+        'user-id-does-not-exists'                                   => 'معرف المستخدم غير موجود.',
 
         // Trip Validation
         'trip_type_required'                                        => 'حقل نوع الرحلة مطلوب.',
@@ -832,6 +800,8 @@ return [
         'the-user-is-not-a-member-of-this-trip'                     => 'المستخدم ليس عضوًا في هذه الرحلة.',
         'user_slug_required'                                        => 'معرف المستخدم مطلوب.',
         'user_slug_exists'                                          => 'المستخدم المحدد غير موجود.',
+        'the-user-owner-this-trip-not-longer-active'                => 'لم يعد مالك المستخدم لهذه الرحلة نشطًا.',
+        'this-trip-was-deleted'                                     => 'هذه الرحلة تم حذفها',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',
@@ -864,6 +834,8 @@ return [
         'the-selected-place-is-not-active'                          => 'المكان المحدد غير نشط.',
         'place-id-invalid'                                          => 'معرّف المكان غير صالح.',
         'place-id-does-not-exists'                                  => 'معرف المكان غير موجود.',
+        'this-place-already-in-your-visited-place'                  => 'هذا المكان موجود بالفعل في قائمة الأماكن التي قمت بزيارتها.',
+        'this_place_not_in_your_visited_place_list'                 => 'هذا المكان ليس في قائمة الاماكن التي زرتها',
 
         // Subcategory Validation
         'subcategory-is-required'                                   => 'التصنيف الفرعي مطلوب.',
@@ -878,10 +850,13 @@ return [
         'event-id-does-not-exists'                                  => 'معرّف الحدث غير موجود.',
         "date-is-required"                                          => "التاريخ مطلوب.",
         "date-invalid-format"                                       => "يجب أن يكون التاريخ بتنسيق صالح.",
+        'you-already-make-this-as-interest'                         => 'لقد قمت بالفعل بوضع علامة على هذا كشيء مثير للاهتمام.',
+        'you-did-not-make-this-to-interest-to-delete-interest'      => 'لم تقم بإضافة هذا كشيء مثير للاهتمام لحذفه.',
 
         // Volunteering Validation
         'volunteering-id-is-required'                               => 'معرّف التطوع مطلوب.',
         'volunteering-id-does-not-exist'                            => 'معرّف التطوع غير موجود.',
+        'you-can\'t-make-this-as-interest-because-it-in-the-past'   => 'لا يمكنك وضع علامة على هذا كشيء مثير للاهتمام لأنه في الماضي.',
 
         // Contact Us Validation
         'name-is-required'                                          => 'حقل الاسم مطلوب.',
@@ -943,5 +918,48 @@ return [
         'number-of-days-integer'                                    => 'يجب أن يكون عدد الأيام عددًا صحيحًا.',
         'number-of-days-min'                                        => 'يجب أن يكون عدد الأيام على الأقل 1.',
         'number-of-days-nullable'                                   => 'حقل عدد الأيام اختياري.',
+
+        // Notification Validation
+        'this-notification-did-not-belong-to-this-user'             => 'هذا الاشعار لا ينتمي لهذا المستخدم.',
+        'notification-id-is-required'                               => 'معرف الاشعار مطلوب.',
+        'notification-id-does-not-exists'                           => 'معرف الاشعار غير موجود.',
+
+        // Favorite Validation
+        'favorite-id-does-not-exists'                               => 'المفضلة المحددة غير موجودة.',
+        'you-already-make-this-as-favorite'                         => 'لقد قمت بالفعل بإضافتها إلى المفضلة.',
+        'not-acceptable-type'                                       => 'نوع غير مقبول.',
+        'this_is_not_in_favorite_list'                              => 'هذه غير موجودة في لائحة المفضلة',
+
+        // Review Validation
+        'review-id-does-not-exists'                                 => 'معرف التقييم غير موجود.',
+        'you-already-make-review-for-this'                          => 'لقد قمت بالفعل بكتابة مراجعة لهذا.',
+        'you_cant_make_review_for_upcoming_trip'                    => 'هذه الرحلة لا زالت نشطة لا يمكنك عمل مراجهة عليها الان',
+        'you_cannot_make_review_for_upcoming_event'                 => 'لا يمكنك عمل مراجعة للحدث القادم',
+        'you-did-not-make-review-for-this'                          => 'لم تقم بكتابة مراجعة لهذا.',
+        'the-review-creator-not-longer-active'                      => 'المستخدم الذي قام بكتابة المراجعة لهذا غير مفعل.',
+        'the-selected-review-id-does-not-exists'                    => 'معرّف المراجعة المحدد غير موجود',
+        'the-review-id-required'                                    => 'معرّف المراجعة مطلوب',
+        'the-status-required'                                       => 'الحالة بالاعجاب او عدم الاعجاب مطلوبة.',
+        'not-acceptable-status'                                     => 'حالة غير مقبولة.',
+        'the-review-id-must-be-integer'                             => 'يجب ان يكون معرف المراجعة عدد صحيح.',
+
+        // Post Validation
+        'visitable-type-required'                                   => 'يرجى تحديد نوع العنصر المرتبط بالنشر.',
+        'visitable-type-in'                                         => 'نوع العنصر المحدد غير صالح. الخيارات المتاحة: مكان، خطة، حدث، تطوع.',
+        'visitable-id-required'                                     => 'يرجى إدخال معرّف العنصر المرتبط بالنشر.',
+        'visitable-id-exists'                                       => 'العنصر المحدد غير موجود أو غير صالح.',
+        'selected-type-does-not-exist'                              => 'العنصر المحدد غير موجود ضمن النوع المحدد.',
+        'the-selected-place-is-not-active'                          => 'المكان المحدد غير نشط حاليًا.',
+        'content-required'                                          => 'يرجى كتابة محتوى المنشور.',
+        'content-string'                                            => 'يجب أن يكون المحتوى نصًا صالحًا.',
+        'privacy-required'                                          => 'يرجى تحديد إعداد الخصوصية للمنشور.',
+        'privacy-in'                                                => 'إعداد الخصوصية غير صالح. الخيارات المتاحة: عام، خاص، الأصدقاء فقط.',
+        'file-must-be-valid'                                        => 'الملف المرفوع غير صالح.',
+        'file-must-be-a-valid-image-audio-video'                    => 'يجب أن يكون الملف صورة، أو مقطع صوتي، أو فيديو بصيغة مدعومة.',
+        'file-size-must-be-less-than-10mb'                          => 'يجب ألا يتجاوز حجم الملف 10 ميغابايت.',
+        'post-id-required'                                          => 'معرف المنشور مطلوب.',
+        'post-id-does-not-exists'                                   => 'معرف المنشور غير موجود.',
+        'you_are_not_the_owner_of_this_post'                        => 'ليس لديك صلاحية لتعديل هذا المنشور.',
+        'post-id-invalid'                                           => 'معرف المنشور غير صالح.',
     ],
 ];

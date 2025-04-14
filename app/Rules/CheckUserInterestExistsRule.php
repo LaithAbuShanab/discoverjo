@@ -23,7 +23,7 @@ class CheckUserInterestExistsRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $type =  $this->interestable_type::findBySlug($value);
-        if(!$type){
+        if (!$type) {
             return;
         }
         $exists = DB::table('interestables')
@@ -32,9 +32,8 @@ class CheckUserInterestExistsRule implements ValidationRule
             ->where('interestable_id', $type->id)
             ->exists();
 
-        if (!$exists ) {
-            $fail(__('validation.api.you-didn\'t-make-this-to-interest-to-delete-interest'));
+        if (!$exists) {
+            $fail(__('validation.api.you-did-not-make-this-to-interest-to-delete-interest'));
         }
-
     }
 }

@@ -23,7 +23,7 @@ class CheckUserInterestRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $type =  $this->interestable_type::findBySlug($value);
-        if(!$type){
+        if (!$type) {
             return;
         }
         $exists = DB::table('interestables')
@@ -39,9 +39,8 @@ class CheckUserInterestRule implements ValidationRule
         $datetime = $type->end_datetime;
         $now = now()->setTimezone('Asia/Riyadh');
 
-        if($datetime && $datetime < $now){
+        if ($datetime && $datetime < $now) {
             $fail(__('validation.api.you-can\'t-make-this-as-interest-because-it-in-the-past'));
         }
-
     }
 }

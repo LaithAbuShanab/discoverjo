@@ -5,8 +5,6 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CheckIfTypeAndSlugRule implements ValidationRule, DataAwareRule
 {
@@ -25,9 +23,9 @@ class CheckIfTypeAndSlugRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip','event','volunteering','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip'];
 
-        if(!in_array($this->data['type'],$acceptableType)){
+        if (!in_array($this->data['type'], $acceptableType)) {
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
@@ -36,15 +34,14 @@ class CheckIfTypeAndSlugRule implements ValidationRule, DataAwareRule
         $favorableItem = $modelClass::findBySlug($value);
 
         if (!$favorableItem) {
-            $fail(__('validation.api.id-does-not-exists'));
+            $fail(__('validation.api.review-id-does-not-exists'));
             return;
         }
 
-        if($this->data['type']=='place'){
-            if($favorableItem->status != 1){
+        if ($this->data['type'] == 'place') {
+            if ($favorableItem->status != 1) {
                 $fail(__('validation.api.the-selected-place-is-not-active'));
             }
         }
-
     }
 }

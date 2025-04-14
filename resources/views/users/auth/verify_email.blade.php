@@ -21,9 +21,10 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             height: 100vh;
             direction: {{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }};
+            padding-top: 2rem;
         }
 
         .container {
@@ -188,11 +189,7 @@
         <img src="{{ asset('assets/logo_black_cut.JPG') }}"
              alt="{{ __('app.logo') }}"
              class="responsive-logo">
-
         <h1>{{$message}}</h1>
-
-
-
     </div>
 </div>
 

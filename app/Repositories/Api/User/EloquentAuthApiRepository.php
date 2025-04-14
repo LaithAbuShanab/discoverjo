@@ -57,7 +57,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 ['action' => 'view_user', 'action_label' => 'View User', 'action_url' => route('filament.admin.resources.users.index')]
             );
 
-//            event(new Registered($user));
+            event(new Registered($user));
             return new UserResource($user);
         });
     }

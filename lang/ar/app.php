@@ -146,9 +146,6 @@ return [
 
     "api" => [
         /** for categories */
-        'comment-created-successfully' => 'تم انشاء التعليق بنجاح',
-        'comment-updated-successfully' => 'تم تعديل التعليق بنجاح',
-        'comment-deleted-successfully' => 'تم حذف التعليق بنجاح',
         'the-following-request-sent-successfully' => 'تم بعث طلب المتابعة بنجاح',
         'follows-deleted-successfully' => 'تم حذف المتابعة بنجاح',
         'accept-follow-request-successfully' => 'تم قبول طلب المتابعة بنجاح',
@@ -163,10 +160,6 @@ return [
         'rating-updated-successfully' => 'تم تعديل تقييمك بنجاح',
         'rating-deleted-successfully' => 'تم حذف تقييمك بنجاح',
         'trip-updated-successfully' => 'تم تعديل رحلة مرشد سياحي بنجاح',
-        'trip-deleted-successfully' => 'تم حذف رحلة مرشد سياحي بنجاح',
-        'trip-image-deleted-successfully' => 'تم حذف صورة رحلة مرشد سياحي بنجاح',
-        'join-requests-retrieved-successfully' => 'تم استرجاع طلبات الانضمام بنجاح',
-        'join-requests-status-changed-successfully' => 'تم تغيير حالة طلب الانضمام بنجاح',
         'guide-trips-subscription-created-successfully' => 'تم ارسال طلب اشتراكك لرحلة المرشد بنجاح',
         'guide-trips-users-subscription-updated-successfully' => 'تم تعديل طلب اشتراكك لرحلة المرشد بنجاح',
         'guide-trips-users-subscription-deleted-successfully' => 'تم حذف طلب اشتراكك لرحلة المرشد بنجاح',
@@ -176,8 +169,6 @@ return [
         'your-review-in-this-trip-updated-successfully' => 'تمت تعديل مراجعة لهذه الرحلة بنجاح',
         'the-plan-retrieved-successfully' => 'تم استرجاع الخطة بنجاح',
         'plan-deleted-successfully' => 'تم حذف الخطة بنجاح',
-        'favorite-post-created-successfully' => 'تم اضافة المنشور للائحة المفضلة',
-        'favorite-post-deleted-successfully' => 'تمت إزالة المنشور من قائمة المفضلة بنجاح',
         'reply-created-successfully' => 'تم انشاء الرد بنجاح',
         'reply-updated-successfully' => 'تم تعديل الرد بنجاح',
         'reply-deleted-successfully' => 'تم حذف الرد بنجاح',
@@ -212,7 +203,7 @@ return [
         'the-trip-updated-successfully'                                => 'تم تعديل الرحلة بنجاح',
         'the-user-deleted-successfully'                                => 'تم حذف المستخدم بنجاح',
         'trips-retrieved-successfully'                                 => 'تم استرجاع الرحلات بنجاح',
-        'the-searched-trip-retrieved-successfully'                      => 'تم استرجاع الرحلة المبحوثة بنجاح',
+        'the-searched-trip-retrieved-successfully'                     => 'تم استرجاع الرحلة المبحوثة بنجاح',
 
         // Plan Api
         'plan-created-successfully'                                    => 'تم انشاء الخطة بنجاح',
@@ -278,6 +269,11 @@ return [
         'guide-trips-retrieved-successfully'                           => 'تم استرجاع رحلات المرشدين السياحيين بنجاح',
         'trip-retrieved-successfully'                                  => 'تم استرجاع رحلة المرشدين السياحيين بنجاح',
         'guide-users-retrieved-successfully'                           => 'تم استرجاع المرشدين السياحيين بنجاح',
+        'trip-updated-successfully'                                    => 'تم تحديث الرحلة بنجاح',
+        'trip-deleted-successfully'                                    => 'تم حذف رحلة مرشد سياحي بنجاح',
+        'trip-image-deleted-successfully'                              => 'تم حذف صورة رحلة مرشد سياحي بنجاح',
+        'join-requests-retrieved-successfully'                         => 'تم استرجاع طلبات الانضمام بنجاح',
+        'join-requests-status-changed-successfully'                    => 'تم تغيير حالة طلب الانضمام بنجاح',
 
         // User Api
         'the-users-retried-successfully'                               => 'تم استرجاع المستخدمين بنجاح',
@@ -316,5 +312,14 @@ return [
         'post-retrieved-successfully'                                  => 'تم استرجاع المنشورات بنجاح',
         'post-created-successfully'                                    => 'تم انشاء المنشور بنجاح',
         'post-updated-successfully'                                    => 'تم تعديل المنشور بنجاح',
+        'post-image-deleted-successfully'                              => 'تم حذف صور المنشور بنجاح',
+        'post-deleted-successfully'                                    => 'تم حذف المنشور بنجاح',
+        'favorite-post-created-successfully'                           => 'تم اضافة المنشور للائحة المفضلة',
+        'favorite-post-deleted-successfully'                           => 'تمت إزالة المنشور من قائمة المفضلة بنجاح',
+
+        // Comment Api
+        'comment-created-successfully'                                 => 'تم انشاء التعليق بنجاح',
+        'comment-updated-successfully'                                 => 'تم تعديل التعليق بنجاح',
+        'comment-deleted-successfully'                                 => 'تم حذف التعليق بنجاح',
     ],
 ];

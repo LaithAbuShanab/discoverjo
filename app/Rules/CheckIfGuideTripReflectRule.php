@@ -22,11 +22,10 @@ class CheckIfGuideTripReflectRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
 
-        if(isset(request()->guide_trip_id) && !empty(request()->guide_trip_id)){
+        if (isset(request()->guide_trip_id) && !empty(request()->guide_trip_id)) {
             $userTrips = GuideTrip::where('id', '!=', request()->guide_trip_id)->where('guide_id', $userId)->where('status', 1)->get();
-        }else{
+        } else {
             $userTrips = GuideTrip::where('guide_id', $userId)->where('status', 1)->get();
-
         }
 
         foreach ($userTrips as $userTrip) {

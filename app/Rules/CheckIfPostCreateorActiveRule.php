@@ -16,9 +16,9 @@ class CheckIfPostCreateorActiveRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $post = Post::find($value);
-        if(!$post) return;
+        if (!$post) return;
         $activeOwner = $post->user?->status;
-        if(!$activeOwner){
+        if (!$activeOwner) {
             $fail(__('validation.api.the-user-post-creator-not-longer-active'));
         }
     }

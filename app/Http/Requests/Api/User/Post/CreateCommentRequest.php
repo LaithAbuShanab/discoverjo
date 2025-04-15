@@ -25,29 +25,50 @@ class CreateCommentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'post_id' => ['required', 'exists:posts,id', new IfUserCanMakeCommentInPostRule(), new CheckIfPostCreateorActiveRule()],
+            'post_id' => [
+                'bail',
+                'required',
+                'exists:posts,id',
+                new IfUserCanMakeCommentInPostRule(),
+                new CheckIfPostCreateorActiveRule()
+            ],
             'content' => ['required', 'string'],
-            'parent_id' => ['nullable', 'exists:comments,id', new CheckIfCommentHasNullParentIdRule(), new CheckIfCommentOwnerActiveRule()],
+            'parent_id' => [
+                'bail',
+                'nullable',
+                'exists:comments,id',
+                new CheckIfCommentHasNullParentIdRule(),
+                new CheckIfCommentOwnerActiveRule()
+            ],
         ];
     }
 
-    public function messages()
+    /**
+     * Custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
     {
         return [
             'post_id.required' => __('validation.api.post-id-required'),
             'post_id.exists' => __('validation.api.post-id-exists'),
-            'post_id.if_user_can_make_comment_in_post' => __('validation.api.post-id-can-make-comment'),
             'content.required' => __('validation.api.content-required'),
             'content.string' => __('validation.api.content-string'),
+            'parent_id.exists' => __('validation.api.parent-id-exists'),
         ];
     }
 
-
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param Validator $validator
+     */
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();

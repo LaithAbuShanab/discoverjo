@@ -145,9 +145,6 @@ return [
 
     "api" => [
         /** for categories */
-        'comment-created-successfully' => 'Comment created successfully',
-        'comment-updated-successfully' => 'Comment updated successfully',
-        'comment-deleted-successfully' => 'Comment deleted successfully',
         'the-following-request-sent-successfully' => 'The following request sent successfully',
         'follows-deleted-successfully' => 'Following deleted successfully',
         'accept-follow-request-successfully' => 'Your following request accepted successfully',
@@ -163,10 +160,6 @@ return [
         'rating-deleted-successfully' => 'Your rating deleted successfully',
         'trip-created-successfully' => 'Trip created successfully',
         'trip-updated-successfully' => 'Trip updated successfully',
-        'trip-deleted-successfully' => 'Trip deleted successfully',
-        'trip-image-deleted-successfully' => 'Trip\'s image deleted successfully',
-        'join-requests-retrieved-successfully' => 'Join requests retrieved successfully',
-        'join-requests-status-changed-successfully' => 'Status of join request changed successfully',
         'guide-trips-subscription-created-successfully' => 'Your request for attendance created successfully',
         'guide-trips-users-subscription-updated-successfully' => 'Your request for attendance updated successfully',
         'guide-trips-users-subscription-deleted-successfully' => 'Your request for attendance deleted successfully',
@@ -177,8 +170,6 @@ return [
         'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
         'the-plan-retrieved-successfully' => 'The plan retrieved successfully',
         'plan-deleted-successfully' => 'Plan deleted successfully',
-        'favorite-post-created-successfully' => 'Post added to favorite list successfully',
-        'favorite-post-deleted-successfully' => 'Post removed for favorite list successfully',
         'reply-created-successfully' => 'Reply created successfully',
         'reply-updated-successfully' => 'Reply updated successfully',
         'reply-deleted-successfully' => 'Reply deleted successfully',
@@ -279,6 +270,11 @@ return [
         'guide-trips-retrieved-successfully'                           => 'Guide trips retrieved successfully',
         'trip-retrieved-successfully'                                  => 'Trip retrieved successfully',
         'guide-users-retrieved-successfully'                           => 'Guide users retrieved successfully',
+        'trip-updated-successfully'                                    => 'Trip updated successfully',
+        'trip-deleted-successfully'                                    => 'Trip deleted successfully',
+        'trip-image-deleted-successfully'                              => 'Trip\'s image deleted successfully',
+        'join-requests-retrieved-successfully'                         => 'Join requests retrieved successfully',
+        'join-requests-status-changed-successfully'                    => 'Status of join request changed successfully',
 
         // User Api
         'the-users-retried-successfully'                               => 'The users retried successfully',
@@ -317,5 +313,14 @@ return [
         'post-retrieved-successfully'                                  => 'Post retrieved successfully',
         'post-created-successfully'                                    => 'Post created successfully',
         'post-updated-successfully'                                    => 'Post updated successfully',
+        'post-image-deleted-successfully'                              => 'Post\'s image deleted successfully',
+        'post-deleted-successfully'                                    => 'Post deleted successfully',
+        'favorite-post-created-successfully'                           => 'Post added to favorite list successfully',
+        'favorite-post-deleted-successfully'                           => 'Post removed for favorite list successfully',
+
+        // Comment Api
+        'comment-created-successfully'                                 => 'Comment created successfully',
+        'comment-updated-successfully'                                 => 'Comment updated successfully',
+        'comment-deleted-successfully'                                 => 'Comment deleted successfully',
     ],
 ];

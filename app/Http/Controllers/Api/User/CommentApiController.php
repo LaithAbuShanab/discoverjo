@@ -17,20 +17,18 @@ use Illuminate\Validation\Rule;
 
 class CommentApiController extends Controller
 {
-    protected $commentApiUseCase;
+    public function __construct(protected CommentApiUseCase $commentApiUseCase)
+    {
 
-    public function __construct(CommentApiUseCase $commentUseCase) {
-
-        $this->commentApiUseCase = $commentUseCase;
-
+        $this->commentApiUseCase = $commentApiUseCase;
     }
     /**
      * Display a listing of the resource.
      */
     public function commentStore(CreateCommentRequest $request)
     {
-        try{
-            $comments = $this->commentApiUseCase->createComment($request->validated());
+        try {
+            $this->commentApiUseCase->createComment($request->validated());
             return ApiResponse::sendResponse(200,  __('app.api.comment-created-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -38,7 +36,7 @@ class CommentApiController extends Controller
         }
     }
 
-    public function commentUpdate(Request $request,$comment_id)
+    public function commentUpdate(Request $request, $comment_id)
     {
         $id = $comment_id;
         $content = $request->input('content');
@@ -48,22 +46,22 @@ class CommentApiController extends Controller
                 'content' => $content,
             ],
             [
-                'comment_id' => ['required', 'exists:comments,id', new CheckIfCommentBelongToUser()],
+                'comment_id' => ['bail', 'required', 'exists:comments,id', new CheckIfCommentBelongToUser()],
                 'content' => ['required', 'string'],
             ],
             [
-            'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),
-            'comment_id.required'=> __('validation.api.the-comment-id-required'),
-            'content.required'=> __('validation.api.the-content-required'),
-        ]);
-
-
+                'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),
+                'comment_id.required' => __('validation.api.the-comment-id-required'),
+                'content.required' => __('validation.api.the-content-required'),
+                'content.string' => __('validation.api.comment-should-be-string'),
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
         }
-        try{
-            $comments = $this->commentApiUseCase->updateComment($validator->validated());
+        try {
+            $this->commentApiUseCase->updateComment($validator->validated());
             return ApiResponse::sendResponse(200,  __('app.api.comment-updated-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -72,23 +70,25 @@ class CommentApiController extends Controller
         }
     }
 
-    public function commentDelete(Request $request,$comment_id){
+    public function commentDelete(Request $request, $comment_id)
+    {
 
         $validator = Validator::make(
             [
                 'comment_id' => $comment_id,
             ],
             [
-                'comment_id' => ['required', 'exists:comments,id', new CheckIfUserCanDeleteComment()],
+                'comment_id' => ['bail', 'required', 'exists:comments,id', new CheckIfUserCanDeleteComment()],
             ],
             [
                 'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),
-                'comment_id.required'=> __('validation.api.the-comment-id-required'),
-            ]);
+                'comment_id.required' => __('validation.api.the-comment-id-required'),
+            ]
+        );
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
         }
-        try{
+        try {
             $comments = $this->commentApiUseCase->deleteComment($validator->validated()['comment_id']);
             return ApiResponse::sendResponse(200, __('app.api.comment-deleted-successfully'), []);
         } catch (\Exception $e) {
@@ -98,7 +98,7 @@ class CommentApiController extends Controller
         }
     }
 
-    public function likeDislike(Request $request,$status,$comment_id)
+    public function likeDislike(Request $request, $status, $comment_id)
     {
         $validator = Validator::make(
             [
@@ -107,13 +107,16 @@ class CommentApiController extends Controller
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
-                'comment_id' => ['required', 'integer', 'exists:comments,id',new CheckIfCommentOwnerActiveRule()],
+                'comment_id' => ['bail', 'required', 'integer', 'exists:comments,id', new CheckIfCommentOwnerActiveRule()],
             ],
             [
                 'comment_id.exists' => __('validation.api.the-selected-comment-id-does-not-exists'),
-                'comment_id.required'=> __('validation.api.the-comment-id-required'),
-                'status'=>__('validation.api.the-status-required')
-            ]);
+                'comment_id.required' => __('validation.api.the-comment-id-required'),
+                'comment_id.integer' => __('validation.api.comment-id-must-be-integer'),
+                'status.required' => __('validation.api.the-status-required'),
+                'status.in' => __('validation.api.the-status-invalid'),
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());

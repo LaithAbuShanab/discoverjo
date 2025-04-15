@@ -23,7 +23,7 @@ class CheckIfUserCanDeleteComment implements ValidationRule
         if (!$comment) return;
 
         $post = Post::find($comment->post_id);
-        if(!$post) return;
+        if (!$post) return;
 
         if ($comment->user_id !== $userId && (!$post || $post->user_id !== $userId)) {
             $fail(__('validation.api.you_can_not_delete_the_comment'));

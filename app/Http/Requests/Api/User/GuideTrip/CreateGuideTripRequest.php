@@ -4,7 +4,6 @@ namespace App\Http\Requests\Api\User\GuideTrip;
 
 use App\Helpers\ApiResponse;
 use App\Rules\CheckIfGuideTripReflectRule;
-use App\Rules\CheckIfGuideTripReflictRule;
 use App\Rules\CheckIsGuideRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,8 +11,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 
 class CreateGuideTripRequest extends FormRequest
 {
@@ -33,38 +30,42 @@ class CreateGuideTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_en' => ['required', 'string', 'max:255',new CheckIsGuideRule()],
+            'name_en' => ['bail', 'required', 'string', 'max:255', new CheckIsGuideRule()],
             'name_ar' => ['required', 'string', 'max:255'],
             'description_en' => ['required', 'string'],
             'description_ar' => ['required', 'string'],
             'main_price' => ['required', 'numeric', 'min:0'],
             'start_datetime' => [
+                'bail',
                 'required',
                 'date',
                 'date_format:Y-m-d H:i:s',
                 function ($attribute, $value, $fail) {
                     if (Carbon::parse($value)->isPast()) {
-                        $fail('The ' . $attribute . ' must be a date and time in the future.');
+                        $fail(__('validation.api.start_datetime_future'));
                     }
                 },
-                new CheckIfGuideTripReflectRule(request()->start_datetime, request()->end_datetime)],
+                new CheckIfGuideTripReflectRule(request()->start_datetime, request()->end_datetime)
+            ],
             'end_datetime' => [
+                'bail',
                 'required',
                 'date',
                 'date_format:Y-m-d H:i:s',
                 function ($attribute, $value, $fail) {
                     if (Carbon::parse($value)->isPast()) {
-                        $fail('The ' . $attribute . ' must be a date and time in the future.');
+                        $fail(__('validation.api.end_datetime_future'));
                     }
                 },
                 function ($attribute, $value, $fail) {
                     if (request()->start_datetime && Carbon::parse($value)->lessThanOrEqualTo(Carbon::parse(request()->start_datetime))) {
-                        $fail('The ' . $attribute . ' must be a date and time after the start date and time.');
+                        $fail(__('validation.api.end_datetime_after_start_datetime'));
                     }
-                },],
+                },
+            ],
             'max_attendance' => ['required', 'integer', 'min:1'],
-            'gallery'=>['required'],
-            'gallery.*' => ['file','mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,mp4,mov,avi,mkv,flv,wmv','max:10000'],
+            'gallery' => ['required'],
+            'gallery.*' => ['file', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,mp4,mov,avi,mkv,flv,wmv', 'max:10000'],
             'activities' => ['required', 'string'],
             'price_include' => ['required', 'string'],
             'price_age' => ['nullable', 'string'],
@@ -79,71 +80,70 @@ class CreateGuideTripRequest extends FormRequest
     {
         return [
             // Name
-            'name_en.required' => 'The English name is required.',
-            'name_en.string' => 'The English name must be a string.',
-            'name_en.max' => 'The English name may not be greater than 255 characters.',
-            'name_en.CheckIsGuideRule' => 'The English name must pass the guide check.',
+            'name_en.required' => __('validation.api.name_en_required'),
+            'name_en.string' => __('validation.api.name_en_string'),
+            'name_en.max' => __('validation.api.name_en_max'),
 
-            'name_ar.required' => 'The Arabic name is required.',
-            'name_ar.string' => 'The Arabic name must be a string.',
-            'name_ar.max' => 'The Arabic name may not be greater than 255 characters.',
+            'name_ar.required' => __('validation.api.name_ar_required'),
+            'name_ar.string' => __('validation.api.name_ar_string'),
+            'name_ar.max' => __('validation.api.name_ar_max'),
 
             // Description
-            'description_en.required' => 'The English description is required.',
-            'description_en.string' => 'The English description must be a string.',
+            'description_en.required' => __('validation.api.description_en_required'),
+            'description_en.string' => __('validation.api.description_en_string'),
 
-            'description_ar.required' => 'The Arabic description is required.',
-            'description_ar.string' => 'The Arabic description must be a string.',
+            'description_ar.required' => __('validation.api.description_ar_required'),
+            'description_ar.string' => __('validation.api.description_ar_string'),
 
             // Main Price
-            'main_price.required' => 'The main price is required.',
-            'main_price.numeric' => 'The main price must be a number.',
-            'main_price.min' => 'The main price must be at least 0.',
+            'main_price.required' => __('validation.api.main_price_required'),
+            'main_price.numeric' => __('validation.api.main_price_numeric'),
+            'main_price.min' => __('validation.api.main_price_min'),
 
             // Date and Time
-            'start_datetime.required' => 'The start date and time is required.',
-            'start_datetime.date' => 'The start date and time must be a valid date.',
-            'start_datetime.date_format' => 'The start date and time must be in the format Y-m-d H:i:s.',
-            'start_datetime.future' => 'The start date and time must be a date and time in the future.',
+            'start_datetime.required' => __('validation.api.start_datetime_required'),
+            'start_datetime.date' => __('validation.api.start_datetime_date'),
+            'start_datetime.date_format' => __('validation.api.start_datetime_format'),
+            'start_datetime.future' => __('validation.api.start_datetime_future'),
 
-            'end_datetime.required' => 'The end date and time is required.',
-            'end_datetime.date' => 'The end date and time must be a valid date.',
-            'end_datetime.date_format' => 'The end date and time must be in the format Y-m-d H:i:s.',
-            'end_datetime.future' => 'The end date and time must be a date and time in the future.',
-            'end_datetime.after' => 'The end date and time must be after the start date and time.',
+            'end_datetime.required' => __('validation.api.end_datetime_required'),
+            'end_datetime.date' => __('validation.api.end_datetime_date'),
+            'end_datetime.date_format' => __('validation.api.end_datetime_format'),
+            'end_datetime.future' => __('validation.api.end_datetime_future'),
+            'end_datetime.after' => __('validation.api.end_datetime_after'),
 
             // Max Attendance
-            'max_attendance.required' => 'The maximum attendance is required.',
-            'max_attendance.integer' => 'The maximum attendance must be an integer.',
-            'max_attendance.min' => 'The maximum attendance must be at least 1.',
+            'max_attendance.required' => __('validation.api.max_attendance_required'),
+            'max_attendance.integer' => __('validation.api.max_attendance_integer'),
+            'max_attendance.min' => __('validation.api.max_attendance_min'),
 
             // Gallery
-            'gallery.*.file' => 'Each gallery item must be a file.',
-            'gallery.*.mimes' => 'Each gallery item must be a file of type: jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz, mp4, mov, avi, mkv, flv, wmv.',
+            'gallery.*.file' => __('validation.api.gallery_file'),
+            'gallery.*.mimes' => __('validation.api.gallery_mimes'),
 
             // Activities
-            'activities.required' => 'Activities are required.',
-            'activities.string' => 'Activities must be a string.',
+            'activities.required' => __('validation.api.activities_required'),
+            'activities.string' => __('validation.api.activities_string'),
 
             // Price Include
-            'price_include.required' => 'Price include is required.',
-            'price_include.string' => 'Price include must be a string.',
+            'price_include.required' => __('validation.api.price_include_required'),
+            'price_include.string' => __('validation.api.price_include_string'),
 
             // Price Age
-            'price_age.nullable' => 'Price age must be a string if present.',
+            'price_age.nullable' => __('validation.api.price_age_nullable'),
 
             // Assembly
-            'assembly.required' => 'Assembly is required.',
-            'assembly.string' => 'Assembly must be a string.',
+            'assembly.required' => __('validation.api.assembly_required'),
+            'assembly.string' => __('validation.api.assembly_string'),
 
             // Required Items
-            'required_items.nullable' => 'Required items must be a string if present.',
+            'required_items.nullable' => __('validation.api.required_items_nullable'),
 
             // Is Trail
-            'is_trail.nullable' => 'Is trail must be a boolean if present.',
+            'is_trail.nullable' => __('validation.api.is_trail_nullable'),
 
             // Trail
-            'trail.nullable' => 'Trail must be a string if present.',
+            'trail.nullable' => __('validation.api.trail_nullable'),
         ];
     }
 
@@ -187,8 +187,6 @@ class CreateGuideTripRequest extends FormRequest
             }
         });
     }
-
-
 
     protected function validateJsonArray($field, $validator, $rules)
     {

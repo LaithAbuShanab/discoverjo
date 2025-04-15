@@ -17,7 +17,7 @@ class CheckMediaBelongsToUserRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $media = Media::find($value);
-        if(!$media)return;
+        if (!$media) return;
         if (!$media || $media->model->user_id !== Auth::guard('api')->user()->id) {
             $fail(__('validation.api.you_are_not_authorized_to_delete_this_media'));
         }

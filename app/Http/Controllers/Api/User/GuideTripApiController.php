@@ -85,7 +85,6 @@ class GuideTripApiController extends Controller
 
     public function update(UpdateGuideTripRequest $request, $slug)
     {
-
         $validator = Validator::make(['slug' => $slug], [
             'slug' => ['required', 'exists:guide_trips,slug', new CheckIfGuideIsOwnerOfTrip()],
         ], [
@@ -97,6 +96,7 @@ class GuideTripApiController extends Controller
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
+
         try {
             $updateTrip = $this->guideTripApiUseCase->updateGuideTrip($request->validated(), $validator->validated()['slug']);
             return ApiResponse::sendResponse(200, __('app.api.trip-updated-successfully'), $updateTrip);
@@ -108,7 +108,6 @@ class GuideTripApiController extends Controller
 
     public function delete(Request $request, $slug)
     {
-
         $validator = Validator::make(['slug' => $slug], [
             'slug' => ['required', 'exists:guide_trips,slug', new CheckIfGuideIsOwnerOfTrip()],
         ], [
@@ -121,8 +120,8 @@ class GuideTripApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $updateTrip = $this->guideTripApiUseCase->deleteGuideTrip($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, __('app.api.trip-deleted-successfully'), $updateTrip);
+            $this->guideTripApiUseCase->deleteGuideTrip($validator->validated()['slug']);
+            return ApiResponse::sendResponse(200, __('app.api.trip-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -143,8 +142,8 @@ class GuideTripApiController extends Controller
         }
 
         try {
-            $createTrip = $this->guideTripApiUseCase->deleteImage($validator->validated()['media_id']);
-            return ApiResponse::sendResponse(200, __('app.api.trip-image-deleted-successfully'), $createTrip);
+            $this->guideTripApiUseCase->deleteImage($validator->validated()['media_id']);
+            return ApiResponse::sendResponse(200, __('app.api.trip-image-deleted-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -165,8 +164,8 @@ class GuideTripApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $updateTrip = $this->guideTripApiUseCase->joinRequests($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, __('app.api.join-requests-retrieved-successfully'), $updateTrip);
+            $joinRequests = $this->guideTripApiUseCase->joinRequests($validator->validated()['slug']);
+            return ApiResponse::sendResponse(200, __('app.api.join-requests-retrieved-successfully'), $joinRequests);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -182,11 +181,12 @@ class GuideTripApiController extends Controller
                 'status' => $status,
             ],
             [
-                'guide_trip_user_id' => ['required', 'exists:guide_trip_users,id', new CheckIfTheUserOwnTheTripRule(), new CheckIfUserJoinedToTripActiveRule()],
+                'guide_trip_user_id' => ['bail', 'required', 'exists:guide_trip_users,id', new CheckIfTheUserOwnTheTripRule(), new CheckIfUserJoinedToTripActiveRule()],
                 'status' => ['required', Rule::in(['confirmed', 'canceled'])],
             ],
             [
                 'status.required' => __('validation.api.status-is-required'),
+                'status.in' => __('validation.api.the-status-invalid'),
                 'guide_trip_user_id.required' => __('validation.api.guide-trip-user-id-required'),
                 'guide_trip_user_id.exists' => __('validation.api.guide-trip-user-id-does-not-exists'),
             ]
@@ -205,11 +205,10 @@ class GuideTripApiController extends Controller
         }
     }
 
-    public function tripsOfGuide( $guide_slug)
+    public function tripsOfGuide($guide_slug)
     {
-
         $validator = Validator::make(['guide_slug' => $guide_slug], [
-            'guide_slug' => ['required', 'exists:users,slug', new CheckIfUserActiveRule()],
+            'guide_slug' => ['bail', 'required', 'exists:users,slug', new CheckIfUserActiveRule()],
         ], [
             'guide_slug.required' => __('validation.api.guide-trip-id-required'),
             'guide_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
@@ -220,12 +219,11 @@ class GuideTripApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $updateTrip = $this->guideTripApiUseCase->tripsOfGuide($validator->validated()['guide_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.trips-retrieved-successfully'), $updateTrip);
+            $trips = $this->guideTripApiUseCase->tripsOfGuide($validator->validated()['guide_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-retrieved-successfully'), $trips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
-
 }

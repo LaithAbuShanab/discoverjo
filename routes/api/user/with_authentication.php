@@ -71,27 +71,27 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/store', [PostApiController::class, 'store']); // DONE ✅
         Route::post('/update/{post_id}', [PostApiController::class, 'update']); // DONE ✅
         Route::get('show/{post_id}', [PostApiController::class, 'show']); // DONE ✅
-        Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']);
-        Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']);
-        Route::post('favorite/{post_id}', [PostApiController::class, 'createFavoritePost']);
-        Route::delete('favorite/{post_id}/delete', [PostApiController::class, 'deleteFavoritePost']);
-        Route::post('/like-dislike/{status}/{post_id}', [PostApiController::class, 'likeDislike']);  // NOTIFICATION(4)
+        Route::delete('/image/delete/{media_id}', [PostApiController::class, 'DeleteImage']); // DONE ✅
+        Route::delete('/delete/{post_id}', [PostApiController::class, 'destroy']); // DONE ✅
+        Route::post('favorite/{post_id}', [PostApiController::class, 'createFavoritePost']); // DONE ✅
+        Route::delete('favorite/{post_id}/delete', [PostApiController::class, 'deleteFavoritePost']); // DONE ✅
+        Route::post('/like-dislike/{status}/{post_id}', [PostApiController::class, 'likeDislike']); // DONE ✅
 
         // COMMENTS SYSTEM
-        Route::post('/comment/store', [CommentApiController::class, 'commentStore']); // NOTIFICATION(5)
-        Route::put('/comment/update/{comment_id}', [CommentApiController::class, 'commentUpdate']);
-        Route::delete('/comment/delete/{comment_id}', [CommentApiController::class, 'commentDelete']);
-        Route::post('comment/like-dislike/{status}/{comment_id}', [CommentApiController::class, 'likeDislike']);  // NOTIFICATION(6)
+        Route::post('/comment/store', [CommentApiController::class, 'commentStore']); // DONE ✅
+        Route::put('/comment/update/{comment_id}', [CommentApiController::class, 'commentUpdate']); // DONE ✅
+        Route::delete('/comment/delete/{comment_id}', [CommentApiController::class, 'commentDelete']); // DONE ✅
+        Route::post('comment/like-dislike/{status}/{comment_id}', [CommentApiController::class, 'likeDislike']); // DONE ✅
     });
 
     Route::group(['prefix' => 'guide'], function () {
-        Route::post('/trips/store', [GuideTripApiController::class, 'store']);
-        Route::get('/trips/{guide_slug}', [GuideTripApiController::class, 'tripsOfGuide']);
-        Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']);
-        Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']);
-        Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']);
-        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']);
-        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // NOTIFICATION(16)
+        Route::post('/trips/store', [GuideTripApiController::class, 'store']); // DONE ✅
+        Route::get('/trips/{guide_slug}', [GuideTripApiController::class, 'tripsOfGuide']); // DONE ✅
+        Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']); // DONE ✅
+        Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']); // DONE ✅
+        Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']); // DONE ✅
+        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']); // DONE
+        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // DONE
     });
 
     Route::group(['prefix' => 'user/guide-trip'], function () {

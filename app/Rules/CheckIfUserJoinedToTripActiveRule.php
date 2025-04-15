@@ -16,10 +16,9 @@ class CheckIfUserJoinedToTripActiveRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userGideTrip = GuideTripUser::find($value);
-        if(!$userGideTrip) return;
-        if(!$userGideTrip->user?->status){
+        if (!$userGideTrip) return;
+        if (!$userGideTrip->user?->status) {
             $fail(__('validation.api.the-user-not-longer-active'));
         }
-
     }
 }

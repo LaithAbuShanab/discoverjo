@@ -62,7 +62,7 @@ class PlaceApiController extends Controller
         try {
             $createVisitedPlace = $this->placeApiUseCase->createVisitedPlace($validator->validated()['slug']);
 
-            return ApiResponse::sendResponse(200, __('app.place.api.you-put-this-place-in-visited-place-list'), $createVisitedPlace);
+            return ApiResponse::sendResponse(200, __('app.api.you-put-this-place-in-visited-place-list'), $createVisitedPlace);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -85,7 +85,7 @@ class PlaceApiController extends Controller
 
         try {
             $deleteVisitedPlace = $this->placeApiUseCase->deleteVisitedPlace($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, __('app.place.api.remove-place-form-visited-places-list-successfully'), $deleteVisitedPlace);
+            return ApiResponse::sendResponse(200, __('app.api.remove-place-form-visited-places-list-successfully'), $deleteVisitedPlace);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());

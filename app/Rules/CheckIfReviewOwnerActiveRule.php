@@ -16,8 +16,8 @@ class CheckIfReviewOwnerActiveRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $review = Reviewable::find($value);
-        if(!$review) return;
-        if(!$review->user->status){
+        if (!$review) return;
+        if (!$review->user->status) {
             $fail(__('validation.api.the-review-creator-not-longer-active'));
             return;
         }

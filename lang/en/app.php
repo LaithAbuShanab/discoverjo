@@ -39,11 +39,9 @@ return [
 
     'event' => [
         'api' => [
-            'you-add-this-event-to-interest-successfully' => 'You added this event to your interests successfully',
             'you-already-make-this-as-interest' => 'You have already marked this as an interest',
             'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'You can\'t mark this as an interest because it\'s in the past',
             'you-didn\'t-make-this-to-interest-to-delete-interest' => 'You haven\'t marked this as an interest to delete it',
-            'you-remove-this-event-from-interested-list' => 'You removed this event from your interests successfully',
             'you-already-make-this-as-favorite' => 'You have already marked this as a favorite',
             'you-added-event-in-favorite-successfully' => 'You added this event to your favorites successfully',
             'this-is-not-in-favorite-list-to-delete-it-from-list' => 'This event is not in your favorites list to delete it',
@@ -53,21 +51,13 @@ return [
             'you-added-review-for-this-event-successfully' => 'You added a review for this event successfully',
             'you-do-not-have-review' => 'You don\'t have a review to update',
             'you-update-your-review-successfully' => 'You updated your review successfully',
-            'you-deleted-your-review-successfully' => 'You deleted your review successfully',
-            'the-likable-status-change-successfully' => 'The likable status was changed successfully',
-            'user-details-retrieved-successfully' => 'User details retrieved successfully',
-            'the-interest-event-retrieved-successfully' => 'The interest event list retrieved successfully',
-
         ],
     ],
 
     'place' => [
         'api' => [
             'you-put-this-in-favorite-list' => 'You put this in favorite list successfully',
-            'you-delete-this-from-favorite-list' => 'You deleted this form favorite list.',
             'you-remove-this-place-in-favorite-list' => 'You remove this place in favorite list successfully',
-            'you-put-this-place-in-visited-place-list' => 'You put this place in visited place list',
-            'remove-place-form-visited-places-list-successfully' => 'You remove this place from visited place successfully',
             'you-added-review-for-this-place-successfully' => 'You added review for this place successfully',
             'you-updated-review-for-this-place-successfully' => 'You updated review for this place successfully',
             'you-remove-review-for-this-place-successfully' => 'You remove review for this place successfully',
@@ -79,7 +69,6 @@ return [
         'api' => [
             'favorite-plan-created-successfully' => 'You added this plan to favorite list',
             'you-remove-plan-from-favorite-list' => 'You removed this plan from favorite list',
-            'the-likable-status-change-successfully' => 'The likable status changed successfully',
         ]
     ],
 
@@ -185,24 +174,17 @@ return [
         'you-deleted-the-trip-from-favorite-Successfully' => 'You deleted this trip from favorite list successfully',
         'you-added-review-for-this-trip-successfully' => 'You added review for this trip successfully',
         'your-review-in-this-trip-updated-successfully' => 'Yor review in this trip updated successfully',
-        'your-review-updated-successfully' => 'Yor review updated successfully',
         'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
         'the-plan-retrieved-successfully' => 'The plan retrieved successfully',
         'plan-deleted-successfully' => 'Plan deleted successfully',
-        'post-retrieved-successfully' => 'Post retrieved successfully',
-        'post-created-successfully' => 'Post created successfully',
-        'post-updated-successfully' => 'Post updated successfully',
         'favorite-post-created-successfully' => 'Post added to favorite list successfully',
         'favorite-post-deleted-successfully' => 'Post removed for favorite list successfully',
         'reply-created-successfully' => 'Reply created successfully',
         'reply-updated-successfully' => 'Reply updated successfully',
         'reply-deleted-successfully' => 'Reply deleted successfully',
-        'user-details-retrieved-successfully' => 'User details retrieved successfully',
         'your-profile-updated-successfully' => 'Your profile updated successfully',
         'your-location-set-successfully' => 'Your location sat successfully',
-        'your-all-favorite-retrieved-successfully' => 'Your favorite retrieved successfully',
         'the-users-retried-successfully' => 'The users retrieved successfully',
-        'the-searched-favorite-retrieved-successfully' => 'the searched favorite retrieved successfully',
         'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
 
         // Auth Api
@@ -249,6 +231,8 @@ return [
         // Place Api
         'place-retrieved-by-id-successfully'                           => 'Place retrieved by id successfully',
         'the-searched-place-retrieved-successfully'                    => 'The searched place retrieved successfully',
+        'you-put-this-place-in-visited-place-list'                     => 'You put this place in visited place list',
+        'remove-place-form-visited-places-list-successfully'           => 'You remove this place from visited place successfully',
 
         // SubCategory Api
         'places-of-subcategories-retrieved-successfully'               => 'Places of SubCategories retrieved successfully',
@@ -268,12 +252,18 @@ return [
         'event-retrieved-successfully'                                 => 'Event retrieved successfully',
         'events-of-specific-date-retrieved-successfully'               => 'Events of specific date retrieved successfully',
         'the-searched-event-retrieved-successfully'                    => 'The searched event was retrieved successfully',
+        'the-interest-event-retrieved-successfully'                    => 'The interest event list retrieved successfully',
+        'you-add-this-event-to-interest-successfully'                  => 'You added this event to your interests successfully',
+        'you-remove-this-event-from-interested-list'                   => 'You removed this event from your interests successfully',
 
         // Volunteering Api
         'volunteering-retrieved-successfully'                          => 'Volunteering retrieved successfully',
         'active-volunteering-retrieved-successfully'                   => 'Active volunteering retrieved successfully',
         'volunteering-of-specific-date-retrieved-successfully'         => 'Volunteering of specific date retrieved successfully',
         'the-searched-volunteering-retrieved-successfully'             => 'The searched volunteering was retrieved successfully',
+        'the-interest-volunteering-retrieved-successfully'             => 'The interest volunteering list retrieved successfully',
+        'you-add-this-volunteering-to-interest-successfully'           => 'You added this volunteering to your interests successfully',
+        'you-remove-this-volunteering-to-interest-successfully'        => 'You removed this volunteering from your interests successfully',
 
         // Legal Api
         'legal-retrieved-successfully'                                 => 'Legal retrieved successfully',
@@ -293,6 +283,7 @@ return [
         // User Api
         'the-users-retried-successfully'                               => 'The users retried successfully',
         'your-place-current-location-retrieved-successfully'            => 'Your place current location retrieved successfully',
+        'user-details-retrieved-successfully'                          => 'User details retrieved successfully',
 
         // Slider Api
         'onboardings-retrieved-successfully'                           => 'Onboardings retrieved successfully',
@@ -302,5 +293,29 @@ return [
 
         // Feature Api'
         'features-retrieved-successfully'                              => 'Features retrieved successfully',
+
+        // Notification Api
+        'your-notification-retrieved-successfully'                     => 'Your notification retrieved successfully',
+        'notification-read-successfully'                               => 'Notification read successfully',
+        'your-unread-notification-retrieved-successfully'              => 'Your unread notification retrieved successfully',
+        'notification-deleted-successfully'                            => 'Notification deleted successfully',
+
+        // Favorite Api
+        'you-put-this-place-in-favorite-list'                          => 'You put this place in favorite list successfully',
+        'you-delete-this-from-favorite-list'                           => 'You deleted this form favorite list.',
+        'your-all-favorite-retrieved-successfully'                     => 'Your favorite retrieved successfully',
+        'the-searched-favorite-retrieved-successfully'                 => 'the searched favorite retrieved successfully',
+
+        // Review Api
+        'reviews-retrieved-successfully'                               => 'Reviews retrieved successfully',
+        'you-added-review-successfully'                                => 'Review added successfully',
+        'your-review-updated-successfully'                             => 'Yor review updated successfully',
+        'you-deleted-your-review-successfully'                         => 'You deleted your review successfully',
+        'the-likable-status-change-successfully'                       => 'The likable status was changed successfully',
+
+        // Post Api
+        'post-retrieved-successfully'                                  => 'Post retrieved successfully',
+        'post-created-successfully'                                    => 'Post created successfully',
+        'post-updated-successfully'                                    => 'Post updated successfully',
     ],
 ];

@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Helpers\ApiResponse;
-use App\Http\Controllers\Controller;
-use App\Rules\CheckIfExistsInFavoratblesRule;
-use App\Rules\CheckIfExistsInReviewsRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
-use App\Rules\CheckIfNotExistsInReviewsRule;
-use App\Rules\CheckIfPastEventOrVolunteering;
-use App\Rules\CheckIfReviewOwnerActiveRule;
-use App\Rules\CheckIfTypeAndSlugRule;
-use App\Rules\CheckIfTypeIsInThePastRule;
-use App\Rules\CheckIfUserTypeActiveRule;
-use App\UseCases\Api\User\ReviewApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Helpers\ApiResponse;
+use App\Http\Controllers\Controller;
+use App\Rules\CheckIfExistsInReviewsRule;
+use App\Rules\CheckIfNotExistsInReviewsRule;
+use App\Rules\CheckIfReviewOwnerActiveRule;
+use App\Rules\CheckIfTypeAndSlugRule;
+use App\Rules\CheckIfTypeIsInThePastRule;
+use App\Rules\CheckIfUserTypeActiveRule;
+use App\UseCases\Api\User\ReviewApiUseCase;
 
 class ReviewApiController extends Controller
 {
-    protected $reviewApiUseCase;
-
-    public function __construct(ReviewApiUseCase $reviewApiUseCase)
+    public function __construct(protected ReviewApiUseCase $reviewApiUseCase)
     {
-
         $this->reviewApiUseCase = $reviewApiUseCase;
     }
 
@@ -39,19 +33,22 @@ class ReviewApiController extends Controller
             ],
             [
 
-                'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
-                'slug' => ['required', new CheckIfTypeAndSlugRule(),new CheckIfUserTypeActiveRule()],
-            ],[
-            'slug.required'=>__('validation.api.id-does-not-exists'),
-        ]);
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
+                'slug' => ['bail', 'required', new CheckIfTypeAndSlugRule(), new CheckIfUserTypeActiveRule()],
+            ],
+            [
+                'slug.required' => __('validation.api.id-does-not-exists'),
+                'type.in' => __('validation.api.not-acceptable-type'),
+            ]
+        );
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $trip = $this->reviewApiUseCase->allReviews($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.trip-reviews-retrieved-successfully'), $trip);
+            $review = $this->reviewApiUseCase->allReviews($validator->validated());
+            return ApiResponse::sendResponse(200, __('app.api.reviews-retrieved-successfully'), $review);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -66,13 +63,10 @@ class ReviewApiController extends Controller
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-            'type'=>['bail','required',Rule::in(['place', 'trip','event','volunteering','guideTrip'])],
-            'slug' => ['bail','required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(),new CheckIfUserTypeActiveRule()],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip'])],
+            'slug' => ['bail', 'required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(), new CheckIfUserTypeActiveRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
-        ], [
-            'rating.required' => __('validation.api.rating-is-required'),
-            'comment.string' => __('validation.api.comment-should-be-string'),
         ]);
 
         if ($validator->fails()) {
@@ -81,8 +75,8 @@ class ReviewApiController extends Controller
         }
 
         try {
-            $trip = $this->reviewApiUseCase->addReview($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.api.you-added-review-for-this-trip-successfully'), $trip);
+            $review = $this->reviewApiUseCase->addReview($validator->validated());
+            return ApiResponse::sendResponse(200, __('app.api.you-added-review-successfully'), $review);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -102,9 +96,6 @@ class ReviewApiController extends Controller
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfNotExistsInReviewsRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
-        ], [
-            'rating.required' => __('validation.api.rating-is-required'),
-            'comment.string' => __('validation.api.comment-should-be-string'),
         ]);
 
         if ($validator->fails()) {
@@ -153,12 +144,14 @@ class ReviewApiController extends Controller
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
-                'review_id' => ['bail','required', 'integer', 'exists:reviewables,id',new CheckIfReviewOwnerActiveRule()],
+                'review_id' => ['bail', 'required', 'integer', 'exists:reviewables,id', new CheckIfReviewOwnerActiveRule()],
             ],
             [
                 'review_id.exists' => __('validation.api.the-selected-review-id-does-not-exists'),
+                'review_id.integer' => __('validation.api.the-review-id-must-be-integer'),
                 'review_id.required' => __('validation.api.the-review-id-required'),
-                'status' => __('validation.api.the-status-required')
+                'status' => __('validation.api.the-status-required'),
+                'status.in' => __('validation.api.not-acceptable-status'),
             ]
         );
 
@@ -169,7 +162,7 @@ class ReviewApiController extends Controller
 
         try {
             $this->reviewApiUseCase->reviewsLike($validator->validated());
-            return ApiResponse::sendResponse(200, __('app.event.api.the-likable-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

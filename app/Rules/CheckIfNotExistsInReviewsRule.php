@@ -7,7 +7,6 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
 {
@@ -27,9 +26,9 @@ class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $acceptableType = ['place', 'trip','event','volunteering','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip'];
 
-        if(!in_array($this->data['type'],$acceptableType)){
+        if (!in_array($this->data['type'], $acceptableType)) {
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
@@ -37,7 +36,7 @@ class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
         $favorableItem = $modelClass::findBySlug($value);
 
         if (!$favorableItem) {
-            $fail(__('validation.api.id-does-not-exists'));
+            $fail(__('validation.api.review-id-does-not-exists'));
             return;
         }
 
@@ -45,6 +44,5 @@ class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
         if (!$exists) {
             $fail(__('validation.api.you-did-not-make-review-for-this'));
         }
-
     }
 }

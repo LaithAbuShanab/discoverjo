@@ -207,6 +207,7 @@ return [
         'price-level'                               => 'Price Level',
         'website'                                   => 'Website',
         'rating'                                    => 'Rating',
+        'comment'                                   => 'Comment',
         'total-user-rating'                         => 'Total User Rating',
         'sub_category_id'                           => 'Subcategory',
         'region-id'                                 => 'Region',
@@ -313,25 +314,18 @@ return [
 
     'api' => [
         'relationship_not_exist' => "The relationship :relationship does not exist in User model",
-        'this-place-already-in-your-visited-place' => 'This place already in your visited place list',
         'this-place-not-in-your-visited-place-list' => 'This place not in your visited place list to remove it form list',
         'the-selected-comment-id-does-not-exists' => 'The selected Comment id does not exists',
         'the-comment-id-required' => 'The comment id is required',
         'the-content-required' => 'The content is required',
         'you_can_not_delete_the_comment' => 'You can\'t delete the comment',
-        'the-status-required' => 'The status like or dislike is required',
         'event-id-is-required' => 'Event id is required',
         'you_are_not_attendance_in_this' => 'You are not an attendee for this trip.',
-
         'event-id-does-not-exists' => 'Event id does not exists',
         'rating-is-required' => 'Rating field is required',
         'comment-should-be-string' => 'Comment should be string',
-        'the-selected-review-id-does-not-exists' => 'The selected review id does not exists',
-        'the-review-id-required' => 'The review id is required',
         'the-following-id-is-required' => 'The following id is required',
         'the-following-id-does-not-exists' => 'The following id does not exists',
-        'user-id-is-required' => 'user id is required',
-        'user-id-does-not-exists' => 'user id does not exists',
         'conversation-id-is-required' => 'Conversation id is required',
         'conversation-id-does-not-exists' => 'Conversation id does not exists',
         'status-is-required' => 'Status is required',
@@ -341,12 +335,8 @@ return [
         'guide-trip-id-does-not-exists' => 'guide trip id does not exists',
         'media-id-required' => 'media id is required',
         'media-id-does-not-exists' => 'media id does not exists',
-        'this_is_not_in_favorite_list' => 'this is not in favorite list',
         'id-does-not-exists' => ' id does not exists',
-        'you-did-not-make-review-for-this' => 'You did not make review for this.',
         'plan-id-does-not-exists' => 'Plan id does not exists',
-        'post-id-does-not-exists' => 'Post id does not exists',
-        'post-id-invalid' => 'Post id invalid',
         'reply-id-is-required' => 'Reply id is required',
         'reply-id-does-not-exists' => 'Reply id does not exists',
         'content-is-required' => 'Content is required',
@@ -366,7 +356,6 @@ return [
 
         // File
         "file-is-required-if-media" => "A file is required when the message type is image, audio, or video.",
-        "file-must-be-valid" => "The uploaded file must be a valid file.",
         "file-invalid-type" => "The file must be one of the following types: jpg, jpeg, png, gif, mp3, wav, mp4, mov, avi.",
         "file-max-size" => "The file must not exceed :max kilobytes.",
 
@@ -564,19 +553,8 @@ return [
 
         'activity-end-time-after' => 'The end time must be after the start time.',
 
-        'post-id-required' => 'The post ID is required.',
         'post-id-exists' => 'The selected post does not exist.',
         'post-id-can-make-comment' => 'You cannot comment on this post.',
-        'content-required' => 'The content of the comment is required.',
-        'content-string' => 'The content must be a string.',
-
-        'visitable-type-required' => 'The visitable type is required.',
-        'visitable-type-in' => 'The visitable type must be one of the following: place, plan, trip, event, volunteering.',
-        'visitable-id-required' => 'The visitable ID is required.',
-        'visitable-id-exists' => 'The selected visitable item does not exist.',
-
-        'privacy-required' => 'Privacy setting is required.',
-        'privacy-in' => 'The privacy setting must be one of the following: 0 (public), 1 (private), 2 (friends only).',
 
         'comment-id-required' => 'The comment ID is required.',
         'comment-id-exists' => 'The selected comment does not exist.',
@@ -663,8 +641,6 @@ return [
         'wrong-email' => 'The provided email is incorrect.',
         'check-update-message-trip' => 'The trip has been updated, please check the trip details.',
         'this-comment-did-not-belong-to-you' => 'This comment does not belong to you.',
-        'you-already-make-this-as-favorite' => 'You have already marked this as a favorite.',
-        'you-already-make-review-for-this' => 'You have already made a review for this.',
         'you-do-not-have-review' => 'You do not have a review for this.',
 
         'you_already_make_request_to_this_user_wait_for_accept_id' => 'You have already made a request to this user, wait for acceptance.',
@@ -685,14 +661,9 @@ return [
         'not_owner_of_image' => 'You are not the owner of this image.',
         'invalid_jordanian_phone_number' => 'The :attribute must be a valid Jordanian phone number.',
         'this_is_not_in_favorite_list_to_delete' => 'This item is not in your favorite list, so it cannot be deleted.',
-        'this_place_not_in_your_visited_place_list' => 'This place is not in your visited places list.',
-        'you_cannot_make_review_for_upcoming_event' => 'You cannot make a review for an upcoming event.',
         'this_reply_did_not_belong_to_you' => 'This reply does not belong to you.',
         'reply_not_found' => 'The specified reply was not found.',
-        'you_cant_make_review_for_upcoming_trip' => 'You can\'t make a review for an upcoming trip.',
-        'this-trip-was-deleted' => 'This trip was deleted',
         'comment_not_found' => 'The specified comment was not found.',
-
         'you_can_not_delete_the_reply' => 'You cannot delete this reply.',
         'you_should_join_trip_first' => 'You should join the trip first.',
         'trip_not_found' => 'The specified trip was not found.',
@@ -704,11 +675,7 @@ return [
         'you_did_not_make_review_for_this_guide_to_update' => 'You have not made a review for this guide to update.',
         'you_did_not_make_rating_for_this_guide' => 'You have not made a rating for this guide before.',
         'you_should_be_guide_to_create_guide_trip' => 'You must be a guide to create a guide trip.',
-        'you_are_not_the_owner_of_this_post' => 'You are not the owner of this post.',
         'invalid_json_format' => 'The provided data is not a valid JSON format.',
-        'you-didn\'t-make-this-to-interest-to-delete-interest' => 'You didn\'t mark this as interesting to delete the interest.',
-        'you-already-make-this-as-interest' => 'You have already marked this as interesting.',
-        'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'You can’t mark this as interesting because it is in the past.',
         'the-current-question-and-next-question-cannot-be-the-same' => 'The current question and next question cannot be the same.',
         'this-conversation-is-not-available' => 'This conversation is not available.',
         'you-are-not-a-member-of-this-conversation' => 'You are not a member of this conversation.',
@@ -758,6 +725,9 @@ return [
         'the-provided-old-password-is-incorrect'                    => 'The provided old password is incorrect',
         'lng-required'                                              => 'The longitude field is required.',
         'lat-required'                                              => 'The latitude field is required.',
+        'this-user-not-longer-active'                               => 'This user is not longer active.',
+        'user-id-is-required'                                       => 'User id is required.',
+        'user-id-does-not-exists'                                   => 'User id does not exist.',
 
         // Trip Validation
         'trip_type_required'                                        => 'The trip type field is required.',
@@ -832,6 +802,8 @@ return [
         'the-user-is-not-a-member-of-this-trip'                     => 'The user is not a member of this trip.',
         'user_slug_required'                                        => 'The user identifier (slug) is required.',
         'user_slug_exists'                                          => 'The selected user does not exist.',
+        'the-user-owner-this-trip-not-longer-active'                => 'The user owner of this trip is no longer active.',
+        'this-trip-was-deleted'                                     => 'This trip was deleted',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'The plan identifier (slug) is required Or the plan does not exist.',
@@ -865,6 +837,8 @@ return [
         'the-selected-place-is-not-active'                          => 'The selected place is not active.',
         'place-id-invalid'                                          => 'Place id invalid',
         'place-id-does-not-exists'                                  => 'Place id does not exists',
+        'this-place-already-in-your-visited-place'                  => 'This place already in your visited place list',
+        'this_place_not_in_your_visited_place_list'                 => 'This place is not in your visited places list.',
 
         // Subcategory Validation
         'subcategory-is-required'                                   => 'Subcategory is required',
@@ -879,10 +853,13 @@ return [
         'event-id-does-not-exists'                                  => 'Event ID does not exists',
         "date-is-required"                                          => "Date is required",
         "date-invalid-format"                                       => "Date invalid format",
+        'you-already-make-this-as-interest'                         => 'You have already marked this as interesting.',
+        'you-did-not-make-this-to-interest-to-delete-interest'      => 'You didn\'t mark this as interesting to delete the interest.',
 
         // Volunteering Validation
         'volunteering-id-is-required'                               => 'Volunteering ID is required',
         'volunteering-id-does-not-exist'                            => 'Volunteering ID does not exist',
+        'you-can\'t-make-this-as-interest-because-it-in-the-past'   => 'You can’t mark this as interesting because it is in the past.',
 
         // Contact Us Validation
         'name-is-required'                                          => 'The name field is required.',
@@ -942,5 +919,48 @@ return [
         'number-of-days-integer'                                   => 'The number of days must be an integer.',
         'number-of-days-min'                                       => 'The number of days must be at least 1.',
         'number-of-days-nullable'                                  => 'The number of days field is optional.',
+
+        // Notification Validation
+        'this-notification-did-not-belong-to-this-user'            => 'This notification did not belong to this user.',
+        'notification-id-is-required'                              => 'Notification id is required.',
+        'notification-id-does-not-exists'                          => 'Notification id does not exist.',
+
+        // Favorite Validation
+        'favorite-id-does-not-exists'                              => 'Selected favorite does not exist.',
+        'you-already-make-this-as-favorite'                        => 'You have already marked this as a favorite.',
+        'not-acceptable-type'                                      => 'Not acceptable type.',
+        'this_is_not_in_favorite_list'                             => 'this is not in favorite list',
+
+        // Review Validation
+        'review-id-does-not-exists'                                => 'Selected review does not exist.',
+        'you-already-make-review-for-this'                         => 'You have already made a review for this.',
+        'you_cant_make_review_for_upcoming_trip'                   => 'You can\'t make a review for an upcoming trip.',
+        'you_cannot_make_review_for_upcoming_event'                => 'You cannot make a review for an upcoming event.',
+        'you-did-not-make-review-for-this'                         => 'You did not make review for this.',
+        'the-review-creator-not-longer-active'                     => 'The review creator is not longer active.',
+        'the-selected-review-id-does-not-exists'                   => 'The selected review id does not exists',
+        'the-review-id-required'                                   => 'The review id is required',
+        'the-status-required'                                      => 'The status like or dislike is required',
+        'not-acceptable-status'                                    => 'Not acceptable status',
+        'the-review-id-must-be-integer'                            => 'The review id must be integer',
+
+        // Post Validation
+        'visitable-type-required'                                  => 'Please specify the type of the visitable item.',
+        'visitable-type-in'                                        => 'The selected visitable type is invalid. Allowed types: place, plan, trip, event, volunteering.',
+        'visitable-id-required'                                    => 'The visitable item ID is required.',
+        'visitable-id-exists'                                      => 'The specified visitable item could not be found.',
+        'selected-type-does-not-exist'                             => 'The selected item does not exist for the specified type.',
+        'the-selected-place-is-not-active'                         => 'The selected place is currently inactive.',
+        'content-required'                                         => 'Post content is required.',
+        'content-string'                                           => 'The content must be a valid string.',
+        'privacy-required'                                         => 'Please select a privacy setting for the post.',
+        'privacy-in'                                               => 'Invalid privacy setting. Options are: 0 (Public), 1 (Private), or 2 (Friends Only).',
+        'file-must-be-valid'                                       => 'The uploaded file is not valid.',
+        'file-must-be-a-valid-image-audio-video'                   => 'The uploaded file must be a valid image, audio, or video format.',
+        'file-size-must-be-less-than-10mb'                         => 'The file size must not exceed 10MB.',
+        'post-id-required'                                         => 'The post ID is required.',
+        'post-id-does-not-exists'                                  => 'Post id does not exists',
+        'you_are_not_the_owner_of_this_post'                       => 'You are not the owner of this post.',
+        'post-id-invalid'                                          => 'Post id invalid',
     ]
 ];

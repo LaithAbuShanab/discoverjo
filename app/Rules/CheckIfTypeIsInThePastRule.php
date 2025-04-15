@@ -26,9 +26,9 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $now = now()->setTimezone('Asia/Riyadh');
-        $acceptableType = ['place', 'trip','event','volunteering','guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip'];
 
-        if(!in_array($this->data['type'],$acceptableType)){
+        if (!in_array($this->data['type'], $acceptableType)) {
             return;
         }
         // Validate if the type class has the method `findBySlug` before using it
@@ -37,16 +37,16 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
         $reviewableItem = $modelClass::findBySlug($value);
 
         if (!$reviewableItem) {
-            $fail(__('validation.api.id-does-not-exists'));
+            $fail(__('validation.api.review-id-does-not-exists'));
             return;
         }
 
-        if($this->data['type']=='place'){
-            if($reviewableItem->status != 1){
+        if ($this->data['type'] == 'place') {
+            if ($reviewableItem->status != 1) {
                 $fail(__('validation.api.the-selected-place-is-not-active'));
                 return;
             }
-        }elseif($this->data['type']=='trip'){
+        } elseif ($this->data['type'] == 'trip') {
             $userId = Auth::guard('api')->user()->id;
             $attendance = UsersTrip::where('user_id', $userId)->where('trip_id', $reviewableItem?->id)->where('status', '1')->exists();
             $owner = $reviewableItem?->user_id;
@@ -55,16 +55,16 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
                 return;
             }
             $trip = Trip::findBySlug($value);
-            if($trip->status == 2 || $trip->status == 3){
+            if ($trip->status == 2 || $trip->status == 3) {
                 $fail(__('validation.api.this-trip-was-deleted'));
                 return;
             }
             $now = now()->setTimezone('Asia/Riyadh');
-            if ($trip?->date_time > $now ) {
+            if ($trip?->date_time > $now) {
                 $fail(__('validation.api.you_cant_make_review_for_upcoming_trip'));
                 return;
             }
-        }else{
+        } else {
             $date = $modelClass::findBySlug($value)?->start_datetime;
 
             if ($date > $now) {
@@ -72,8 +72,5 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
                 return;
             }
         }
-
-
-
     }
 }

@@ -6,10 +6,6 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Post\CreatePostApiRequest;
 use App\Http\Requests\Api\User\Post\UpdatePostApiRequest;
-use App\Models\Post;
-use App\Rules\CheckIfExistsInFavoratblesRule;
-use App\Rules\CheckIfFollowerFollowingExistsRule;
-use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfPostCreateorActiveRule;
 use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckMediaBelongsToUserRule;
@@ -25,21 +21,19 @@ use Illuminate\Validation\Rule;
 
 class PostApiController extends Controller
 {
-    protected $postApiUseCase;
-
-    public function __construct(PostApiUseCase $postApiUseCase)
+    public function __construct(protected PostApiUseCase $postApiUseCase)
     {
-
         $this->postApiUseCase = $postApiUseCase;
     }
+
     /**
      * Display a listing of the resource.
      */
     public function followingPost()
     {
         try {
-            $createTrip = $this->postApiUseCase->followingPost();
-            return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $createTrip);
+            $followingPosts = $this->postApiUseCase->followingPost();
+            return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $followingPosts);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -64,13 +58,13 @@ class PostApiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostApiRequest $request,$post_id)
+    public function update(UpdatePostApiRequest $request, $post_id)
     {
         $validator = Validator::make(['post_id' => $post_id], [
-            'post_id' => ['required', 'exists:posts,id', new CheckPostBelongToUser()]
-        ],[
-            'post_id.required'=>__('validation.api.guide-trip-id-required'),
-            'post_id.exists'=>__('validation.api.guide-trip-id-does-not-exists'),
+            'post_id' => ['bail', 'required', 'exists:posts,id', new CheckPostBelongToUser()]
+        ], [
+            'post_id.required' => __('validation.api.post-id-required'),
+            'post_id.exists' => __('validation.api.post-id-does-not-exists'),
         ]);
         $validatedData = array_merge($request->validated(), $validator->validated());
         try {
@@ -82,15 +76,18 @@ class PostApiController extends Controller
         }
     }
 
-    public function show(Request $request,$post_id)
+    public function show(Request $request, $post_id)
     {
-        $validator = Validator::make(['post_id' => $post_id], [
-            'post_id' => ['required', 'exists:posts,id'],
-        ],
+        $validator = Validator::make(
+            ['post_id' => $post_id],
             [
-                'post_id.exists'=>__('validation.api.post-id-invalid'),
-                'post_id.required'=>__('validation.api.post-id-does-not-exists')
-            ]);
+                'post_id' => ['required', 'exists:posts,id'],
+            ],
+            [
+                'post_id.exists' => __('validation.api.post-id-invalid'),
+                'post_id.required' => __('validation.api.post-id-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['post_id'][0]);
@@ -98,7 +95,6 @@ class PostApiController extends Controller
 
         try {
             $post = $this->postApiUseCase->showPost($validator->validated());
-
             return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $post);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -106,13 +102,13 @@ class PostApiController extends Controller
         }
     }
 
-    public function DeleteImage(Request $request,$media_id)
+    public function DeleteImage(Request $request, $media_id)
     {
         $validator = Validator::make(['media_id' => $media_id], [
-            'media_id' => ['required', 'exists:media,id',new CheckMediaBelongsToUserRule()],
-        ],[
-            'media_id.required'=>__('validation.api.media-id-required'),
-            'media_id.exists'=>__('validation.api.media-id-does-not-exists'),
+            'media_id' => ['required', 'exists:media,id', new CheckMediaBelongsToUserRule()],
+        ], [
+            'media_id.required' => __('validation.api.media-id-required'),
+            'media_id.exists' => __('validation.api.media-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -131,7 +127,7 @@ class PostApiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request,$post_id)
+    public function destroy(Request $request, $post_id)
     {
         $validator = Validator::make(['post_id' => $post_id], [
             'post_id' => ['required', 'exists:posts,id', new CheckPostBelongToUser()],
@@ -150,13 +146,16 @@ class PostApiController extends Controller
         }
     }
 
-    public function createFavoritePost(Request $request,$post_id)
+    public function createFavoritePost(Request $request, $post_id)
     {
 
         $validator = Validator::make(
             ['post_id' => $post_id],
             [
-                'post_id' => ['required', 'exists:posts,id', function ($attribute, $value, $fail) { // Add $attribute and $fail parameters
+                'post_id' => [
+                    'required',
+                    'exists:posts,id',
+                    function ($attribute, $value, $fail) { // Add $attribute and $fail parameters
                         $exists = DB::table('favorables')
                             ->where('user_id', Auth::guard('api')->id())
                             ->where('favorable_type', 'App\Models\Post')
@@ -166,7 +165,8 @@ class PostApiController extends Controller
                         if ($exists) {
                             $fail(__('validation.api.you-already-make-this-as-favorite'));
                         }
-                    },new CheckIfPostCreateorActiveRule()
+                    },
+                    new CheckIfPostCreateorActiveRule()
                 ]
             ],
             [
@@ -189,7 +189,7 @@ class PostApiController extends Controller
         }
     }
 
-    public  function deleteFavoritePost(Request $request,$post_id)
+    public  function deleteFavoritePost(Request $request, $post_id)
     {
 
         $validator = Validator::make(
@@ -212,9 +212,10 @@ class PostApiController extends Controller
                 ]
             ],
             [
-                'post_id.exists'=>__('validation.api.post-id-invalid'),
-                'post_id.required'=>__('validation.api.post-id-does-not-exists')
-            ]);
+                'post_id.exists' => __('validation.api.post-id-invalid'),
+                'post_id.required' => __('validation.api.post-id-does-not-exists')
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['post_id'][0]);
@@ -229,16 +230,17 @@ class PostApiController extends Controller
         }
     }
 
-    public function likeDislike(Request $request,$status,$post_id)
+    public function likeDislike(Request $request, $status, $post_id)
     {
         $validator = Validator::make(
             ['status' => $status, 'post_id' => $post_id],
-            ['status' => ['required', Rule::in(['like', 'dislike'])], 'post_id' => ['required', 'integer', 'exists:posts,id',new CheckIfPostCreateorActiveRule()],],
+            ['status' => ['required', Rule::in(['like', 'dislike'])], 'post_id' => ['required', 'integer', 'exists:posts,id', new CheckIfPostCreateorActiveRule()],],
             [
-                'post_id.exists'=>__('validation.api.post-id-invalid'),
-                'post_id.required'=>__('validation.api.post-id-does-not-exists'),
-                'status'=>__('validation.api.the-status-required')
-            ]);
+                'post_id.exists' => __('validation.api.post-id-invalid'),
+                'post_id.required' => __('validation.api.post-id-does-not-exists'),
+                'status' => __('validation.api.the-status-required')
+            ]
+        );
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
@@ -246,7 +248,7 @@ class PostApiController extends Controller
 
         try {
             $this->postApiUseCase->postLike($validator->validated());
-            return ApiResponse::sendResponse(200,__('app.event.api.the-likable-status-change-successfully'), []);
+            return ApiResponse::sendResponse(200, __('app.event.api.the-likable-status-change-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -262,17 +264,18 @@ class PostApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
     public function otherUserPosts($slug)
     {
-        $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:users,slug',new CheckIfUserActiveRule()],
-        ],
+        $validator = Validator::make(
+            ['slug' => $slug],
             [
-                'slug.required'=>__('validation.api.the-user-id-is-required'),
-                'slug.exists'=>__('validation.api.the-user-id-does-not-exists'),
+                'slug' => ['required', 'exists:users,slug', new CheckIfUserActiveRule()],
+            ],
+            [
+                'slug.required' => __('validation.api.the-user-id-is-required'),
+                'slug.exists' => __('validation.api.the-user-id-does-not-exists'),
             ]
         );
 
@@ -287,6 +290,5 @@ class PostApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 }

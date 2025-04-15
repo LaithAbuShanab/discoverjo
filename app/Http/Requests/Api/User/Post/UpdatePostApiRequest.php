@@ -4,12 +4,9 @@ namespace App\Http\Requests\Api\User\Post;
 
 use App\Helpers\ApiResponse;
 use App\Models\Event;
-use App\Models\GuideTrip;
 use App\Models\Place;
 use App\Models\Plan;
-use App\Models\Trip;
 use App\Models\Volunteering;
-use App\Rules\CheckPostBelongToUser;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -35,11 +32,13 @@ class UpdatePostApiRequest extends FormRequest
     {
         return [
             'visitable_type' => [
+                'bail',
                 'required',
                 Rule::in(['place', 'plan', 'event', 'volunteering']),
             ],
 
             'visitable_slug' => [
+                'bail',
                 'required',
                 function ($attribute, $value, $fail) {
                     $type = $this->input('visitable_type');
@@ -50,12 +49,12 @@ class UpdatePostApiRequest extends FormRequest
                         'volunteering' => Volunteering::class,
                     ];
 
-                    if (isset($models[$type]) && !$models[$type]::findBySlug( $value)) {
-                        $fail(__('validation.api.selected-' . $type . '-does-not-exist'));
+                    if (isset($models[$type]) && !$models[$type]::findBySlug($value)) {
+                        $fail(__('validation.api.selected-type-does-not-exist'));
                         return;
                     }
-                    if($type == 'place'){
-                        if(!$models[$type]::findBySlug( $value)->status){
+                    if ($type == 'place') {
+                        if (!$models[$type]::findBySlug($value)->status) {
                             $fail(__('validation.api.the-selected-place-is-not-active'));
                         }
                     }
@@ -63,10 +62,9 @@ class UpdatePostApiRequest extends FormRequest
             ],
 
             'content' => ['required', 'string'],
-
             'privacy' => ['required', Rule::in([0, 1, 2])],
-            'media' => ['nullable'],
-            'media.*'=>['file','mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo','max:10240']
+            'media'   => ['nullable'],
+            'media.*' => ['file', 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo', 'max:10240']
         ];
     }
 
@@ -74,17 +72,16 @@ class UpdatePostApiRequest extends FormRequest
     public function messages()
     {
         return [
-            'post_id.required' => __('validation.api.post-id-required'),
-            'post_id.exists' => __('validation.api.post-id-exists'),
-            'post_id.custom' => __('validation.api.post-id-custom'),
             'visitable_type.required' => __('validation.api.visitable-type-required'),
             'visitable_type.in' => __('validation.api.visitable-type-in'),
-            'visitable_id.required' => __('validation.api.visitable-id-required'),
-            'visitable_id.custom' => __('validation.api.visitable-id-custom'),
+            'visitable_slug.required' => __('validation.api.visitable-id-required'),
             'content.required' => __('validation.api.content-required'),
             'content.string' => __('validation.api.content-string'),
             'privacy.required' => __('validation.api.privacy-required'),
             'privacy.in' => __('validation.api.privacy-in'),
+            'media.*.file' => __('validation.api.file-must-be-valid'),
+            'media.*.mimetypes' => __('validation.api.file-must-be-a-valid-image-audio-video'),
+            'media.*.max' => __('validation.api.file-size-must-be-less-than-10mb'),
         ];
     }
 

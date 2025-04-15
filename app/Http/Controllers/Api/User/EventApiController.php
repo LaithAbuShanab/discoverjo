@@ -82,7 +82,7 @@ class EventApiController extends Controller
     public function interest(Request $request, $slug)
     {
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:events,slug', new CheckUserInterestRule('App\Models\Event')],
+            'slug' => ['bail', 'required', 'exists:events,slug', new CheckUserInterestRule('App\Models\Event')],
         ], [
             'slug.required' => __('validation.api.event-id-is-required'),
             'slug.exists' => __('validation.api.event-id-does-not-exists'),
@@ -92,9 +92,10 @@ class EventApiController extends Controller
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
+
         try {
             $events = $this->eventApiUseCase->interestEvent($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200,  __('app.event.api.you-add-this-event-to-interest-successfully'), $events);
+            return ApiResponse::sendResponse(200,  __('app.api.you-add-this-event-to-interest-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 
@@ -115,12 +116,12 @@ class EventApiController extends Controller
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
         }
+
         try {
-            $events = $this->eventApiUseCase->disinterestEvent($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, __('app.event.api.you-remove-this-event-from-interested-list'), $events);
+            $event = $this->eventApiUseCase->disinterestEvent($validator->validated()['slug']);
+            return ApiResponse::sendResponse(200, __('app.api.you-remove-this-event-from-interested-list'), $event);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
-
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
     }
@@ -141,9 +142,8 @@ class EventApiController extends Controller
     {
         try {
             $id = Auth::guard('api')->user()->id;
-
             $events = $this->eventApiUseCase->interestList($id);
-            return ApiResponse::sendResponse(200, __('app.event.api.the-interest-event-retrieved-successfully'), $events);
+            return ApiResponse::sendResponse(200, __('app.api.the-interest-event-retrieved-successfully'), $events);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

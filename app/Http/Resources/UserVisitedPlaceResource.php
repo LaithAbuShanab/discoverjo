@@ -16,6 +16,7 @@ class UserVisitedPlaceResource extends JsonResource
     {
         return [
             'name'=>$this->name,
+            'slug'=>$this->slug,
             'longitude'=>$this->longitude,
             'latitude'=>$this->latitude
 

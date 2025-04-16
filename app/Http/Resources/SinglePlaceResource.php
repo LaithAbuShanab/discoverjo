@@ -66,6 +66,21 @@ class SinglePlaceResource extends JsonResource
             $gallery[] = $image->getUrl('place_gallery_app');
         }
 
+        $posts = $this->posts->filter(function ($post) {
+            if ($post->privacy == 1) {
+                return true;
+            }
+
+            // Followers-only post
+            if ($post->privacy == 2) {
+                // Assuming you have access to the authenticated user
+                $user = Auth::guard('api')->user();
+                return $user && $user->isFollowing($post->user); // or $post->creator
+            }
+
+            return false;
+        });
+
 
         $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
         return [
@@ -95,7 +110,7 @@ class SinglePlaceResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id', $this->id) : false,
             'visited' => Auth::guard('api')->user() ? Auth::guard('api')->user()->visitedPlace->contains('id', $this->id) : false,
             'reviews' => ReviewResource::collection($this->reviews),
-            'posts' => UserPostResource::collection($this->posts),
+            'posts' => UserPostResource::collection($posts),
         ];
     }
 }

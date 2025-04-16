@@ -36,6 +36,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 ->where('users.status', 1); // Only active users
         })
             ->whereIn('privacy', [1, 2])
+            ->orWhere('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 

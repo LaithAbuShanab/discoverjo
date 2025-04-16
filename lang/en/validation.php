@@ -160,23 +160,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Custom Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify custom validation messages for attributes using the
-    | convention "attribute.rule" to name the lines. This makes it quick to
-    | specify a specific custom language line for a given attribute rule.
-    |
-    */
-
-    'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Custom Validation Attributes
     |--------------------------------------------------------------------------
     |
@@ -334,12 +317,6 @@ return [
     ],
 
     'api' => [
-        'relationship_not_exist' => "The relationship :relationship does not exist in User model",
-        'this-place-not-in-your-visited-place-list' => 'This place not in your visited place list to remove it form list',
-        'event-id-is-required' => 'Event id is required',
-        'you_are_not_attendance_in_this' => 'You are not an attendee for this trip.',
-        'event-id-does-not-exists' => 'Event id does not exists',
-        'rating-is-required' => 'Rating field is required',
         'the-following-id-is-required' => 'The following id is required',
         'the-following-id-does-not-exists' => 'The following id does not exists',
         'conversation-id-is-required' => 'Conversation id is required',
@@ -373,7 +350,6 @@ return [
         "following-id-not-exists" => "The following user does not exist.",
         "follower-following-already-exists" => "You are already following this user.",
 
-
         // Question ID
         "question-id-is-required" => "The question ID is required.",
         "question-id-not-exists" => "The selected question does not exist.",
@@ -381,23 +357,6 @@ return [
         // Answer
         "answer-is-required" => "The answer is required.",
         "answer-invalid-value" => "The answer must be 'yes', 'no', or 'I don't know'.",
-
-        // Guide ID
-        "guide-id-is-required" => "The guide ID is required.",
-        "the-provided-id-not-guide" => 'The provided id not belong to guide',
-        "you-can-not-make-rating-for-yourself" => "You can not make rating for yourself",
-        "you-made-rating-already" => "You have already made rating for the guide",
-        "guide-id-not-exists" => "The selected guide does not exist.",
-        "guide-already-joined" => "You have already joined this guide previously.",
-
-        // Rating
-        "rating-must-be-numeric" => "The rating must be a numeric value.",
-        "rating-min-value" => "The rating must be at least 1.",
-        "rating-max-value" => "The rating must not be more than 5.",
-
-
-        "guide-update-not-allowed" => "You are not allowed to update this guide.",
-
 
         // Name
         "name-en-required" => "The English name is required.",
@@ -466,11 +425,6 @@ return [
         // Trail
         "trail-nullable" => "Trail must be a string if present.",
 
-        'guide_trip_id.required' => 'The guide trip ID is required.',
-        'guide_trip_id.exists' => 'The selected guide trip ID is invalid.',
-        'guide_trip_id.check_if_guide_trip_active_or_in_future' => 'The guide trip must be active or scheduled for the future.',
-        'guide_trip_id.check_if_guide_trip_user_exist' => 'The user must exist for the guide trip.',
-
         'subscribers.required' => 'Subscribers are required.',
         'subscribers.array' => 'Subscribers must be an array.',
 
@@ -489,31 +443,6 @@ return [
         'subscribers.*.phone_number.required' => 'The phone number for each subscriber is required.',
         'subscribers.*.phone_number.string' => 'The phone number must be a string.',
         'subscribers.*.phone_number.max' => 'The phone number may not be greater than 20 characters.',
-
-
-        'guide-trip-id-invalid' => 'The selected guide trip ID is invalid.',
-        'guide-trip-active-or-future' => 'The guide trip must be active or scheduled for the future.',
-        'guide-trip-user-joined' => 'The user must have joined the guide trip.',
-
-        'subscribers-required' => 'Subscribers are required.',
-        'subscribers-array' => 'Subscribers must be an array.',
-
-        'subscriber-first-name-required' => 'The first name for each subscriber is required.',
-        'subscriber-first-name-string' => 'The first name must be a string.',
-        'subscriber-first-name-max' => 'The first name may not be greater than 255 characters.',
-
-        'subscriber-last-name-required' => 'The last name for each subscriber is required.',
-        'subscriber-last-name-string' => 'The last name must be a string.',
-        'subscriber-last-name-max' => 'The last name may not be greater than 255 characters.',
-
-        'subscriber-age-required' => 'The age for each subscriber is required.',
-        'subscriber-age-integer' => 'The age must be an integer.',
-        'subscriber-age-min' => 'The age must be at least 0.',
-
-        'subscriber-phone-number-required' => 'The phone number for each subscriber is required.',
-        'subscriber-phone-number-string' => 'The phone number must be a string.',
-        'subscriber-phone-number-max' => 'The phone number may not be greater than 20 characters.',
-
 
         'categories-id-nullable' => 'The categories ID field is optional.',
         'categories-id-array' => 'The categories ID field must be an array.',
@@ -658,25 +587,14 @@ return [
         'this_user_already_follow_you' => 'This user already follows you.',
         'you_can_not_make_request_to_yourself' => 'You cannot make a request to yourself.',
 
-        'trip_registration_closed' => 'You can no longer register for this trip.',
-        'trip_has_started' => 'The trip started on :start_datetime.',
         'trip_conflict' => 'There is a conflict with your existing trips.',
-        'already_in_trip' => 'You are already in this trip.',
         'invalid_jordanian_phone_number' => 'The :attribute must be a valid Jordanian phone number.',
         'this_is_not_in_favorite_list_to_delete' => 'This item is not in your favorite list, so it cannot be deleted.',
         'this_reply_did_not_belong_to_you' => 'This reply does not belong to you.',
         'reply_not_found' => 'The specified reply was not found.',
         'comment_not_found' => 'The specified comment was not found.',
         'you_can_not_delete_the_reply' => 'You cannot delete this reply.',
-        'you_should_join_trip_first' => 'You should join the trip first.',
-        'trip_not_found' => 'The specified trip was not found.',
-        'this_trip_inactive' => 'This trip is inactive.',
-        'cannot_update_trip_started_at' => 'You cannot update this trip because it started at :date.',
         'you_do_not_have_request_to_delete' => 'You do not have a request to delete this trip.',
-        'you_did_not_participate_in_any_of_guide_trip' => 'You did not participate in any of the guide’s trips.',
-        'you_already_create_rating_for_this_guide' => 'You have already created a rating for this guide.',
-        'you_did_not_make_review_for_this_guide_to_update' => 'You have not made a review for this guide to update.',
-        'you_did_not_make_rating_for_this_guide' => 'You have not made a rating for this guide before.',
         'invalid_json_format' => 'The provided data is not a valid JSON format.',
         'the-current-question-and-next-question-cannot-be-the-same' => 'The current question and next question cannot be the same.',
         'this-conversation-is-not-available' => 'This conversation is not available.',
@@ -686,7 +604,6 @@ return [
         'this-name-en-and-location-exists' => 'A place with this name in English and the specified location already exists.',
         'priority-must-be-unique-within-same-parent-category' => 'The priority must be unique within the same parent category.',
         'you-deactivated-by-admin-wait-to-unlock-the-block' => 'You deactivated by admin so wait to unlock the block',
-        'you-did-not-join-to-this-trip' => 'you did not join to this trip',
         'invalid-credentials' => 'Invalid credentials',
         'you-should-verify-email-first' => 'You should verify your email first',
         'something-went-wrong' => 'Something went wrong',
@@ -803,6 +720,7 @@ return [
         'user_slug_exists'                                          => 'The selected user does not exist.',
         'the-user-owner-this-trip-not-longer-active'                => 'The user owner of this trip is no longer active.',
         'this-trip-was-deleted'                                     => 'This trip was deleted',
+        'you_are_not_attendance_in_this'                            => 'You are not an attendee for this trip.',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'The plan identifier (slug) is required Or the plan does not exist.',
@@ -954,6 +872,46 @@ return [
         'guide-trip-user-id-required'                               => 'Guide trip user id required',
         'guide-trip-user-id-does-not-exists'                        => 'Guide trip user id does not exists',
         'the-user-not-longer-active'                                => 'The user is no longer active.',
+        'you-did-not-join-to-this-trip'                             => 'you did not join to this trip',
+
+        // User Guide Trip Validation
+        'trip_registration_closed'                                  => 'You can no longer register for this trip.',
+        'trip_has_started'                                          => 'The trip started on :start_datetime.',
+        'already_in_trip'                                           => 'You are already in this trip.',
+        'subscribers-required'                                      => 'Subscribers are required.',
+        'subscribers-array'                                         => 'Subscribers must be an array.',
+        'subscriber-first-name-required'                            => 'The first name for each subscriber is required.',
+        'subscriber-first-name-string'                              => 'The first name must be a string.',
+        'subscriber-first-name-max'                                 => 'The first name may not be greater than 255 characters.',
+        'subscriber-last-name-required'                             => 'The last name for each subscriber is required.',
+        'subscriber-last-name-string'                               => 'The last name must be a string.',
+        'subscriber-last-name-max'                                  => 'The last name may not be greater than 255 characters.',
+        'subscriber-age-required'                                   => 'The age for each subscriber is required.',
+        'subscriber-age-integer'                                    => 'The age must be an integer.',
+        'subscriber-age-min'                                        => 'The age must be at least 0.',
+        'subscriber-phone-number-required'                          => 'The phone number for each subscriber is required.',
+        'subscriber-phone-number-string'                            => 'The phone number must be a string.',
+        'subscriber-phone-number-max'                               => 'The phone number may not be greater than 20 characters.',
+        'you_should_join_trip_first'                                => 'You should join the trip first.',
+        'trip_not_found'                                            => 'The specified trip was not found.',
+        'this_trip_inactive'                                        => 'This trip is inactive.',
+        'cannot_update_trip_started_at'                             => 'You cannot update this trip because it started at :date.',
+
+        // Guide Rating Validation
+        'guide-id-required'                                         => 'The guide ID is required.',
+        'guide-id-does-not-exists'                                  => 'The selected guide ID does not exist.',
+        "the-provided-id-not-guide"                                 => 'The provided id not belong to guide',
+        'the-guide-not-active'                                      => 'The guide is not active.',
+        'you_did_not_make_rating_for_this_guide'                    => 'You have not made a rating for this guide before.',
+        "you-can-not-make-rating-for-yourself"                      => "You can not make rating for yourself",
+        'you_did_not_participate_in_any_of_guide_trip'              => 'You did not participate in any of the guide’s trips.',
+        'you_already_create_rating_for_this_guide'                  => 'You have already created a rating for this guide.',
+        "you-made-rating-already"                                   => "You have already made rating for the guide",
+        'rating-is-required'                                        => 'Rating field is required',
+        "rating-must-be-numeric"                                    => "The rating must be a numeric value.",
+        "rating-min-value"                                          => "The rating must be at least 1.",
+        "rating-max-value"                                          => "The rating must not be more than 5.",
+        'you_did_not_make_review_for_this_guide_to_update'          => 'You have not made a review for this guide to update.',
 
         // Region Validation
         'region-id-nullable'                                       => 'The region ID field is optional.',
@@ -988,6 +946,7 @@ return [
         'the-status-required'                                      => 'The status like or dislike is required',
         'not-acceptable-status'                                    => 'Not acceptable status',
         'the-review-id-must-be-integer'                            => 'The review id must be integer',
+        'relationship_not_exist'                                   => "The relationship :relationship does not exist in User model",
 
         // Post Validation
         'visitable-type-required'                                  => 'Please specify the type of the visitable item.',

@@ -20,7 +20,7 @@ class CheckIfUserHasJoinedInTripRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $activeTrip = GuideTrip::findBySlug($value);
-        if(!$activeTrip) return;
+        if (!$activeTrip) return;
 
         // Check if the user is part of the trip
         $userInTrip = GuideTripUser::where('guide_trip_id', $activeTrip->id)->where('user_id', $userId)->exists();
@@ -45,5 +45,4 @@ class CheckIfUserHasJoinedInTripRule implements ValidationRule
             $fail(__('validation.api.cannot_update_trip_started_at', ['date' => $activeTrip->start_datetime]));
         }
     }
-
 }

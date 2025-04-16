@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Api\User\GuideTrip;
 
-use App\Rules\CheckIfGuideTripActiveOrInFuture;
-use App\Rules\CheckIfJordanianPhoneRule;
-use App\Rules\CheckIfUserHasJoinedInTripRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
+use App\Helpers\ApiResponse;
 
 class UpdateGuideTripUserRequest extends FormRequest
 {
@@ -30,19 +30,13 @@ class UpdateGuideTripUserRequest extends FormRequest
             'subscribers.*.first_name' => 'required|string|max:255',
             'subscribers.*.last_name' => 'required|string|max:255',
             'subscribers.*.age' => 'required|integer|min:0',
-            'subscribers.*.phone_number' => ['required','string','max:20'],
+            'subscribers.*.phone_number' => ['required', 'string', 'max:20'],
         ];
     }
 
     public function messages()
     {
         return [
-            // Guide Trip ID validation messages
-            'guide_trip_id.required' => __('validation.api.guide-trip-id-required'),
-            'guide_trip_id.exists' => __('validation.api.guide-trip-id-invalid'),
-            'guide_trip_id.check_if_guide_trip_active_or_in_future' => __('validation.api.guide-trip-active-or-future'),
-            'guide_trip_id.check_if_user_has_joined_in_trip' => __('validation.api.guide-trip-user-joined'),
-
             // Subscribers validation messages
             'subscribers.required' => __('validation.api.subscribers-required'),
             'subscribers.array' => __('validation.api.subscribers-array'),
@@ -67,10 +61,9 @@ class UpdateGuideTripUserRequest extends FormRequest
 
 
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-        ], \Illuminate\Http\Response::HTTP_BAD_REQUEST));
+        $errors = $validator->errors()->all();
+        throw new HttpResponseException(ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors));
     }
 }

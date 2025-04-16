@@ -49,9 +49,10 @@ class GuideTripUserApiController extends Controller
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
+
         try {
-            $createGuideTripUsers = $this->guideTripUserApiUseCase->allSubscription($validator->validated()['guide_trip_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-fetched-successfully'), $createGuideTripUsers);
+            $guideTrips = $this->guideTripUserApiUseCase->allSubscription($validator->validated()['guide_trip_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-fetched-successfully'), $guideTrips);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -73,8 +74,8 @@ class GuideTripUserApiController extends Controller
         }
         $data =  array_merge($request->validated(), $validator->validated());;
         try {
-            $createGuideTripUsers = $this->guideTripUserApiUseCase->storeSubscriberInTrip($data);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-created-successfully'), $createGuideTripUsers);
+            $sendRequest = $this->guideTripUserApiUseCase->storeSubscriberInTrip($data);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-created-successfully'), $sendRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -96,8 +97,8 @@ class GuideTripUserApiController extends Controller
         }
         $data =  array_merge($request->validated(), $validator->validated());
         try {
-            $createGuideTripUsers = $this->guideTripUserApiUseCase->updateSubscriberInTrip($data);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-updated-successfully'), $createGuideTripUsers);
+            $updateRequest = $this->guideTripUserApiUseCase->updateSubscriberInTrip($data);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-updated-successfully'), $updateRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -106,7 +107,6 @@ class GuideTripUserApiController extends Controller
 
     public function delete(Request $request, $guide_trip_slug)
     {
-
         $validator = Validator::make(['guide_trip_slug' => $guide_trip_slug], [
             'guide_trip_slug' => ['bail', 'required', 'exists:guide_trips,slug', new CheckIfUserHasJoinedRule(), new CheckIfGuideActiveRule()],
         ], [
@@ -119,8 +119,8 @@ class GuideTripUserApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $createGuideTripUsers = $this->guideTripUserApiUseCase->deleteSubscriberInTrip($validator->validated()['guide_trip_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-deleted-successfully'), $createGuideTripUsers);
+            $deleteRequest = $this->guideTripUserApiUseCase->deleteSubscriberInTrip($validator->validated()['guide_trip_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-deleted-successfully'), $deleteRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

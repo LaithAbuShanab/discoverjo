@@ -3,12 +3,6 @@
 namespace App\Http\Requests\Api\User\GuideRating;
 
 use App\Helpers\ApiResponse;
-use App\Rules\CheckIfTheIdIsGuideRule;
-use App\Rules\CheckIfUserJoinedGuidPreviouslyRule;
-use App\Rules\CheckIfUserMakeRatingOnGuideRule;
-use App\Rules\CheckIfUserNotGuideForRatingRule;
-use App\Rules\CheckIsGuideRule;
-use App\Rules\IfUserCanMakeCommentInPostRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -39,12 +33,6 @@ class CreateGuideRatingRequest extends FormRequest
     public function messages()
     {
         return [
-            // Guide ID
-            'guide_id.required' => __('validation.api.guide-id-is-required'),
-            'guide_id.exists' => __('validation.api.guide-id-not-exists'),
-            'guide_id.CheckIfUserJoinedGuidPreviouslyRule' => __('validation.api.guide-already-joined'),
-
-            // Rating
             'rating.required' => __('validation.api.rating-is-required'),
             'rating.numeric' => __('validation.api.rating-must-be-numeric'),
             'rating.min' => __('validation.api.rating-min-value'),

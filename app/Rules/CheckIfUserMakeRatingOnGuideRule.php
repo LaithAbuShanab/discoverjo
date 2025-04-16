@@ -19,10 +19,9 @@ class CheckIfUserMakeRatingOnGuideRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $guide = User::findBySlug($value);
-        if(!$guide)return;
-        if(RatingGuide::where('user_id',$userId)->where('guide_id',$guide->id)->exists()){
+        if (!$guide) return;
+        if (RatingGuide::where('user_id', $userId)->where('guide_id', $guide->id)->exists()) {
             $fail(__('validation.api.you-made-rating-already'));
         }
-
     }
 }

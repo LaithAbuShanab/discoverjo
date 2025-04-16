@@ -84,28 +84,31 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('comment/like-dislike/{status}/{comment_id}', [CommentApiController::class, 'likeDislike']); // DONE ✅
     });
 
+    // ALL ROUTES FOR GUIDE
     Route::group(['prefix' => 'guide'], function () {
         Route::post('/trips/store', [GuideTripApiController::class, 'store']); // DONE ✅
         Route::get('/trips/{guide_slug}', [GuideTripApiController::class, 'tripsOfGuide']); // DONE ✅
         Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']); // DONE ✅
         Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']); // DONE ✅
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']); // DONE ✅
-        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']); // DONE
-        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // DONE
+        Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']); // DONE ✅
+        Route::put('change/join/request/{status}/{guide_trip_user_id}', [GuideTripApiController::class, 'changeJoinRequestStatus']); // DONE ✅
     });
 
+    // ALL ROUTES FOR GUIDE TRIP
     Route::group(['prefix' => 'user/guide-trip'], function () {
-        Route::get('/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'allSubscription']);
-        Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']); // NOTIFICATION(15)
-        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']);
-        Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']);
+        Route::get('/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'allSubscription']); // DONE ✅
+        Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']); // DONE ✅
+        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']); // DONE ✅
+        Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']); // DONE ✅
     });
 
-    Route::controller(GuideRatingController::class)->group(function () {
-        Route::get('rating/guide/show/{guide_slug}', 'show');
-        Route::post('rating/guide/store/{guide_slug}', 'create');
-        Route::post('rating/guide/update/{guide_slug}', 'update');
-        Route::delete('rating/guide/delete/{guide_slug}', 'delete');
+    // ALL ROUTES FOR GUIDE RATING
+    Route::group(['prefix' => 'rating'], function () {
+        Route::get('/guide/show/{guide_slug}', [GuideRatingController::class, 'show']); // DONE ✅
+        Route::post('/guide/store/{guide_slug}', [GuideRatingController::class, 'create']); // DONE ✅
+        Route::post('/guide/update/{guide_slug}', [GuideRatingController::class, 'update']); // DONE ✅
+        Route::delete('/guide/delete/{guide_slug}', [GuideRatingController::class, 'delete']); // DONE ✅
     });
 
     Route::group(['prefix' => 'follow'], function () {

@@ -16,11 +16,11 @@ class CheckIfTheIdIsGuideRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $user = User::findBySlug($value);
-        if(!$user) return;
-        if(!$user->is_guide){
+        if (!$user) return;
+        if (!$user->is_guide) {
             $fail(__('validation.api.the-provided-id-not-guide'));
         }
-        if( $user->status != 1){
+        if ($user->status != 1) {
             $fail(__('validation.api.the-guide-not-active'));
         }
     }

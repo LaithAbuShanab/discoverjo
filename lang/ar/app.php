@@ -9,7 +9,6 @@ return [
     "thankYou" => "إذا لم تطلب تأكيد البريد الإلكتروني، يمكنك تجاهل هذا البريد الإلكتروني.",
     "allReserved" => "جميع الحقوق محفوظة لـ دسكوفر جو",
     "yourNotVerified" => "لم يتم التحقق من بريدك الإلكتروني. يرجى تفعيل حسابك قبل تسجيل الدخول.",
-    //translation email reset password
     'discover-jordan-logo' => 'شعار اكتشف الأردن',
     'discover-jordan' => 'اكتشف الأردن',
     'reset_password_notification' => 'إشعار إعادة تعيين كلمة المرور',
@@ -25,8 +24,6 @@ return [
     'passwords_do_not_match' => 'كلمتا المرور غير متطابقتين.',
     'something_went_wrong' => 'حدث خطأ ما، يرجى المحاولة مرة أخرى.',
     'password_reset_successfully' => 'تمت إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.',
-
-    // fields
     'email' => 'البريد الإلكتروني',
     'username' => 'اسم المستخدم',
     'enter-username' => 'يرجى إدخال اسم المستخدم',
@@ -35,25 +32,6 @@ return [
     'password' => 'كلمة المرور',
     'confirm-password' => 'تأكيد كلمة المرور',
     'enter-confirm-password' => 'يرجى تأكيد كلمة المرور',
-
-
-
-    'event' => [
-        'api' => [
-            'you-already-make-this-as-interest' => 'لقد قمت بتحديد هذه كاهتمام بالفعالية بالفعل',
-            'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'لا يمكنك تحديد هذه كاهتمام بالفعالية لأنها في الماضي',
-            'you-didn\'t-make-this-to-interest-to-delete-interest' => 'لم تقم بتحديد هذه كاهتمام بالفعالية لحذفها',
-            'you-already-make-this-as-favorite' => 'لقد قمت بتحديد هذه كمفضلة بالفعل',
-            'you-added-event-in-favorite-successfully' => 'تمت إضافة هذه الفعالية إلى قائمة المفضلة بنجاح',
-            'this-is-not-in-favorite-list-to-delete-it-from-list' => 'هذه الفعالية ليست في قائمة المفضلة لحذفها',
-            'you-remove-event-from-favorite-successfully' => 'تمت إزالة الفعالية من قائمة المفضلة بنجاح',
-            'you-already-make-review-for-this' => 'لقد قمت بالفعل بكتابة مراجعة لهذه الفعالية',
-            'you-can\'t-make-review-for-upcoming' => 'لا يمكنك كتابة مراجعة لفعالية قادمة',
-            'you-added-review-for-this-event-successfully' => 'تمت إضافة مراجعة لهذه الفعالية بنجاح',
-            'you-do-not-have-review' => 'ليس لديك مراجعة لتحديثها',
-            'you-update-your-review-successfully' => 'تم تحديث مراجعتك بنجاح',
-        ],
-    ],
 
     'place' => [
         'api' => [
@@ -143,7 +121,6 @@ return [
 
     ],
 
-
     "api" => [
         /** for categories */
         'the-following-request-sent-successfully' => 'تم بعث طلب المتابعة بنجاح',
@@ -156,26 +133,13 @@ return [
         'first-question-retrieved-successfully' => 'تم استرجاع السؤال الاول بنجاح',
         'next-question-retrieved-successfully' => 'تم استرجاع السؤال التالي بنجاح',
         'the-result-retrieved-successfully' => 'تم استرجاع النتيجة بنجاح',
-        'rating-created-successfully' => 'تم انشاء تقييمك بنجاح',
-        'rating-updated-successfully' => 'تم تعديل تقييمك بنجاح',
-        'rating-deleted-successfully' => 'تم حذف تقييمك بنجاح',
-        'trip-updated-successfully' => 'تم تعديل رحلة مرشد سياحي بنجاح',
-        'guide-trips-subscription-created-successfully' => 'تم ارسال طلب اشتراكك لرحلة المرشد بنجاح',
-        'guide-trips-users-subscription-updated-successfully' => 'تم تعديل طلب اشتراكك لرحلة المرشد بنجاح',
-        'guide-trips-users-subscription-deleted-successfully' => 'تم حذف طلب اشتراكك لرحلة المرشد بنجاح',
-        'you-added-trip-in-favorite-successfully' => ' لقد تم اضافت هذه الرحلة للائحة المفضلة بنجاح',
-        'you-deleted-the-trip-from-favorite-Successfully' => 'لقد تم حذف هذه الرحلة من لائحة المفضلة بنجاح',
-        'you-added-review-for-this-trip-successfully' => 'تمت اضافة مراجعة لهذه الرحلة بنجاح',
-        'your-review-in-this-trip-updated-successfully' => 'تمت تعديل مراجعة لهذه الرحلة بنجاح',
         'the-plan-retrieved-successfully' => 'تم استرجاع الخطة بنجاح',
-        'plan-deleted-successfully' => 'تم حذف الخطة بنجاح',
         'reply-created-successfully' => 'تم انشاء الرد بنجاح',
         'reply-updated-successfully' => 'تم تعديل الرد بنجاح',
         'reply-deleted-successfully' => 'تم حذف الرد بنجاح',
         'your-profile-updated-successfully' => 'تم تعديل ملفك الشخصي بنجاح',
         'your-location-set-successfully' => 'تم تحديد موقعك بنجاح',
         'all-tags-retrieved-successfully' => 'تم استرجاع الاوسمة بنجاح',
-        'guide-trips-users-subscription-fetched-successfully' => ' تم استرجاع لائحة المستخدمين المشتركين في الرحة بنجاح',
 
         // Auth Api
         'you-logged-in-successfully'                                   => 'لقد تم تسجيل دخولك بنجاح',
@@ -274,6 +238,18 @@ return [
         'trip-image-deleted-successfully'                              => 'تم حذف صورة رحلة مرشد سياحي بنجاح',
         'join-requests-retrieved-successfully'                         => 'تم استرجاع طلبات الانضمام بنجاح',
         'join-requests-status-changed-successfully'                    => 'تم تغيير حالة طلب الانضمام بنجاح',
+
+        // Guide Trip User Api
+        'guide-trips-users-subscription-fetched-successfully'          => ' تم استرجاع لائحة المستخدمين المشتركين في الرحة بنجاح',
+        'guide-trips-subscription-created-successfully'                => 'تم ارسال طلب اشتراكك لرحلة المرشد بنجاح',
+        'guide-trips-users-subscription-updated-successfully'          => 'تم تعديل طلب اشتراكك لرحلة المرشد بنجاح',
+        'guide-trips-users-subscription-deleted-successfully'          => 'تم حذف طلب اشتراكك لرحلة المرشد بنجاح',
+
+        // Rating Guide Trip Api
+        'rating-retrieved-successfully'                                => 'تم استرجاع التقييمات بنجاح',
+        'rating-created-successfully'                                  => 'تم انشاء تقييمك بنجاح',
+        'rating-updated-successfully'                                  => 'تم تعديل تقييمك بنجاح',
+        'rating-deleted-successfully'                                  => 'تم حذف تقييمك بنجاح',
 
         // User Api
         'the-users-retried-successfully'                               => 'تم استرجاع المستخدمين بنجاح',

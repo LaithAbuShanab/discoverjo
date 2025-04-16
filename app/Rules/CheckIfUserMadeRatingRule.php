@@ -19,8 +19,8 @@ class CheckIfUserMadeRatingRule implements ValidationRule
     {
         $userId = Auth::guard('api')->user()->id;
         $guide = User::findBySlug($value);
-        if(!$guide) return;
-        if (!RatingGuide::where('guide_id',$guide->id)->where('user_id',$userId)->exists()){
+        if (!$guide) return;
+        if (!RatingGuide::where('guide_id', $guide->id)->where('user_id', $userId)->exists()) {
             $fail(__('validation.api.you_did_not_make_rating_for_this_guide'));
         }
     }

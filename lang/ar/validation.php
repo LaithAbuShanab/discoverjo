@@ -138,23 +138,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Custom Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify custom validation messages for attributes using the
-    | convention "attribute.rule" to name the lines. This makes it quick to
-    | specify a specific custom language line for a given attribute rule.
-    |
-    */
-
-    'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Custom Validation Attributes
     |--------------------------------------------------------------------------
     |
@@ -326,10 +309,6 @@ return [
     ],
 
     'api' => [
-        'relationship_not_exist' => "العلاقة :relationship غير موجودة في نموذج المستخدم",
-
-        // Place Errors
-        'this-place-not-in-your-visited-place-list' => 'هذا المكان غير موجود في قائمة الأماكن التي قمت بزيارتها لإزالته من القائمة.',
         'id-does-not-exists' => 'المعرف غير موجود.',
 
         // User Errors
@@ -341,26 +320,6 @@ return [
         'conversation-id-does-not-exists' => 'معرف المحادثة غير موجود.',
         'conversation-id-must-exist' => 'المحادثة المحددة غير موجودة.',
         'conversation-id-invalid' => 'معرف المحادثة غير صالح.',
-
-        // Guide Trip Errors
-        "guide-id-is-required" => "معرف الدليل مطلوب.",
-        "the-provided-id-not-guide" => 'المعرف غير مرتبط بمرشد سياحي ',
-        "you-can-not-make-rating-for-yourself" => "لا تستطيع ان تقيم نفسك",
-        "you-made-rating-already" => "لقد قمت بالفعل بتقييم المرشد",
-        "guide-id-not-exists" => "الدليل المحدد غير موجود.",
-        "guide-already-joined" => "لقد انضممت إلى هذا الدليل من قبل.",
-        "guide-update-not-allowed" => "لا يُسمح لك بتحديث هذا الدليل.",
-        'guide_trip_id.required' => 'معرف رحلة الدليل مطلوب.',
-        'guide_trip_id.exists' => 'معرف رحلة الدليل المحدد غير صحيح.',
-        'guide_trip_id.check_if_guide_trip_active_or_in_future' => 'يجب أن تكون رحلة الدليل نشطة أو مجدولة في المستقبل.',
-        'guide_trip_id.check_if_guide_trip_user_exist' => 'يجب أن يكون هناك مستخدم موجود لرحلة الدليل.',
-        'you_did_not_participate_in_any_of_guide_trip' => 'لم تشارك في أي من رحلات المرشد.',
-        'you_already_create_rating_for_this_guide' => 'لقد قمت بإنشاء تقييم لهذا المرشد بالفعل.',
-        'you_did_not_make_review_for_this_guide_to_update' => 'لم تقم بكتابة مراجعة لهذا المرشد لتحديثها.',
-        'you_did_not_make_rating_for_this_guide' => 'لم تقم بعمل تقييم للمرشد السياحي من قبل',
-        'guide-trip-id-invalid' => 'معرف رحلة الدليل المحدد غير صحيح.',
-        'guide-trip-active-or-future' => 'يجب أن تكون رحلة الدليل نشطة أو مجدولة في المستقبل.',
-        'guide-trip-user-joined' => 'يجب أن يكون المستخدم قد انضم إلى رحلة الدليل.',
 
         // Post Errors
         'reply-id-is-required' => 'رقم معرف الرد مطلوب.',
@@ -390,11 +349,6 @@ return [
         // Answer Errors
         "answer-is-required" => "الإجابة مطلوبة.",
         "answer-invalid-value" => "يجب أن تكون الإجابة إما 'نعم', 'لا', أو 'لا أعرف'.",
-
-        // Rating Errors
-        "rating-must-be-numeric" => "يجب أن يكون التقييم قيمة رقمية.",
-        "rating-min-value" => "يجب أن يكون التقييم على الأقل 1.",
-        "rating-max-value" => "يجب ألا يزيد التقييم عن 5.",
 
         // Name Errors (English and Arabic)
         "name-en-required" => "الاسم بالإنجليزية مطلوب.",
@@ -668,7 +622,6 @@ return [
         'you-cannot-make-review-for-upcoming-trip' => 'لا يمكنك كتابة مراجعة لرحلة قادمة.',
 
         // Media, Post, and Tag Errors
-        'this-place-not-in-your-visited-place-list' => 'هذا المكان ليس في قائمة الأماكن التي زرتها.',
         'you-are-not-the-owner-of-this-post' => 'أنت لست مالك هذا المنشور.',
         'you-are-not-authorized-to-delete-this-media' => 'لا تستطيح حذف هذه الوسائط.',
         'this-email-in-black-list' => 'هذا البريد الإلكتروني موجود في القائمة السوداء.',
@@ -682,7 +635,6 @@ return [
         'you-cannot-delete-this-interest' => 'لا يمكنك حذف هذا الاهتمام.',
         'categories-should-be-array' => 'التصنيفات الرئيسية يجب ان تكون مصفوفة.',
         'something-went-wrong' => 'هناك خطأ قد حدث.',
-        'you_are_not_attendance_in_this' => 'انت غير مشترك بهذه الرحلة',
 
         // Additional Errors
         'wait-for-admin-to-accept-your-application' => 'انتظر حتى يقوم المسؤول على الموافقة على طلبك',
@@ -795,6 +747,7 @@ return [
         'user_slug_exists'                                          => 'المستخدم المحدد غير موجود.',
         'the-user-owner-this-trip-not-longer-active'                => 'لم يعد مالك المستخدم لهذه الرحلة نشطًا.',
         'this-trip-was-deleted'                                     => 'هذه الرحلة تم حذفها',
+        'you_are_not_attendance_in_this'                            => 'انت غير مشترك بهذه الرحلة',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',
@@ -874,7 +827,7 @@ return [
         // Guide Trip Validation
         'not_owner_of_trip'                                         => 'أنت لست مالك هذه الرحلة.',
         'you_should_be_guide_to_create_guide_trip'                  => 'يجب أن تكون مرشداً لإنشاء رحلة مرشد.',
-        'the-guide-not-longer-active'                               => 'الدليل لم يتم تحديثه بعد.',
+        'the-guide-not-longer-active'                               => 'دليل الرحلة لم يكون نشطاً.',
         'guide-trip-id-required'                                    => 'رقم معرف الرحلة السياحية مطلوب.',
         'guide-trip-id-does-not-exists'                             => 'رقم معرف الرحلة السياحية غير موجود.',
         'first-name-is-required'                                    => 'الاسم الأول مطلوب.',
@@ -947,6 +900,46 @@ return [
         'guide-trip-user-id-required'                               => 'رقم معرف طلب الانضمام مطلوب ',
         'guide-trip-user-id-does-not-exists'                        => 'رقم معرف طلب الانضمام غير موجود',
         'the-user-not-longer-active'                                => 'المستخدم غير نشيط.',
+        'you-did-not-join-to-this-trip'                             => 'أنت لم تنضم إلى هذه الرحلة',
+
+        // User Guide Trip Validation
+        'trip_registration_closed'                                  => 'لم يعد بإمكانك التسجيل في هذه الرحلة.',
+        'trip_has_started'                                          => 'بدأت الرحلة في :start_datetime.',
+        'already_in_trip'                                           => 'أنت بالفعل ضمن هذه الرحلة.',
+        'subscribers-required'                                      => 'يجب إدخال المشتركين.',
+        'subscribers-array'                                         => 'يجب ان يكون المشتركين عبارة عن مصفوفة.',
+        'subscriber-first-name-required'                            => 'الاسم الأول لكل مشترك مطلوب.',
+        'subscriber-first-name-string'                              => 'يجب أن يكون الاسم الأول نصًا.',
+        'subscriber-first-name-max'                                 => 'يجب ألا يزيد الاسم الأول عن 255 حرفًا.',
+        'subscriber-last-name-required'                             => 'اسم العائلة لكل مشترك مطلوب.',
+        'subscriber-last-name-string'                               => 'يجب أن يكون اسم العائلة نصًا.',
+        'subscriber-last-name-max'                                  => 'يجب ألا يزيد اسم العائلة عن 255 حرفًا.',
+        'subscriber-age-required'                                   => 'العمر لكل مشترك مطلوب.',
+        'subscriber-age-integer'                                    => 'يجب أن يكون العمر عددًا صحيحًا.',
+        'subscriber-age-min'                                        => 'يجب ألا يقل العمر عن 0.',
+        'subscriber-phone-number-required'                          => 'رقم الهاتف لكل مشترك مطلوب.',
+        'subscriber-phone-number-string'                            => 'يجب أن يكون رقم الهاتف نصًا.',
+        'subscriber-phone-number-max'                               => 'يجب ألا يزيد رقم الهاتف عن 20 حرفًا.',
+        'you_should_join_trip_first'                                => 'يجب أن تنضم إلى الرحلة أولاً.',
+        'trip_not_found'                                            => 'لم يتم العثور على الرحلة المحددة.',
+        'this_trip_inactive'                                        => 'هذه الرحلة غير نشطة.',
+        'cannot_update_trip_started_at'                             => 'لا يمكنك تعديل هذه الرحلة لأنها بدأت في :date.',
+
+        // Guide Rating Validation
+        'guide-id-required'                                         => 'معرّف الدليل مطلوب.',
+        'guide-id-does-not-exists'                                  => 'معرّف الدليل غير موجود.',
+        "the-provided-id-not-guide"                                 => 'المعرف غير مرتبط بمرشد سياحي ',
+        'the-guide-not-active'                                      => 'الدليل غير نشط.',
+        'you_did_not_make_rating_for_this_guide'                    => 'لم تقم بعمل تقييم للمرشد السياحي من قبل',
+        "you-can-not-make-rating-for-yourself"                      => "لا تستطيع ان تقيم نفسك",
+        'you_did_not_participate_in_any_of_guide_trip'              => 'لم تشارك في أي من رحلات المرشد.',
+        'you_already_create_rating_for_this_guide'                  => 'لقد قمت بإنشاء تقييم لهذا المرشد بالفعل.',
+        "you-made-rating-already"                                   => "لقد قمت بالفعل بتقييم المرشد",
+        'rating-is-required'                                        => 'حقل التقييم مطلوب.',
+        'rating-must-be-numeric'                                    => 'يجب أن يكون التقييم قيمة رقمية.',
+        'rating-min-value'                                          => 'يجب ألا يقل التقييم عن 1.',
+        'rating-max-value'                                          => 'يجب ألا يزيد التقييم عن 5.',
+        'you_did_not_make_review_for_this_guide_to_update'          => 'لم تقم بكتابة مراجعة لهذا المرشد لتحديثها.',
 
         // Region Validation
         'region-id-nullable'                                        => 'حقل معرف المنطقة اختياري.',
@@ -981,6 +974,7 @@ return [
         'the-status-required'                                       => 'الحالة بالاعجاب او عدم الاعجاب مطلوبة.',
         'not-acceptable-status'                                     => 'حالة غير مقبولة.',
         'the-review-id-must-be-integer'                             => 'يجب ان يكون معرف المراجعة عدد صحيح.',
+        'relationship_not_exist'                                    => "العلاقة :relationship غير موجودة في نموذج المستخدم",
 
         // Post Validation
         'visitable-type-required'                                   => 'يرجى تحديد نوع العنصر المرتبط بالنشر.',

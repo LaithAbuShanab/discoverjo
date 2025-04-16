@@ -9,7 +9,6 @@ return [
     "thankYou" => "If you did not request email verification, you can ignore this email.",
     "allReserved" => "All rights reserved to Discover Jo",
     "yourNotVerified" => "Your email has not been verified. Please activate your account before logging in.",
-    //translation email reset password
     'discover-jordan-logo' => 'Discover Jordan logo',
     'discover-jordan' => 'Discover Jordan',
     'reset_password_notification' => 'Password reset notification',
@@ -25,8 +24,6 @@ return [
     'passwords_do_not_match' => 'Passwords do not match.',
     'something_went_wrong' => 'Oops! Something went wrong. Please try again.',
     'password_reset_successfully' => 'Your password has been successfully reset. You can now log in with your new credentials.',
-
-    // fields
     'email' => 'Email',
     'username' => 'Username',
     'enter-username' => 'Please enter your username',
@@ -36,24 +33,6 @@ return [
     'confirm-password' => 'Confirm password',
     'enter-confirm-password' => 'Please confirm your password',
 
-
-    'event' => [
-        'api' => [
-            'you-already-make-this-as-interest' => 'You have already marked this as an interest',
-            'you-can\'t-make-this-as-interest-because-it-in-the-past' => 'You can\'t mark this as an interest because it\'s in the past',
-            'you-didn\'t-make-this-to-interest-to-delete-interest' => 'You haven\'t marked this as an interest to delete it',
-            'you-already-make-this-as-favorite' => 'You have already marked this as a favorite',
-            'you-added-event-in-favorite-successfully' => 'You added this event to your favorites successfully',
-            'this-is-not-in-favorite-list-to-delete-it-from-list' => 'This event is not in your favorites list to delete it',
-            'you-remove-event-from-favorite-successfully' => 'You removed this event from your favorites successfully',
-            'you-already-make-review-for-this' => 'You have already made a review for this event',
-            'you-can\'t-make-review-for-upcoming' => 'You can\'t make a review for an upcoming event',
-            'you-added-review-for-this-event-successfully' => 'You added a review for this event successfully',
-            'you-do-not-have-review' => 'You don\'t have a review to update',
-            'you-update-your-review-successfully' => 'You updated your review successfully',
-        ],
-    ],
-
     'place' => [
         'api' => [
             'you-put-this-in-favorite-list' => 'You put this in favorite list successfully',
@@ -62,7 +41,6 @@ return [
             'you-updated-review-for-this-place-successfully' => 'You updated review for this place successfully',
             'you-remove-review-for-this-place-successfully' => 'You remove review for this place successfully',
         ],
-
     ],
 
     "plan" => [
@@ -142,7 +120,6 @@ return [
         'declined-guide-trip-body'                      => ':username was rejected on the trip :trip_name.',
     ],
 
-
     "api" => [
         /** for categories */
         'the-following-request-sent-successfully' => 'The following request sent successfully',
@@ -155,27 +132,13 @@ return [
         'first-question-retrieved-successfully' => 'First question retrieved successfully',
         'next-question-retrieved-successfully' => 'Next question retrieved successfully',
         'the-result-retrieved-successfully' => 'The result retrieved successfully',
-        'rating-created-successfully' => 'Your rating created successfully',
-        'rating-updated-successfully' => 'Your rating updated successfully',
-        'rating-deleted-successfully' => 'Your rating deleted successfully',
-        'trip-created-successfully' => 'Trip created successfully',
-        'trip-updated-successfully' => 'Trip updated successfully',
-        'guide-trips-subscription-created-successfully' => 'Your request for attendance created successfully',
-        'guide-trips-users-subscription-updated-successfully' => 'Your request for attendance updated successfully',
-        'guide-trips-users-subscription-deleted-successfully' => 'Your request for attendance deleted successfully',
-        'you-added-trip-in-favorite-successfully' => 'You added this trip to favorite successfully',
-        'you-deleted-the-trip-from-favorite-Successfully' => 'You deleted this trip from favorite list successfully',
-        'you-added-review-for-this-trip-successfully' => 'You added review for this trip successfully',
-        'your-review-in-this-trip-updated-successfully' => 'Yor review in this trip updated successfully',
         'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
         'the-plan-retrieved-successfully' => 'The plan retrieved successfully',
-        'plan-deleted-successfully' => 'Plan deleted successfully',
         'reply-created-successfully' => 'Reply created successfully',
         'reply-updated-successfully' => 'Reply updated successfully',
         'reply-deleted-successfully' => 'Reply deleted successfully',
         'your-profile-updated-successfully' => 'Your profile updated successfully',
         'your-location-set-successfully' => 'Your location sat successfully',
-        'the-users-retried-successfully' => 'The users retrieved successfully',
         'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
 
         // Auth Api
@@ -275,6 +238,18 @@ return [
         'trip-image-deleted-successfully'                              => 'Trip\'s image deleted successfully',
         'join-requests-retrieved-successfully'                         => 'Join requests retrieved successfully',
         'join-requests-status-changed-successfully'                    => 'Status of join request changed successfully',
+
+        // Guide Trip User Api
+        'guide-trips-users-subscription-fetched-successfully'          => 'Guide trips users subscription fetched successfully',
+        'guide-trips-subscription-created-successfully'                => 'Your request for attendance created successfully',
+        'guide-trips-users-subscription-updated-successfully'          => 'Your request for attendance updated successfully',
+        'guide-trips-users-subscription-deleted-successfully'          => 'Your request for attendance deleted successfully',
+
+        // Rating Guide Trip Api
+        'rating-retrieved-successfully'                                => 'Rating retrieved successfully',
+        'rating-created-successfully'                                  => 'Your rating created successfully',
+        'rating-updated-successfully'                                  => 'Your rating updated successfully',
+        'rating-deleted-successfully'                                  => 'Your rating deleted successfully',
 
         // User Api
         'the-users-retried-successfully'                               => 'The users retried successfully',

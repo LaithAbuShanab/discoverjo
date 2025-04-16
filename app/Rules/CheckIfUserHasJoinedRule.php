@@ -18,7 +18,7 @@ class CheckIfUserHasJoinedRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $guideTrip = GuideTrip::findBySlug($value);
-        if(!$guideTrip) return;
+        if (!$guideTrip) return;
         $userInTrip = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->exists();
         if (!$userInTrip) {
             $fail(__('validation.api.you-did-not-join-to-this-trip'));

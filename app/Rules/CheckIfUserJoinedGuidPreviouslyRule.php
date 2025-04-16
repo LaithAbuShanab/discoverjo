@@ -28,12 +28,12 @@ class CheckIfUserJoinedGuidPreviouslyRule implements DataAwareRule,  ValidationR
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $guideSlug =$this->data['guide_slug'];
+        $guideSlug = $this->data['guide_slug'];
         $guide = User::findBySlug($guideSlug);
-        if(!$guide) return;
+        if (!$guide) return;
         $guideId = $guide->id;
         $hasParticipated = GuideTripUser::where('user_id', $userId)
-            ->whereHas('guideTrip', function($query) use ($guideId) {
+            ->whereHas('guideTrip', function ($query) use ($guideId) {
                 $query->where('guide_id', $guideId);
             })
             ->exists();
@@ -46,6 +46,5 @@ class CheckIfUserJoinedGuidPreviouslyRule implements DataAwareRule,  ValidationR
         if (RatingGuide::where('guide_id', $guideId)->where('user_id', $userId)->exists()) {
             $fail(__('validation.api.you_already_create_rating_for_this_guide'));
         }
-
     }
 }

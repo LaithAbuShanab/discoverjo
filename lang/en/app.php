@@ -33,23 +33,6 @@ return [
     'confirm-password' => 'Confirm password',
     'enter-confirm-password' => 'Please confirm your password',
 
-    'place' => [
-        'api' => [
-            'you-put-this-in-favorite-list' => 'You put this in favorite list successfully',
-            'you-remove-this-place-in-favorite-list' => 'You remove this place in favorite list successfully',
-            'you-added-review-for-this-place-successfully' => 'You added review for this place successfully',
-            'you-updated-review-for-this-place-successfully' => 'You updated review for this place successfully',
-            'you-remove-review-for-this-place-successfully' => 'You remove review for this place successfully',
-        ],
-    ],
-
-    "plan" => [
-        'api' => [
-            'favorite-plan-created-successfully' => 'You added this plan to favorite list',
-            'you-remove-plan-from-favorite-list' => 'You removed this plan from favorite list',
-        ]
-    ],
-
     "notifications" => [
 
         // Trip Requests
@@ -121,26 +104,6 @@ return [
     ],
 
     "api" => [
-        /** for categories */
-        'the-following-request-sent-successfully' => 'The following request sent successfully',
-        'follows-deleted-successfully' => 'Following deleted successfully',
-        'accept-follow-request-successfully' => 'Your following request accepted successfully',
-        'un-accept-follow-request-successfully' => 'Unaccepted follow request successfully',
-        'followers-requests-retrieved-successfully' => 'Followers request retrieved successfully',
-        'followers-retrieved-successfully' => 'Followers retrieved successfully',
-        'followings-retrieved-successfully' => 'Followings retrieved successfully',
-        'first-question-retrieved-successfully' => 'First question retrieved successfully',
-        'next-question-retrieved-successfully' => 'Next question retrieved successfully',
-        'the-result-retrieved-successfully' => 'The result retrieved successfully',
-        'you-deleted-your-review-trip-successfully' => 'Your review on this trip deleted successfully',
-        'the-plan-retrieved-successfully' => 'The plan retrieved successfully',
-        'reply-created-successfully' => 'Reply created successfully',
-        'reply-updated-successfully' => 'Reply updated successfully',
-        'reply-deleted-successfully' => 'Reply deleted successfully',
-        'your-profile-updated-successfully' => 'Your profile updated successfully',
-        'your-location-set-successfully' => 'Your location sat successfully',
-        'all-tags-retrieved-successfully' => 'All tags retrieved successfully',
-
         // Auth Api
         'you-logged-in-successfully'                                   => 'You logged in successfully',
         'you-register-successfully'                                    => 'Congratulations! Your registration was successful. Enjoy your journey with us.',
@@ -175,6 +138,9 @@ return [
         'plan-deleted-successfully'                                    => 'Plan deleted successfully',
         'plans-retrieved-successfully'                                 => 'Plans retrieved successfully',
         'the-searched-plan-retrieved-successfully'                     => 'The searched plan retrieved successfully',
+        'the-plan-retrieved-successfully'                              => 'The plan retrieved successfully',
+        'favorite-plan-created-successfully'                           => 'You added this plan to favorite list',
+        'you-remove-plan-from-favorite-list'                           => 'You removed this plan from favorite list',
 
         // Category Api
         'categories-retrieved-successfully'                            => 'Categories retrieved successfully',
@@ -297,5 +263,29 @@ return [
         'comment-created-successfully'                                 => 'Comment created successfully',
         'comment-updated-successfully'                                 => 'Comment updated successfully',
         'comment-deleted-successfully'                                 => 'Comment deleted successfully',
+
+        // Follow Api
+        'followers-requests-retrieved-successfully'                    => 'Followers request retrieved successfully',
+        'the-following-request-sent-successfully'                      => 'The following request sent successfully',
+        'follows-deleted-successfully'                                 => 'Following deleted successfully',
+        'followers-retrieved-successfully'                             => 'Followers retrieved successfully',
+        'followings-retrieved-successfully'                            => 'Followings retrieved successfully',
+        'accept-follow-request-successfully'                           => 'Your following request accepted successfully',
+        'un-accept-follow-request-successfully'                        => 'Unaccepted follow request successfully',
+
+        // Conversation Api
+        'group-chat-message-retrieved-successfully'                    => 'Message retrieved successfully',
+        'group-chat-members-retrieved-successfully'                    => 'Members retrieved successfully',
+        'group-chat-message-sent-successfully'                         => 'Message sent successfully',
+
+        // Question Api
+        'first-question-retrieved-successfully'                        => 'First question retrieved successfully',
+        'next-question-retrieved-successfully'                         => 'Next question retrieved successfully',
+        'the-result-retrieved-successfully'                            => 'The result retrieved successfully',
+
+        // Profile Api
+        'your-profile-updated-successfully'                            => 'Your profile updated successfully',
+        'all-tags-retrieved-successfully'                              => 'All tags retrieved successfully',
+        'your-location-set-successfully'                               => 'Your location sat successfully',
     ],
 ];

@@ -111,20 +111,22 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::delete('/guide/delete/{guide_slug}', [GuideRatingController::class, 'delete']); // DONE ✅
     });
 
+    // ALL ROUTES FOR FOLLOW
     Route::group(['prefix' => 'follow'], function () {
-        Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']);
-        Route::post('/create/{following_slug}', [FollowApiController::class, 'follow']); // NOTIFICATION(7)
-        Route::delete('/delete/{following_slug}', [FollowApiController::class, 'unfollow']);
-        Route::get('/followers/{user_slug}', [FollowApiController::class, 'followers']);
-        Route::get('/followings/{user_slug}', [FollowApiController::class, 'followings']);
-        Route::put('/accept/following-request/{follower_slug}', [FollowApiController::class, 'acceptFollowerRequest']); // NOTIFICATION(8)
-        Route::put('/unaccepted/following-request/{follower_slug}', [FollowApiController::class, 'UnacceptedFollowerRequest']);
+        Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']); // DONE ✅
+        Route::post('/create/{following_slug}', [FollowApiController::class, 'follow']); // DONE ✅
+        Route::delete('/delete/{following_slug}', [FollowApiController::class, 'unfollow']); // DONE ✅
+        Route::get('/followers/{user_slug}', [FollowApiController::class, 'followers']); // DONE ✅
+        Route::get('/followings/{user_slug}', [FollowApiController::class, 'followings']); // DONE ✅
+        Route::put('/accept/following-request/{follower_slug}', [FollowApiController::class, 'acceptFollowerRequest']); // DONE ✅
+        Route::put('/unaccepted/following-request/{follower_slug}', [FollowApiController::class, 'UnacceptedFollowerRequest']); // DONE ✅
     });
 
+    // ALL ROUTES FOR GROUP CHAT
     Route::group(['prefix' => 'chat'], function () {
-        Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']);
-        Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']);
-        Route::post('/store', [GroupChatController::class, 'store']); // NOTIFICATION(9)
+        Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']); // DONE ✅
+        Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']); // DONE ✅
+        Route::post('/store', [GroupChatController::class, 'store']); // DONE ✅
     });
 
     // ALL ROUTES FOR TRIP
@@ -174,26 +176,23 @@ Route::middleware(['firstLogin'])->group(function () {
     });
 
     Route::group(['prefix' => 'game'], function () {
-        Route::get('/start', [GameApiController::class, 'start']);
-        Route::post('/next-question', [GameApiController::class, 'next']);
-        Route::post('/finish', [GameApiController::class, 'finish']);
+        Route::get('/start', [GameApiController::class, 'start']); // DONE ✅
+        Route::post('/next-question', [GameApiController::class, 'next']); // DONE ✅
+        Route::post('/finish', [GameApiController::class, 'finish']); // DONE ✅
     });
 });
 
-// All Routes For profile
-Route::post('profile/update', [UserProfileController::class, 'update']);
-Route::get('all/tags', [UserProfileController::class, 'allTags']);
+// ALL ROUTES FOR PROFILE
+Route::post('profile/update', [UserProfileController::class, 'update']); // DONE ✅
+Route::get('all/tags', [UserProfileController::class, 'allTags']); // DONE ✅
+Route::post('user/set-location', [UserProfileController::class, 'setLocation']); // DONE ✅
 
-//we will see to add it or not
-Route::post('user/set-location', [UserProfileController::class, 'setLocation']);
+// ALL ROUTES FOR DELETE ACCOUNT
+Route::delete('delete/account', [AuthUserController::class, 'deleteAccount']); // DONE ✅
+Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']); // DONE ✅
 
-//delete and deactivate account need time
-Route::delete('delete/account', [AuthUserController::class, 'deleteAccount']);
-Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAccount']);
-
-
-Route::get('current/user/posts', [PostApiController::class, 'currentUserPosts']);
-Route::get('other/user/posts/{slug}', [PostApiController::class, 'otherUserPosts']);
+Route::get('current/user/posts', [PostApiController::class, 'currentUserPosts']); // DONE ✅
+Route::get('other/user/posts/{slug}', [PostApiController::class, 'otherUserPosts']); // DONE ✅
 
 
 Broadcast::routes();

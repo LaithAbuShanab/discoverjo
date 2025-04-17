@@ -3,14 +3,10 @@
 namespace App\Http\Requests\Api\User\Game;
 
 use App\Helpers\ApiResponse;
-use App\Rules\CheckIfCanMakeTripRule;
-use App\Rules\CheckTagExistsRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
 
@@ -34,7 +30,7 @@ class NextQuestionRequest extends FormRequest
 
         return [
             'question_id' => ['required', 'exists:questions,id'],
-            'answer' => ['required', Rule::in('yes','no','i_dont_know')],
+            'answer' => ['required', Rule::in('yes', 'no', 'i_dont_know')],
 
         ];
     }

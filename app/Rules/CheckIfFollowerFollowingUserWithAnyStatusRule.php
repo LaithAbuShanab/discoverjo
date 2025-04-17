@@ -20,7 +20,7 @@ class CheckIfFollowerFollowingUserWithAnyStatusRule implements ValidationRule
     {
         $id = Auth::guard('api')->user()->id;
         $followerUser = User::findBySlug($value);
-        if(!$followerUser) return;
+        if (!$followerUser) return;
         // Check if there is no request belonging to this user as a follower
         $exists = Follow::where('following_id', $id)->where('follower_id', $followerUser->id)->exists();
         if (!$exists) {
@@ -32,5 +32,4 @@ class CheckIfFollowerFollowingUserWithAnyStatusRule implements ValidationRule
             $fail(__('validation.api.you_can_not_make_request_to_yourself'));
         }
     }
-
 }

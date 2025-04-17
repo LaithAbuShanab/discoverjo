@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class GroupChatController extends Controller
 {
-    protected $groupChatUseCase;
-
-    public function __construct(GroupChatUseCase $groupChatUseCase)
+    public function __construct(protected GroupChatUseCase $groupChatUseCase)
     {
         $this->groupChatUseCase = $groupChatUseCase;
     }
@@ -25,9 +23,9 @@ class GroupChatController extends Controller
     {
         $validator = Validator::make(['conversation_id' => $request->conversation_id], [
             'conversation_id' => ['required', 'exists:conversations,id', new GroupChatIndexRule($request->conversation_id)],
-        ],[
-            'conversation_id.required'=>__('validation.api.conversation-id-is-required'),
-            'conversation_id.exists'=>__('validation.api.conversation-id-does-not-exists'),
+        ], [
+            'conversation_id.required' => __('validation.api.conversation-id-is-required'),
+            'conversation_id.exists' => __('validation.api.conversation-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -37,7 +35,7 @@ class GroupChatController extends Controller
 
         try {
             $data = $this->groupChatUseCase->getGroupMessages($request->conversation_id);
-            return ApiResponse::sendResponse(200, __('app.group-chat.group-chat-retrieved-successfully'), $data);
+            return ApiResponse::sendResponse(200, __('app.api.group-chat-message-retrieved-successfully'), $data);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -48,9 +46,9 @@ class GroupChatController extends Controller
     {
         $validator = Validator::make(['conversation_id' => $request->conversation_id], [
             'conversation_id' => ['required', 'exists:conversations,id', new GroupChatIndexRule($request->conversation_id)],
-        ],[
-            'conversation_id.required'=>__('validation.api.conversation-id-is-required'),
-            'conversation_id.exists'=>__('validation.api.conversation-id-does-not-exists'),
+        ], [
+            'conversation_id.required' => __('validation.conversation-id-is-required'),
+            'conversation_id.exists' => __('validation.api.conversation-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -60,17 +58,18 @@ class GroupChatController extends Controller
 
         try {
             $data = $this->groupChatUseCase->getGroupMembers($request->conversation_id);
-            return ApiResponse::sendResponse(200, __('app.group-chat.group-chat-retrieved-successfully'), $data);
+            return ApiResponse::sendResponse(200, __('app.api.group-chat-members-retrieved-successfully'), $data);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
+
     public function store(CreateMessageRequest $request)
     {
         try {
             $data = $this->groupChatUseCase->sendMessages($request);
-            return ApiResponse::sendResponse(200, __('app.group-chat.message-sent-successfully'), $data);
+            return ApiResponse::sendResponse(200, __('app.api.group-chat-message-sent-successfully'), $data);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

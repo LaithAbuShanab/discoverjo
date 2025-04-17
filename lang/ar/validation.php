@@ -13,128 +13,150 @@ return [
     |
     */
 
-    'date' => 'يجب أن يكون :attribute تاريخًا صالحًا.',
-    'date_equals' => 'يجب أن يكون :attribute تاريخًا مساويًا لـ :date.',
-    'date_format' => 'يجب أن يتطابق :attribute مع التنسيق :format.',
-    'decimal' => 'يجب أن يحتوي :attribute على :decimal أماكن عشرية.',
+    'accepted' => 'يجب قبول :attribute.',
+    'accepted_if' => 'يجب قبول :attribute عندما يكون :other هو :value.',
+    'active_url' => ':attribute ليس عنوان URL صالحًا.',
+    'after' => 'يجب أن يكون :attribute تاريخًا بعد :date.',
+    'after_or_equal' => 'يجب أن يكون :attribute تاريخًا بعد أو يساوي :date.',
+    'alpha' => 'يجب أن يحتوي :attribute على أحرف فقط.',
+    'alpha_dash' => 'يجب أن يحتوي :attribute على أحرف وأرقام وشرطات فقط.',
+    'alpha_num' => 'يجب أن يحتوي :attribute على أحرف وأرقام فقط.',
+    'array' => 'يجب أن يكون :attribute مصفوفة.',
+    'ascii' => 'يجب أن يحتوي :attribute على أحرف أبجدية رقمية أحادية البايت ورموز فقط.',
+    'before' => 'يجب أن يكون :attribute تاريخًا قبل :date.',
+    'before_or_equal' => 'يجب أن يكون :attribute تاريخًا قبل أو يساوي :date.',
+    'between' => [
+        'array' => 'يجب أن يحتوي :attribute على عدد عناصر بين :min و :max.',
+        'file' => 'يجب أن يكون حجم :attribute بين :min و :max كيلوبايت.',
+        'numeric' => 'يجب أن يكون :attribute بين :min و :max.',
+        'string' => 'يجب أن يكون طول :attribute بين :min و :max حرفًا.',
+    ],
+    'boolean' => 'يجب أن يكون :attribute صحيحًا أو خاطئًا.',
+    'can' => 'يحتوي :attribute على قيمة غير مصرح بها.',
+    'confirmed' => 'تأكيد :attribute غير متطابق.',
+    'current_password' => 'كلمة المرور غير صحيحة.',
+    'date' => ':attribute ليس تاريخًا صالحًا.',
+    'date_equals' => 'يجب أن يكون :attribute تاريخًا يساوي :date.',
+    'date_format' => 'يجب أن يتطابق :attribute مع الصيغة :format.',
+    'decimal' => 'يجب أن يحتوي :attribute على :decimal منازل عشرية.',
     'declined' => 'يجب رفض :attribute.',
     'declined_if' => 'يجب رفض :attribute عندما يكون :other هو :value.',
     'different' => 'يجب أن يكون :attribute و :other مختلفين.',
-    'digits' => 'يجب أن يحتوي :attribute على :digits أرقام.',
-    'digits_between' => 'يجب أن يحتوي :attribute على بين :min و :max رقمًا.',
-    'dimensions' => 'يحتوي :attribute على أبعاد صورة غير صالحة.',
+    'digits' => 'يجب أن يتكون :attribute من :digits أرقام.',
+    'digits_between' => 'يجب أن يتكون :attribute من عدد أرقام بين :min و :max.',
+    'dimensions' => 'أبعاد صورة :attribute غير صالحة.',
     'distinct' => 'يحتوي :attribute على قيمة مكررة.',
     'doesnt_end_with' => 'يجب ألا ينتهي :attribute بأحد القيم التالية: :values.',
     'doesnt_start_with' => 'يجب ألا يبدأ :attribute بأحد القيم التالية: :values.',
-    'email' => 'يجب أن يكون :attribute عنوان بريد إلكتروني صالحًا.',
+    'email' => 'يجب أن يكون :attribute عنوان بريد إلكتروني صالح.',
     'ends_with' => 'يجب أن ينتهي :attribute بأحد القيم التالية: :values.',
-    'enum' => 'القيمة المحددة لـ :attribute غير صالحة.',
-    'exists' => 'القيمة المحددة لـ :attribute غير صالحة.',
-    'extensions' => 'يجب أن يحتوي :attribute على إحدى الامتدادات التالية: :values.',
+    'enum' => ':attribute المحدد غير صالح.',
+    'exists' => ':attribute المحدد غير صالح.',
+    'extensions' => 'يجب أن يحتوي :attribute على أحد الامتدادات التالية: :values.',
     'file' => 'يجب أن يكون :attribute ملفًا.',
     'filled' => 'يجب أن يحتوي :attribute على قيمة.',
     'gt' => [
-        'array' => 'يجب أن يحتوي :attribute على أكثر من :value عنصرًا.',
-        'file' => 'يجب أن يكون :attribute أكبر من :value كيلوبايت.',
+        'array' => 'يجب أن يحتوي :attribute على أكثر من :value عنصر.',
+        'file' => 'يجب أن يكون حجم :attribute أكبر من :value كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute أكبر من :value.',
-        'string' => 'يجب أن يكون :attribute أكبر من :value حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute أكبر من :value حرفًا.',
     ],
     'gte' => [
-        'array' => 'يجب أن يحتوي :attribute على :value عنصرًا أو أكثر.',
-        'file' => 'يجب أن يكون :attribute أكبر من أو يساوي :value كيلوبايت.',
+        'array' => 'يجب أن يحتوي :attribute على :value عنصر أو أكثر.',
+        'file' => 'يجب أن يكون حجم :attribute أكبر من أو يساوي :value كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute أكبر من أو يساوي :value.',
-        'string' => 'يجب أن يكون :attribute أكبر من أو يساوي :value حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute أكبر من أو يساوي :value حرفًا.',
     ],
-    'hex_color' => 'يجب أن يكون :attribute لونًا سداسي عشري صالحًا.',
+    'hex_color' => 'يجب أن يكون :attribute لونًا سداسيًا صالحًا.',
     'image' => 'يجب أن يكون :attribute صورة.',
-    'in' => 'القيمة المحددة لـ :attribute غير صالحة.',
-    'in_array' => 'يجب أن يكون :attribute موجودًا في :other.',
+    'in' => ':attribute المحدد غير صالح.',
+    'in_array' => 'يجب أن يوجد :attribute في :other.',
     'integer' => 'يجب أن يكون :attribute عددًا صحيحًا.',
     'ip' => 'يجب أن يكون :attribute عنوان IP صالحًا.',
     'ipv4' => 'يجب أن يكون :attribute عنوان IPv4 صالحًا.',
     'ipv6' => 'يجب أن يكون :attribute عنوان IPv6 صالحًا.',
-    'json' => 'يجب أن يكون :attribute نص JSON صالحًا.',
-    'lowercase' => 'يجب أن يكون :attribute بحروف صغيرة.',
+    'json' => 'يجب أن يكون :attribute نصًا JSON صالحًا.',
+    'lowercase' => 'يجب أن يكون :attribute بأحرف صغيرة.',
     'lt' => [
-        'array' => 'يجب أن يحتوي :attribute على أقل من :value عنصرًا.',
-        'file' => 'يجب أن يكون :attribute أقل من :value كيلوبايت.',
+        'array' => 'يجب أن يحتوي :attribute على أقل من :value عنصر.',
+        'file' => 'يجب أن يكون حجم :attribute أقل من :value كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute أقل من :value.',
-        'string' => 'يجب أن يكون :attribute أقل من :value حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute أقل من :value حرفًا.',
     ],
     'lte' => [
-        'array' => 'يجب ألا يحتوي :attribute على أكثر من :value عنصرًا.',
-        'file' => 'يجب أن يكون :attribute أقل من أو يساوي :value كيلوبايت.',
+        'array' => 'يجب ألا يحتوي :attribute على أكثر من :value عنصر.',
+        'file' => 'يجب أن يكون حجم :attribute أقل من أو يساوي :value كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute أقل من أو يساوي :value.',
-        'string' => 'يجب أن يكون :attribute أقل من أو يساوي :value حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute أقل من أو يساوي :value حرفًا.',
     ],
     'mac_address' => 'يجب أن يكون :attribute عنوان MAC صالحًا.',
     'max' => [
-        'array' => 'يجب ألا يحتوي :attribute على أكثر من :max عنصرًا.',
-        'file' => 'يجب ألا يكون :attribute أكبر من :max كيلوبايت.',
-        'numeric' => 'يجب ألا يكون :attribute أكبر من :max.',
-        'string' => 'يجب ألا يكون :attribute أكبر من :max حرفًا.',
+        'array' => 'يجب ألا يحتوي :attribute على أكثر من :max عنصر.',
+        'file' => 'يجب ألا يتجاوز حجم :attribute :max كيلوبايت.',
+        'numeric' => 'يجب ألا يتجاوز :attribute :max.',
+        'string' => 'يجب ألا يتجاوز طول :attribute :max حرفًا.',
     ],
     'max_digits' => 'يجب ألا يحتوي :attribute على أكثر من :max أرقام.',
-    'mimes' => 'يجب أن يكون :attribute ملفًا من النوع: :values.',
-    'mimetypes' => 'يجب أن يكون :attribute ملفًا من النوع: :values.',
+    'mimes' => 'يجب أن يكون :attribute ملفًا من نوع: :values.',
+    'mimetypes' => 'يجب أن يكون :attribute ملفًا من نوع: :values.',
     'min' => [
-        'array' => 'يجب أن يحتوي :attribute على الأقل على :min عنصرًا.',
-        'file' => 'يجب أن يكون :attribute على الأقل :min كيلوبايت.',
+        'array' => 'يجب أن يحتوي :attribute على الأقل :min عنصر.',
+        'file' => 'يجب أن يكون حجم :attribute على الأقل :min كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute على الأقل :min.',
-        'string' => 'يجب أن يكون :attribute على الأقل :min حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute على الأقل :min حرفًا.',
     ],
-    'min_digits' => 'يجب أن يحتوي :attribute على الأقل على :min أرقام.',
+    'min_digits' => 'يجب أن يحتوي :attribute على الأقل :min أرقام.',
     'missing' => 'يجب أن يكون :attribute مفقودًا.',
     'missing_if' => 'يجب أن يكون :attribute مفقودًا عندما يكون :other هو :value.',
     'missing_unless' => 'يجب أن يكون :attribute مفقودًا ما لم يكن :other هو :value.',
     'missing_with' => 'يجب أن يكون :attribute مفقودًا عندما يكون :values موجودًا.',
     'missing_with_all' => 'يجب أن يكون :attribute مفقودًا عندما تكون :values موجودة.',
     'multiple_of' => 'يجب أن يكون :attribute مضاعفًا لـ :value.',
-    'not_in' => 'القيمة المحددة لـ :attribute غير صالحة.',
-    'not_regex' => 'تنسيق :attribute غير صالح.',
+    'not_in' => ':attribute المحدد غير صالح.',
+    'not_regex' => 'صيغة :attribute غير صالحة.',
     'numeric' => 'يجب أن يكون :attribute رقمًا.',
     'password' => [
         'letters' => 'يجب أن يحتوي :attribute على حرف واحد على الأقل.',
         'mixed' => 'يجب أن يحتوي :attribute على حرف كبير وحرف صغير على الأقل.',
         'numbers' => 'يجب أن يحتوي :attribute على رقم واحد على الأقل.',
         'symbols' => 'يجب أن يحتوي :attribute على رمز واحد على الأقل.',
-        'uncompromised' => 'تم العثور على :attribute في تسريب بيانات. يرجى اختيار كلمة مرور مختلفة.',
+        'uncompromised' => 'ظهر :attribute في تسريب بيانات. يرجى اختيار :attribute مختلف.',
     ],
     'present' => 'يجب أن يكون :attribute موجودًا.',
     'present_if' => 'يجب أن يكون :attribute موجودًا عندما يكون :other هو :value.',
     'present_unless' => 'يجب أن يكون :attribute موجودًا ما لم يكن :other هو :value.',
     'present_with' => 'يجب أن يكون :attribute موجودًا عندما يكون :values موجودًا.',
     'present_with_all' => 'يجب أن يكون :attribute موجودًا عندما تكون :values موجودة.',
-    'prohibited' => 'يُحظر استخدام :attribute.',
-    'prohibited_if' => 'يُحظر استخدام :attribute عندما يكون :other هو :value.',
-    'prohibited_unless' => 'يُحظر استخدام :attribute ما لم يكن :other في :values.',
-    'prohibits' => ':attribute يمنع :other من الوجود.',
-    'regex' => 'تنسيق :attribute غير صالح.',
+    'prohibited' => ':attribute محظور.',
+    'prohibited_if' => ':attribute محظور عندما يكون :other هو :value.',
+    'prohibited_unless' => ':attribute محظور ما لم يكن :other ضمن :values.',
+    'prohibits' => ':attribute يحظر وجود :other.',
+    'regex' => 'صيغة :attribute غير صالحة.',
     'required' => ':attribute مطلوب.',
-    'required_array_keys' => 'يجب أن يحتوي :attribute على مفاتيح: :values.',
+    'required_array_keys' => 'يجب أن يحتوي :attribute على مدخلات لـ: :values.',
     'required_if' => ':attribute مطلوب عندما يكون :other هو :value.',
     'required_if_accepted' => ':attribute مطلوب عندما يتم قبول :other.',
-    'required_unless' => ':attribute مطلوب ما لم يكن :other في :values.',
+    'required_unless' => ':attribute مطلوب ما لم يكن :other ضمن :values.',
     'required_with' => ':attribute مطلوب عندما يكون :values موجودًا.',
     'required_with_all' => ':attribute مطلوب عندما تكون :values موجودة.',
     'required_without' => ':attribute مطلوب عندما لا يكون :values موجودًا.',
     'required_without_all' => ':attribute مطلوب عندما لا تكون أي من :values موجودة.',
     'same' => 'يجب أن يتطابق :attribute مع :other.',
     'size' => [
-        'array' => 'يجب أن يحتوي :attribute على :size عنصرًا.',
-        'file' => 'يجب أن يكون :attribute :size كيلوبايت.',
+        'array' => 'يجب أن يحتوي :attribute على :size عنصر.',
+        'file' => 'يجب أن يكون حجم :attribute :size كيلوبايت.',
         'numeric' => 'يجب أن يكون :attribute :size.',
-        'string' => 'يجب أن يحتوي :attribute على :size حرفًا.',
+        'string' => 'يجب أن يكون طول :attribute :size حرفًا.',
     ],
     'starts_with' => 'يجب أن يبدأ :attribute بأحد القيم التالية: :values.',
     'string' => 'يجب أن يكون :attribute نصًا.',
     'timezone' => 'يجب أن يكون :attribute منطقة زمنية صالحة.',
-    'unique' => 'تم بالفعل استخدام :attribute.',
+    'unique' => 'تم استخدام :attribute مسبقًا.',
     'uploaded' => 'فشل تحميل :attribute.',
-    'uppercase' => 'يجب أن يكون :attribute بحروف كبيرة.',
-    'url' => 'يجب أن يكون :attribute رابط URL صالحًا.',
-    'ulid' => 'يجب أن يكون :attribute معرف ULID صالحًا.',
-    'uuid' => 'يجب أن يكون :attribute معرف UUID صالحًا.',
+    'uppercase' => 'يجب أن يكون :attribute بأحرف كبيرة.',
+    'url' => 'يجب أن يكون :attribute عنوان URL صالحًا.',
+    'ulid' => 'يجب أن يكون :attribute صالحًا ULID.',
+    'uuid' => 'يجب أن يكون :attribute صالحًا UUID.',
 
     /*
     |--------------------------------------------------------------------------
@@ -148,6 +170,8 @@ return [
     */
 
     'attributes' => [
+
+        // المعلومات الأساسية
         'name'                                      => 'الاسم',
         'name-en'                                   => 'الاسم بالإنجليزية',
         'name-ar'                                   => 'الاسم بالعربية',
@@ -155,489 +179,109 @@ return [
         'password'                                  => 'كلمة المرور',
         'password_confirmation'                     => 'تأكيد كلمة المرور',
         'role'                                      => 'الدور',
-        'description-en'                            => 'الوصف بالإنجليزية',
-        'description-ar'                            => 'الوصف بالعربية',
+        'token'                                     => 'رمز التحقق',
+
+        // التواصل والعنوان
+        'phone-number'                              => 'رقم الهاتف',
         'address-en'                                => 'العنوان بالإنجليزية',
         'address-ar'                                => 'العنوان بالعربية',
-        'phone-number'                              => 'رقم الهاتف',
+        'google-map-url'                            => 'رابط خرائط جوجل',
         'longitude'                                 => 'خط الطول',
         'latitude'                                  => 'خط العرض',
-        'google-map-url'                            => 'رابط خرائط جوجل',
-        'website'                                   => 'الموقع الإلكتروني',
-        'business_status'                           => 'حالة العمل',
-        'price-level'                               => 'مستوى السعر',
+        'region-id'                                 => 'المنطقة',
+
+        // الوصف
+        'description'                               => 'الوصف',
+        'description-en'                            => 'الوصف بالإنجليزية',
+        'description-ar'                            => 'الوصف بالعربية',
+
+        // الوسائط
         'image'                                     => 'الصورة',
         'main-image'                                => 'الصورة الرئيسية',
         'gallery-images'                            => 'صور المعرض',
-        'rating'                                    => 'التقييم',
-        'comment'                                   => 'التعليق',
-        'total-user-rating'                         => 'إجمالي تقييم المستخدم',
+        'gallery'                                   => 'المعرض',
+
+        // النشاط التجاري والوسوم
         'sub_category_id'                           => 'الفئة الفرعية',
-        'tags-id'                                   => 'العلامات',
-        'region-id'                                 => 'المنطقة',
-        'subject'                                   => 'الموضوع',
-        'message'                                   => 'الرسالة',
-        'description'                               => 'الوصف',
-        'days'                                      => 'أيام الخطة',
+        'tags-id'                                   => 'الوسوم',
+        'business_status'                           => 'حالة النشاط التجاري',
+        'place-type'                                => 'نوع المكان',
+
+        // التقييم والسعر
+        'price-level'                               => 'مستوى السعر',
+        'website'                                   => 'الموقع الإلكتروني',
+        'rating'                                    => 'التقييم',
+        'total-user-rating'                         => 'إجمالي تقييمات المستخدمين',
+        'comment'                                   => 'تعليق',
+
+        // تفاصيل الرحلة أو البرنامج
+        'days'                                      => 'الأيام',
         'days.*.activities'                         => 'الأنشطة',
         'days.*.activities.*.name'                  => 'اسم النشاط',
-        'days.*.activities.*.start_time'            => 'وقت بدء النشاط',
-        'days.*.activities.*.end_time'              => 'وقت انتهاء النشاط',
+        'days.*.activities.*.start_time'            => 'وقت بداية النشاط',
+        'days.*.activities.*.end_time'              => 'وقت نهاية النشاط',
         'days.*.activities.*.place_slug'            => 'مكان النشاط',
-        'days.*.activities.*.note'                  => 'ملاحظة النشاط',
-        'min_cost'                                  => 'الحد الأدنى للتكلفة',
-        'max_cost'                                  => 'الحد الأقصى للتكلفة',
-        'min_rate'                                  => 'الحد الأدنى للتقييم',
-        'max_rate'                                  => 'الحد الأقصى للتقييم',
-        'min_age'                                   => 'الحد الأدنى للعمر',
-        'max_age'                                   => 'الحد الأقصى للعمر',
-        'min_duration_in_minute'                    => 'الحد الأدنى لمدة النشاط',
-        'max_duration_in_minute'                    => 'الحد الأقصى لمدة النشاط',
-        'distance_in_meter'                         => 'الحد الأقصى لمسافة النشاط',
-        'difficulty'                                => 'الصعوبة',
-        'cost'                                      => 'التكلفة',
-        'time'                                      => 'الوقت',
-        'place_en'                                  => 'المكان بالإنجليزية',
-        'place_ar'                                  => 'المكان بالعربية',
-        'activities.en'                             => 'النشاط بالإنجليزية',
-        'activities.ar'                             => 'النشاط بالعربية',
-        'price_include.en'                          => 'ما يشمله السعر بالإنجليزية',
-        'price_include.ar'                          => 'ما يشمله السعر بالعربية',
+        'days.*.activities.*.note'                  => 'ملاحظات النشاط',
+
+        // التسعير حسب الفئة العمرية
         'price_age.min_age'                         => 'الحد الأدنى للعمر',
         'price_age.max_age'                         => 'الحد الأقصى للعمر',
-        'price_age.cost'                            => 'تكلفة الفئة العمرية',
+        'price_age.cost'                            => 'سعر الفئة العمرية',
+
+        // الفلاتر (السعر / العمر / التقييم)
+        'min_cost'                                  => 'الحد الأدنى للتكلفة',
+        'max_cost'                                  => 'الحد الأقصى للتكلفة',
+        'cost'                                      => 'التكلفة',
+        'min_rate'                                  => 'أقل تقييم',
+        'max_rate'                                  => 'أعلى تقييم',
+        'min_age'                                   => 'الحد الأدنى للعمر',
+        'max_age'                                   => 'الحد الأقصى للعمر',
+
+        // المدة والمسافة
+        'min_duration_in_minute'                    => 'الحد الأدنى للمدة (بالدقائق)',
+        'max_duration_in_minute'                    => 'الحد الأقصى للمدة (بالدقائق)',
+        'distance_in_meter'                         => 'المسافة (بالمتر)',
+
+        // المسارات
+        'trail.min_duration_in_minute'              => 'الحد الأدنى لمدة المسار (بالدقائق)',
+        'trail.max_duration_in_minute'              => 'الحد الأقصى لمدة المسار (بالدقائق)',
+        'trail.distance_in_meter'                   => 'مسافة المسار (بالمتر)',
+        'trail.difficulty'                          => 'صعوبة المسار',
+        'difficulty'                                => 'الصعوبة',
+        'time'                                      => 'الوقت',
+
+        // نقطة التجمع
         'assembly.time'                             => 'وقت التجمع',
-        'assembly.place_en'                         => 'مكان التجمع بالإنجليزية',
-        'assembly.place_ar'                         => 'مكان التجمع بالعربية',
-        'required_items.en'                         => 'العناصر المطلوبة بالإنجليزية',
-        'required_items.ar'                         => 'العناصر المطلوبة بالعربية',
-        'trail.min_duration_in_minute'              => 'الحد الأدنى لمدة المسار',
-        'trail.max_duration_in_minute'              => 'الحد الأقصى لمدة المسار',
-        'trail.distance_in_meter'                   => 'المسافة في المسار بالأمتار',
-        'trail.difficulty'                          => 'درجة صعوبة المسار',
-        'gallery'                                   => 'المعرض',
-    ],
+        'assembly.place_en'                         => 'مكان التجمع (بالإنجليزية)',
+        'assembly.place_ar'                         => 'مكان التجمع (بالعربية)',
 
-    'msg' => [
-        // Category Validation Messages
-        /** start category translation validation here */
-        'english-name-required' => 'الاسم بالإنجليزية مطلوب.',
-        'english-name-min-characters' => 'يجب أن يتكون الاسم بالإنجليزية من :min أحرف على الأقل.',
-        'arabic-name-required' => 'الاسم بالعربية مطلوب.',
-        'arabic-name-min-characters' => 'يجب أن يتكون الاسم بالعربية من :min أحرف على الأقل.',
-        'priority-required' => 'الأولوية مطلوبة.',
-        'image-required' => 'الصورة مطلوبة.',
-        'image-invalid' => 'الصورة غير صالحة',
-        'validation.msg.image-mime' => 'يجب أن يكون :attribute ملف من النوع: :mime_types.',
-        /** end category translation validation here */
+        // الأماكن
+        'place_en'                                  => 'المكان بالإنجليزية',
+        'place_ar'                                  => 'المكان بالعربية',
 
-        // Other Validation Messages
-        'name-required' => 'الاسم مطلوب.',
-        'email-required' => 'البريد الإلكتروني مطلوب.',
-        'email-already-exists' => 'البريد الإلكتروني موجود بالفعل.',
-        'email-should-be-email-format' => 'يجب أن يكون البريد الإلكتروني بتنسيق البريد الإلكتروني.',
-        'password-confirmation-required' => 'تأكيد كلمة المرور مطلوب.',
-        'role-required' => 'الدور مطلوب.',
+        // الأنشطة
+        'activities.en'                             => 'النشاط بالإنجليزية',
+        'activities.ar'                             => 'النشاط بالعربية',
 
-        // Category CRUD Messages
-        'category-created-successfully!' => 'تم إنشاء الفئة بنجاح!',
-        'categories-updated-successfully!' => 'تم تحديث الفئات بنجاح!',
-        'categories-deleted-successfully!' => 'تم حذف الفئات بنجاح!',
+        // المستلزمات
+        'required_items.en'                         => 'المستلزمات المطلوبة (بالإنجليزية)',
+        'required_items.ar'                         => 'المستلزمات المطلوبة (بالعربية)',
 
-        // Description and Address Validation Messages
-        'english-description-required' => 'الوصف بالإنجليزية مطلوب',
-        'english-description-min-characters' => 'يجب أن يحتوي الوصف بالإنجليزية على الحد الأدنى من الحروف',
-        'arabic-description-required' => 'الوصف بالعربية مطلوب',
-        'arabic-description-min-characters' => 'يجب أن يحتوي الوصف بالعربية على الحد الأدنى من الحروف',
-        'english-address-required' => 'العنوان بالإنجليزية مطلوب',
-        'english-address-min-characters' => 'يجب أن يحتوي العنوان بالإنجليزية على الحد الأدنى من الحروف',
-        'arabic-address-required' => 'العنوان بالعربية مطلوب',
-        'arabic-address-min-characters' => 'يجب أن يحتوي العنوان بالعربية على الحد الأدنى من الحروف',
+        // السعر يشمل
+        'price_include.en'                          => 'يشمل السعر (بالإنجليزية)',
+        'price_include.ar'                          => 'يشمل السعر (بالعربية)',
 
-        // Location and Link Validation Messages
-        'google-map-url-required' => 'رابط خرائط جوجل مطلوب',
-        'invalid-url' => 'رابط خرائط جوجل غير صالح',
-        'phone-number-required' => 'رقم الهاتف مطلوب',
-        'longitude-required' => 'خط الطول مطلوب',
-        'invalid-longitude' => 'خط الطول غير صالح',
-        'latitude-required' => 'خط العرض مطلوب',
-        'invalid-latitude' => 'خط العرض غير صالح',
+        // الرسائل والتواصل
+        'subject'                                   => 'الموضوع',
+        'message'                                   => 'الرسالة',
 
-        // Business and Website Validation Messages
-        'price-level-required' => 'مستوى السعر مطلوب',
-        'website-required' => 'الموقع الإلكتروني مطلوب',
-        'invalid-website-url' => 'رابط الموقع الإلكتروني غير صالح',
-
-        // Rating Validation Messages
-        'rating-required' => 'التقييم مطلوب',
-        'invalid-rating' => 'التقييم غير صالح',
-        'total-user-rating-required' => 'إجمالي تقييم المستخدم مطلوب',
-        'invalid-total-user-rating' => 'إجمالي تقييم المستخدم غير صالح',
-
-        // Subcategory and Region Validation Messages
-        'subcategory-required' => 'الفئة الفرعية مطلوبة',
-        'invalid-subcategory' => 'الفئة الفرعية غير صالحة',
-        'region-required' => 'المنطقة مطلوبة',
-        'invalid-region' => 'المنطقة غير صالحة',
-
-        // Tags Validation Messages
-        'business-status-required' => 'حالة العمل مطلوبة',
-        'tags-required' => 'العلامات مطلوبة',
-        'invalid-tags' => 'العلامات غير صالحة',
-        'invalid-tag' => 'علامة غير صالحة',
-
-        // Image Validation Messages
-        'main-image-required' => 'الصورة الرئيسية مطلوبة',
-        'invalid-image' => 'الصورة الرئيسية غير صالحة',
-        'invalid-image-format' => 'تنسيق الصورة الرئيسية غير صالح',
-        'invalid-gallery-image' => 'صورة المعرض غير صالحة',
-        'invalid-gallery-image-format' => 'تنسيق صورة المعرض غير صالح',
-
-        // Email Validation Messages
-        'email-invalid' => 'البريد الالكتروني غير صالح',
-
-        // Message Validation
-        'message-required' => "يجب ادخال الرسالة",
-
-        // Question Validation
-        "question-name-en-required" => "السؤال بالانجليزي مطلوب",
-        "question-name-ar-required" => "السؤال بالعربي مطلوب",
-        "is-first-question-required" => "هل هذا السؤال الأول؟",
-
-        // Follow Validation
-        'check-if-followers-existence' => 'المستخدم :user ليس واحدًا من متابعيك',
+        // أولوية العرض
+        'priority'                                  => 'الأولوية',
     ],
 
     'api' => [
-        'id-does-not-exists' => 'المعرف غير موجود.',
-
-        // User Errors
-        'the-following-id-is-required' => 'معرف المتبوع مطلوب.',
-        'the-following-id-does-not-exists' => 'معرف المتبوع غير موجود بلائحة المستخدمين.',
-
-        // Conversation Errors
-        'conversation-id-is-required' => 'معرف المحادثة مطلوب.',
-        'conversation-id-does-not-exists' => 'معرف المحادثة غير موجود.',
-        'conversation-id-must-exist' => 'المحادثة المحددة غير موجودة.',
-        'conversation-id-invalid' => 'معرف المحادثة غير صالح.',
-
-        // Post Errors
-        'reply-id-is-required' => 'رقم معرف الرد مطلوب.',
-        'reply-id-does-not-exists' => 'رقم معرف الرد غير موجود.',
-
-        // Message Type Errors
-        "message-type-is-required" => "نوع الرسالة مطلوب.",
-        "message-type-must-be-string" => "يجب أن يكون نوع الرسالة نصًا.",
-        "message-type-invalid" => "يجب أن يكون نوع الرسالة أحد الأنواع التالية: نص، صورة، صوت، أو فيديو.",
-        "message-txt-is-required-if-text" => "نص الرسالة مطلوب عندما يكون نوع الرسالة نصًا.",
-        "message-txt-must-be-string" => "يجب أن يكون نص الرسالة نصًا.",
-
-        // File Upload Errors
-        "file-is-required-if-media" => "الملف مطلوب عندما يكون نوع الرسالة صورة أو صوت أو فيديو.",
-        "file-invalid-type" => "يجب أن يكون الملف من الأنواع التالية: jpg، jpeg، png، gif، mp3، wav، mp4، mov، avi.",
-        "file-max-size" => "يجب ألا يتجاوز حجم الملف :max كيلوبايت.",
-
-        // Following ID Errors
-        "following-id-is-required" => "معرف المتابعة مطلوب.",
-        "following-id-not-exists" => "المستخدم المطلوب غير موجود.",
-        "follower-following-already-exists" => "أنت تتابع هذا المستخدم بالفعل.",
-
-        // Question ID Errors
-        "question-id-is-required" => "معرف السؤال مطلوب.",
-        "question-id-not-exists" => "السؤال المحدد غير موجود.",
-
-        // Answer Errors
-        "answer-is-required" => "الإجابة مطلوبة.",
-        "answer-invalid-value" => "يجب أن تكون الإجابة إما 'نعم', 'لا', أو 'لا أعرف'.",
-
-        // Name Errors (English and Arabic)
-        "name-en-required" => "الاسم بالإنجليزية مطلوب.",
-        "name-en-string" => "الاسم بالإنجليزية يجب أن يكون نصًا.",
-        "name-en-max" => "الاسم بالإنجليزية لا يمكن أن يتجاوز 255 حرفًا.",
-        "name-en-check" => "الاسم بالإنجليزية يجب أن يتجاوز تحقق الدليل.",
-        "name-ar-required" => "الاسم بالعربية مطلوب.",
-        "name-ar-string" => "الاسم بالعربية يجب أن يكون نصًا.",
-        "name-ar-max" => "الاسم بالعربية لا يمكن أن يتجاوز 255 حرفًا.",
-
-        // Description Errors (English and Arabic)
-        "description-en-required" => "الوصف بالإنجليزية مطلوب.",
-        "description-en-string" => "الوصف بالإنجليزية يجب أن يكون نصًا.",
-        "description-ar-required" => "الوصف بالعربية مطلوب.",
-        "description-ar-string" => "الوصف بالعربية يجب أن يكون نصًا.",
-
-        // Price Errors
-        "main-price-required" => "السعر الرئيسي مطلوب.",
-        "main-price-numeric" => "السعر الرئيسي يجب أن يكون رقمًا.",
-        "main-price-min" => "السعر الرئيسي يجب أن يكون على الأقل 0.",
-
-        // Date and Time Errors
-        "start-datetime-required" => "تاريخ ووقت البدء مطلوب.",
-        "start-datetime-date" => "تاريخ ووقت البدء يجب أن يكون تاريخًا صحيحًا.",
-        "start-datetime-format" => "تاريخ ووقت البدء يجب أن يكون بتنسيق Y-m-d H:i:s.",
-        "start-datetime-future" => "تاريخ ووقت البدء يجب أن يكون في المستقبل.",
-        "end-datetime-required" => "تاريخ ووقت الانتهاء مطلوب.",
-        "end-datetime-date" => "تاريخ ووقت الانتهاء يجب أن يكون تاريخًا صحيحًا.",
-        "end-datetime-format" => "تاريخ ووقت الانتهاء يجب أن يكون بتنسيق Y-m-d H:i:s.",
-        "end-datetime-future" => "تاريخ ووقت الانتهاء يجب أن يكون في المستقبل.",
-        "end-datetime-after-start" => "تاريخ ووقت الانتهاء يجب أن يكون بعد تاريخ ووقت البدء.",
-
-        // Max Attendance Errors
-        "max-attendance-required" => "الحد الأقصى للحضور مطلوب.",
-        "max-attendance-integer" => "الحد الأقصى للحضور يجب أن يكون عددًا صحيحًا.",
-        "max-attendance-min" => "الحد الأقصى للحضور يجب أن يكون على الأقل 1.",
-
-        // Gallery Errors
-        "gallery-file" => "كل عنصر في المعرض يجب أن يكون ملفًا.",
-        "gallery-mimes" => "كل عنصر في المعرض يجب أن يكون ملفًا من نوع: jpeg، png، jpg، gif، svg، webp، bmp، tiff، ico، svgz، mp4، mov، avi، mkv، flv، wmv.",
-
-        // Activities Errors
-        "activities-required" => "الأنشطة مطلوبة.",
-        "activities-string" => "الأنشطة يجب أن تكون نصًا.",
-
-        // Price Include Errors
-        "price-include-required" => "سعر الشمول مطلوب.",
-        "price-include-string" => "سعر الشمول يجب أن يكون نصًا.",
-
-        // Price Age Errors
-        "price-age-nullable" => "عمر السعر يجب أن يكون نصًا إذا كان موجودًا.",
-
-        // Assembly Errors
-        "assembly-required" => "التجميع مطلوب.",
-        "assembly-string" => "التجميع يجب أن يكون نصًا.",
-
-        // Required Items Errors
-        "required-items-nullable" => "العناصر المطلوبة يجب أن تكون نصًا إذا كانت موجودة.",
-
-        // Is Trail Errors
-        "is-trail-nullable" => "الطريق يجب أن يكون Boolean إذا كان موجودًا.",
-        "trail-nullable" => "الطريق يجب أن يكون نصًا إذا كان موجودًا.",
-
-        // Subscribers Errors
-        'subscribers.required' => 'المشتركين مطلوبون.',
-        'subscribers.array' => 'يجب أن يكون المشتركين مصفوفة.',
-        'subscribers.*.first_name.required' => 'اسم المشترك الأول مطلوب.',
-        'subscribers.*.first_name.string' => 'يجب أن يكون الاسم الأول سلسلة نصية.',
-        'subscribers.*.first_name.max' => 'قد لا يكون الاسم الأول أكبر من 255 حرفًا.',
-        'subscribers.*.last_name.required' => 'اسم العائلة لكل مشترك مطلوب.',
-        'subscribers.*.last_name.string' => 'يجب أن يكون الاسم الأخير سلسلة نصية.',
-        'subscribers.*.last_name.max' => 'قد لا يكون الاسم الأخير أكبر من 255 حرفًا.',
-        'subscribers.*.age.required' => 'العمر لكل مشترك مطلوب.',
-        'subscribers.*.age.integer' => 'يجب أن يكون العمر عدد صحيح.',
-        'subscribers.*.age.min' => 'يجب أن يكون العمر على الأقل 0.',
-        'subscribers.*.phone_number.required' => 'رقم الهاتف لكل مشترك مطلوب.',
-        'subscribers.*.phone_number.string' => 'يجب أن يكون رقم الهاتف سلسلة نصية.',
-        'subscribers.*.phone_number.max' => 'قد لا يكون رقم الهاتف أكبر من 20 حرفًا.',
-
-        // Category Errors
-        'categories-id-nullable' => 'حقل معرف الفئات اختياري.',
-        'categories-id-array' => 'يجب أن يكون حقل معرف الفئات مصفوفة.',
-        'category-exists' => 'واحدة أو أكثر من الفئات غير موجودة.',
-        'category-main' => 'يجب أن تكون الفئة المحددة فئة رئيسية.',
-
-        // Subcategory Errors
-        'subcategories-id-nullable' => 'حقل معرف الفئات الفرعية اختياري.',
-        'subcategories-id-array' => 'يجب أن يكون حقل معرف الفئات الفرعية مصفوفة.',
-        'subcategory-exists' => 'واحدة أو أكثر من الفئات الفرعية غير موجودة.',
-        'subcategory-main' => 'يجب أن تكون الفئة الفرعية المحددة فئة فرعية صحيحة.',
-
-        // Cost Errors
-        'max-cost-nullable' => 'حقل التكلفة القصوى اختياري.',
-
-        // Feature Errors
-        'features-id-nullable' => 'حقل معرف الميزات اختياري.',
-        'feature-exists' => 'واحدة أو أكثر من الميزات غير موجودة.',
-
-        // Rate Errors
-        'min-rate-nullable' => 'حقل التصنيف الأدنى اختياري.',
-        'max-rate-nullable' => 'حقل التصنيف الأقصى اختياري.',
-
-        // Activity Errors
-        'activity-name-string' => 'يجب أن يكون اسم النشاط نصًا.',
-        'activity-name-max' => 'لا يمكن أن يكون اسم النشاط أطول من 255 حرفًا.',
-        'day-total-duration' => 'لا يمكن أن تتجاوز مدة الأنشطة في يوم واحد 24 ساعة.',
-
-        // Plan Errors
-        'plan-id-required' => 'معرف الخطة مطلوب.',
-        'plan-id-exists' => 'الخطة المحددة غير موجودة أو لا تخصك.',
-        'name-required' => 'حقل الاسم مطلوب.',
-        'name-string' => 'يجب أن يكون الاسم نصًا.',
-        'name-max' => 'لا يمكن أن يكون الاسم أطول من 255 حرفًا.',
-        'description-required' => 'حقل الوصف مطلوب.',
-        'description-max' => 'لا يمكن أن يكون الوصف أطول من 1000 حرفًا.',
-        'description-string' => 'يجب أن يكون الوصف نصًا.',
-        'days-required' => 'حقل الأيام مطلوب.',
-        'days-array' => 'يجب أن يكون حقل الأيام مصفوفة.',
-
-        // Activity Errors
-        'activities-array' => 'يجب أن يكون حقل الأنشطة مصفوفة.',
-        'activity-name-required' => 'حقل الاسم مطلوب لكل نشاط.',
-        'activity-start-time-required' => 'حقل وقت البدء مطلوب لكل نشاط.',
-        'activity-start-time-format' => 'يجب أن يكون وقت البدء بالتنسيق H:i.',
-        'activity-end-time-required' => 'حقل وقت الانتهاء مطلوب لكل نشاط.',
-        'activity-end-time-format' => 'يجب أن يكون وقت الانتهاء بالتنسيق H:i.',
-        'activity-end-time-after' => 'يجب أن يكون وقت الانتهاء بعد وقت البدء.',
-        'activity-place-id-required' => 'حقل معرف المكان مطلوب لكل نشاط.',
-        'activity-place-id-exists' => 'المكان المحدد غير موجود.',
-        'activity-note-max' => 'لا يمكن أن يكون الملاحظة أطول من 255 حرفًا.',
-
-        // Comment Errors
-        'comment-id-required' => 'معرف التعليق مطلوب.',
-        'comment-id-exists' => 'التعليق المحدد غير موجود.',
-
-        // Post Ownership Errors
-        'post-id-custom' => 'يجب أن يكون المنشور مملوكًا للمستخدم.',
-
-        // Visitable ID Errors
-        'visitable-id-custom' => 'الزيارة المحددة غير موجودة.',
-
-        // Location Errors
-        'latitude-required' => 'حقل خط العرض مطلوب.',
-        'latitude-numeric' => 'يجب أن يكون خط العرض رقمًا.',
-        'longitude-required' => 'حقل خط الطول مطلوب.',
-        'longitude-numeric' => 'يجب أن يكون خط الطول رقمًا.',
-
-        // User Profile Errors
-        'gender-required' => 'حقل الجنس مطلوب.',
-        'gender-in' => 'الجنس المحدد غير صحيح.',
-        'birthday-required' => 'حقل تاريخ الميلاد مطلوب.',
-        'birthday-min-age' => 'يجب أن يكون عمرك على الأقل 18 عامًا.',
-        'tags-id-required' => 'حقل العلامات مطلوب.',
-        'tags-id-exists' => 'إحدى العلامات المحددة غير موجودة.',
-        'username-alpha_dash' => 'يمكن أن يحتوي اسم المستخدم فقط على حروف وأرقام وشرطات وشرطات سفلية.',
-        'username-not-regex' => 'لا يجوز أن يحتوي اسم المستخدم على مسافات.',
-
-        // Image Validation Errors
-        'image-image' => 'يجب أن تكون الصورة ملف صورة صالح.',
-
-        // Trip Errors
-        'trip_id-required' => 'حقل معرف الرحلة مطلوب.',
-        'trip_id-integer' => 'يجب أن يكون معرف الرحلة عدد صحيح.',
-        'trip_id-exists' => 'معرف الرحلة المحدد غير موجود.',
-
-        // User Trip Errors
-        'user_id-required' => 'حقل معرف المستخدم مطلوب.',
-        'user_id-integer' => 'يجب أن يكون معرف المستخدم عدد صحيح.',
-        'user_id-exists' => 'معرف المستخدم المحدد غير موجود في جدول users_trips.',
-
-        // Trip Type Errors
-        'trip_type-required' => 'حقل نوع الرحلة مطلوب.',
-        'trip_type-string' => 'يجب أن يكون نوع الرحلة نصًا.',
-        'trip_type-in' => 'نوع الرحلة المحدد غير صالح.',
-
-        // Place Errors
-        'place_id-required' => 'حقل معرف المكان مطلوب.',
-        'place_id-integer' => 'يجب أن يكون معرف المكان عدد صحيح.',
-        'place_id-exists' => 'معرف المكان المحدد غير موجود.',
-
-        // Cost Errors
-        'cost-required' => 'حقل التكلفة مطلوب.',
-        'cost-numeric' => 'يجب أن تكون التكلفة عددًا.',
-        'cost-min' => 'يجب أن تكون التكلفة على الأقل 0.',
-
-        // Age Range Errors
-        'age_min-required_if' => 'حقل الحد الأدنى للعمر مطلوب عندما يكون نوع الرحلة 0 أو 1.',
-        'age_min-integer' => 'يجب أن يكون الحد الأدنى للعمر عدد صحيح.',
-        'age_max-required_if' => 'حقل الحد الأقصى للعمر مطلوب عندما يكون نوع الرحلة 0 أو 1.',
-        'age_max-integer' => 'يجب أن يكون الحد الأقصى للعمر عدد صحيح.',
-
-        // Date and Time Errors
-        'date-required' => 'حقل التاريخ مطلوب.',
-        'date-date' => 'التاريخ غير صالح.',
-        'date-custom' => 'لا يمكن أن يكون تاريخ الرحلة في الماضي.',
-        'time-required' => 'حقل الوقت مطلوب.',
-        'time-date_format' => 'يجب أن يكون الوقت بتنسيق H:i:s.',
-
-        // Attendance Errors
-        'attendance_number-required_if' => 'حقل عدد الحضور مطلوب عندما يكون نوع الرحلة 0 أو 1.',
-        'attendance_number-integer' => 'يجب أن يكون عدد الحضور عدد صحيح.',
-        'attendance_number-min' => 'يجب أن يكون عدد الحضور على الأقل 1.',
-
-        // Tag Errors
-        'tags-required' => 'حقل العلامات مطلوب.',
-        'tags-exists' => 'العلامة المحددة غير موجودة.',
-        'tags-nullable' => 'يمكن أن يكون حقل العلامات فارغًا.',
-
-        // User Errors for Trip Type 2
-        'users-required_if' => 'حقل المستخدمين مطلوب عندما يكون نوع الرحلة 2.',
-
-        // Age Validation Errors
-        'age_max-gte' => 'يجب أن يكون الحد الأقصى للعمر أكبر من أو يساوي الحد الأدنى للعمر.',
-
-        // Gender Nullable Error
-        'gender-nullable' => 'يمكن أن يكون حقل الجنس فارغًا.',
-
-        // Date and Time Conditional Validation Errors
-        'date-required_if' => 'حقل التاريخ مطلوب عندما يكون الوقت موجودًا.',
-        'time-required_if' => 'حقل الوقت مطلوب عندما يكون التاريخ موجودًا.',
-
-        // Email Errors
-        'email-required' => 'حقل البريد الإلكتروني مطلوب.',
-        'email-string' => 'يجب أن يكون البريد الإلكتروني نصًا.',
-        'email-email' => 'يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صحيح.',
-        'email-lowercase' => 'يجب أن يكون البريد الإلكتروني بحروف صغيرة.',
-
-        // Password Errors
-        'password-required' => 'حقل كلمة المرور مطلوب.',
-        'password-string' => 'يجب أن تكون كلمة المرور نصًا.',
-
-        // Custom Category Errors
-        'the-selected-subcategory-it-is-main-category' => 'الفئة الفرعية المختارة هي الفئة الرئيسية',
-        'the-subcategories-should-be-array' => 'يجب أن تكون الفئات الفرعية في شكل مصفوفة',
-        'the-category-should-be-array' => 'يجب أن تكون الفئات في شكل مصفوفة',
-
-        // Trip and Journey Errors
-        'check-update-message-trip' => 'تم تحديث الرحلة، يرجى التحقق من تفاصيل الرحلة.',
-        'this-user-has-joined-a-trip-on-the-same-date-as-your-trip' => 'هذا المستخدم قد انضم إلى رحلة في نفس تاريخ رحلتك، لذا لا يمكنه الانضمام إلى رحلتك.',
-        'you-are-not-attendance-in-this' => 'أنت لست حاضرًا في هذه الرحلة.',
-        'you-cant-make-review-for-upcoming-trip' => 'لا يمكنك كتابة مراجعة لرحلة قادمة.',
-        'trip-registration-closed' => 'لا يمكنك التسجيل في هذه الرحلة بعد الآن.',
-        'trip-has-started' => 'بدأت الرحلة في :start_datetime.',
-        'trip-conflict' => 'هناك تعارض مع رحلاتك الحالية.',
-        'already-in-trip' => 'أنت بالفعل في هذه الرحلة.',
-        'not-owner-of-trip' => 'أنت لست مالك هذه الرحلة.',
-        'cannot-update-trip-started-at' => 'لا يمكنك تحديث هذه الرحلة لأنها بدأت في :date.',
-        'trip-not-found' => 'لم يتم العثور على الرحلة المحددة.',
-        'this-trip-inactive' => 'هذه الرحلة غير نشطة.',
-        'you-should-join-trip-first' => 'يجب أن تنضم إلى الرحلة أولاً.',
-        'you-do-not-have-request-to-delete' => 'ليس لديك طلب لحذف هذه الرحلة.',
-        'this-reply-did-not-belong-to-you' => 'هذه الرد لا تعود إليك.',
-        'you-can-not-delete-the-reply' => 'لا يمكنك حذف هذه الرد.',
-        'comment-not-found' => 'لم يتم العثور على التعليق المحدد.',
-        'reply-not-found' => 'لم يتم العثور على الرد المحدد.',
-        'you-should-verify-email-first' => 'عليك ان تقوم بالتحقق من البريد الالكتروني',
-
-        // User and Profile Errors
-        'wrong-email' => 'البريد الإلكتروني المدخل غير صحيح.',
-        'this-is-not-in-favorite-list-to-delete' => 'هذا العنصر غير موجود في قائمة المفضلة الخاصة بك ولا يمكن حذفه.',
-        'you-do-not-have-review' => 'ليس لديك مراجعة لهذا.',
-        'you-already-make-request-to-this-user-wait-for-accept-id' => 'لقد قمت بالفعل بإرسال طلب لهذا المستخدم، انتظر القبول.',
-        'you-already-follow-this-user' => 'أنت تتابع هذا المستخدم بالفعل.',
-        'you-can-not-follow-yourself' => 'لا يمكنك متابعة نفسك.',
-        'you-are-not-follower-for-this-user' => 'أنت لست متابعًا لهذا المستخدم.',
-        'you-can-not-unfollow-discover-jordan-profile' => 'لا تستطيع الغاء متابعة صفحة اكتشف الاردن.',
-        'this-user-already-follow-you' => 'هذا المستخدم يتابعك بالفعل.',
-        'you-can-not-make-request-to-yourself' => 'لا يمكنك تقديم طلب لنفسك.',
-        'check-if-followers-existence' => 'المستخدم :user ليس متابعًا.',
-        'you-cannot-make-review-for-upcoming-event' => 'لا يمكنك كتابة تقييم لهذا الحدث القادم.',
-        'you-cannot-make-review-for-upcoming-trip' => 'لا يمكنك كتابة مراجعة لرحلة قادمة.',
-
-        // Media, Post, and Tag Errors
-        'you-are-not-the-owner-of-this-post' => 'أنت لست مالك هذا المنشور.',
-        'you-are-not-authorized-to-delete-this-media' => 'لا تستطيح حذف هذه الوسائط.',
-        'this-email-in-black-list' => 'هذا البريد الإلكتروني موجود في القائمة السوداء.',
-        'you-should-verify-email-first' => 'عليك ان تقوم بالتحقق من البريد الالكتروني.',
-
-        // Validation Errors
-        'invalid-json-format' => 'البيانات المقدمة ليست بتنسيق JSON صالح.',
-        'you-deactivated-by-admin-wait-to-unlock-the-block' => 'لقد تم حظرك من قبل المشرف انتظر حتى يتم الغاء حظرك',
-        'invalid-credentials' => 'بيانات المستخدم غير صحيحة.',
-        'you-should-verify-email-first' => 'عليك ان تقوم بالتحقق من البريد الالكتروني.',
-        'you-cannot-delete-this-interest' => 'لا يمكنك حذف هذا الاهتمام.',
-        'categories-should-be-array' => 'التصنيفات الرئيسية يجب ان تكون مصفوفة.',
-        'something-went-wrong' => 'هناك خطأ قد حدث.',
-
-        // Additional Errors
-        'wait-for-admin-to-accept-your-application' => 'انتظر حتى يقوم المسؤول على الموافقة على طلبك',
+        // General Errors
+        'something-went-wrong'                                      => 'هناك خطأ قد حدث.',
 
         // Auth Validation
         "username-or-email-is-required"                             => "الاسم المستخدم او البريد الالكتروني مطلوب.",
@@ -657,11 +301,13 @@ return [
         "username-regex"                                            => "يجب أن يبدأ اسم المستخدم بحرف ويحتوي فقط على أحرف وأرقام وشرطات.",
         "username-no-whitespace"                                    => "يجب ألا يحتوي اسم المستخدم على مسافات.",
         "username-unique"                                           => "اسم المستخدم مُستخدم بالفعل.",
+        'email-is-required'                                         => 'حقل البريد الإلكتروني مطلوب.',
         "email-must-be-string"                                      => "يجب أن يكون البريد الإلكتروني نصًا.",
         "email-must-be-lowercase"                                   => "يجب أن يكون البريد الإلكتروني بأحرف صغيرة.",
         "email-max"                                                 => "يجب ألا يتجاوز البريد الإلكتروني :max أحرف.",
         "email-unique"                                              => "البريد الإلكتروني مُستخدم بالفعل.",
         "email-in-blacklist"                                        => "البريد الإلكتروني في القائمة السوداء.",
+        'email-invalid-format'                                      => 'يجب أن يكون البريد الإلكتروني بتنسيق صحيح.',
         "email-max-length"                                          => "يجب ألا يزيد البريد الإلكتروني عن :max أحرف.",
         'email-valid'                                               => 'البريد الالكتروني صالح',
         "email-must-be-valid"                                       => "يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صالح.",
@@ -672,6 +318,15 @@ return [
         'this-user-not-longer-active'                               => 'هذا المستخدم لم يعد نشطًا.',
         'user-id-is-required'                                       => 'رقم معرف للمستخدم مطلوب.',
         'user-id-does-not-exists'                                   => 'معرف المستخدم غير موجود.',
+        'email-required'                                            => 'حقل البريد الإلكتروني مطلوب.',
+        'email-string'                                              => 'يجب أن يكون البريد الإلكتروني نصًا.',
+        'email-email'                                               => 'يجب أن يكون البريد الإلكتروني عنوان بريد إلكتروني صحيح.',
+        'password-required'                                         => 'حقل كلمة المرور مطلوب.',
+        'password-string'                                           => 'يجب أن تكون كلمة المرور نصًا.',
+        'you-deactivated-by-admin-wait-to-unlock-the-block'         => 'لقد تم حظرك من قبل المشرف انتظر حتى يتم الغاء حظرك',
+        'invalid-credentials'                                       => 'بيانات المستخدم غير صحيحة.',
+        'you-should-verify-email-first'                             => 'عليك ان تقوم بالتحقق من البريد الالكتروني',
+        'wait-for-admin-to-accept-your-application'                 => 'انتظر حتى يقوم المسؤول على الموافقة على طلبك',
 
         // Trip Validation
         'trip_type_required'                                        => 'حقل نوع الرحلة مطلوب.',
@@ -748,6 +403,8 @@ return [
         'the-user-owner-this-trip-not-longer-active'                => 'لم يعد مالك المستخدم لهذه الرحلة نشطًا.',
         'this-trip-was-deleted'                                     => 'هذه الرحلة تم حذفها',
         'you_are_not_attendance_in_this'                            => 'انت غير مشترك بهذه الرحلة',
+        'check-update-message-trip'                                 => 'تم تحديث الرحلة، يرجى التحقق من تفاصيل الرحلة.',
+        'you-do-not-have-review'                                    => 'ليس لديك مراجعة لهذا.',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',
@@ -806,8 +463,6 @@ return [
 
         // Contact Us Validation
         'name-is-required'                                          => 'حقل الاسم مطلوب.',
-        'email-is-required'                                         => 'حقل البريد الإلكتروني مطلوب.',
-        'email-invalid-format'                                      => 'يجب أن يكون البريد الإلكتروني بتنسيق صحيح.',
         'subject-nullable'                                          => 'حقل الموضوع اختياري.', // اختياري؛ ربما لا يظهر
         'message-is-required'                                       => 'حقل الرسالة مطلوب.',
         'images-optional'                                           => 'الصور اختيارية.',
@@ -975,6 +630,7 @@ return [
         'not-acceptable-status'                                     => 'حالة غير مقبولة.',
         'the-review-id-must-be-integer'                             => 'يجب ان يكون معرف المراجعة عدد صحيح.',
         'relationship_not_exist'                                    => "العلاقة :relationship غير موجودة في نموذج المستخدم",
+        'id-does-not-exists'                                        => 'المعرف غير موجود.',
 
         // Post Validation
         'visitable-type-required'                                   => 'يرجى تحديد نوع العنصر المرتبط بالنشر.',
@@ -1001,6 +657,8 @@ return [
         'the-status-invalid'                                        => 'حالة غير صالحة',
         'post-id-must-be-integer'                                   => 'يجب ان يكون معرف المنشور عدد صحيح.',
         'the-user-post-creator-not-longer-active'                   => 'المستخدم الذي أنشأ المنشور لم يعد نشطًا.',
+        'the-user-id-is-required'                                   => 'المستخدم مطلوب.',
+        'the-user-id-does-not-exists'                                => 'المستخدم غير موجود.',
 
         // Comment Validation
         'post-id-exists'                                            => 'المنشور المحدد غير موجود.',
@@ -1016,5 +674,54 @@ return [
         'comment-should-be-string'                                  => 'التعليق يجب ان يكون نص.',
         'you_can_not_delete_the_comment'                            => 'لا يمكنك حذف التعليق.',
         'comment-id-must-be-integer'                                => 'يجب ان يكون معرف التعليق عدد صحيح.',
+
+        // Follow Validation
+        'the-following-id-is-required'                              => 'معرف المتبوع مطلوب.',
+        'the-following-id-does-not-exists'                          => 'معرف المتبوع غير موجود بلائحة المستخدمين.',
+        'you_already_make_request_to_this_user_wait_for_accept_id'  => 'لقد أرسلت طلبًا لهذا المستخدم بالفعل، الرجاء الانتظار حتى يتم القبول.',
+        'you_already_follow_this_user'                              => 'أنت تتابع هذا المستخدم بالفعل.',
+        'you_can_not_follow_yourself'                               => 'لا يمكنك متابعة نفسك.',
+        'you_are_not_follower_for_this_user'                        => 'أنت لست من متابعي هذا المستخدم.',
+        'you_can_not_unfollow_discover_jordan_profile'              => 'لا يمكنك إلغاء متابعة حساب اكتشف الأردن.',
+        'the-follower-id-is-required'                               => 'معرف المتابع مطلوب.',
+        'the-follower-id-does-not-exist'                            => 'معرف المتابع غير صالح.',
+        'there_is_noting_request_belong_to_this_user_as_follower'   => 'لا توجد أي طلبات تابعة لهذا المستخدم كمتابع.',
+        'this_user_already_follow_you'                              => 'هذا المستخدم يتابعك بالفعل.',
+        'you_can_not_make_request_to_yourself'                      => 'لا يمكنك إرسال طلب إلى نفسك.',
+
+        // Conversation Validation
+        'conversation-id-is-required'                               => 'معرف المحادثة مطلوب.',
+        'conversation-id-does-not-exists'                           => 'معرف المحادثة غير موجود.',
+        'this-conversation-is-not-available'                        => 'هذه المحادثة غير متاحة.',
+        'you-are-not-a-member-of-this-conversation'                 => 'أنت لست عضوًا في هذه المحادثة.',
+        'conversation-id-must-exist'                                => 'المحادثة المحددة غير موجودة.',
+        'conversation-id-invalid'                                   => 'معرف المحادثة غير صالح.',
+        "message-txt-is-required-if-text"                           => "نص الرسالة مطلوب عندما يكون نوع الرسالة نصًا.",
+        "message-txt-must-be-string"                                => "يجب أن يكون نص الرسالة نصًا.",
+        "file-is-required-if-media"                                 => "الملف مطلوب عندما يكون نوع الرسالة صورة أو صوت أو فيديو.",
+        "file-invalid-type"                                         => "يجب أن يكون الملف من الأنواع التالية: jpg، jpeg، png، gif، mp3، wav، mp4، mov، avi.",
+        "file-max-size"                                             => "يجب ألا يتجاوز حجم الملف :max كيلوبايت.",
+
+        // Qustions Validation
+        "question-id-is-required"                                   => "معرف السؤال مطلوب.",
+        "question-id-not-exists"                                    => "السؤال المحدد غير موجود.",
+        "answer-is-required"                                        => "الإجابة مطلوبة.",
+        "answer-invalid-value"                                      => "يجب أن تكون الإجابة إما 'نعم', 'لا', أو 'لا أعرف'.",
+
+        // Profile Validation
+        'gender-required'                                           => 'حقل الجنس مطلوب.',
+        'gender-in'                                                 => 'الجنس المحدد غير صحيح.',
+        'birthday-required'                                         => 'حقل تاريخ الميلاد مطلوب.',
+        'birthday-min-age'                                          => 'يجب أن يكون عمرك على الأقل 18 عامًا.',
+        'tags-id-required'                                          => 'حقل العلامات مطلوب.',
+        'tags-id-exists'                                            => 'إحدى العلامات المحددة غير موجودة.',
+        'username-alpha_dash'                                       => 'يمكن أن يحتوي اسم المستخدم فقط على حروف وأرقام وشرطات وشرطات سفلية.',
+        'username-not-regex'                                        => 'لا يجوز أن يحتوي اسم المستخدم على مسافات.',
+        'image-image'                                               => 'يجب أن تكون الصورة ملف صورة صالح.',
+        'latitude-required'                                         => 'حقل خط العرض مطلوب.',
+        'latitude-numeric'                                          => 'يجب أن يكون خط العرض رقمًا.',
+        'longitude-required'                                        => 'حقل خط الطول مطلوب.',
+        'longitude-numeric'                                         => 'يجب أن يكون خط الطول رقمًا.',
+
     ],
 ];

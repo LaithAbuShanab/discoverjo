@@ -170,39 +170,51 @@ return [
     */
 
     'attributes' => [
+
+        // Basic Info
         'name'                                      => 'Name',
         'name-en'                                   => 'English Name',
         'name-ar'                                   => 'Arabic Name',
         'email'                                     => 'Email',
         'password'                                  => 'Password',
-        'image'                                     => 'Image',
-        'priority'                                  => 'Priority',
         'password_confirmation'                     => 'Password Confirmation',
         'role'                                      => 'Role',
-        'description-en'                            => 'English Description',
-        'description-ar'                            => 'Arabic Description',
+        'token'                                     => 'Token',
+
+        // Contact & Address
+        'phone-number'                              => 'Phone Number',
         'address-en'                                => 'English Address',
         'address-ar'                                => 'Arabic Address',
         'google-map-url'                            => 'Google Map URL',
-        'phone-number'                              => 'Phone Number',
         'longitude'                                 => 'Longitude',
         'latitude'                                  => 'Latitude',
+        'region-id'                                 => 'Region',
+
+        // Description
+        'description'                               => 'Description',
+        'description-en'                            => 'English Description',
+        'description-ar'                            => 'Arabic Description',
+
+        // Media
+        'image'                                     => 'Image',
+        'main-image'                                => 'Main Image',
+        'gallery-images'                            => 'Gallery Images',
+        'gallery'                                   => 'Gallery',
+
+        // Business & Tags
+        'sub_category_id'                           => 'Subcategory',
+        'tags-id'                                   => 'Tags',
+        'business_status'                           => 'Business Status',
+        'place-type'                                => 'Place Type',
+
+        // Rating & Price
         'price-level'                               => 'Price Level',
         'website'                                   => 'Website',
         'rating'                                    => 'Rating',
-        'comment'                                   => 'Comment',
         'total-user-rating'                         => 'Total User Rating',
-        'sub_category_id'                           => 'Subcategory',
-        'region-id'                                 => 'Region',
-        'business_status'                           => 'Business Status',
-        'tags-id'                                   => 'Tags',
-        'main-image'                                => 'Main Image',
-        'gallery-images'                            => 'Gallery Images',
-        'place-type'                                => 'Place Type',
-        'token'                                     => 'Token',
-        'subject'                                   => 'Subject',
-        'message'                                   => 'Message',
-        'description'                               => 'Description',
+        'comment'                                   => 'Comment',
+
+        // Tour / Itinerary Details
         'days'                                      => 'Days',
         'days.*.activities'                         => 'Activities',
         'days.*.activities.*.name'                  => 'Activity Name',
@@ -210,440 +222,111 @@ return [
         'days.*.activities.*.end_time'              => 'Activity End Time',
         'days.*.activities.*.place_slug'            => 'Activity Place',
         'days.*.activities.*.note'                  => 'Activity Note',
+
+        // Pricing by Age
+        'price_age.min_age'                         => 'Minimum age',
+        'price_age.max_age'                         => 'Maximum age',
+        'price_age.cost'                            => 'Age group cost',
+
+        // Cost / Rate / Age Filters
         'min_cost'                                  => 'Min Cost',
         'max_cost'                                  => 'Max Cost',
+        'cost'                                      => 'Cost',
         'min_rate'                                  => 'Min Rate',
         'max_rate'                                  => 'Max Rate',
         'min_age'                                   => 'Min Age',
         'max_age'                                   => 'Max Age',
+
+        // Duration & Distance
         'min_duration_in_minute'                    => 'Min Duration In Minute',
         'max_duration_in_minute'                    => 'Max Duration In Minute',
         'distance_in_meter'                         => 'Distance In Meter',
-        'difficulty'                                => 'Difficulty',
-        'cost'                                      => 'Cost',
-        'time'                                      => 'Time',
-        'place_en'                                  => 'English Place',
-        'place_ar'                                  => 'Arabic Place',
-        'activities.en'                             => 'Activity in English',
-        'activities.ar'                             => 'Activity in Arabic',
-        'price_include.en'                          => 'Price includes (English)',
-        'price_include.ar'                          => 'Price includes (Arabic)',
-        'price_age.min_age'                         => 'Minimum age',
-        'price_age.max_age'                         => 'Maximum age',
-        'price_age.cost'                            => 'Age group cost',
-        'assembly.time'                             => 'Assembly time',
-        'assembly.place_en'                         => 'Assembly place (English)',
-        'assembly.place_ar'                         => 'Assembly place (Arabic)',
-        'required_items.en'                         => 'Required items (English)',
-        'required_items.ar'                         => 'Required items (Arabic)',
+
+        // Trail
         'trail.min_duration_in_minute'              => 'Minimum trail duration (minutes)',
         'trail.max_duration_in_minute'              => 'Maximum trail duration (minutes)',
         'trail.distance_in_meter'                   => 'Trail distance (meters)',
         'trail.difficulty'                          => 'Trail difficulty',
-        'gallery'                                   => 'Gallery',
-    ],
+        'difficulty'                                => 'Difficulty',
+        'time'                                      => 'Time',
 
-    "msg" => [
-        'english-name-required' => 'English name is required.',
-        'english-name-min-characters' => 'English name must be at least :min characters.',
-        'arabic-name-required' => 'Arabic name is required.',
-        'arabic-name-min-characters' => 'Arabic name must be at least :min characters.',
-        'priority-required' => 'Priority is required.',
-        //        'priority-min-characters' => 'Priority must be at least :min characters.',
-        'image-required' => 'Image is required.',
-        'image-invalid' => 'Image Invalid',
-        'image-mime' => 'The :attribute must be a file of type: :mime_types.',
-        'name-required' => 'Name is required.',
-        'email-required' => 'Email is required.',
-        'email-already-exists' => 'Email already exists.',
-        'email-should-be-email-format' => 'Email should be in email format.',
-        'password-confirmation-required' => 'Password confirmation is required.',
-        'role-required' => 'Role is required.',
-        'category-created-successfully!' => 'Category created successfully!',
-        'categories-updated-successfully!' => 'Categories Updated Successfully!',
-        'categories-deleted-successfully!' => 'Categories Deleted Successfully!',
-        'place-created-successfully!' => 'Place Created Successfully!',
-        'place-updated-successfully!' => 'Place Updated Successfully!',
-        'english-description-required' => 'English Description Is Required',
-        'english-description-min-characters' => 'English Description Should Have Minimum Characters',
-        'arabic-description-required' => 'Arabic Description Is Required',
-        'arabic-description-min-characters' => 'Arabic Description Should Have Minimum Characters',
-        'english-address-required' => 'English Address Is Required',
-        'english-address-min-characters' => 'English Address Should Have Minimum Characters',
-        'arabic-address-required' => 'Arabic Address Is Required',
-        'arabic-address-min-characters' => 'Arabic Address Should Have Minimum Characters',
-        'google-map-url-required' => 'Google Map URL Is Required',
-        'invalid-url' => 'Invalid Google Map URL',
-        'phone-number-required' => 'Phone Number Is Required',
-        'longitude-required' => 'Longitude Is Required',
-        'invalid-longitude' => 'Invalid Longitude',
-        'latitude-required' => 'Latitude Is Required',
-        'invalid-latitude' => 'Invalid Latitude',
-        'price-level-required' => 'Price Level Is Required',
-        'website-required' => 'Website Is Required',
-        'invalid-website-url' => 'Invalid Website URL',
-        'rating-required' => 'Rating Is Required',
-        'invalid-rating' => 'Invalid Rating',
-        'total-user-rating-required' => 'Total User Rating Is Required',
-        'invalid-total-user-rating' => 'Invalid Total User Rating',
-        'subcategory-required' => 'Subcategory Is Required',
-        'invalid-subcategory' => 'Invalid Subcategory',
-        'region-required' => 'Region Is Required',
-        'invalid-region' => 'Invalid Region',
-        'business-status-required' => 'Business Status Is Required',
-        'tags-required' => 'Tags Are Required',
-        'invalid-tags' => 'Invalid Tags',
-        'invalid-tag' => 'Invalid Tag',
-        'main-image-required' => 'Main Image Is Required',
-        'invalid-image' => 'Invalid Main Image',
-        'invalid-image-format' => 'Invalid Main Image Format',
-        'invalid-gallery-image' => 'Invalid Gallery Image',
-        'invalid-gallery-image-format' => 'Invalid Gallery Image Format',
-        'place-type' => 'Place Type',
-        'token-required' => 'Token Is Required',
-        'password-required' => 'Password Is Required',
-        'password-confirm' => 'Password Confirmation Is Required',
-        'email-invalid' => 'Email Invalid',
-        'message-required' => "Message Required",
-        'the-note-field-cannot-be-longer-than-255-characters' => 'the note field cannot be longer than 255 characters',
-        'the-arabic-note-field-cannot-be-longer-than-255-characters' => 'The Arabic note field cannot be longer than 255 characters',
-        'the-name-field-is-required' => 'The name field is required',
-        'the-arabic-name-field-is-required' => 'The Arabic name field is required',
-        'the-place-field-is-required' => 'The place field is required',
-        "question-name-en-required" => "Question English Is Required",
-        "question-name-ar-required" => "Question Arabic Is Required",
-        "is-first-question-required" => "First Question Is Required",
-        'check-if-followers-existence' => 'The user :user not one of your followers',
+        // Assembly
+        'assembly.time'                             => 'Assembly time',
+        'assembly.place_en'                         => 'Assembly place (English)',
+        'assembly.place_ar'                         => 'Assembly place (Arabic)',
+
+        // Places
+        'place_en'                                  => 'English Place',
+        'place_ar'                                  => 'Arabic Place',
+
+        // Activities
+        'activities.en'                             => 'Activity in English',
+        'activities.ar'                             => 'Activity in Arabic',
+
+        // Required Items
+        'required_items.en'                         => 'Required items (English)',
+        'required_items.ar'                         => 'Required items (Arabic)',
+
+        // Price Includes
+        'price_include.en'                          => 'Price includes (English)',
+        'price_include.ar'                          => 'Price includes (Arabic)',
+
+        // Messaging
+        'subject'                                   => 'Subject',
+        'message'                                   => 'Message',
+
+        // Priority
+        'priority'                                  => 'Priority',
     ],
 
     'api' => [
-        'the-following-id-is-required' => 'The following id is required',
-        'the-following-id-does-not-exists' => 'The following id does not exists',
-        'conversation-id-is-required' => 'Conversation id is required',
-        'conversation-id-does-not-exists' => 'Conversation id does not exists',
-        'id-does-not-exists' => ' id does not exists',
-        'plan-id-does-not-exists' => 'Plan id does not exists',
-        'reply-id-is-required' => 'Reply id is required',
-        'reply-id-does-not-exists' => 'Reply id does not exists',
-        'content-is-required' => 'Content is required',
-
-        // Message Type
-        "message-type-is-required" => "Message type is required.",
-        "message-type-must-be-string" => "Message type must be a string.",
-        "message-type-invalid" => "Message type must be one of the following: text, image, audio, or video.",
-
-        // Conversation ID
-        "conversation-id-must-exist" => "The selected conversation does not exist.",
-        "conversation-id-invalid" => "Invalid conversation ID.",
-
-        // Message Text
-        "message-txt-is-required-if-text" => "Message text is required when the message type is text.",
-        "message-txt-must-be-string" => "Message text must be a string.",
-
-        // File
-        "file-is-required-if-media" => "A file is required when the message type is image, audio, or video.",
-        "file-invalid-type" => "The file must be one of the following types: jpg, jpeg, png, gif, mp3, wav, mp4, mov, avi.",
-        "file-max-size" => "The file must not exceed :max kilobytes.",
-
-        // Following ID
-        "following-id-is-required" => "The following ID is required.",
-        "following-id-not-exists" => "The following user does not exist.",
-        "follower-following-already-exists" => "You are already following this user.",
-
-        // Question ID
-        "question-id-is-required" => "The question ID is required.",
-        "question-id-not-exists" => "The selected question does not exist.",
-
-        // Answer
-        "answer-is-required" => "The answer is required.",
-        "answer-invalid-value" => "The answer must be 'yes', 'no', or 'I don't know'.",
-
-        // Name
-        "name-en-required" => "The English name is required.",
-        "name-en-string" => "The English name must be a string.",
-        "name-en-max" => "The English name may not be greater than 255 characters.",
-        "name-en-check" => "The English name must pass the guide check.",
-
-        "name-ar-required" => "The Arabic name is required.",
-        "name-ar-string" => "The Arabic name must be a string.",
-        "name-ar-max" => "The Arabic name may not be greater than 255 characters.",
-
-        // Description
-        "description-en-required" => "The English description is required.",
-        "description-en-string" => "The English description must be a string.",
-
-        "description-ar-required" => "The Arabic description is required.",
-        "description-ar-string" => "The Arabic description must be a string.",
-
-        // Main Price
-        "main-price-required" => "The main price is required.",
-        "main-price-numeric" => "The main price must be a number.",
-        "main-price-min" => "The main price must be at least 0.",
-
-        // Date and Time
-        "start-datetime-required" => "The start date and time is required.",
-        "start-datetime-date" => "The start date and time must be a valid date.",
-        "start-datetime-format" => "The start date and time must be in the format Y-m-d H:i:s.",
-        "start-datetime-future" => "The start date and time must be a date and time in the future.",
-
-        "end-datetime-required" => "The end date and time is required.",
-        "end-datetime-date" => "The end date and time must be a valid date.",
-        "end-datetime-format" => "The end date and time must be in the format Y-m-d H:i:s.",
-        "end-datetime-future" => "The end date and time must be a date and time in the future.",
-        "end-datetime-after-start" => "The end date and time must be after the start date and time.",
-
-        // Max Attendance
-        "max-attendance-required" => "The maximum attendance is required.",
-        "max-attendance-integer" => "The maximum attendance must be an integer.",
-        "max-attendance-min" => "The maximum attendance must be at least 1.",
-
-        // Gallery
-        "gallery-file" => "Each gallery item must be a file.",
-        "gallery-mimes" => "Each gallery item must be a file of type: jpeg, png, jpg, gif, svg, webp, bmp, tiff, ico, svgz, mp4, mov, avi, mkv, flv, wmv.",
-
-        // Activities
-        "activities-required" => "Activities are required.",
-        "activities-string" => "Activities must be a string.",
-
-        // Price Include
-        "price-include-required" => "Price include is required.",
-        "price-include-string" => "Price include must be a string.",
-
-        // Price Age
-        "price-age-nullable" => "Price age must be a string if present.",
-
-        // Assembly
-        "assembly-required" => "Assembly is required.",
-        "assembly-string" => "Assembly must be a string.",
-
-        // Required Items
-        "required-items-nullable" => "Required items must be a string if present.",
-
-        // Is Trail
-        "is-trail-nullable" => "Is trail must be a boolean if present.",
-
-        // Trail
-        "trail-nullable" => "Trail must be a string if present.",
-
-        'subscribers.required' => 'Subscribers are required.',
-        'subscribers.array' => 'Subscribers must be an array.',
-
-        'subscribers.*.first_name.required' => 'The first name for each subscriber is required.',
-        'subscribers.*.first_name.string' => 'The first name must be a string.',
-        'subscribers.*.first_name.max' => 'The first name may not be greater than 255 characters.',
-
-        'subscribers.*.last_name.required' => 'The last name for each subscriber is required.',
-        'subscribers.*.last_name.string' => 'The last name must be a string.',
-        'subscribers.*.last_name.max' => 'The last name may not be greater than 255 characters.',
-
-        'subscribers.*.age.required' => 'The age for each subscriber is required.',
-        'subscribers.*.age.integer' => 'The age must be an integer.',
-        'subscribers.*.age.min' => 'The age must be at least 0.',
-
-        'subscribers.*.phone_number.required' => 'The phone number for each subscriber is required.',
-        'subscribers.*.phone_number.string' => 'The phone number must be a string.',
-        'subscribers.*.phone_number.max' => 'The phone number may not be greater than 20 characters.',
-
-        'categories-id-nullable' => 'The categories ID field is optional.',
-        'categories-id-array' => 'The categories ID field must be an array.',
-        'category-exists' => 'One or more categories do not exist.',
-        'category-main' => 'The selected category must be a main category.',
-
-        'subcategories-id-nullable' => 'The subcategories ID field is optional.',
-        'subcategories-id-array' => 'The subcategories ID field must be an array.',
-        'subcategory-exists' => 'One or more subcategories do not exist.',
-        'subcategory-main' => 'The selected subcategory must be a valid subcategory.',
-
-        'max-cost-nullable' => 'The maximum cost field is optional.',
-
-        'features-id-nullable' => 'The features ID field is optional.',
-        'feature-exists' => 'One or more features do not exist.',
-
-        'min-rate-nullable' => 'The minimum rate field is optional.',
-        'max-rate-nullable' => 'The maximum rate field is optional.',
-        'category-id-required' => 'The category ID field is required.',
-        'category-id-exists' => 'The selected category ID does not exist.',
-
-
-        'name-required' => 'The name field is required.',
-        'name-string' => 'The name must be a string.',
-        'name-max' => 'The name may not be greater than 255 characters.',
-        'description-required' => 'The description field is required.',
-        'description-max' => 'The description may not be greater than 1000 characters.',
-        'description-string' => 'The description must be a string.',
-        'days-required' => 'The days field is required.',
-        'days-array' => 'The days must be an array.',
-        'activity-name-required' => 'The activity name field is required.',
-        'activity-name-string' => 'The activity name must be a string.',
-        'activity-name-max' => 'The activity name may not be greater than 255 characters.',
-        'activity-start-time-required' => 'The activity start time field is required.',
-        'activity-start-time-format' => 'The activity start time must be in the format H:i.',
-        'activity-end-time-required' => 'The activity end time field is required.',
-        'activity-end-time-format' => 'The activity end time must be in the format H:i.',
-        'activity-note-max' => 'The activity note may not be greater than 255 characters.',
-
-        'day-total-duration' => 'The total duration of activities in a single day cannot exceed 24 hours.',
-
-        'plan-id-required' => 'The plan ID is required.',
-        'plan-id-exists' => 'The selected plan does not exist or does not belong to you.',
-
-        'activities-array' => 'The activities field must be an array.',
-
-        'activity-end-time-after' => 'The end time must be after the start time.',
-
-        'comment-id-required' => 'The comment ID is required.',
-        'comment-id-exists' => 'The selected comment does not exist.',
-
-
-        'post-id-custom' => 'The post must belong to the user.',
-
-        'visitable-id-custom' => 'The selected visitable does not exist.',
-
-        'latitude-required' => 'The latitude field is required.',
-        'latitude-numeric' => 'The latitude must be a number.',
-        'longitude-required' => 'The longitude field is required.',
-        'longitude-numeric' => 'The longitude must be a number.',
-
-
-        'gender-required' => 'The gender field is required.',
-        'gender-in' => 'The selected gender is invalid.',
-        'birthday-required' => 'The birthday field is required.',
-        'birthday-min-age' => 'You must be at least 18 years old.',
-        'tags-id-required' => 'The tags field is required.',
-        'tags-id-exists' => 'One or more of the selected tags do not exist.',
-        'username-alpha_dash' => 'The username may only contain letters, numbers, dashes, and underscores.',
-
-        'username-not-regex' => 'The username may not contain spaces.',
-        'image-image' => 'The image must be a valid image file.',
-
-        'trip_id-required' => 'The trip ID field is required.',
-        'trip_id-integer' => 'The trip ID must be an integer.',
-        'trip_id-exists' => 'The selected trip ID does not exist.',
-
-        'user_id-required' => 'The user ID field is required.',
-        'user_id-integer' => 'The user ID must be an integer.',
-        'user_id-exists' => 'The selected user ID does not exist in the users_trips table.',
-
-
-        'trip_type-required' => 'The trip type field is required.',
-        'trip_type-string' => 'The trip type must be a string.',
-        'trip_type-in' => 'The selected trip type is invalid.',
-        'place_id-required' => 'The place ID field is required.',
-        'place_id-integer' => 'The place ID must be an integer.',
-        'place_id-exists' => 'The selected place ID does not exist.',
-        'cost-required' => 'The cost field is required.',
-        'cost-numeric' => 'The cost must be a number.',
-        'cost-min' => 'The cost must be at least 0.',
-        'age_min-required_if' => 'The age minimum field is required when trip type is 0 or 1.',
-        'age_min-integer' => 'The age minimum must be an integer.',
-        'age_max-required_if' => 'The age maximum field is required when trip type is 0 or 1.',
-        'age_max-integer' => 'The age maximum must be an integer.',
-        'date-required' => 'The date field is required.',
-        'date-date' => 'The date is not a valid date.',
-        'date-custom' => 'The trip date cannot be in the past.',
-        'time-required' => 'The time field is required.',
-        'time-date_format' => 'The time must be in the format H:i:s.',
-        'attendance_number-required_if' => 'The attendance number field is required when trip type is 0 or 1.',
-        'attendance_number-integer' => 'The attendance number must be an integer.',
-        'attendance_number-min' => 'The attendance number must be at least 1.',
-        'tags-required' => 'The tags field is required.',
-        'tags-exists' => 'The selected tag does not exist.',
-        'users-required_if' => 'The users field is required when trip type is 2.',
-
-
-        'age_max-gte' => 'The age maximum must be greater than or equal to age minimum.',
-        'gender-nullable' => 'The gender field can be null.',
-
-        'date-required_if' => 'The date field is required when time is present.',
-
-        'time-required_if' => 'The time field is required when date is present.',
-
-        'tags-nullable' => 'The tags field can be null.',
-
-        'email-required' => 'The email field is required.',
-        'email-string' => 'The email must be a string.',
-        'email-email' => 'The email must be a valid email address.',
-        'password-required' => 'The password field is required.',
-        'password-string' => 'The password must be a string.',
-
-
-        'email-lowercase' => 'The email must be lowercase.',
-        'the-selected-category-does-not-main-category' => 'The selected category does not main category',
-        'the-selected-subcategory-it-is-main-category' => 'The selected subcategory it is main category',
-        'the-subcategories-should-be-array' => 'The subcategories should be array',
-        'the-category-should-be-array' => 'The categories should be array',
-
-        'wrong-email' => 'The provided email is incorrect.',
-        'check-update-message-trip' => 'The trip has been updated, please check the trip details.',
-        'you-do-not-have-review' => 'You do not have a review for this.',
-
-        'you_already_make_request_to_this_user_wait_for_accept_id' => 'You have already made a request to this user, wait for acceptance.',
-        'you_already_follow_this_user' => 'You are already following this user.',
-        'you_can_not_follow_yourself' => 'You cannot follow yourself.',
-        'you_are_not_follower_for_this_user' => 'You are not a follower of this user.',
-        'you_can_not_unfollow_discover_jordan_profile' => 'You can not unfollow discover Jordan profile',
-
-        'there_is_noting_request_belong_to_this_user_as_follower' => 'There is no request belonging to this user as a follower.',
-        'this_user_already_follow_you' => 'This user already follows you.',
-        'you_can_not_make_request_to_yourself' => 'You cannot make a request to yourself.',
-
-        'trip_conflict' => 'There is a conflict with your existing trips.',
-        'invalid_jordanian_phone_number' => 'The :attribute must be a valid Jordanian phone number.',
-        'this_is_not_in_favorite_list_to_delete' => 'This item is not in your favorite list, so it cannot be deleted.',
-        'this_reply_did_not_belong_to_you' => 'This reply does not belong to you.',
-        'reply_not_found' => 'The specified reply was not found.',
-        'comment_not_found' => 'The specified comment was not found.',
-        'you_can_not_delete_the_reply' => 'You cannot delete this reply.',
-        'you_do_not_have_request_to_delete' => 'You do not have a request to delete this trip.',
-        'invalid_json_format' => 'The provided data is not a valid JSON format.',
-        'the-current-question-and-next-question-cannot-be-the-same' => 'The current question and next question cannot be the same.',
-        'this-conversation-is-not-available' => 'This conversation is not available.',
-        'you-are-not-a-member-of-this-conversation' => 'You are not a member of this conversation.',
-        'your-attribute-is-required' => 'The :attribute is required.',
-        'combination-of-question-answer-and-next-question-must-be-unique' => 'The combination of question, answer, and next question must be unique.',
-        'this-name-en-and-location-exists' => 'A place with this name in English and the specified location already exists.',
-        'priority-must-be-unique-within-same-parent-category' => 'The priority must be unique within the same parent category.',
-        'you-deactivated-by-admin-wait-to-unlock-the-block' => 'You deactivated by admin so wait to unlock the block',
-        'invalid-credentials' => 'Invalid credentials',
-        'you-should-verify-email-first' => 'You should verify your email first',
-        'something-went-wrong' => 'Something went wrong',
-        'wait-for-admin-to-accept-your-application' => 'Wait for admin to accept your application',
+        // General Errors
+        'something-went-wrong'                                     => 'Something went wrong',
 
         // Auth Validation
-        "username-or-email-is-required"                             => "Username or email is required.",
-        "username-or-email-must-be-string"                          => "Username or email must be a string.",
-        "username-or-email-max"                                     => "Username or email must not exceed :max characters.",
-        "password-is-required"                                      => "Password is required.",
-        "password-confirmation-mismatch"                            => "Password confirmation does not match.",
-        "password-must-comply-with-rules"                           => "Password must meet the security requirements.",
-        'old_password-is-required'                                  => "Old password is required",
-        "device-token-is-required"                                  => "Device token is required.",
-        "device-token-max"                                          => "Device token must not exceed :max characters.",
-        "username-is-required"                                      => "Username is required.",
-        "username-must-be-string"                                   => "Username must be a string.",
-        "username-must-be-alpha-dash"                               => "Username may only contain letters, numbers, dashes, and underscores.",
-        "username-min"                                              => "Username must be at least :min characters long.",
-        "username-max"                                              => "Username must not exceed :max characters.",
-        "username-regex"                                            => "Username must start with a letter and contain only letters, numbers, dashes, or underscores.",
-        "username-no-whitespace"                                    => "Username must not contain spaces.",
-        "username-unique"                                           => "Username has already been taken.",
-        "email-is-required"                                         => "Email is required.",
-        "email-must-be-string"                                      => "Email must be a string.",
-        "email-must-be-lowercase"                                   => "Email must be in lowercase.",
-        "email-max"                                                 => "Email must not exceed :max characters.",
-        "email-unique"                                              => "Email has already been taken.",
-        "email-in-blacklist"                                        => "Email is blacklisted.",
-        "email-invalid-format"                                      => "Email must be a valid email address.",
-        "email-max-length"                                          => "Email must not exceed :max characters.",
+        'device-token-is-required'                                  => 'Device token is required.',
+        'device-token-max'                                          => 'Device token must not exceed :max characters.',
+        'email-email'                                               => 'The email must be a valid email address.',
+        'email-in-blacklist'                                        => 'Email is blacklisted.',
+        'email-invalid-format'                                      => 'Email must be a valid email address.',
+        'email-is-required'                                         => 'Email is required.',
+        'email-max'                                                 => 'Email must not exceed :max characters.',
+        'email-max-length'                                          => 'Email must not exceed :max characters.',
+        'email-must-be-lowercase'                                   => 'Email must be in lowercase.',
+        'email-must-be-string'                                      => 'Email must be a string.',
+        'email-must-be-valid'                                       => 'Email must be a valid email address.',
+        'email-required'                                            => 'The email field is required.',
+        'email-string'                                              => 'The email must be a string.',
+        'email-unique'                                              => 'Email has already been taken.',
         'email-valid'                                               => 'Email Is Valid',
-        "email-must-be-valid"                                       => "Email must be a valid email address.",
-        "token-is-required"                                         => "Token is required.",
-        'the-provided-old-password-is-incorrect'                    => 'The provided old password is incorrect',
-        'lng-required'                                              => 'The longitude field is required.',
+        'invalid-credentials'                                       => 'Invalid credentials',
         'lat-required'                                              => 'The latitude field is required.',
+        'lng-required'                                              => 'The longitude field is required.',
+        'old_password-is-required'                                  => 'Old password is required',
+        'password-confirmation-mismatch'                            => 'Password confirmation does not match.',
+        'password-is-required'                                      => 'Password is required.',
+        'password-must-comply-with-rules'                           => 'Password must meet the security requirements.',
+        'password-required'                                         => 'The password field is required.',
+        'password-string'                                           => 'The password must be a string.',
+        'the-provided-old-password-is-incorrect'                    => 'The provided old password is incorrect',
         'this-user-not-longer-active'                               => 'This user is not longer active.',
-        'user-id-is-required'                                       => 'User id is required.',
+        'token-is-required'                                         => 'Token is required.',
         'user-id-does-not-exists'                                   => 'User id does not exist.',
+        'user-id-is-required'                                       => 'User id is required.',
+        'username-is-required'                                      => 'Username is required.',
+        'username-max'                                              => 'Username must not exceed :max characters.',
+        'username-min'                                              => 'Username must be at least :min characters long.',
+        'username-must-be-alpha-dash'                               => 'Username may only contain letters, numbers, dashes, and underscores.',
+        'username-must-be-string'                                   => 'Username must be a string.',
+        'username-no-whitespace'                                    => 'Username must not contain spaces.',
+        'username-or-email-is-required'                             => 'Username or email is required.',
+        'username-or-email-max'                                     => 'Username or email must not exceed :max characters.',
+        'username-or-email-must-be-string'                          => 'Username or email must be a string.',
+        'username-regex'                                            => 'Username must start with a letter and contain only letters, numbers, dashes, or underscores.',
+        'username-unique'                                           => 'Username has already been taken.',
+        'wait-for-admin-to-accept-your-application'                 => 'Wait for admin to accept your application',
+        'you-deactivated-by-admin-wait-to-unlock-the-block'         => 'You deactivated by admin so wait to unlock the block',
+        'you-should-verify-email-first'                             => 'You should verify your email first',
 
         // Trip Validation
         'trip_type_required'                                        => 'The trip type field is required.',
@@ -721,6 +404,8 @@ return [
         'the-user-owner-this-trip-not-longer-active'                => 'The user owner of this trip is no longer active.',
         'this-trip-was-deleted'                                     => 'This trip was deleted',
         'you_are_not_attendance_in_this'                            => 'You are not an attendee for this trip.',
+        'check-update-message-trip'                                 => 'The trip has been updated, please check the trip details.',
+        'you-do-not-have-review'                                    => 'You do not have a review for this.',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'The plan identifier (slug) is required Or the plan does not exist.',
@@ -780,7 +465,7 @@ return [
 
         // Contact Us Validation
         'name-is-required'                                          => 'The name field is required.',
-        'subject-nullable'                                          => 'The subject field is optional.', // Optional; may not be shown
+        'subject-nullable'                                          => 'The subject field is optional.',
         'message-is-required'                                       => 'The message field is required.',
         'images-optional'                                           => 'Images are optional.',
         'images-must-be-an-image'                                   => 'Each uploaded file must be an image.',
@@ -865,7 +550,7 @@ return [
         'required_items_nullable'                                   => 'Required items must be a string if present.',
         'is_trail_nullable'                                         => 'Is trail must be a boolean if present.',
         'trail_nullable'                                            => 'Trail must be a string if present.',
-        'trip_conflicts'                                            => 'The trip conflicts with another trip.',
+        'trip_conflict'                                             => 'The trip conflicts with another trip.',
         'end_datetime_after_start_datetime'                         => 'The end date and time must be after the start date and time.',
         'there-is-no-trip-belong-to-this-image'                     => 'There is no trip belong to this image.',
         'not_owner_of_image'                                        => 'You are not the owner of this image.',
@@ -947,6 +632,7 @@ return [
         'not-acceptable-status'                                    => 'Not acceptable status',
         'the-review-id-must-be-integer'                            => 'The review id must be integer',
         'relationship_not_exist'                                   => "The relationship :relationship does not exist in User model",
+        'id-does-not-exists'                                       => ' id does not exists',
 
         // Post Validation
         'visitable-type-required'                                  => 'Please specify the type of the visitable item.',
@@ -973,6 +659,8 @@ return [
         'the-status-invalid'                                       => 'The status is invalid',
         'post-id-must-be-integer'                                  => 'Post id must be integer',
         'the-user-post-creator-not-longer-active'                  => 'The user who created the post is no longer active.',
+        'the-user-id-is-required'                                  => 'The user id is required',
+        'the-user-id-does-not-exists'                              => 'The user id does not exists',
 
         // Comment Validation
         'post-id-exists'                                           => 'The selected post does not exist.',
@@ -988,5 +676,53 @@ return [
         'comment-should-be-string'                                 => 'Comment should be string',
         'you_can_not_delete_the_comment'                           => 'You can\'t delete the comment',
         'comment-id-must-be-integer'                               => 'Comment id must be integer',
+
+        // Follow Validation
+        'the-following-id-is-required'                             => 'The following id is required',
+        'the-following-id-does-not-exists'                         => 'The following id does not exists',
+        'you_already_make_request_to_this_user_wait_for_accept_id' => 'You have already made a request to this user, wait for acceptance.',
+        'you_already_follow_this_user'                             => 'You are already following this user.',
+        'you_can_not_follow_yourself'                              => 'You cannot follow yourself.',
+        'you_are_not_follower_for_this_user'                       => 'You are not a follower of this user.',
+        'you_can_not_unfollow_discover_jordan_profile'             => 'You can not unfollow discover Jordan profile',
+        'the-follower-id-is-required'                              => 'The follower id is required',
+        'the-follower-id-does-not-exist'                           => 'The follower id does not exist',
+        'there_is_noting_request_belong_to_this_user_as_follower'  => 'There is no request belonging to this user as a follower.',
+        'this_user_already_follow_you'                             => 'This user already follows you.',
+        'you_can_not_make_request_to_yourself'                     => 'You cannot make a request to yourself.',
+
+        // Conversation Validation
+        'conversation-id-is-required'                              => 'Conversation id is required',
+        'conversation-id-does-not-exists'                          => 'Conversation id does not exists',
+        'this-conversation-is-not-available'                       => 'This conversation is not available.',
+        'you-are-not-a-member-of-this-conversation'                => 'You are not a member of this conversation.',
+        "conversation-id-must-exist"                               => "The selected conversation does not exist.",
+        "conversation-id-invalid"                                  => "Invalid conversation ID.",
+        "message-txt-is-required-if-text"                          => "Message text is required when the message type is text.",
+        "message-txt-must-be-string"                               => "Message text must be a string.",
+        "file-is-required-if-media"                                => "A file is required when the message type is image, audio, or video.",
+        "file-invalid-type"                                        => "The file must be one of the following types: jpg, jpeg, png, gif, mp3, wav, mp4, mov, avi.",
+        "file-max-size"                                            => "The file must not exceed :max kilobytes.",
+
+        // Question Validation
+        "question-id-is-required"                                  => "The question ID is required.",
+        "question-id-not-exists"                                   => "The selected question does not exist.",
+        "answer-is-required"                                       => "The answer is required.",
+        "answer-invalid-value"                                     => "The answer must be 'yes', 'no', or 'I don't know'.",
+
+        // Profile Validation
+        'gender-required'                                          => 'The gender field is required.',
+        'gender-in'                                                => 'The selected gender is invalid.',
+        'birthday-required'                                        => 'The birthday field is required.',
+        'birthday-min-age'                                         => 'You must be at least 18 years old.',
+        'tags-id-required'                                         => 'The tags field is required.',
+        'tags-id-exists'                                           => 'One or more of the selected tags do not exist.',
+        'username-alpha_dash'                                      => 'The username may only contain letters, numbers, dashes, and underscores.',
+        'username-not-regex'                                       => 'The username may not contain spaces.',
+        'image-image'                                              => 'The image must be a valid image file.',
+        'latitude-required'                                        => 'Latitude Is Required',
+        'latitude-numeric'                                         => 'The latitude must be a number.',
+        'longitude-required'                                       => 'Longitude Is Required',
+        'longitude-numeric'                                        => 'The longitude must be a number.',
     ]
 ];

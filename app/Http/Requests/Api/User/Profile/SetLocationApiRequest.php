@@ -48,5 +48,4 @@ class SetLocationApiRequest extends FormRequest
             ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $errors)
         );
     }
-
 }

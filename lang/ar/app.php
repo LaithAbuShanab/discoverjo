@@ -33,23 +33,6 @@ return [
     'confirm-password' => 'تأكيد كلمة المرور',
     'enter-confirm-password' => 'يرجى تأكيد كلمة المرور',
 
-    'place' => [
-        'api' => [
-            'you-put-this-in-favorite-list' => 'لقد وضعت هذه في قائمة المفضلة بنجاح',
-            'you-remove-this-place-in-favorite-list' => 'لقد قمت بإزالة هذا المكان من قائمة المفضلة بنجاح',
-            'you-added-review-for-this-place-successfully' => 'لقد أضفت مراجعة لهذا المكان بنجاح',
-            'you-updated-review-for-this-place-successfully' => 'لقد قمت بتحديث المراجعة لهذا المكان بنجاح',
-            'you-remove-review-for-this-place-successfully' => 'لقد قمت بإزالة المراجعة لهذا المكان بنجاح',
-        ],
-    ],
-
-    "plan" => [
-        'api' => [
-            'favorite-plan-created-successfully' => 'لقد أضفت هذه الخطة إلى قائمة المفضلة',
-            'you-remove-plan-from-favorite-list' => 'لقد قمت بإزالة هذه الخطة من قائمة المفضلة',
-        ]
-    ],
-
     "notifications" => [
 
         // الطلبات المتعلقة بالرحلات
@@ -118,29 +101,9 @@ return [
         'accepted-guide-trip-body'                      => 'تم قبول :username من الرحلة :trip_name.',
         'declined-guide-trip-title'                     => 'تم رفض :username من الرحلة.',
         'declined-guide-trip-body'                      => 'تم رفض :username من الرحلة :trip_name.',
-
     ],
 
     "api" => [
-        /** for categories */
-        'the-following-request-sent-successfully' => 'تم بعث طلب المتابعة بنجاح',
-        'follows-deleted-successfully' => 'تم حذف المتابعة بنجاح',
-        'accept-follow-request-successfully' => 'تم قبول طلب المتابعة بنجاح',
-        'un-accept-follow-request-successfully' => 'تم رفض طلب المتابعة بنجاح',
-        'followers-requests-retrieved-successfully' => 'تم استرجاع طلبات المتابعين بنجاح',
-        'followers-retrieved-successfully' => 'تم استرجاع المتابعين بنجاح',
-        'followings-retrieved-successfully' => 'تم استرجاع المتبوعين بنجاح',
-        'first-question-retrieved-successfully' => 'تم استرجاع السؤال الاول بنجاح',
-        'next-question-retrieved-successfully' => 'تم استرجاع السؤال التالي بنجاح',
-        'the-result-retrieved-successfully' => 'تم استرجاع النتيجة بنجاح',
-        'the-plan-retrieved-successfully' => 'تم استرجاع الخطة بنجاح',
-        'reply-created-successfully' => 'تم انشاء الرد بنجاح',
-        'reply-updated-successfully' => 'تم تعديل الرد بنجاح',
-        'reply-deleted-successfully' => 'تم حذف الرد بنجاح',
-        'your-profile-updated-successfully' => 'تم تعديل ملفك الشخصي بنجاح',
-        'your-location-set-successfully' => 'تم تحديد موقعك بنجاح',
-        'all-tags-retrieved-successfully' => 'تم استرجاع الاوسمة بنجاح',
-
         // Auth Api
         'you-logged-in-successfully'                                   => 'لقد تم تسجيل دخولك بنجاح',
         'you-register-successfully'                                    => 'مبروك! تم تسجيلك بنجاح. استمتع برحلتك معنا.',
@@ -175,6 +138,9 @@ return [
         'plan-deleted-successfully'                                    => 'تم حذف الخطة بنجاح',
         'plans-retrieved-successfully'                                 => 'تم استرجاع الخطط بنجاح',
         'the-searched-plan-retrieved-successfully'                     => 'تم استرجاع الخطط المبحوثة بنجاح',
+        'the-plan-retrieved-successfully'                              => 'تم استرجاع الخطة بنجاح',
+        'favorite-plan-created-successfully'                           => 'لقد أضفت هذه الخطة إلى قائمة المفضلة',
+        'you-remove-plan-from-favorite-list'                           => 'لقد قمت بإزالة هذه الخطة من قائمة المفضلة',
 
         // Category Api
         'categories-retrieved-successfully'                            => 'تم استرجاع الفئات بنجاح.',
@@ -297,5 +263,30 @@ return [
         'comment-created-successfully'                                 => 'تم انشاء التعليق بنجاح',
         'comment-updated-successfully'                                 => 'تم تعديل التعليق بنجاح',
         'comment-deleted-successfully'                                 => 'تم حذف التعليق بنجاح',
+
+        // Follow Api
+        'followers-requests-retrieved-successfully'                    => 'تم استرجاع طلبات المتابعين بنجاح',
+        'the-following-request-sent-successfully'                      => 'تم بعث طلب المتابعة بنجاح',
+        'follows-deleted-successfully'                                 => 'تم حذف المتابعة بنجاح',
+        'followers-retrieved-successfully'                             => 'تم استرجاع المتابعين بنجاح',
+        'followings-retrieved-successfully'                            => 'تم استرجاع المتبوعين بنجاح',
+        'accept-follow-request-successfully'                           => 'تم قبول طلب المتابعة بنجاح',
+        'un-accept-follow-request-successfully'                        => 'تم رفض طلب المتابعة بنجاح',
+
+        // Conversation Api
+        'group-chat-message-retrieved-successfully'                    => 'تم استرجاع الرسائل بنجاح',
+        'group-chat-members-retrieved-successfully'                    => 'تم استرجاع اعضاء المجموعة بنجاح',
+        'group-chat-message-sent-successfully'                         => 'تم ارسال الرسالة بنجاح',
+
+        // Question Api
+        'first-question-retrieved-successfully'                        => 'تم استرجاع السؤال الاول بنجاح',
+        'next-question-retrieved-successfully'                         => 'تم استرجاع السؤال التالي بنجاح',
+        'the-result-retrieved-successfully'                            => 'تم استرجاع النتيجة بنجاح',
+
+        // Profile Api
+        'your-profile-updated-successfully'                            => 'تم تعديل ملفك الشخصي بنجاح',
+        'all-tags-retrieved-successfully'                              => 'تم استرجاع الاوسمة بنجاح',
+        'your-location-set-successfully'                               => 'تم تحديد موقعك بنجاح',
+
     ],
 ];

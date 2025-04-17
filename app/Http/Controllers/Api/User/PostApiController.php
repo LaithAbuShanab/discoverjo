@@ -269,7 +269,7 @@ class PostApiController extends Controller
     {
         try {
             $posts = $this->postApiUseCase->currentUserPosts();
-            return ApiResponse::sendResponse(200, __('app.post-retrieved-successfully'), $posts);
+            return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $posts);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -295,7 +295,7 @@ class PostApiController extends Controller
         }
         try {
             $posts = $this->postApiUseCase->otherUserPosts($validator->validated()['slug']);
-            return ApiResponse::sendResponse(200, __('app.post-retrieved-successfully'), $posts);
+            return ApiResponse::sendResponse(200, __('app.api.post-retrieved-successfully'), $posts);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

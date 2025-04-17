@@ -158,7 +158,7 @@ class PlanApiController extends Controller
         try {
             $createFavPlace = $this->planApiUseCase->createFavoritePlan($id);
 
-            return ApiResponse::sendResponse(200, __('app.plan.api.favorite-plan-created-successfully'), $createFavPlace);
+            return ApiResponse::sendResponse(200, __('app.api.favorite-plan-created-successfully'), $createFavPlace);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -187,7 +187,7 @@ class PlanApiController extends Controller
 
         try {
             $deleteFavPlan = $this->planApiUseCase->deleteFavoritePlan($id);
-            return ApiResponse::sendResponse(200,  __('app.plan.api.you-remove-plan-from-favorite-list'), $deleteFavPlan);
+            return ApiResponse::sendResponse(200,  __('app.api.you-remove-plan-from-favorite-list'), $deleteFavPlan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

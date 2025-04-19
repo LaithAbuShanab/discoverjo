@@ -104,7 +104,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function deleteSubscriberInTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
-        $guideTripUser = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->first();
+        $guideTripUser = GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->get();
         $guideTripUser->delete();
     }
 

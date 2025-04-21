@@ -17,9 +17,18 @@ class CheckIfCanUpdateTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $trip = Trip::where('slug', $value)->first();
+
         if ($trip) {
             if ($trip->user_id !== Auth::guard('api')->user()->id) {
                 $fail(__('validation.api.check-update-message-trip'));
+                return;
+            }
+        }
+
+        if ($trip) {
+            if ($trip->usersTrip?->where('status', 1)->count() >= 1) {
+                $fail(__('validation.api.check-update-message-trip-1'));
+                return;
             }
         }
     }

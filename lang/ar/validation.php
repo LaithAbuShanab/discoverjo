@@ -408,6 +408,7 @@ return [
         'you_are_not_attendance_in_this'                            => 'انت غير مشترك بهذه الرحلة',
         'check-update-message-trip'                                 => 'لا يمكن تعديل الرحلة إلا من قبل مالكها.',
         'you-do-not-have-review'                                    => 'ليس لديك مراجعة لهذا.',
+        'check-update-message-trip-1'                               => '. لا يمكن تعديل الرحلة لأنها تحتوي على مشتركين بالفعل',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'معرف الخطة مطلوب أو أن الخطة غير موجودة.',

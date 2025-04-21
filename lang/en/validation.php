@@ -409,6 +409,7 @@ return [
         'you_are_not_attendance_in_this'                            => 'You are not an attendee for this trip.',
         'check-update-message-trip'                                 => 'The trip can only be modified by its owner.',
         'you-do-not-have-review'                                    => 'You do not have a review for this.',
+        'check-update-message-trip-1'                               => 'The trip cannot be modified because it already has participants.',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'The plan identifier (slug) is required Or the plan does not exist.',

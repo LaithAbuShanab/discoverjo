@@ -180,6 +180,7 @@ return [
         'password_confirmation'                     => 'تأكيد كلمة المرور',
         'role'                                      => 'الدور',
         'token'                                     => 'رمز التحقق',
+        'date'                                      => 'التاريخ',
 
         // التواصل والعنوان
         'phone-number'                              => 'رقم الهاتف',
@@ -329,6 +330,8 @@ return [
         'wait-for-admin-to-accept-your-application'                 => 'انتظر حتى يقوم المسؤول على الموافقة على طلبك',
 
         // Trip Validation
+        'the-date-must-be-a-date-in-the-future'                     => 'لا يجب أن يكون التاريخ أقدم من تاريخ اليوم.',
+        'the-time-must-be-a-time-in-the-future'                     => 'يجب اختيار وقت لاحق للوقت الحالي.',
         'trip_type_required'                                        => 'حقل نوع الرحلة مطلوب.',
         'trip_type_integer'                                         => 'يجب أن يكون نوع الرحلة عدداً صحيحاً.',
         'trip_type_in'                                              => 'يجب أن يكون نوع الرحلة أحد القيم التالية: 0, 1, أو 2.',

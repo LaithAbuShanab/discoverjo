@@ -21,6 +21,7 @@ class Trip extends Model
     protected static $logOnlyDirty = true;
     protected static $logName = 'trip';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
+
     public function getDescriptionForEvent(string $eventName): string
     {
         return "A user has been {$eventName}";
@@ -32,12 +33,15 @@ class Trip extends Model
             ->logOnly(['place_id','trip_type','name','description','cost','age_range','sex','date_time','attendance_number','status'])
             ->logOnlyDirty();
     }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
     }
+
     public function place()
     {
         return $this->belongsTo(Place::class);

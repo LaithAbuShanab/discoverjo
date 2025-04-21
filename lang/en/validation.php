@@ -180,6 +180,7 @@ return [
         'password_confirmation'                     => 'Password Confirmation',
         'role'                                      => 'Role',
         'token'                                     => 'Token',
+        'date'                                      => 'Date',
 
         // Contact & Address
         'phone-number'                              => 'Phone Number',
@@ -329,6 +330,8 @@ return [
         'you-should-verify-email-first'                             => 'You should verify your email first',
 
         // Trip Validation
+        'the-date-must-be-a-date-in-the-future'                     => "The date must not be earlier than today's date.",
+        'the-time-must-be-a-time-in-the-future'                     => "The time must be greater than the current time.",
         'trip_type_required'                                        => 'The trip type field is required.',
         'trip_type_integer'                                         => 'The trip type must be an integer.',
         'trip_type_in'                                              => 'The trip type must be one of the following: 0, 1, or 2.',

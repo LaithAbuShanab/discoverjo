@@ -52,25 +52,33 @@ class UpdateTripRequest extends FormRequest
             ],
             'gender' => ['nullable'],
             'date' => [
-                Rule::requiredIf(function () {
-                    return request()->filled('time');
-                }),
+                Rule::requiredIf(fn() => request()->filled('time')),
                 'nullable',
                 'date',
                 function ($attribute, $value, $fail) {
-                    if ($value && Carbon::parse($value)->isPast()) {
-                        $fail('The ' . $attribute . ' must be a date in the future.');
+                    if ($value) {
+                        $date = Carbon::parse($value)->timezone(config('app.timezone'));
+                        if ($date->isBefore(Carbon::today(config('app.timezone')))) {
+                            $fail(__('validation.api.the-' . $attribute . '-must-be-a-date-in-the-future'));
+                        }
                     }
                 },
             ],
             'time' => [
                 'nullable',
                 'date_format:H:i:s',
-                Rule::requiredIf(function () {
-                    return request()->filled('date');
-                }),
-                Rule::when(request()->filled('date'), [new CheckIfCanMakeTripRule]),
+                Rule::requiredIf(fn() => request()->filled('date')),
+                function ($attribute, $value, $fail) {
+                    $date = request('date');
+                    if ($value && $date) {
+                        $dateTime = Carbon::parse($date . ' ' . $value, config('app.timezone'));
+                        if ($dateTime->isBefore(Carbon::now(config('app.timezone'))) && Carbon::now(config('app.timezone'))->format('Y-m-d') == $date) {
+                            $fail(__('validation.api.the-' . $attribute . '-must-be-a-time-in-the-future'));
+                        }
+                    }
+                },
             ],
+
 
             'attendance_number' => ['nullable', 'integer', 'min:1'],
             'tags' => ['nullable', new CheckTagExistsRule()],
@@ -94,6 +102,7 @@ class UpdateTripRequest extends FormRequest
             'age_max.gte' => __('validation.api.age_max_gte'),
             'gender.nullable' => __('validation.api.gender_nullable'),
             'date.date' => __('validation.api.date_date'),
+            'date.required' => __('validation.api.date_required'),
             'date.required_if' => __('validation.api.date_required_if'),
             'date.after_or_equal' => __('validation.api.date_after_or_equal'),
             'time.date_format' => __('validation.api.time_date_format'),

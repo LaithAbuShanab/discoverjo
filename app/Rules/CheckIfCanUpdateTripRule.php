@@ -16,6 +16,7 @@ class CheckIfCanUpdateTripRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $trip = Trip::where('slug', $value)->first();
+        dd($trip);
         if (!$trip) return;
         if ($trip) {
             if ($trip->usersTrip?->where('status', 1)->count() >= 1) {

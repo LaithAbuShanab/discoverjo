@@ -153,67 +153,51 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
 
         try {
             $review = Reviewable::find($data['review_id']);
-            $status = $data['status'] == "like" ? '1' : '0';
+            $authUser = Auth::guard('api')->user();
+            $status = $data['status'] === 'like' ? '1' : '0';
             $userReview = $review->user;
-            $receiverLanguage = $userReview->lang;
+            $isSelfReview = $review->user_id === $authUser->id;
+            $receiverLang = $userReview->lang;
             $ownerToken = $userReview->DeviceToken->token;
-            $notificationData = [];
 
-            $existingLike = $review->like()->where('user_id', Auth::guard('api')->user()->id)->first();
+            $existingLike = $review->like()->where('user_id', $authUser->id)->first();
+            $notificationData = [];
 
             if ($existingLike) {
                 if ($existingLike->pivot->status != $status) {
-                    $review->like()->updateExistingPivot(Auth::guard('api')->user()->id, ['status' => $status]);
-                    if ($data['status'] == "like") {
-                        $notificationData = [
-                            'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                            'icon' => asset('assets/icon/speaker.png'),
-                            'sound' => 'default',
-                        ];
-                        Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user(), $review));
-                    } else {
-                        $notificationData = [
-                            'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                            'icon'  => asset('assets/icon/speaker.png'),
-                            'sound' => 'default',
-                        ];
-                        Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user(), $review));
-                    }
+                    $review->like()->updateExistingPivot($authUser->id, ['status' => $status]);
                 } else {
-                    $review->like()->detach(Auth::guard('api')->user()->id);
+                    $review->like()->detach($authUser->id);
+                    DB::commit();
+                    return;
                 }
             } else {
-                $review->like()->attach(Auth::guard('api')->user()->id, ['status' => $status]);
-                if ($data['status'] == "like") {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-like', [], $receiverLanguage),
-                        'body'  => Lang::get('app.notifications.new-user-like-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'icon'  => asset('assets/icon/speaker.png'),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userReview, new NewReviewLikeNotification(Auth::guard('api')->user(), $review));
+                $review->like()->attach($authUser->id, ['status' => $status]);
+            }
+
+            $type = $status === '1' ? 'like' : 'dislike';
+            $notificationData = [
+                'title' => Lang::get("app.notifications.new-review-{$type}", [], $receiverLang),
+                'body'  => Lang::get("app.notifications.new-user-{$type}-in-review", ['username' => $authUser->username], $receiverLang),
+                'icon'  => asset('assets/icon/speaker.png'),
+                'sound' => 'default',
+            ];
+
+            if (!$isSelfReview) {
+                if ($status === '1') {
+                    Notification::send($userReview, new NewReviewLikeNotification($authUser, $review));
                 } else {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-review-dislike', [], $receiverLanguage),
-                        'body'  => Lang::get('app.notifications.new-user-dislike-in-review', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'icon'  => asset('assets/icon/speaker.png'),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userReview, new NewReviewDisLikeNotification(Auth::guard('api')->user(), $review));
+                    Notification::send($userReview, new NewReviewDisLikeNotification($authUser, $review));
                 }
             }
 
             if (!empty($notificationData)) {
                 sendNotification([$ownerToken], $notificationData);
             }
-            activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
 
-            $user = Auth::guard('api')->user();
-            $user->addPoints(10);
-            $activity = Activity::find(1);
-            $user->recordStreak($activity);
+            activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
+            $authUser->addPoints(10);
+            $authUser->recordStreak(Activity::find(1));
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -221,4 +205,5 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             throw $e;
         }
     }
+
 }

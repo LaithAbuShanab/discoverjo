@@ -29,9 +29,6 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Pipeline\Pipeline;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification as FilamentNotification;
-
 
 class EloquentTripApiRepository implements TripApiRepositoryInterface
 {
@@ -203,7 +200,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return new TripResource($createdTrip);
     }
 
-    //When Creator Accept Or Reject User
+    // When Creator Accept Or Reject User
     public function changeStatus($request)
     {
         return DB::transaction(function () use ($request) {
@@ -437,6 +434,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         }
     }
 
+    // TODO:: SEND NOTIFICATION FOR THE USER WHEN OWNER
     public function removeUser($request)
     {
         $trip = Trip::where('slug', $request->trip_slug)->first();

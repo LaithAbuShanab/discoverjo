@@ -21,7 +21,6 @@ class PasswordResetLinkController extends Controller
                 $request->only('email')
             );
 
-            dd($status);
             if ($status == Password::RESET_LINK_SENT) {
                 return ApiResponse::sendResponse(200,  __('app.api.the-link-for-reset-password-sent-successfully'), null);
             } else {

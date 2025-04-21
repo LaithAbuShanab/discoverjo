@@ -21,13 +21,13 @@ class NewReviewLikeNotification extends Notification
     {
         $this->user = $user;
 
-        $type = $review->reviewable_type == "App\Models\Trip" ? "trip" : "guideTrip";
-//        $slug = $review->reviewable_type == "App\Models\Trip" ? $review->reviewable->slug : $review->reviewable->trip->slug;
+        $type =  class_basename($review->reviewable_type);
+        $slug = $review->reviewable->slug;
         $review_id = $review->id;
 
         $this->review = [
             "type" => 'review_' . $type,
-//            "slug" => $slug,
+            "slug" => $slug,
             "review_id" => $review_id
         ];
     }

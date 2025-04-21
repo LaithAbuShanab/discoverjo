@@ -407,7 +407,7 @@ return [
         'the-user-owner-this-trip-not-longer-active'                => 'The user owner of this trip is no longer active.',
         'this-trip-was-deleted'                                     => 'This trip was deleted',
         'you_are_not_attendance_in_this'                            => 'You are not an attendee for this trip.',
-        'check-update-message-trip'                                 => 'The trip has been updated, please check the trip details.',
+        'check-update-message-trip'                                 => 'The trip can only be modified by its owner.',
         'you-do-not-have-review'                                    => 'You do not have a review for this.',
 
         // Plan Validation

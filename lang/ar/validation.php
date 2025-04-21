@@ -406,7 +406,7 @@ return [
         'the-user-owner-this-trip-not-longer-active'                => 'لم يعد مالك المستخدم لهذه الرحلة نشطًا.',
         'this-trip-was-deleted'                                     => 'هذه الرحلة تم حذفها',
         'you_are_not_attendance_in_this'                            => 'انت غير مشترك بهذه الرحلة',
-        'check-update-message-trip'                                 => 'تم تحديث الرحلة، يرجى التحقق من تفاصيل الرحلة.',
+        'check-update-message-trip'                                 => 'لا يمكن تعديل الرحلة إلا من قبل مالكها.',
         'you-do-not-have-review'                                    => 'ليس لديك مراجعة لهذا.',
 
         // Plan Validation

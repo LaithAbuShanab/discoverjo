@@ -89,7 +89,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     {
         return SlugOptions::create()
             ->generateSlugsFrom('username')
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
     }
     public function registerMediaCollections(): void
     {

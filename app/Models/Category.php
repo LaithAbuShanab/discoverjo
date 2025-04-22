@@ -90,7 +90,8 @@ class Category extends Model implements HasMedia
             ->generateSlugsFrom(function () {
                 return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
             })
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
     }
 
     public function places()

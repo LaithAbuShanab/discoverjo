@@ -46,7 +46,8 @@ class Plan extends Model
                 return $this->getTranslation('name', 'en');
             })
             ->saveSlugsTo('slug')
-            ->usingLanguage('en');
+            ->usingLanguage('en')
+            ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
     }
 
     public function creator()

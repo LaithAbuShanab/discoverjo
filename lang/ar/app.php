@@ -41,6 +41,8 @@ return [
         "rejected-trip"                                                => "تم رفض طلبك للإنضمام للرحلة",
         "accepted-trip-body"                                           => "قام المستخدم :username بقبول طلبك في الرحلة :trip_name",
         "rejected-trip-body"                                           => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
+        'you-have-removed'                                             => 'تمت إزالتك من الرحلة',
+        'you-have-removed-from-trip'                                   => 'قام المستخدم :username بإزالتك من الرحلة :trip_name.',
 
         // إنشاء الرحلات والدعوات
         "new-trip-title"                                               => "يوجد رحلة جديدة",

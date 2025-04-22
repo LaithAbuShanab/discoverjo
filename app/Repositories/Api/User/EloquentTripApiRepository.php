@@ -22,6 +22,7 @@ use App\Notifications\Users\Trip\AcceptCancelInvitationNotification;
 use App\Notifications\Users\Trip\AcceptCancelNotification;
 use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
+use App\Notifications\Users\Trip\RemoveUserTripNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -353,7 +354,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return new TripDetailsResource($trip);
     }
 
-    // When User Leaving
+    // WHEN USER LEAVE THE TRIP
     public function cancelJoinTrip($slug, $request)
     {
         $trip_id = Trip::where('slug', $slug)->first()->id;
@@ -434,13 +435,28 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         }
     }
 
-    // TODO:: SEND NOTIFICATION FOR THE USER WHEN OWNER
     public function removeUser($request)
     {
         $trip = Trip::where('slug', $request->trip_slug)->first();
-        $user_id = User::where('slug', $request->user_slug)->first()->id;
+        $user = User::where('slug', $request->user_slug)->first();
+
+        $user_id = $user->id;
+
         $trip->usersTrip()->where('user_id', $user_id)->delete();
         $trip->conversation->members()->where('user_id', $user_id)->delete();
+
+        Notification::send($user, new RemoveUserTripNotification(Auth::guard('api')->user(), $trip));
+
+        // To Send Notification To Owner Using Firebase Cloud Messaging
+        $ownerToken = $user->DeviceToken->token;
+        $receiverLanguage = $user->lang;
+        $notificationData = [
+            'title' => Lang::get('app.notifications.you-have-removed', [], $receiverLanguage),
+            'body' => Lang::get('app.notifications.you-have-removed-from-trip', ['username' => Auth::guard('api')->user()->username , 'trip_name' => $trip->name], $receiverLanguage),
+            'icon'  => asset('assets/icon/trip.png'),
+            'sound' => 'default',
+        ];
+        sendNotification([$ownerToken], $notificationData);
     }
 
     public function favorite($id)

@@ -41,6 +41,8 @@ return [
         "rejected-trip"                                                => "You have been rejected into the trip",
         "accepted-trip-body"                                           => ":username has accepted your request for the trip :trip_name",
         "rejected-trip-body"                                           => ":username has rejected your request for the trip :trip_name",
+        'you-have-removed'                                             => 'You have been removed from the trip.',
+        'you-have-removed-from-trip'                                   => 'The user :username has removed you from the trip :trip_name.',
 
         // Trip Creation & Invitations
         "new-trip-title"                                               => "There is a new trip",

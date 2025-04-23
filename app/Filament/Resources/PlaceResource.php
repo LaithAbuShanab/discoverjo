@@ -55,7 +55,7 @@ class PlaceResource extends Resource
                         Forms\Components\Textarea::make('description')->rows(5)->required()->placeholder('Please Enter Description')->translatable()->columnSpanFull(),
                         Forms\Components\TextInput::make('address')->required()->placeholder('Please Enter Address')->translatable()->columnSpanFull(),
                         Forms\Components\TextInput::make('google_map_url')->required()->columnSpan(1)->placeholder('Please Enter Google Map Url'),
-                        Forms\Components\TextInput::make('phone_number')->tel()->maxLength(255)->required()->placeholder('Please Enter Phone Number'),
+                        Forms\Components\TextInput::make('phone_number')->tel()->maxLength(255)->placeholder('Please Enter Phone Number'),
                         Forms\Components\TextInput::make('longitude')->required()->numeric()->placeholder('EX: 32.123456'),
                         Forms\Components\TextInput::make('latitude')->required()->numeric()->placeholder('EX: 32.123456'),
                         Forms\Components\TextInput::make('price_level')->required()->numeric()->default(-1),

@@ -20,6 +20,17 @@ class CreatePlanApiRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        // If request is not JSON or body cannot be parsed, throw an error early
+        if (!$this->isJson() || is_null(json_decode($this->getContent(), true))) {
+            throw new HttpResponseException(
+                ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, ['Invalid JSON format.'])
+            );
+        }
+    }
+
+
     /**
      * Get the validation rules that apply to the request.
      *

@@ -21,10 +21,17 @@ class UpdatePlanApiRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+        // If request is not JSON or body cannot be parsed, throw an error early
+        if (!$this->isJson() || is_null(json_decode($this->getContent(), true))) {
+            throw new HttpResponseException(
+                ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, ['Invalid JSON format.'])
+            );
+        }
         $this->merge([
             'plan_slug' => request('plan_slug'),
         ]);
     }
+
 
     // public function rules(): array
     // {

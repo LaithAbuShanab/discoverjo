@@ -53,7 +53,10 @@ class CreateTripRequest extends FormRequest
                 'required',
                 'date',
                 function ($attribute, $value, $fail) {
-                    if (Carbon::parse($value)->isPast()) {
+                    $now = Carbon::now('Asia/Riyadh');
+                    $date = Carbon::createFromFormat('Y-m-d', $value, 'Asia/Riyadh');
+
+                    if ($date->lt($now->copy()->startOfDay())) {
                         $fail(__('validation.api.date-cannot-be-in-the-past', ['date' => $value]));
                     }
                 },
@@ -61,8 +64,26 @@ class CreateTripRequest extends FormRequest
             'time' => [
                 'required',
                 'date_format:H:i:s',
+                function ($attribute, $value, $fail) {
+                    $date = request()->date;
+                    $time = $value;
+
+                    if ($date) {
+                        $now = Carbon::now('Asia/Riyadh');
+                        $requestDate = Carbon::createFromFormat('Y-m-d', $date, 'Asia/Riyadh');
+
+                        if ($requestDate->isSameDay($now)) {
+                            $requestDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $time, 'Asia/Riyadh');
+
+                            if ($requestDateTime->lt($now)) {
+                                $fail(__('validation.api.time-should-not-be-in-the-past'));
+                            }
+                        }
+                    }
+                },
                 new CheckIfCanMakeTripRule,
             ],
+
             'attendance_number' => [
                 'required_if:trip_type,0,1',
                 'integer',

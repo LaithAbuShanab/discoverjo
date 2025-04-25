@@ -16,20 +16,20 @@ class VolunteeringResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $activity= Activity::find(1);
+//        $activity= Activity::find(1);
         $startDatetime = dateTime($this->start_datetime);
         $endDateTime =  dateTime($this->end_datetime);
-
-        $interestedUsers = $this->interestedUsers->map(function ($interestedUser)  use ($activity){
-            return [
-                'id' => $interestedUser->id,
-                'slug'=>$interestedUser->slug,
-                'name' => $interestedUser->username,
-                'image' => $interestedUser->getFirstMediaUrl('avatar', 'avatar_app'),
-                'points' => $this->getPoints(),
-                'streak' => $this->getCurrentStreakCount($activity),
-            ];
-        });
+//
+//        $interestedUsers = $this->interestedUsers->map(function ($interestedUser)  use ($activity){
+//            return [
+//                'id' => $interestedUser->id,
+//                'slug'=>$interestedUser->slug,
+//                'name' => $interestedUser->username,
+//                'image' => $interestedUser->getFirstMediaUrl('avatar', 'avatar_app'),
+//                'points' => $this->getPoints(),
+//                'streak' => $this->getCurrentStreakCount($activity),
+//            ];
+//        });
 
         return [
             'id' => $this->id,
@@ -44,7 +44,7 @@ class VolunteeringResource extends JsonResource
             'address' => $this->address,
             'hours_worked' => $this->hours_worked,
             'status' => intval($this->status),
-            'interested_users' => $interestedUsers,
+            'interested_users' => UserResource::collection($this->interestedUsers),
             'attendance_number' => $this->attendance_number,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteVolunteerings->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->volunteeringInterestables->contains('id', $this->id) : false,

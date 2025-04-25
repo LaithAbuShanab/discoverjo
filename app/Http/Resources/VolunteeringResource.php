@@ -44,7 +44,9 @@ class VolunteeringResource extends JsonResource
             'address' => $this->address,
             'hours_worked' => $this->hours_worked,
             'status' => intval($this->status),
-            'interested_users' => UserResource::collection($this->interestedUsers),
+            'interested_users' => UserResource::collection(
+                $this->interestedUsers->filter(fn($user) => $user->status == 1)
+            ),
             'attendance_number' => $this->attendance_number,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteVolunteerings->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->volunteeringInterestables->contains('id', $this->id) : false,

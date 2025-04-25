@@ -55,7 +55,10 @@ class SingleEventResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->eventInterestables->contains('id', $this->id) : false,
             'organizers' => $organizers,
-            'interested_users' => UserResource::collection($this->interestedUsers),
+            'interested_users' => UserResource::collection(
+                $this->interestedUsers->filter(fn($user) => $user->status == 1)
+            ),
+
         ];
 
         // if ($this->start_datetime < $now) {

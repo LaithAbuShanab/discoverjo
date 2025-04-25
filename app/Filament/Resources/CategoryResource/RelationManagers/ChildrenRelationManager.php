@@ -24,7 +24,20 @@ class ChildrenRelationManager extends RelationManager
                     ->translatable(),
                 Forms\Components\TextInput::make('priority')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->rule(function ($get, $record) {
+                        $parentId = $get('parent_id');
+                        $ignoreId = $record?->id;
+
+                        return new \App\Rules\UniquePriorityWithinParent($parentId, $ignoreId);
+                    }),
+                Forms\Components\Select::make('parent_id')
+                    ->relationship('parent', 'name', function ($query) {
+                        $query->whereNull('parent_id');
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 SpatieMediaLibraryFileUpload::make('category_active_image')
                     ->collection('category_active')
                     ->conversion('category_active_website')

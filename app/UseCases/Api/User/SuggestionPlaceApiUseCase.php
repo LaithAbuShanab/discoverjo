@@ -15,9 +15,10 @@ class SuggestionPlaceApiUseCase
 
     public function createSuggestionPlace($request)
     {
+
         return $this->suggestionPlaceApiRepositoryInterface->createsuggestionPlace([
-            'place_name'=>$request['place_name'],
-            'address'=>$request['address'],
+            'place_name'=>htmlspecialchars(strip_tags($request['place_name'])),
+            'address'=>htmlspecialchars(strip_tags($request['address'])),
 
         ],isset($request['images']) ? $request['images'] : null);
     }

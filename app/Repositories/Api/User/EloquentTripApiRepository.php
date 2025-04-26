@@ -135,8 +135,20 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function privateTrips()
     {
-        $userTrips = UsersTrip::where('user_id', Auth::guard('api')->user()->id)->where('status', '1')->pluck('trip_id')->toArray();
-        $trips = Trip::where('user_id', Auth::guard('api')->user()->id)->orWhereIn('id', $userTrips)->get();
+        $userId = Auth::guard('api')->user()->id;
+
+        $userTrips = UsersTrip::where('user_id', $userId)
+            ->where('status', '1')
+            ->pluck('trip_id')
+            ->toArray();
+
+        $trips = Trip::where(function ($query) use ($userId, $userTrips) {
+            $query->where('user_id', $userId)
+                ->orWhereIn('id', $userTrips);
+        })
+            ->whereIn('status', ['0', '1'])
+            ->get();
+
         return PrivateTripResource::collection($trips);
     }
 
@@ -452,7 +464,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $receiverLanguage = $user->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.you-have-removed', [], $receiverLanguage),
-            'body' => Lang::get('app.notifications.you-have-removed-from-trip', ['username' => Auth::guard('api')->user()->username , 'trip_name' => $trip->name], $receiverLanguage),
+            'body' => Lang::get('app.notifications.you-have-removed-from-trip', ['username' => Auth::guard('api')->user()->username, 'trip_name' => $trip->name], $receiverLanguage),
             'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];

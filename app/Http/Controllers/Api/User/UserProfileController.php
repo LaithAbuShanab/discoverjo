@@ -70,8 +70,12 @@ class UserProfileController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
         try {
-            $users = $this->userProfileApiUseCase->search($query);
+            $users = $this->userProfileApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -83,8 +87,12 @@ class UserProfileController extends Controller
     public function favSearch(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
         try {
-            $users = $this->userProfileApiUseCase->favSearch($query);
+            $users = $this->userProfileApiUseCase->favSearch($validatedQuery);
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {

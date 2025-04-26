@@ -197,8 +197,13 @@ class PlanApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
+        $query = $request->input('query');
         try {
-            $plan = $this->planApiUseCase->search($query);
+            $plan = $this->planApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

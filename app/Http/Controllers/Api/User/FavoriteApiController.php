@@ -102,8 +102,12 @@ class FavoriteApiController extends Controller
     public function favSearch(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
         try {
-            $users = $this->favoriteApiUseCase->favSearch($query);
+            $users = $this->favoriteApiUseCase->favSearch($validatedQuery);
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {

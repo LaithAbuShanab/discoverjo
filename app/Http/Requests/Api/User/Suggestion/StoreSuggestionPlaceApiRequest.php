@@ -26,8 +26,8 @@ class StoreSuggestionPlaceApiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'place_name' => 'required',
-            'address' => 'required',
+            'place_name' =>  ['required', 'string', 'max:255'],
+            'address' =>  ['required', 'string', 'max:255'],
             "images" => ['nullable'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:10000'],
         ];

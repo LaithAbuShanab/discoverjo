@@ -359,8 +359,12 @@ class TripApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
         try {
-            $places = $this->tripApiUseCase->search($query);
+            $places = $this->tripApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

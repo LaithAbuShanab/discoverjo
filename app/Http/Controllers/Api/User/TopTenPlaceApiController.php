@@ -8,6 +8,7 @@ use App\UseCases\Api\User\TopTenPlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class TopTenPlaceApiController extends Controller
 {
@@ -34,8 +35,12 @@ class TopTenPlaceApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'nullable|string|max:255'
+        ]);
+        $validatedQuery = $validator->validated()['query'];
         try {
-            $topTenPlaces = $this->topTenPlaceApiUseCase->search($query);
+            $topTenPlaces = $this->topTenPlaceApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.searched-top-ten-places-retrieved-successfully'), $topTenPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

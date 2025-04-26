@@ -44,14 +44,12 @@ class SuggestionPlaceResource extends Resource
                                 Forms\Components\TextInput::make('place_name')
                                     ->label('Place Name')
                                     ->required()
-                                    ->maxLength(255)
-                                    ->htmlspecialchars(),
+                                    ->maxLength(255),
 
                                 Forms\Components\Textarea::make('address')
                                     ->label('Address')
                                     ->required()
-                                    ->maxLength(255)
-                                    ->htmlspecialchars(),
+                                    ->maxLength(255),
                             ]),
                     ])
                     ->columns(1),

@@ -194,7 +194,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
             if ($existingLike) {
                 if ($existingLike->status != $status) {
-                    $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
+//                    $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
+                    $existingLike->update(['status' => $status]);
 
                     if ($authUser->id != $post->user_id) {
                         if ($status === '1') {

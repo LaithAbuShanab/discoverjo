@@ -99,10 +99,21 @@ function sendNotification($deviceTokens, $data)
     $factory = (new Factory)->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
     $messaging = $factory->createMessaging();
 
-    // Build the notification message
-    $notification = FirebaseNotification::create($data['title'], $data['body']);
-    $message = CloudMessage::new()->withNotification($notification)->withData($data);
+    // Build the notification
+    if (isset($data['notification'])) {
+        $notification = FirebaseNotification::create($data['notification']['title'], $data['notification']['body']);
+        $dataPayload = $data['data'] ?? [];
+    } else {
+        $notification = FirebaseNotification::create($data['title'], $data['body']);
+        $dataPayload = [];
+    }
 
+    // Build the message
+    $message = CloudMessage::new()
+        ->withNotification($notification)
+        ->withData($dataPayload);
+
+    // Send the message
     if (is_array($deviceTokens)) {
         $response = $messaging->sendMulticast($message, $deviceTokens);
     } else {
@@ -111,6 +122,7 @@ function sendNotification($deviceTokens, $data)
 
     return $response;
 }
+
 
 function activityLog($logName, $model, $description, $event, $extraProps = [])
 {

@@ -31,6 +31,7 @@ return [
     'verifyEmailButton'                                                => 'Verify Email',
     'verifyEmailMessage'                                               => 'You have requested to verify your email. Please click the button below to verify your email:',
     'yourNotVerified'                                                  => 'Your email has not been verified. Please activate your account before logging in.',
+    'you'                                                              => 'You',
 
     "notifications" => [
 

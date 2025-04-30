@@ -108,7 +108,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 GuideTripUser::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
             }
 
-            $user->tokens()->where('name', 'mobile')->delete();
+//            $user->tokens()->where('name', 'mobile')->delete();
 
             // CHeck If This User Verify Email
             if (!$user->hasVerifiedEmail()) {
@@ -128,12 +128,13 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             $user->token_website = $tokenWebsite;
             $user->verified_email = true;
 
-            $existingDeviceToken = DeviceToken::where('user_id', $user->id)->first();
-            if ($existingDeviceToken) {
-                $existingDeviceToken->update(['token' => $userData['device_token']]);
-            } else {
-                DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
-            }
+            DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
+//            $existingDeviceToken = DeviceToken::where('user_id', $user->id)->first();
+//            if ($existingDeviceToken) {
+//                $existingDeviceToken->update(['token' => $userData['device_token']]);
+//            } else {
+//                DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
+//            }
             activityLog('User', $user, 'the user logged in', 'login');
 
             return new UserLoginResource($user);

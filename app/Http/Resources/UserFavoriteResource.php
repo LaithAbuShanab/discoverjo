@@ -49,7 +49,20 @@ class UserFavoriteResource extends JsonResource
 
         $guideTripFav = $this->favoriteGuideTrips->filter(fn($guideTrip) => $guideTrip->guide->status == 1);
 
-        $planFav = $this->favoritePlans->filter(fn($plan) => $plan->creator->status == 1);
+        $planFav = $this->favoritePlans->filter(function ($plan) {
+            if ($plan->creator_type === 'App\\Models\\User') {
+                return $plan->creator && $plan->creator->status == 1;
+            }
+
+            // Allow all plans if the creator is an admin
+            if ($plan->creator_type === 'App\\Models\\Admin') {
+                return true;
+            }
+
+            // Optional: exclude plans with unknown creator types
+            return false;
+        });
+
 
         return [
             'places'       => $placeFav,

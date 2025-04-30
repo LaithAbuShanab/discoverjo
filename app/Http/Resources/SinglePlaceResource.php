@@ -81,6 +81,12 @@ class SinglePlaceResource extends JsonResource
             return false;
         });
 
+        $weather = null;
+        $temp = getWeatherNow($placeLat, $placeLng);
+
+        if ($temp !== false) {
+            $weather = $temp;
+        }
 
         $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
         return [
@@ -95,6 +101,7 @@ class SinglePlaceResource extends JsonResource
             'total_user_rating' => $this->total_user_rating,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
+            'weather'=>$weather,
             'business_status' => businessStatusTranslation(Request::header('Content-Language') ?? 'ar', $this->business_status),
             'google_map_url' => $this->google_map_url,
             'phone_number' => $this->phone_number,

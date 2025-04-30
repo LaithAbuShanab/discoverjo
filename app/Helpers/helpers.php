@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Http;
 
+use Carbon\Carbon;
+
 
 function AdminPermission($permission)
 {
@@ -285,3 +287,30 @@ function getAddressFromCoordinates(float $lat, float $lng, string $language): st
     }
 }
 
+
+function getWeatherNow($latitude, $longitude)
+{
+    $jordanTime = Carbon::now('Asia/Riyadh');
+    $utcTime = $jordanTime->copy()->setTimezone('UTC')->format('Y-m-d\TH:00');
+
+    $response = Http::get('https://api.open-meteo.com/v1/forecast', [
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'hourly' => 'temperature_2m',
+    ]);
+
+    if ($response->failed()) {
+        return false;
+    }
+
+    $data = $response->json();
+    $times = $data['hourly']['time'];
+    $temperatures = $data['hourly']['temperature_2m'];
+
+    $index = array_search($utcTime, $times);
+    if ($index === false) {
+        return false;
+    }
+
+    return $temperatures[$index];
+}

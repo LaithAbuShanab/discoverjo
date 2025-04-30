@@ -128,7 +128,18 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             $user->token_website = $tokenWebsite;
             $user->verified_email = true;
 
-            DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
+            $deviceToken = $userData['device_token'];
+
+            $existing = DeviceToken::where('user_id', $user->id)
+                ->where('token', $deviceToken)
+                ->first();
+
+            if (!$existing) {
+                DeviceToken::create([
+                    'user_id' => $user->id,
+                    'token' => $deviceToken,
+                ]);
+            }
 //            $existingDeviceToken = DeviceToken::where('user_id', $user->id)->first();
 //            if ($existingDeviceToken) {
 //                $existingDeviceToken->update(['token' => $userData['device_token']]);

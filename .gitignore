@@ -5,6 +5,7 @@
 /public/hot
 /public/storage
 /public/images
+/public/assets/images
 /storage/*.key
 /storage/pail
 /vendor

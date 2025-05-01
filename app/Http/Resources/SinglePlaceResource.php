@@ -40,7 +40,7 @@ class SinglePlaceResource extends JsonResource
         $categories = $this->categories->map(function ($category) {
             return $category->parent ? [
                 'name' => $category->parent->name,
-                'main_image' => $category->parent->getFirstMediaUrl('main_category', 'main_category_app'),
+                'main_image' => $category->parent->getFirstMediaUrl('main_category'),
             ] : null;
         })->filter()->unique();
 
@@ -94,7 +94,7 @@ class SinglePlaceResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('main_place', 'main_place_app'),
+            'image' => $this->getFirstMediaUrl('main_place'),
             'region' => $this->region->name,
             'address' => $this->address,
             'rating' => $this->rating,

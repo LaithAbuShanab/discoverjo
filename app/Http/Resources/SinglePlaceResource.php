@@ -63,7 +63,7 @@ class SinglePlaceResource extends JsonResource
         $gallery = [];
 
         foreach ($this->getMedia('place_gallery') as $image) {
-            $gallery[] = $image->getUrl('place_gallery_app');
+            $gallery[] = $image->getUrl();
         }
 
         $posts = $this->posts->filter(function ($post) {

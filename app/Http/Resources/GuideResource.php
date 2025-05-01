@@ -54,7 +54,7 @@ class GuideResource extends JsonResource
             'reviews'=>ReviewResource::collection($this->reviews),
             'guide_trips'=>AllGuideTripResource::collection($this->guideTrips),
             'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
+            'avatar'=> $this->getFirstMediaUrl('avatar'),
         ];
     }
 }

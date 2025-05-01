@@ -22,7 +22,7 @@ class UserTripResource extends JsonResource
             'username' => $this->user->username,
             'email' => $this->user->email,
             'status' => $this->status,
-            'image' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
+            'image' => $this->user->getFirstMediaUrl('avatar'),
             // 'points' => $this->user->getPoints(),
             // 'streak' => $this->user->getCurrentStreakCount($activity),
         ];

@@ -56,7 +56,7 @@ class OtherUserProfileResource extends JsonResource
             'tags' => $tags,
             'reviews' =>  ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
+            'avatar' => $this->getFirstMediaUrl('avatar'),
         ];
     }
 }

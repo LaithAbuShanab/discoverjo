@@ -18,7 +18,7 @@ class GamePlaceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'image' => $this?->getFirstMediaUrl('main_place', 'main_place_app'),
+            'image' => $this?->getFirstMediaUrl('main_place'),
             'region' => $this->region->name,
             'address' => $this->address,
             'rating' => $this->rating,

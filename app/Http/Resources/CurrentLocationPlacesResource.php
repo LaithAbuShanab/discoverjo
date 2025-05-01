@@ -19,7 +19,7 @@ class CurrentLocationPlacesResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'image' => $this->getFirstMediaUrl('main_place', 'main_place_app'),
+            'image' => $this->getFirstMediaUrl('main_place'),
             'region' => $this->region->name,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,

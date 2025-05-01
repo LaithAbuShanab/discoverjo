@@ -26,7 +26,7 @@ class EventResource extends JsonResource
             'start_time' => $startDatetime->format('H:i:s'),
             'end_day' => $endDateTime->format('Y-m-d'),
             'end_time' => $endDateTime->format('H:i:s'),
-            'image' => $this->getFirstMediaUrl('event', 'event_app'),
+            'image' => $this->getFirstMediaUrl('event'),
             'region' => $this->region->name,
             'address' => $this->address,
             'price' => $this->price,

@@ -18,7 +18,7 @@ class LikeDislikeResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user->id,
             'user_slug' => $this->user->slug,
-            'image' => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
+            'image' => $this->user->getFirstMediaUrl('avatar'),
             'username' => $this->user->username,
         ];
     }

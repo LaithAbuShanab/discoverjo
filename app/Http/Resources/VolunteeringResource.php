@@ -39,7 +39,7 @@ class VolunteeringResource extends JsonResource
             'start_time' => $startDatetime->format('H:i:s'),
             'end_day' => $endDateTime->format('Y-m-d'),
             'end_time' => $endDateTime->format('H:i:s'),
-            'image' => $this->getFirstMediaUrl('volunteering', 'volunteering_app'),
+            'image' => $this->getFirstMediaUrl('volunteering'),
             'region' => $this->region->name,
             'address' => $this->address,
             'hours_worked' => $this->hours_worked,

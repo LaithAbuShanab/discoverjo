@@ -19,7 +19,7 @@ class SliderResource extends JsonResource
             'slug'=>$this->slug,
             'title' => $this->title,
             'content' => $this->content,
-            'image' => $this->getFirstMediaUrl('slider', 'slider_app'),
+            'image' => $this->getFirstMediaUrl('slider'),
 //            'priority' => $this->priority,
 //            'status'=>$this->status,
 //            'type'=>$this->type

@@ -19,6 +19,7 @@
         "laravel/passport": "^12.0",
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.9",
+        "league/flysystem-aws-s3-v3": "^3.29",
         "mokhosh/filament-rating": "^1.4",
         "outerweb/filament-translatable-fields": "^2.1",
         "pusher/pusher-php-server": "^7.2",

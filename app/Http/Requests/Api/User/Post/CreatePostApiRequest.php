@@ -63,7 +63,7 @@ class CreatePostApiRequest extends FormRequest
             'media.*' => [
                 'file',
                 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo',
-                'max:50240',
+                'max:8192000',
             ],
         ];
     }

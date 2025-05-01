@@ -22,6 +22,7 @@ class CreatePostApiRequest extends FormRequest
 
     public function rules(): array
     {
+        $maxFileSize = 1024 * 1024 * 50;
         return [
             'visitable_type' => [
                 'bail',
@@ -63,7 +64,7 @@ class CreatePostApiRequest extends FormRequest
             'media.*' => [
                 'file',
                 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo',
-                'max:8192000',
+                'max:' . $maxFileSize,
             ],
         ];
     }

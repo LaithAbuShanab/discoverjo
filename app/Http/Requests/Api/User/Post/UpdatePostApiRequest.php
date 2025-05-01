@@ -30,6 +30,7 @@ class UpdatePostApiRequest extends FormRequest
      */
     public function rules(): array
     {
+        $maxFileSize = 1024 * 1024 * 50;
         return [
             'visitable_type' => [
                 'bail',
@@ -64,7 +65,7 @@ class UpdatePostApiRequest extends FormRequest
             'content' => ['required', 'string'],
             'privacy' => ['required', Rule::in([0, 1, 2])],
             'media'   => ['nullable'],
-            'media.*' => ['file', 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo', 'max:50240']
+            'media.*' => ['file', 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo', 'max:' . $maxFileSize]
         ];
     }
 

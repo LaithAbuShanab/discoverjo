@@ -41,11 +41,11 @@ class NewCommentNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "There is a new comment",
-            "title_ar" => "يوجد تعليق جديد",
-            "body_en" => "The User " . $this->user->username . " has add new comment",
-            "body_ar" => "تم إنشاء تعليق جديد بواسطة المستخدم " . $this->user->username,
-            'options' => [
+            "title_en" => "You've Got a New Response",
+            "title_ar" => "تحديث على أحد المنشورات",
+            "body_en"  => "User " . $this->user->username . " has posted a new comment",
+            "body_ar"  => " قام المستخدم" . $this->user->username . " بإضافة تعليق جديد على المنشور",
+            'options'  => [
                 'type'       => 'comment',
                 'slug'       => null,
                 'post_id'    => $this->postId,

@@ -95,7 +95,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
             // Send Notification Via Firebase
             foreach ($followers as $follower) {
-                $token[] = $follower->DeviceToken->token;
+                $tokens = $follower->DeviceTokenMany->pluck('token')->toArray();
                 $receiverLanguage = $follower->lang;
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
@@ -104,7 +104,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     'sound' => 'default',
                 ];
 
-                sendNotification($token, $notificationData);
+                sendNotification($tokens, $notificationData);
             }
 
             $user = Auth::guard('api')->user();
@@ -186,7 +186,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             $status = $data['status'] == "like" ? '1' : '0';
             $userPost = $post->user;
             $receiverLanguage = $userPost->lang;
-            $ownerToken = $userPost->DeviceToken->token;
+            $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
             $notificationData = [];
 
             $authUser = Auth::guard('api')->user();
@@ -194,22 +194,26 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
             if ($existingLike) {
                 if ($existingLike->status != $status) {
-//                    $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
+                    // $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
                     $existingLike->update(['status' => $status]);
 
                     if ($authUser->id != $post->user_id) {
                         if ($status === '1') {
                             $notificationData = [
-                                'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-user-like-in-post', ['username' => $authUser->username], $receiverLanguage),
+                                'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-post-like-body', [
+                                    'username' => $authUser->username
+                                ], $receiverLanguage),
                                 'icon'  => asset('assets/icon/speaker.png'),
                                 'sound' => 'default',
                             ];
                             Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
                         } else {
                             $notificationData = [
-                                'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => $authUser->username], $receiverLanguage),
+                                'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-post-dislike-body', [
+                                    'username' => $authUser->username
+                                ], $receiverLanguage),
                                 'icon'  => asset('assets/icon/speaker.png'),
                                 'sound' => 'default',
                             ];
@@ -228,16 +232,20 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 if ($authUser->id != $post->user_id) {
                     if ($status === '1') {
                         $notificationData = [
-                            'title' => Lang::get('app.notifications.new-post-like', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-like-in-post', ['username' => $authUser->username], $receiverLanguage),
+                            'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-post-like-body', [
+                                'username' => $authUser->username
+                            ], $receiverLanguage),
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
                         Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
                     } else {
                         $notificationData = [
-                            'title' => Lang::get('app.notifications.new-post-dislike', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-dislike-in-post', ['username' => $authUser->username], $receiverLanguage),
+                            'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-post-dislike-body', [
+                                'username' => $authUser->username
+                            ], $receiverLanguage),
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
@@ -247,7 +255,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             }
 
             if (!empty($notificationData) && $authUser->id != $post->user_id) {
-                sendNotification([$ownerToken], $notificationData);
+                sendNotification($tokens, $notificationData);
             }
 
             $user = Auth::guard('api')->user();

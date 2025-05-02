@@ -40,11 +40,11 @@ class ChildrenRelationManager extends RelationManager
                     ->required(),
                 SpatieMediaLibraryFileUpload::make('category_active_image')
                     ->collection('category_active')
-                    ->conversion('category_active_website')
+                    ->conversion('category_active_app')
                     ->label('Image Active'),
                 SpatieMediaLibraryFileUpload::make('category_inactive_image')
                     ->collection('category_inactive')
-                    ->conversion('category_inactive_website')
+                    ->conversion('category_inactive_app')
                     ->label('Image Inactive'),
 
 

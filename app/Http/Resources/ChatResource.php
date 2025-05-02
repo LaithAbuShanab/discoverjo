@@ -19,9 +19,10 @@ class ChatResource extends JsonResource
             'id'                => $this->id,
             'user_id'           => $this->user->id,
             'username'          => $this->user->username,
-            'user_image'        => $this->user->getFirstMediaUrl('avatar','avatar_app'),
+            'username_for_me'   => __('app.you'),
+            'user_image'        => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
             'message'           => $this->message_txt,
-            'message_file'      => $this->getFirstMediaUrl('file','file_thumb'),
+            'message_file'      => $this->getFirstMediaUrl('file', 'file_thumb'),
             'sent_datetime'     => $this->sent_datetime
                 ? Carbon::parse($this->sent_datetime)->setTimezone('Asia/Amman')->format('g:i A')
                 : null,

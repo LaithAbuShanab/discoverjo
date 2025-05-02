@@ -39,14 +39,15 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
         Notification::send($commentUser, new NewReplyNotification(Auth::guard('api')->user()));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
-        $ownerToken = $commentUser->DeviceToken->token;
+        $tokens = $commentUser->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $commentUser->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.new-reply', [], $receiverLanguage),
             'body' => Lang::get('app.notifications.new-user-reply-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
             'sound' => 'default',
         ];
-        sendNotification($ownerToken, $notificationData);
+        if (!empty($tokens))
+            sendNotification($tokens, $notificationData);
         return $reply;
     }
 
@@ -65,7 +66,6 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
             'content' => $data['content']
         ]);
         return $reply;
-
     }
 
     public function deleteReply($id)
@@ -79,7 +79,7 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
         $status = $data['status'] == "like" ? '1' : '0';
         $comment = Comment::find($reply->comment_id);
         $userReply = User::find($comment->user_id);
-        $ownerToken = $userReply->DeviceToken->token;
+        $tokens = $userReply->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $userReply->lang;
         $notificationData = [];
 
@@ -96,7 +96,6 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
                         'sound' => 'default',
                     ];
                     Notification::send($userReply, new NewReplyLikeNotification(Auth::guard('api')->user()));
-
                 } else {
                     $notificationData = [
                         'title' => Lang::get('app.notifications.new-reply-dislike', [], $receiverLanguage),
@@ -122,7 +121,6 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
                     'sound' => 'default',
                 ];
                 Notification::send($userReply, new NewReplyLikeNotification(Auth::guard('api')->user()));
-
             } else {
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
@@ -132,12 +130,9 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
 
                 Notification::send($userReply, new NewReplyDisLikeNotification(Auth::guard('api')->user()));
             }
-
         }
         if (!empty($notificationData)) {
-            sendNotification($ownerToken, $notificationData);
+            sendNotification($tokens, $notificationData);
         }
     }
-
-
 }

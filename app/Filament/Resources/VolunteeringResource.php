@@ -114,7 +114,7 @@ class VolunteeringResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->label('volunteering Image')
                                     ->collection('volunteering')
-                                    ->conversion('volunteering_website')
+                                    ->conversion('volunteering_app')
                             ]),
                     ])
                     ->columns(1),

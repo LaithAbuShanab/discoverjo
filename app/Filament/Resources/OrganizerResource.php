@@ -69,7 +69,7 @@ class OrganizerResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->label('Organizer Image')
                                     ->collection('organizer')
-                                    ->conversion('organizer_website')
+                                    ->conversion('organizer_app')
                             ]),
                     ])
                     ->columns(1),

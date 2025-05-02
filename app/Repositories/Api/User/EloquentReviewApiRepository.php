@@ -67,7 +67,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
 
             if (in_array($data['type'], ['trip', 'guideTrip'])) {
                 $userPost = $reviewItem->user;
-                $ownerToken = $userPost->DeviceToken->token;
+                $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
                 $receiverLanguage = $userPost->lang;
 
                 $dataBaseNotification = [
@@ -97,7 +97,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 ];
 
                 Notification::send($userPost, new NewReviewNotification($dataBaseNotification));
-                sendNotification([$ownerToken], $firebaseNotification);
+                sendNotification($tokens, $firebaseNotification);
             }
 
             $user->addPoints(10);
@@ -158,7 +158,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             $userReview = $review->user;
             $isSelfReview = $review->user_id === $authUser->id;
             $receiverLang = $userReview->lang;
-            $ownerToken = $userReview->DeviceToken->token;
+            $tokens = $userReview->DeviceTokenMany->pluck('token')->toArray();
 
             $existingLike = $review->like()->where('user_id', $authUser->id)->first();
             $notificationData = [];
@@ -192,7 +192,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             }
 
             if (!empty($notificationData)) {
-                sendNotification([$ownerToken], $notificationData);
+                sendNotification($tokens, $notificationData);
             }
 
             activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);

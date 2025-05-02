@@ -38,15 +38,17 @@ class NewPostLikeNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        $username = $this->user->username;
+
         return [
-            "title_en" => "New Like",
-            "title_ar" => "اعجاب جديد",
-            "body_en" => "The User " . $this->user->username . " has liked your post",
-            "body_ar" => "المستخدم اعجب بمنشورك " . $this->user->username,
-            'options' => [
-                'type'      => 'single_post',
-                'slug'      => null,
-                'post_id'   => $this->postId
+            "title_en" => __('app.notifications.new-post-like-title', [], 'en'),
+            "title_ar" => __('app.notifications.new-post-like-title', [], 'ar'),
+            "body_en"  => __('app.notifications.new-post-like-body', ['username' => $username], 'en'),
+            "body_ar"  => __('app.notifications.new-post-like-body', ['username' => $username], 'ar'),
+            'options'  => [
+                'type'    => 'single_post',
+                'slug'    => null,
+                'post_id' => $this->postId
             ]
         ];
     }

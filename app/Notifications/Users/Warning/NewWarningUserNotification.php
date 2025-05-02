@@ -47,28 +47,28 @@ class NewWarningUserNotification extends Notification
     {
         if ($this->type === 'blocked') {
             return [
-                'title_en' => 'Account Temporarily Blocked',
-                'title_ar' => 'تم حظر الحساب مؤقتاً',
-                'body_en' => 'Your account has been blocked for two weeks due to repeated violations of our policies.',
-                'body_ar' => 'تم حظر حسابك لمدة أسبوعين بسبب تكرار المخالفات لسياساتنا.',
+                'title_en' => 'Temporary Account Suspension',
+                'title_ar' => 'إشعار حظر مؤقت للحساب',
+                'body_en'  => 'Your account has been temporarily suspended for two weeks due to repeated policy violations. Please review our guidelines to avoid future suspensions.',
+                'body_ar'  => 'تم تعليق حسابك مؤقتًا لمدة أسبوعين نتيجة تكرار المخالفات لسياسات المنصة. نرجو منك مراجعة السياسات لتجنب الحظر مستقبلاً.',
             ];
         }
 
         if ($this->type === 'blacklisted') {
             return [
-                'title_en' => 'Account Blacklisted',
-                'title_ar' => 'تم إدراج الحساب في القائمة السوداء',
-                'body_en' => 'Your account has been permanently blacklisted due to severe violations of our policies.',
-                'body_ar' => 'تم إدراج حسابك في القائمة السوداء بشكل دائم بسبب انتهاكات جسيمة لسياساتنا.',
+                'title_en' => 'Account Status Notification',
+                'title_ar' => 'إشعار بشأن حالة الحساب',
+                'body_en'  => 'We regret to inform you that your account has been permanently blacklisted due to serious violations of our policies. For more details, please contact support.',
+                'body_ar'  => 'نأسف لإبلاغك بأن حسابك قد أُدرج في القائمة السوداء بشكل دائم بسبب مخالفات جسيمة لسياسات الاستخدام. لمزيد من التفاصيل، يرجى التواصل مع فريق الدعم.',
             ];
         }
 
         // Default: warning
         return [
-            'title_en' => 'New Warning',
-            'title_ar' => 'تحذير جديد',
-            'body_en' => 'You have received a warning due to unethical behavior. Please adhere to the community guidelines.',
-            'body_ar' => 'لقد تلقيت تحذيراً بسبب سلوك غير أخلاقي. يرجى الالتزام بإرشادات المجتمع.',
+            'title_en' => 'Account Behavior Notice',
+            'title_ar' => 'تنبيه بشأن سلوك الحساب',
+            'body_en'  => 'A warning has been issued to your account due to behavior that does not align with our community guidelines. Please adhere to the rules to avoid further action.',
+            'body_ar'  => 'تم توجيه تحذير إلى حسابك نتيجة سلوك لا يتوافق مع إرشادات المجتمع. نرجو الالتزام بالسياسات لتفادي الإجراءات المستقبلية.',
         ];
     }
 }

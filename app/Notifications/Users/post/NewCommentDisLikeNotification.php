@@ -41,11 +41,11 @@ class NewCommentDisLikeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "New dislike",
-            "title_ar" => "عدم اعجاب جديد",
-            "body_en" => "The User " . $this->user->username . " has dislike your comment",
-            "body_ar" => "المستخدم لم يعجب بتعليقك " . $this->user->username,
-            'options' => [
+            "title_en" => "New Reaction on Your Comment",
+            "title_ar" => "تفاعل جديد على تعليقك",
+            "body_en"  => "User " . $this->user->username . " reacted with a dislike to your comment",
+            "body_ar"  => "قام المستخدم " . $this->user->username . " بإبداء عدم إعجاب بتعليقك",
+            'options'  => [
                 'type'       => 'comment',
                 'slug'       => null,
                 'post_id'    => $this->postId,
@@ -53,4 +53,5 @@ class NewCommentDisLikeNotification extends Notification
             ]
         ];
     }
+
 }

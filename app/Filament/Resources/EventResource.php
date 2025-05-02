@@ -117,7 +117,7 @@ class EventResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->label('Event Image')
                                     ->collection('event')
-                                    ->conversion('event_website')
+                                    ->conversion('event_app')
                             ]),
                     ])
                     ->columns(1),

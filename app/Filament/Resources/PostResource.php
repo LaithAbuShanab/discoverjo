@@ -114,7 +114,7 @@ class PostResource extends Resource
                         SpatieMediaLibraryFileUpload::make('post')
                             ->label('Post Media')
                             ->collection('post')
-                            ->conversion('post_website')
+                            ->conversion('post_app')
                             ->multiple()
                             ->required()
                             ->columnSpanFull()

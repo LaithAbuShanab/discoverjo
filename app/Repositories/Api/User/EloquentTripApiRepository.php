@@ -286,8 +286,9 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 'sound' => 'default',
             ];
 
-            if ($user->DeviceToken) {
-                sendNotification([$user->DeviceToken->token], $notificationData);
+            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notificationData);
             }
 
             // Return the updated user trip
@@ -311,7 +312,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         Notification::send(Trip::find($trip_id)->user, new NewRequestNotification(Auth::guard('api')->user(), $trip));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
-        $ownerToken = Trip::find($trip_id)->user->DeviceToken->token;
+        $tokens = Trip::find($trip_id)->user->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = Trip::find($trip_id)->user->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.new-request', [], $receiverLanguage),
@@ -319,7 +320,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];
-        sendNotification([$ownerToken], $notificationData);
+        sendNotification($tokens, $notificationData);
     }
 
     public function changeStatusInvitation($request)
@@ -357,7 +358,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];
-        sendNotification([$user->DeviceToken->token], $notificationData);
+        $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+        if (!empty($tokens)) {
+            sendNotification($tokens, $notificationData);
+        }
     }
 
     public function tripDetails($slug)
@@ -460,7 +464,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         Notification::send($user, new RemoveUserTripNotification(Auth::guard('api')->user(), $trip));
 
         // To Send Notification To Owner Using Firebase Cloud Messaging
-        $ownerToken = $user->DeviceToken->token;
+        $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $user->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.you-have-removed', [], $receiverLanguage),
@@ -468,7 +472,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'icon'  => asset('assets/icon/trip.png'),
             'sound' => 'default',
         ];
-        sendNotification([$ownerToken], $notificationData);
+        sendNotification($tokens, $notificationData);
     }
 
     public function favorite($id)
@@ -578,8 +582,9 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
                 Notification::send($follower, new TripNewTripNotification($user, $trip));
 
-                if ($follower->DeviceToken?->token) {
-                    sendNotification([$follower->DeviceToken->token], $notificationData);
+                $tokens = $follower->DeviceTokenMany->pluck('token')->toArray();
+                if (!empty($tokens)) {
+                    sendNotification($tokens, $notificationData);
                 }
             }
         } elseif ($request->trip_type == 2) {
@@ -604,8 +609,9 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
                 Notification::send($invitedUser, new TripNewTripNotification($user, $trip));
 
-                if ($invitedUser->DeviceToken?->token) {
-                    sendNotification([$invitedUser->DeviceToken->token], $notificationData);
+                $tokens = $invitedUser->DeviceTokenMany->pluck('token')->toArray();
+                if (!empty($tokens)) {
+                    sendNotification($tokens, $notificationData);
                 }
             }
         }

@@ -313,7 +313,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
             $userMember = $guideTripUser->user;
             $receiverLanguage = $userMember->lang ?? 'en';
-            $guideUserToken = optional($userMember->DeviceToken)->token;
+            $tokens = $userMember->DeviceTokenMany->pluck('token')->toArray();
 
             $trip = $guideTripUser->guideTrip;
 
@@ -345,8 +345,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 ];
             }
 
-            if ($guideUserToken) {
-                sendNotification([$guideUserToken], $notification);
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notification);
             }
             $user = Auth::guard('api')->user();
             $user->addPoints(10);
@@ -359,7 +359,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $guide = User::findBySlug($slug);
-        $guideTrips= GuideTrip::where('guide_id',$guide->id)->orderBy('start_datetime', 'desc')
+        $guideTrips = GuideTrip::where('guide_id', $guide->id)->orderBy('start_datetime', 'desc')
             ->paginate($perPage);
         $tripsArray = $guideTrips->toArray();
 

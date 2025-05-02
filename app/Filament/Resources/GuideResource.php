@@ -170,7 +170,7 @@ class GuideResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('avatar') // Ensure this matches the model collection
                                     ->label('Profile Image')
                                     ->collection('avatar') // Matches the collection name in the model
-                                    ->conversion('avatar_website') // Ensures correct conversion is used
+                                    ->conversion('avatar_app') // Ensures correct conversion is used
                                     ->image()
                                     ->imageEditor(),
 

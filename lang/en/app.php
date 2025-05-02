@@ -58,35 +58,37 @@ return [
         // Posts
         'new-post-title'                                               => 'New Post Alert!',
         'new-post-body'                                                => 'Exciting news! :username has just shared a new post. Stay updated and check it out!',
-        'new-post-like'                                                => 'New Like',
-        'new-user-like-in-post'                                        => 'The User :username has liked your post',
-        'new-post-dislike'                                             => 'New Dislike',
-        'new-user-dislike-in-post'                                     => 'The User :username has disliked your post',
+        'new-post-like-title'                                          => 'New Like on Your Post',
+        'new-post-like-body'                                           => 'User :username liked your post',
+        'new-post-dislike-title'                                       => 'Negative Reaction on Your Post',
+        'new-post-dislike-body'                                        => 'User :username reacted with a dislike to your post',
 
         // Comments
-        'new-comment'                                                  => 'There is a new comment',
-        'new-user-comment-in-post'                                     => 'The User :username has added a new comment',
-        'new-comment-like'                                             => 'New Like',
-        'new-user-like-in-comment'                                     => 'The User :username has liked your comment',
-        'new-comment-dislike'                                          => 'New Dislike',
-        'new-user-dislike-in-comment'                                  => 'The User :username has disliked your comment',
+        "new-comment"                                                  => "You've Got a New Response",
+        "new-user-comment-in-post"                                     => "User :username has posted a new comment",
+        'new-reply-title'                                              => "You've got a new reply on your comment",
+        'new-reply-body'                                               => 'User :username replied to your comment',
+        'new-comment-like'                                             => 'New Reaction on Your Comment',
+        'new-user-like-in-comment'                                     => 'User :username liked your comment',
+        'new-comment-dislike'                                          => 'New Reaction on Your Comment',
+        'new-user-dislike-in-comment'                                  => 'User :username reacted with a dislike to your comment',
 
         // Warnings & Account Status
-        'new-warning-title'                                            => 'New Warning',
-        'new-warning-body'                                             => 'You have received a warning due to unethical behavior. Please follow our community guidelines.',
-        'new-blocked-two-weeks-title'                                  => 'Account Temporarily Blocked',
-        'new-blocked-two-weeks-body'                                   => 'Your account has been blocked for two weeks due to repeated violations of our policies.',
-        'new-blacklisted-title'                                        => 'Account Blacklisted',
-        'new-blacklisted-body'                                         => 'Your account has been permanently blacklisted due to severe violations of our policies.',
+        'new-warning-title'                                            => 'Account Behavior Notice',
+        'new-warning-body'                                             => 'A warning has been issued to your account due to behavior that does not align with our community guidelines. Please adhere to the rules to avoid further action.',
+        'new-blocked-two-weeks-title'                                  => 'Temporary Account Suspension',
+        'new-blocked-two-weeks-body'                                   => 'Your account has been temporarily suspended for two weeks due to repeated policy violations. Please review our guidelines to avoid future suspensions.',
+        'new-blacklisted-title'                                        => 'Account Status Notification',
+        'new-blacklisted-body'                                         => 'We regret to inform you that your account has been permanently blacklisted due to serious violations of our policies. For more details, please contact support.',
 
         // Reviews
-        'new-review'                                                   => 'New Review',
-        'new-user-review-in-trip'                                      => 'The User :username has added a review to your trip',
-        'new-user-review-in-guideTrip'                                 => 'The User :username has added a review to your guided trip',
-        'new-review-like'                                              => 'New Like',
-        'new-user-like-in-review'                                      => 'The User :username has liked your review',
-        'new-review-dislike'                                           => 'New Dislike',
-        'new-user-dislike-in-review'                                   => 'The User :username has disliked your review',
+        "new-review"                                                   => "New Review",
+        "new-user-review-in-trip"                                      => "User :username wrote a review about your trip",
+        "new-user-review-in-guideTrip"                                 => "User :username wrote a review on your guided trip",
+        "new-review-like"                                              => "Like on your review",
+        "new-user-like-in-review"                                      => "User :username liked your review",
+        "new-review-dislike"                                           => "Dislike on your review",
+        "new-user-dislike-in-review"                                   => "User :username disliked your review",
 
         // Following
         'new-following-request'                                        => 'New following request',
@@ -99,10 +101,10 @@ return [
         'new-user-message'                                             => 'The User :username has sent you a new message',
 
         // Gide Trips
-        'accepted-guide-trip-title'                                    => ':username was accepted on the trip.',
-        'accepted-guide-trip-body'                                     => ':username was accepted on the trip :trip_name.',
-        'declined-guide-trip-title'                                    => ':username was rejected on the trip.',
-        'declined-guide-trip-body'                                     => ':username was rejected on the trip :trip_name.',
+        'accepted-guide-trip-title'                                    => ':username has been accepted for the trip.',
+        'accepted-guide-trip-body'                                     => ':username has been approved to join the trip ":trip_name".',
+        'declined-guide-trip-title'                                    => ':username has been declined for the trip.',
+        'declined-guide-trip-body'                                     => 'Unfortunately, :username’s request to join the trip ":trip_name" was declined.',
     ],
 
     "api" => [

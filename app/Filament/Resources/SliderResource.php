@@ -93,7 +93,7 @@ class SliderResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->label('Event Image')
                                     ->collection('slider')
-                                    ->conversion('slider_website')
+                                    ->conversion('slider_app')
                             ]),
                     ])
                     ->columns(1),

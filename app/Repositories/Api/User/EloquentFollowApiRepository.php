@@ -22,7 +22,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         Follow::create($request);
         $followingUser = User::find($request['following_id']);
 
-        $ownerToken = $followingUser->DeviceToken->token;
+        $tokens = $followingUser->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $followingUser->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.new-following-request', [], $receiverLanguage),
@@ -31,7 +31,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'sound' => 'default',
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user(), $followingUser));
-        sendNotification([$ownerToken], $notificationData);
+        sendNotification($tokens, $notificationData);
 
         //add points and streak
         $user = Auth::guard('api')->user();
@@ -58,7 +58,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'status' => 1,
         ]);
 
-        $ownerToken = $followerUser->DeviceToken->token;
+        $tokens = $followerUser->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $followerUser->lang;
         $notificationData = [
             'title' => Lang::get('app.notifications.accept-your-following-request', [], $receiverLanguage),
@@ -67,7 +67,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'sound' => 'default',
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
-        sendNotification([$ownerToken], $notificationData);
+        sendNotification($tokens, $notificationData);
 
         $user = Auth::guard('api')->user();
         $user->addPoints(10);

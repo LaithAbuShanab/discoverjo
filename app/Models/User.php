@@ -242,6 +242,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return $this->hasOne(DeviceToken::class, 'user_id');
     }
 
+    public function DeviceTokenMany() : HasMany
+    {
+        return $this->hasMany(DeviceToken::class, 'user_id');
+    }
+
     public function followers()
     {
         return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')

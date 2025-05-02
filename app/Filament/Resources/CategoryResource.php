@@ -70,7 +70,8 @@ class CategoryResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->label('Category Image')
                                     ->collection('main_category')
-                                    ->conversion('main_category_website')
+                                    ->conversion('main_category_app')
+
                             ]),
                     ])
                     ->columns(1),

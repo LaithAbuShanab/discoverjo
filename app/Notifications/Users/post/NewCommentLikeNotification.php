@@ -41,11 +41,11 @@ class NewCommentLikeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "New Like",
-            "title_ar" => "اعجاب جديد",
-            "body_en" => "The User " . $this->user->username . " has liked your Comment",
-            "body_ar" => "المستخدم اعجب بتعليقك " . $this->user->username,
-            'options' => [
+            "title_en" => "New Reaction on Your Comment",
+            "title_ar" => "تفاعل جديد على تعليقك",
+            "body_en"  => "User " . $this->user->username . " liked your comment",
+            "body_ar"  => "قام المستخدم " . $this->user->username . " بالإعجاب بتعليقك",
+            'options'  => [
                 'type'       => 'comment',
                 'slug'       => null,
                 'post_id'    => $this->postId,

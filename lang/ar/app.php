@@ -58,35 +58,37 @@ return [
         // المنشورات
         "new-post-title"                                               => "تنبيه: منشور جديد!",
         "new-post-body"                                                => "خبر رائع! قام :username بمشاركة منشور جديد. ابقَ على اطلاع وتصفحه الآن!",
-        "new-post-like"                                                => "اعجاب جديد",
-        "new-user-like-in-post"                                        => "المستخدم :username اعجب بمنشورك",
-        "new-post-dislike"                                             => "عدم اعجاب جديد",
-        "new-user-dislike-in-post"                                     => "المستخدم :username لم يعجب بمنشورك",
+        'new-post-like-title'                                          => 'إعجاب جديد بمنشورك',
+        'new-post-like-body'                                           => 'قام المستخدم :username بالإعجاب بمنشورك',
+        'new-post-dislike-title'                                       => 'تفاعل سلبي على منشورك',
+        'new-post-dislike-body'                                        => 'قام المستخدم :username بإبداء عدم إعجاب بمنشورك',
 
         // التعليقات
-        "new-comment"                                                  => "يوجد تعليق جديد",
-        "new-user-comment-in-post"                                     => "تم إنشاء تعليق جديد بواسطة المستخدم :username",
-        "new-comment-like"                                             => "اعجاب جديد",
-        "new-user-like-in-comment"                                     => "المستخدم :username اعجب بتعليقك",
-        "new-comment-dislike"                                          => "عدم اعجاب جديد",
-        "new-user-dislike-in-comment"                                  => "المستخدم :username لم يعجب بتعليقك",
+        "new-comment"                                                  => "تحديث على أحد المنشورات",
+        "new-user-comment-in-post"                                     => "قام المستخدم :username بإضافة تعليق جديد على المنشور",
+        'new-reply-title'                                              => 'لديك رد جديد على تعليقك',
+        'new-reply-body'                                               => 'قام المستخدم :username بالرد على تعليقك',
+        "new-comment-like"                                             => 'تفاعل جديد على تعليقك',
+        "new-user-like-in-comment"                                     => 'قام المستخدم :username بالإعجاب بتعليقك',
+        "new-comment-dislike"                                          => 'تفاعل جديد على تعليقك',
+        "new-user-dislike-in-comment"                                  => 'قام المستخدم :username بإبداء عدم إعجاب بتعليقك',
 
         // التحذيرات وحالة الحساب
-        "new-warning-title"                                            => "تحذير جديد",
-        "new-warning-body"                                             => "لقد تلقيت تحذيراً بسبب سلوك غير أخلاقي. يرجى الالتزام بإرشادات المجتمع.",
-        "new-blocked-two-weeks-title"                                  => "تم حظر الحساب مؤقتاً",
-        "new-blocked-two-weeks-body"                                   => "تم حظر حسابك لمدة أسبوعين بسبب تكرار المخالفات لسياساتنا.",
-        "new-blacklisted-title"                                        => "تم إدراج الحساب في القائمة السوداء",
-        "new-blacklisted-body"                                         => "تم إدراج حسابك في القائمة السوداء بشكل دائم بسبب انتهاكات جسيمة لسياساتنا.",
+        'new-warning-title'                                            => 'تنبيه بشأن سلوك الحساب',
+        'new-warning-body'                                             => 'تم توجيه تحذير إلى حسابك نتيجة سلوك لا يتوافق مع إرشادات المجتمع. نرجو الالتزام بالسياسات لتفادي الإجراءات المستقبلية.',
+        'new-blocked-two-weeks-title'                                  => 'إشعار حظر مؤقت للحساب',
+        'new-blocked-two-weeks-body'                                   => 'تم تعليق حسابك مؤقتًا لمدة أسبوعين نتيجة تكرار المخالفات لسياسات المنصة. نرجو منك مراجعة السياسات لتجنب الحظر مستقبلاً.',
+        'new-blacklisted-title'                                        => 'إشعار بشأن حالة الحساب',
+        'new-blacklisted-body'                                         => 'نأسف لإبلاغك بأن حسابك قد أُدرج في القائمة السوداء بشكل دائم بسبب مخالفات جسيمة لسياسات الاستخدام. لمزيد من التفاصيل، يرجى التواصل مع فريق الدعم.',
 
         // المراجعات
         "new-review"                                                   => "مراجعة جديدة",
-        "new-user-review-in-trip"                                      => "قام المستخدم :username بإضافة مراجعة على رحلتك",
-        "new-user-review-in-guideTrip"                                 => "قام المستخدم :username بإضافة مراجعة على الرحلة الإرشادية الخاصة بك",
-        "new-review-like"                                              => "اعجاب جديد",
-        "new-user-like-in-review"                                      => "المستخدم :username اعجب بمراجعتك",
-        "new-review-dislike"                                           => "عدم اعجاب جديد",
-        "new-user-dislike-in-review"                                   => "المستخدم :username لم يعجب بمراجعتك",
+        "new-user-review-in-trip"                                      => "قام المستخدم :username بكتابة مراجعة حول رحلتك",
+        "new-user-review-in-guideTrip"                                 => "قام المستخدم :username بكتابة مراجعة على رحلتك الإرشادية",
+        "new-review-like"                                              => "إعجاب على مراجعتك",
+        "new-user-like-in-review"                                      => "قام المستخدم :username بالإعجاب بمراجعتك",
+        "new-review-dislike"                                           => "تفاعل سلبي على مراجعتك",
+        "new-user-dislike-in-review"                                   => "قام المستخدم :username بإبداء عدم إعجاب بمراجعتك",
 
         // طلبات المتابعة
         "new-following-request"                                        => "طلب متابعة جديد",
@@ -99,10 +101,10 @@ return [
         "new-user-message"                                             => "المستخدم :username قام بإرسال رسالة جديدة",
 
         // الرحلات الإرشادية
-        'accepted-guide-trip-title'                                    => 'تم قبول :username من الرحلة.',
-        'accepted-guide-trip-body'                                     => 'تم قبول :username من الرحلة :trip_name.',
+        'accepted-guide-trip-title'                                    => 'تم قبول :username في الرحلة.',
+        'accepted-guide-trip-body'                                     => 'تمت الموافقة على مشاركة :username في الرحلة ":trip_name".',
         'declined-guide-trip-title'                                    => 'تم رفض :username من الرحلة.',
-        'declined-guide-trip-body'                                     => 'تم رفض :username من الرحلة :trip_name.',
+        'declined-guide-trip-body'                                     => 'نأسف، تم رفض طلب :username للانضمام إلى الرحلة ":trip_name".',
     ],
 
     "api" => [

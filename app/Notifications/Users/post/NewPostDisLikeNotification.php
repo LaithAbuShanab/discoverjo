@@ -38,15 +38,17 @@ class NewPostDisLikeNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        $username = $this->user->name;
+
         return [
-            "title_en" => "New dislike",
-            "title_ar" => "عدم اعجاب جديد",
-            "body_en" => "The User " . $this->user->name . " has dislike your post",
-            "body_ar" => "المستخدم لم يعجب بمنشورك " . $this->user->name,
-            'options' => [
-                'type'      => 'single_post',
-                'slug'      => null,
-                'post_id'   => $this->postId
+            "title_en" => __('app.notifications.new-post-dislike-title', [], 'en'),
+            "title_ar" => __('app.notifications.new-post-dislike-title', [], 'ar'),
+            "body_en"  => __('app.notifications.new-post-dislike-body', ['username' => $username], 'en'),
+            "body_ar"  => __('app.notifications.new-post-dislike-body', ['username' => $username], 'ar'),
+            'options'  => [
+                'type'    => 'single_post',
+                'slug'    => null,
+                'post_id' => $this->postId
             ]
         ];
     }

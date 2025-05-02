@@ -152,7 +152,7 @@ class Notification extends Page implements HasForms
 
                     // Send via Firebase if tokens exist
                     foreach ($userModels as $user) {
-                        if ($user->DeviceToken?->token) {
+                        if ($user->DeviceTokenMany && $user->DeviceTokenMany->isNotEmpty()) {
                             $receiverLanguage = $user->lang;
                             $notificationData = [
                                 'title' => $title[$receiverLanguage],
@@ -161,9 +161,12 @@ class Notification extends Page implements HasForms
                                 'sound' => 'default',
                             ];
 
-                            sendNotification([$user->DeviceToken->token], $notificationData);
+                            // Collect all tokens for this user
+                            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+                            sendNotification($tokens, $notificationData);
                         }
                     }
+
 
                     FilamentNotification::make()
                         ->success()

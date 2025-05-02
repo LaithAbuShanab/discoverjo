@@ -43,11 +43,11 @@ class NewReplyNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "There is a new reply in your comment",
-            "title_ar" => "يوجد تعليق جديد",
-            "body_en" => "The User " . $this->user->username . " has add new reply in your comment",
-            "body_ar" => "تم إنشاء رد جديد على تعليقك بواسطة المستخدم " . $this->user->username,
-            'options' => [
+            "title_en" => "You've got a new reply on your comment",
+            "title_ar" => "لديك رد جديد على تعليقك",
+            "body_en"  => "User " . $this->user->username . " replied to your comment",
+            "body_ar"  => "قام المستخدم " . $this->user->username . " بالرد على تعليقك",
+            'options'  => [
                 'type'       => 'comment',
                 'slug'       => null,
                 'post_id'    => $this->postId,

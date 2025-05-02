@@ -62,7 +62,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
             $guideUser = $guideTrip->user;
             $receiverLanguage = $guideUser->lang;
-            $guideUserToken = $guideUser->DeviceToken->token;
+            $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
 
             // Save notification in DB
             Notification::send($guideUser, new NewRequestNotification(Auth::guard('api')->user(), $guideTrip));
@@ -75,7 +75,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
                 'sound' => 'default',
             ];
 
-            sendNotification([$guideUserToken], $notificationData);
+            sendNotification($tokens, $notificationData);
 
             $user = Auth::guard('api')->user();
             $user->addPoints(10);

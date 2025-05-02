@@ -50,10 +50,10 @@ class NewReviewLikeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            "title_en" => "New Like",
-            "title_ar" => "اعجاب جديد",
-            "body_en" => "The User " . $this->user->username . " has liked your review",
-            "body_ar" => "المستخدم اعجب بمراجعتك " . $this->user->username,
+            'title_en' => __('app.notifications.new-review-like'),
+            'title_ar' => __('app.notifications.new-review-like'),
+            'body_en'  => __('app.notifications.new-user-like-in-review', ['username' => $this->user->username]),
+            'body_ar'  => __('app.notifications.new-user-like-in-review', ['username' => $this->user->username]),
             "options" => $this->review
         ];
     }

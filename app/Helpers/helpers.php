@@ -13,14 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Http;
-
 use Carbon\Carbon;
 
-
-function AdminPermission($permission)
-{
-    return Auth::guard('admin')->user()->hasAnyPermission($permission);
-}
 
 function getLang()
 {
@@ -117,6 +111,7 @@ function sendNotification($deviceTokens, $data)
 
     // Send the message
     if (is_array($deviceTokens)) {
+        dd($deviceTokens);
         $response = $messaging->sendMulticast($message, $deviceTokens);
     } else {
         $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));
@@ -176,7 +171,7 @@ function handleWarning(object $record): void
 
     $totalWarnings = $latestCount + 1;
     $user = $record->user;
-    $deviceToken = optional($user->deviceToken)->token;
+    $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
     $receiverLanguage = in_array($user->lang, ['en', 'ar']) ? $user->lang : 'en';
 
     if ($totalWarnings === 4) {
@@ -192,13 +187,13 @@ function handleWarning(object $record): void
 
         FacadesNotification::send($user, new NewWarningUserNotification('blacklisted'));
 
-        if ($deviceToken) {
+        if (!empty($tokens)) {
             $notificationData = [
                 'title' => Lang::get('app.notifications.new-blacklisted-title', [], $receiverLanguage),
                 'body'  => Lang::get('app.notifications.new-blacklisted-body', ['username' => $user->username], $receiverLanguage),
                 'sound' => 'default',
             ];
-            sendNotification([$deviceToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         }
     } elseif ($totalWarnings >= 3) {
         $user->status = 0;
@@ -206,24 +201,24 @@ function handleWarning(object $record): void
 
         FacadesNotification::send($user, new NewWarningUserNotification('blocked'));
 
-        if ($deviceToken) {
+        if (!empty($tokens)) {
             $notificationData = [
                 'title' => Lang::get('app.notifications.new-blocked-two-weeks-title', [], $receiverLanguage),
                 'body'  => Lang::get('app.notifications.new-blocked-two-weeks-body', ['username' => $user->username], $receiverLanguage),
                 'sound' => 'default',
             ];
-            sendNotification([$deviceToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         }
     } else {
         FacadesNotification::send($user, new NewWarningUserNotification('warning'));
 
-        if ($deviceToken) {
+        if (!empty($tokens)) {
             $notificationData = [
                 'title' => Lang::get('app.notifications.new-warning-title', [], $receiverLanguage),
                 'body'  => Lang::get('app.notifications.new-warning-body', ['username' => $user->username], $receiverLanguage),
                 'sound' => 'default',
             ];
-            sendNotification([$deviceToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         }
     }
 }
@@ -280,7 +275,6 @@ function getAddressFromCoordinates(float $lat, float $lng, string $language): st
 
         $result = trim("{$subLocality}, {$locality}", ', ');
         return $result !== '' ? $result : 'Address Not Found';
-
     } catch (\Exception $e) {
         // You could log the exception here if needed
         return 'Error Fetching Address';

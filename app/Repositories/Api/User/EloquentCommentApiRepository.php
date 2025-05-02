@@ -39,7 +39,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
             Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
 
             // To Send Notification To Owner Using Firebase Cloud Messaging
-            $ownerToken = $userPost->DeviceToken->token;
+            $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
             $receiverLanguage = $userPost->lang;
             $notificationData = [
                 'title' => Lang::get('app.notifications.new-comment', [], $receiverLanguage),
@@ -48,11 +48,11 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                 'sound' => 'default',
             ];
 
-            sendNotification([$ownerToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         } else {
             $parentComment = Comment::find($data['parent_id']);
             $userParentComment = User::find($parentComment->user_id);
-            $ownerToken = $userParentComment->DeviceToken->token;
+            $tokens = $userParentComment->DeviceTokenMany->pluck('token')->toArray();
             $receiverLanguage = $userParentComment->lang;
 
             // To Save Notification In Database
@@ -63,7 +63,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                 'body' => Lang::get('app.notifications.new-user-reply-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
                 'sound' => 'default',
             ];
-            sendNotification([$ownerToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         }
 
 
@@ -101,7 +101,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
     {
         $comment = Comment::find($data['comment_id']);
         $userComment = User::find($comment->user_id);
-        $ownerToken = $userComment->DeviceToken->token;
+        $tokens = $userComment->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $userComment->lang;
         $notificationData = [];
         $status = $data['status'] == "like" ? '1' : '0';
@@ -163,7 +163,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         }
 
         if (!empty($notificationData) && $comment->user_id != Auth::guard('api')->user()->id) {
-            sendNotification([$ownerToken], $notificationData);
+            sendNotification($tokens, $notificationData);
         }
 
         $user = Auth::guard('api')->user();

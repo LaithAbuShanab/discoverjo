@@ -67,13 +67,13 @@ class FeatureResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('feature_active_image')
                                     ->label('Feature Active Image')
                                     ->collection('feature_active')
-                                    ->conversion('feature_active_website')
+                                    ->conversion('feature_active_app')
                                     ->required(),
 
                                 SpatieMediaLibraryFileUpload::make('feature_inactive_image')
                                     ->label('Feature Inactive Image')
                                     ->collection('feature_inactive')
-                                    ->conversion('feature_inactive_website')
+                                    ->conversion('feature_inactive_app')
                                     ->required(),
                             ]),
                     ])

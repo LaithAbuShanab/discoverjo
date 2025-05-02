@@ -72,7 +72,7 @@ class EloquentGroupChatRepository implements GroupChatRepositoryInterface
             $eloquentConversation = Conversation::find($request->conversation_id);
             foreach ($eloquentConversation->members->where('user_id', '!=', Auth::guard('api')->user()->id) as $member) {
                 $user = User::find($member->user_id);
-                $token = $user->DeviceToken->token;
+                $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
                 $receiverLanguage = $user->lang;
                 $notificationData = [
                     'notification' => [
@@ -89,7 +89,7 @@ class EloquentGroupChatRepository implements GroupChatRepositoryInterface
                         'message_id'      => $eloquentMessage->id
                     ]
                 ];
-                sendNotification([$token], $notificationData);
+                sendNotification($tokens, $notificationData);
             }
 
             Broadcast(new GroupMessageEvent($data))->toOthers();

@@ -66,13 +66,13 @@ class TagResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('tag_active_image')
                                     ->label('Tag Active Image')
                                     ->collection('tag_active')
-                                    ->conversion('tag_active_website')
+                                    ->conversion('tag_active_app')
                                     ->required(),
 
                                 SpatieMediaLibraryFileUpload::make('tag_inactive_image')
                                     ->label('Tag Inactive Image')
                                     ->collection('tag_inactive')
-                                    ->conversion('tag_inactive_website')
+                                    ->conversion('tag_inactive_app')
                                     ->required(),
                             ]),
                     ])

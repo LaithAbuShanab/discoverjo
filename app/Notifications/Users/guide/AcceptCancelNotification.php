@@ -40,14 +40,20 @@ class AcceptCancelNotification extends Notification
     {
         $tripNameEn = $this->trip->getTranslation('name', 'en');
         $tripNameAr = $this->trip->getTranslation('name', 'ar');
-        $fullName = $this->guideTripUser->first_name . ' ' . $this->guideTripUser->last_name;
+        $fullName   = $this->guideTripUser?->first_name . ' ' . $this->guideTripUser?->last_name;
 
         if ($this->status == 1) {
             return [
-                'title_en' => "$fullName was accepted on the trip.",
-                'title_ar' => "تم قبول $fullName من الرحلة",
-                'body_en'  => "$fullName was accepted on the trip $tripNameEn",
-                'body_ar'  => "تم قبول $fullName من الرحلة $tripNameAr",
+                'title_en' => __('app.notifications.accepted-guide-trip-title', ['username' => $fullName], 'en'),
+                'title_ar' => __('app.notifications.accepted-guide-trip-title', ['username' => $fullName], 'ar'),
+                'body_en'  => __('app.notifications.accepted-guide-trip-body', [
+                    'username'  => $fullName,
+                    'trip_name' => $tripNameEn
+                ], 'en'),
+                'body_ar'  => __('app.notifications.accepted-guide-trip-body', [
+                    'username'  => $fullName,
+                    'trip_name' => $tripNameAr
+                ], 'ar'),
                 'options'  => [
                     'type'    => 'guide_trip',
                     'slug'    => $this->trip->slug,
@@ -56,10 +62,16 @@ class AcceptCancelNotification extends Notification
             ];
         } else {
             return [
-                'title_en' => "$fullName was rejected on the trip.",
-                'title_ar' => "تم رفض $fullName من الرحلة",
-                'body_en'  => "$fullName was rejected on the trip $tripNameEn",
-                'body_ar'  => "تم رفض $fullName من الرحلة $tripNameAr",
+                'title_en' => __('app.notifications.declined-guide-trip-title', ['username' => $fullName], 'en'),
+                'title_ar' => __('app.notifications.declined-guide-trip-title', ['username' => $fullName], 'ar'),
+                'body_en'  => __('app.notifications.declined-guide-trip-body', [
+                    'username'  => $fullName,
+                    'trip_name' => $tripNameEn
+                ], 'en'),
+                'body_ar'  => __('app.notifications.declined-guide-trip-body', [
+                    'username'  => $fullName,
+                    'trip_name' => $tripNameAr
+                ], 'ar'),
                 'options'  => [
                     'type'    => 'guide_trip',
                     'slug'    => $this->trip->slug,

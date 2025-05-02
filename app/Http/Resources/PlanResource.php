@@ -36,7 +36,7 @@ class PlanResource extends JsonResource
             'number_of_days' => $this->days->count(),
             'number_of_activities' => $activities->count(),
             'number_of_places' => $placeIds->count(),
-            'image' => $place?->getFirstMediaUrl('main_place'),
+            'image' => $place?->getFirstMediaUrl('main_place','avatar_app'),
             'favorite' => Auth::guard('api')->user()
                 ? Auth::guard('api')->user()->favoritePlans->contains($this->id)
                 : false,

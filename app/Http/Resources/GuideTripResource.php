@@ -33,7 +33,7 @@ class GuideTripResource extends JsonResource
 
         $gallery = [];
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
-            $gallery[] = $image->original_url;
+            $gallery[] = $image->getUrl('guide_trip_gallery_app');
         }
         $filteredReviews = $this->reviews->filter(function ($review) {
             return $review->user->status == 1;
@@ -61,7 +61,7 @@ class GuideTripResource extends JsonResource
             "guide_username"=>$this->guide->username,
             "guide_phone_number"=>$this->guide->phone_number,
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
-            'guide_avatar' => $this->guide->getFirstMediaUrl('avatar'),
+            'guide_avatar' => $this->guide->getFirstMediaUrl('avatar','avatar_app'),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->guide_id,
             'request_count'=>$countRequest,
             "activities"=>$activities,

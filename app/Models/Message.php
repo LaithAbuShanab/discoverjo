@@ -32,7 +32,7 @@ class Message extends Model implements HasMedia
     {
         $this->addMediaCollection('file')
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('file_thumb')->width(450)->height(450)->format('webp')->nonQueued();;
+                $this->addMediaConversion('file_thumb')->format('webp')->nonQueued();;
             });
     }
 }

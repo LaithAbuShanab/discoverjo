@@ -57,17 +57,8 @@ class GuideTrip extends Model implements HasMedia
         $this->addMediaCollection('guide_trip_gallery')
 
             ->registerMediaConversions(function (Media $media) {
-                // Only perform conversion for image files, skip for video
-                if (in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/bmp', 'image/gif', 'image/svg+xml', 'image/webp'])) {
                     $this->addMediaConversion('guide_trip_gallery_app')
-                        ->width(450)
-                        ->height(450)
                         ->format('webp')->nonQueued();
-                    $this->addMediaConversion('guide_trip_gallery_website')
-                        ->width(450)
-                        ->height(450)
-                        ->format('webp')->nonQueued();
-                }
             });
     }
 

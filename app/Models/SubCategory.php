@@ -21,15 +21,13 @@ class SubCategory extends Model implements HasMedia
         $this->addMediaCollection('subcategory_active')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('subcategory_active_app')->width(80)->height(80)->format('webp')->nonQueued();
-                $this->addMediaConversion('subcategory_active_website')->width(250)->height(250)->format('webp')->nonQueued();
+                $this->addMediaConversion('subcategory_active_app')->format('webp')->nonQueued();
             });
 
         $this->addMediaCollection('subcategory_inactive')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('subcategory_inactive_app')->width(80)->height(80)->format('webp')->nonQueued();
-                $this->addMediaConversion('subcategory_inactive_website')->width(250)->height(250)->format('webp')->nonQueued();
+                $this->addMediaConversion('subcategory_inactive_app')->format('webp')->nonQueued();
             });
     }
 

@@ -40,7 +40,7 @@ class SinglePlaceResource extends JsonResource
         $categories = $this->categories->map(function ($category) {
             return $category->parent ? [
                 'name' => $category->parent->name,
-                'main_image' => $category->parent->getFirstMediaUrl('main_category'),
+                'main_image' => $category->parent->getFirstMediaUrl('main_category','main_category_app'),
             ] : null;
         })->filter()->unique();
 
@@ -63,7 +63,7 @@ class SinglePlaceResource extends JsonResource
         $gallery = [];
 
         foreach ($this->getMedia('place_gallery') as $image) {
-            $gallery[] = $image->getUrl();
+            $gallery[] = $image->getUrl('place_gallery_app');
         }
 
         $posts = $this->posts->filter(function ($post) {
@@ -94,7 +94,7 @@ class SinglePlaceResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('main_place'),
+            'image' => $this->getFirstMediaUrl('main_place','main_place_app'),
             'region' => $this->region->name,
             'address' => $this->address,
             'rating' => $this->rating,

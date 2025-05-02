@@ -25,8 +25,7 @@ class Slider extends Model implements HasMedia
         $this->addMediaCollection('slider')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('slider_app')->width(1042)->height(1042)->format('webp')->nonQueued();
-                $this->addMediaConversion('slider_website')->width(1042)->height(1042)->format('webp')->nonQueued();
+                $this->addMediaConversion('slider_app')->format('webp')->nonQueued();
             });
     }
 

@@ -64,8 +64,7 @@ class Event extends Model implements HasMedia
         $this->addMediaCollection('event')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('event_app')->width(450)->height(350)->format('webp')->nonQueued();
-                $this->addMediaConversion('event_website')->width(250)->height(250)->format('webp')->nonQueued();
+                $this->addMediaConversion('event_app')->format('webp')->nonQueued();
             });
     }
 

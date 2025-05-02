@@ -17,7 +17,7 @@ class SuggestionPlace extends Model implements HasMedia
     {
         $this->addMediaCollection('suggestion_place')
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('suggestion_place_app')->width(500)->height(500)->format('webp')->nonQueued();
+                $this->addMediaConversion('suggestion_place_app')->format('webp')->nonQueued();
             });
     }
 }

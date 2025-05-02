@@ -22,8 +22,8 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'slug'=>$this->slug,
             'name' => $this->name,
-            'active_image'=>$this->getFirstMediaUrl('category_active'),
-            'inactive_image'=>$this->getFirstMediaUrl('category_inactive'),
+            'active_image'=>$this->getFirstMediaUrl('category_active','category_active_app'),
+            'inactive_image'=>$this->getFirstMediaUrl('category_inactive','category_inactive_app'),
 //            'places' => PlaceResource::collection(
 //                $this->places->placesThrough()
 //                    ->selectRaw('*,places.id,places.name,places.address,places.rating, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])

@@ -27,7 +27,7 @@ class ReplyResource extends JsonResource
             'id' => $this->id,
             'username' => $this->user->username,
             'user_slug' => $this->user->slug,
-            'avatar' => $this->user->getFirstMediaUrl('avatar'),
+            'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),
             'content' => $this->content,
             'reply_likes' => [

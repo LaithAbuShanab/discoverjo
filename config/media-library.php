@@ -7,12 +7,12 @@ return [
      * one or more of the disks you've configured in config/filesystems.php.
      */
     'disk_name' => env('MEDIA_DISK', 's3'),
-//    'disk_name' => 's3',
+//    'disk_name' => 'media',
     /*
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024 * 1024 * 50, // 10MB
+    'max_file_size' => 1024 * 1024 * 50, // 50MB
 
     /*
      * This queue connection will be used to generate derived and responsive images.

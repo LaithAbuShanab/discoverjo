@@ -20,7 +20,7 @@ class ActivityDayResource extends JsonResource
             'note'=>$this->notes,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
-            'image'=>$this->place->getFirstMediaUrl('main_place'),
+            'image'=>$this->place->getFirstMediaUrl('main_place','main_place_app'),
         ];
     }
 }

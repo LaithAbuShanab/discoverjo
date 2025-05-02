@@ -36,7 +36,7 @@ class UserPostResource extends JsonResource
             'name' => $this->visitable_type::find($this->visitable_id)?->name,
             'content' => $this->content,
             'images' => $this->getMedia('post')->map(function ($image) {
-                return ['id' => $image->id, 'url' => $image->getUrl(),];
+                return ['id' => $image->id, 'url' => $image->getUrl('post_app'),];
             }),
             'post_likes' => [
                 'total_likes' => $filteredLike->count(),

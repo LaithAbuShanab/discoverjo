@@ -65,7 +65,7 @@ class CreateGuideTripRequest extends FormRequest
             ],
             'max_attendance' => ['required', 'integer', 'min:1'],
             'gallery' => ['required'],
-            'gallery.*' => ['file', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,mp4,mov,avi,mkv,flv,wmv', 'max:10000'],
+            'gallery.*' => ['file', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,mp4,mov,avi,mkv,flv,wmv', 'max:50000'],
             'activities' => ['required', 'string'],
             'price_include' => ['required', 'string'],
             'price_age' => ['nullable', 'string'],

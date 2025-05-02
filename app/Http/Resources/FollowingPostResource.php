@@ -24,7 +24,7 @@ class FollowingPostResource extends JsonResource
             'visitable_type'=>explode("\\Models\\",$this->visitable_type)[1],
             'visitable_id'=>$this->visitable_id,
             'user'=>$this->user->username,
-            'user_image'=>$this->user->getMedia('avatar')->first()?->getUrl(),
+            'user_image'=>$this->user->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'images'=> $images,
 
         ];

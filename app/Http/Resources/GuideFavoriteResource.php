@@ -16,7 +16,7 @@ class GuideFavoriteResource extends JsonResource
     {
         $gallery = [];
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
-            $gallery[] = $image->original_url;
+            $gallery[] =  $image->getUrl('guide_trip_gallery_app');
         }
         return [
             'id'=>$this->id,

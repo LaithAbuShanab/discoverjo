@@ -18,7 +18,7 @@ class AllCategoriesResource extends JsonResource
             'id' => $this->id,
             'slug'=>$this->slug,
             'name' => $this->name,
-            'image' => $this->getFirstMediaUrl('main_category'),
+            'image' => $this->getFirstMediaUrl('main_category','main_category_app'),
             'priority' => $this->priority,
         ];
     }

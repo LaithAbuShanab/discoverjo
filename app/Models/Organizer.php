@@ -42,8 +42,7 @@ class Organizer extends Model implements HasMedia
         $this->addMediaCollection('organizer')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('organizer_app')->width(80)->height(80)->format('webp')->nonQueued();;
-                $this->addMediaConversion('organizer_website')->width(250)->height(250)->format('webp')->nonQueued();;
+                $this->addMediaConversion('organizer_app')->format('webp')->nonQueued();;
             });
     }
 }

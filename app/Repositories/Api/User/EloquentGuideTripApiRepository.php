@@ -26,6 +26,7 @@ use LevelUp\Experience\Models\Activity;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+
 class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 {
     public function AllGuideTrip()

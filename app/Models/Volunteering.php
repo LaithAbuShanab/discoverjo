@@ -40,8 +40,7 @@ class Volunteering extends Model implements HasMedia
         $this->addMediaCollection('volunteering')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('volunteering_app')->width(450)->height(350)->format('webp')->nonQueued();
-                $this->addMediaConversion('volunteering_website')->width(250)->height(250)->format('webp')->nonQueued();
+                $this->addMediaConversion('volunteering_app')->format('webp')->nonQueued();
             });
     }
 

@@ -88,14 +88,12 @@ class Place extends Model implements HasMedia
         $this->addMediaCollection('main_place')
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('main_place_app')->width(450)->height(450)->format('webp')->nonQueued();
-                $this->addMediaConversion('main_place_website')->width(1124)->height(1124)->format('webp')->nonQueued();
+                $this->addMediaConversion('main_place_app')->format('webp')->nonQueued();
             });
 
         $this->addMediaCollection('place_gallery')
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('place_gallery_app')->width(450)->height(450)->format('webp')->nonQueued();
-                $this->addMediaConversion('place_gallery_website')->width(1124)->height(1124)->format('webp')->nonQueued();
+                $this->addMediaConversion('place_gallery_app')->format('webp')->nonQueued();
             });
     }
 

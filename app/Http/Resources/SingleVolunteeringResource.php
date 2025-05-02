@@ -41,7 +41,7 @@ class SingleVolunteeringResource extends JsonResource
             'slug'=>$this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('volunteering'),
+            'image' => $this->getFirstMediaUrl('volunteering','volunteering_app'),
             'start_day' => $startDatetime->format('Y-m-d'),
             'start_time' => $startDatetime->format('H:i:s'),
             'end_day' => $endDateTime->format('Y-m-d'),

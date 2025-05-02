@@ -72,7 +72,7 @@ class Admin extends Authenticatable implements FilamentUser, HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('admin_profile')->singleFile()->registerMediaConversions(function (Media $media) {
-            $this->addMediaConversion('image')->width(250)->height(250)->format('webp')->nonQueued();
+            $this->addMediaConversion('image')->format('webp')->nonQueued();
         });
     }
 

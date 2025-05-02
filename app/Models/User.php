@@ -99,14 +99,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
             ->singleFile()
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('avatar_app')
-                    ->width(250)
-                    ->height(250)
-                    ->format('webp')
-                    ->nonQueued();
-
-                $this->addMediaConversion('avatar_website')
-                    ->width(250)
-                    ->height(250)
                     ->format('webp')
                     ->nonQueued();
             });
@@ -127,8 +119,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
                 // Convert only image files (not PDFs)
                 if (str_starts_with($media->mime_type, 'image/')) {
                     $this->addMediaConversion('file_preview')
-                        ->width(250)
-                        ->height(250)
                         ->format('webp')
                         ->nonQueued();
                 }

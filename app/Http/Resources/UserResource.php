@@ -21,7 +21,7 @@ class UserResource extends JsonResource
                 'id' => $this->user->id,
                 'slug'=>$this->user->slug,
                 'username' => $this->user->username,
-                'image' => $this->user->getFirstMediaUrl('avatar'),
+                'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->user->getPoints(),
                 'streak' => $this->user->getCurrentStreakCount($activity),
             ];
@@ -31,7 +31,7 @@ class UserResource extends JsonResource
                 'slug'=>$this->slug,
                 'username' => $this->username,
                 'email' => $this->email,
-                'image' => $this->getFirstMediaUrl('avatar'),
+                'image' => $this->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
             ];

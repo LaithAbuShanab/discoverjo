@@ -22,7 +22,7 @@ class UserLoginResource extends JsonResource
             'verified_email'=>$this->verified_email,
             'is_guide'=>$this->is_guide,
             'first_login'=>$this->status==2?true:false,
-            'avatar'=>$this->getFirstMediaUrl('avatar'),
+            'avatar'=>$this->getFirstMediaUrl('avatar','avatar_app'),
             'token'=>$this->token,
             'token_website'=>$this->token_website,
 

@@ -43,8 +43,7 @@ class Post extends Model implements HasMedia
     {
         $this->addMediaCollection('post')
             ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('post_app')->width(295)->height(220)->format('webp')->nonQueued();
-                $this->addMediaConversion('post_website')->width(400)->height(365)->format('webp')->nonQueued();
+                $this->addMediaConversion('post_app')->format('webp')->nonQueued();
             });
     }
 

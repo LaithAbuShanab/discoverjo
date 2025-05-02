@@ -18,7 +18,7 @@ class FollowingResource extends JsonResource
             'follower_id'=>$this->follower_id,
             'follower_slug'=>$this->followingUser->slug,
             'follower_name'=>$this->followingUser->username,
-            'follower_image' => $this->followingUser?->getMedia('avatar')->first()?->getUrl(),
+            'follower_image' => $this->followingUser?->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'status'=>$this->status,
 
         ];

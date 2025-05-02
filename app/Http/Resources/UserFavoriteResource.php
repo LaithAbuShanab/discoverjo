@@ -31,7 +31,7 @@ class UserFavoriteResource extends JsonResource
         $postFav = $this->favoritePosts
             ->filter(fn($post) => $post->user->status == 1)
             ->map(function ($post) {
-                $gallery = $post->getMedia('post')->map(fn($image) => $image->original_url)->toArray();
+                $gallery = $post->getMedia('post')->map(fn($image) => $image->getUrl('post_app'))->toArray();
 
                 return [
                     'id' => $post->id,

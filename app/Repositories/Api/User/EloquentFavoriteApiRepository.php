@@ -225,7 +225,6 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
     public function favSearchV2($searchTerm)
     {
         $user = Auth::guard('api')->user();
-        dd($user->favoritePlaces);
         // Filter favorite places
         $placeFav = $user->favoritePlaces
             ->filter(fn($place) =>

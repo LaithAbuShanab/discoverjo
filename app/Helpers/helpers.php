@@ -111,7 +111,6 @@ function sendNotification($deviceTokens, $data)
 
     // Send the message
     if (is_array($deviceTokens)) {
-        dd($deviceTokens);
         $response = $messaging->sendMulticast($message, $deviceTokens);
     } else {
         $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));

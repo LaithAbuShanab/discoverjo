@@ -7,6 +7,7 @@
 /public/images
 /public/assets/images
 /storage/*.key
+/storage/media-library/tempgit
 /storage/pail
 /vendor
 .env

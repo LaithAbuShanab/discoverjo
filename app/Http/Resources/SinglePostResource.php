@@ -36,8 +36,16 @@ class SinglePostResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePosts->contains('id', $this->id) : false,
             'name' => $this->visitable_type::find($this->visitable_id)?->name,
             'content' => $this->content,
-            'images' => $this->getMedia('post')->map(function ($image) {
-                return ['id' => $image->id, 'url' => $image->getUrl('post_app'),];
+            'images' => $this->getMedia('post')->map(function ($media) {
+                // Check if the conversion exists
+                $url = $media->hasGeneratedConversion('post_app')
+                    ? $media->getUrl('post_app')
+                    : $media->getUrl(); // fallback to original
+
+                return [
+                    'id' => $media->id,
+                    'url' => $url,
+                ];
             }),
             'post_likes' => [
                 'total_likes' => $filteredLike->count(),

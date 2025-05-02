@@ -31,7 +31,12 @@ class UserFavoriteResource extends JsonResource
         $postFav = $this->favoritePosts
             ->filter(fn($post) => $post->user->status == 1)
             ->map(function ($post) {
-                $gallery = $post->getMedia('post')->map(fn($image) => $image->getUrl('post_app'))->toArray();
+                // Get media with fallback if conversion doesn't exist
+                $gallery = $post->getMedia('post')->map(function ($media) {
+                    return $media->hasGeneratedConversion('post_app')
+                        ? $media->getUrl('post_app')
+                        : $media->getUrl(); // fallback to original
+                })->toArray();
 
                 return [
                     'id' => $post->id,
@@ -40,10 +45,11 @@ class UserFavoriteResource extends JsonResource
                     'creator_id' => $post->user->id,
                     'creator_username' => $post->user->username,
                     'creator_slug' => $post->user->slug,
-                    'visitable_type' => explode('\\Models\\', $post->visitable_type)[1],
-                    'visitable_id' => $post->visitable_type::find($post->visitable_id)->name,
+                    'visitable_type' => explode('\\Models\\', $post->visitable_type)[1] ?? null,
+                    'visitable_id' => $post->visitable_type::find($post->visitable_id)?->name ?? null,
                 ];
             });
+
 
         $tripFav = $this->favoriteTrips->filter(fn($trip) => $trip->user->status == 1);
 

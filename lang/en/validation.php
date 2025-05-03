@@ -410,6 +410,7 @@ return [
         'check-update-message-trip'                                 => 'The trip can only be modified by its owner.',
         'you-do-not-have-review'                                    => 'You do not have a review for this.',
         'check-update-message-trip-1'                               => 'The trip cannot be modified because it already has participants.',
+        'you-are-not-allowed-to-join-this-trip'                     => 'You are not allowed to join this trip.',
 
         // Plan Validation
         'plan_slug_plan_error_main'                                 => 'The plan identifier (slug) is required Or the plan does not exist.',

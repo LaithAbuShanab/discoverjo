@@ -61,7 +61,7 @@ class CheckAgeGenderExistenceRule implements ValidationRule
                 $fail(__('validation.api.creator-cannot-join-trip'));
             }
 
-            if(!Trip::where('sex', $user->sex)->where('id', $trip_id)->exists()) {
+            if (!Trip::whereIn('sex', [$user->sex, 0])->where('id', $trip_id)->exists()) {
                 $fail(__('validation.api.you-are-not-allowed-to-join-this-trip'));
             }
 

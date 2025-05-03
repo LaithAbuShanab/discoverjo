@@ -16,8 +16,8 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function getAllEvents()
     {
         $perPage = config('app.pagination_per_page');
-        $query= Event::OrderBy('start_datetime');
-        $eloquentEvents = Event::OrderBy('start_datetime')->paginate($perPage);
+        $query= Event::OrderBy('start_datetime','desc');
+        $eloquentEvents = Event::OrderBy('start_datetime','desc')->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
 
         $pagination = [

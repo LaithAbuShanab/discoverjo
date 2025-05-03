@@ -30,7 +30,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function getAllVolunteerings()
     {
         $perPage =config('app.pagination_per_page');
-        $eloquentVolunteerings = Volunteering::orderByRaw('status DESC') // status 1 first
+        $eloquentVolunteerings = Volunteering::orderBy('status','desc') // status 1 first
         ->orderBy('start_datetime', 'desc')             // then order by start_datetime
         ->paginate($perPage);
 

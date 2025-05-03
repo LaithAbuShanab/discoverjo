@@ -19,7 +19,9 @@ class CheckUserTripExistsRule implements ValidationRule
     {
         $userId = Auth::guard('api')->id();
         $trip = Trip::where('slug', $value)->first();
-        if(!$trip) return;
+
+        if (!$trip) return;
+
         // Case 1: If User is Owner
         if ($trip->user_id === $userId) {
             $fail(__('validation.api.you-are-owner-of-trip'));
@@ -33,7 +35,7 @@ class CheckUserTripExistsRule implements ValidationRule
             ->first();
 
         // Case 2: If User Is Not a Member
-        if (!$userTrip) {
+        if ($userTrip) {
             $fail(__('validation.api.you-didnt-join-trip'));
             return;
         }
@@ -44,8 +46,9 @@ class CheckUserTripExistsRule implements ValidationRule
             3 => __('validation.api.you-left-trip'),
         ];
 
-        if (isset($statusMessages[$userTrip->status])) {
-            $fail($statusMessages[$userTrip->status]);
-        }
+        if ($userTrip)
+            if (isset($statusMessages[$userTrip->status])) {
+                $fail($statusMessages[$userTrip->status]);
+            }
     }
 }

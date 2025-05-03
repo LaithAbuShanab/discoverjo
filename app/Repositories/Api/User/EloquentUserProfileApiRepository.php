@@ -181,7 +181,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $userLat = $request['lat'];
         $userLng = $request['lng'];
-        $distanceKm = $request['area'] ?? 15;
+        $distanceKm = $request['area'] ?? 5;
 
         $categoriesSlugs = isset($request['categories']) ? explode(',', $request['categories']) : [];
         $subcategoriesSlugs = isset($request['subcategories']) ? explode(',', $request['subcategories']) : [];

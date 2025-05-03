@@ -59,7 +59,7 @@ class TopTenResource extends Resource
                                     ->required()
                                     ->placeholder('Please Enter Rank')
                                     ->numeric()
-                                    ->unique()
+                                    ->unique(ignoreRecord: true)
                                     ->hint('Enter the rank for the selected place.'), // Adding a hint for better UX.
                             ]),
                     ])

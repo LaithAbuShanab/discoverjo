@@ -71,8 +71,8 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function dateEvents($date)
     {
         $perPage = config('app.pagination_per_page');
-        $query = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1');
-        $eloquentEvents = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1')->paginate($perPage);
+        $query = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date);
+        $eloquentEvents = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
         $pagination = [
             'next_page_url' => $eventsArray['next_page_url'],

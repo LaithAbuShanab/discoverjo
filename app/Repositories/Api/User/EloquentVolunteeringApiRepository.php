@@ -79,8 +79,8 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
     public function dateVolunteerings($date)
     {
         $perPage = config('app.pagination_per_page');
-        $query = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1');
-        $eloquentVolunteerings = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->where('status', '1')->paginate($perPage);
+        $query = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date);
+        $eloquentVolunteerings = Volunteering::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->paginate($perPage);
         $volunteeringArray = $eloquentVolunteerings->toArray();
 
         $pagination = [

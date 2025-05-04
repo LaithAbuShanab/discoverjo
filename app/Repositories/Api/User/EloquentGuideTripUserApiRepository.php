@@ -129,9 +129,8 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         })
             ->whereHas('guide', function ($query) {
                 $query->where('status', '1');
-            });
-        dd($trips);
-        //->paginate($perPage);
+            })
+        ->paginate($perPage);
 
 
         $tripsArray = $trips->toArray();

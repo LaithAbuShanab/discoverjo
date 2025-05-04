@@ -193,7 +193,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $query = Place::where('status', 1)->selectRaw(
             'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
             [$userLat, $userLng, $userLat]
-        )->having('distance', '<=', $distanceKm)->orderBy('distance', 'asc');
+        )->having('distance', '<=', $distanceKm);
 
         // Apply category and subcategory filters
         if (!empty($subcategoriesIds) || !empty($categoriesIds)) {

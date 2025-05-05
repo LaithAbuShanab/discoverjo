@@ -5,6 +5,7 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\AllGuideTripResource;
 use App\Http\Resources\GuideResource;
 use App\Http\Resources\GuideTripResource;
+use App\Http\Resources\GuideTripUpdateDetailResource;
 use App\Http\Resources\GuideTripUserResource;
 use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
 use App\Models\GuideTrip;
@@ -84,6 +85,13 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTrip = GuideTrip::findBySlug($slug);
         activityLog('Guide Trip', $guideTrip, 'The user viewed spcific guide trip', 'View');
         return new GuideTripResource($guideTrip);
+    }
+
+    public function detailUpdate($slug)
+    {
+        $guideTrip = GuideTrip::findBySlug($slug);
+        activityLog('Guide Trip', $guideTrip, 'The user show update spcific guide trip', 'View');
+        return new GuideTripUpdateDetailResource($guideTrip);
     }
 
     public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)

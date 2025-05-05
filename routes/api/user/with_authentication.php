@@ -89,6 +89,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/trips/store', [GuideTripApiController::class, 'store']); // DONE ✅
         Route::get('/trips/{guide_slug}', [GuideTripApiController::class, 'tripsOfGuide']); // DONE ✅
         Route::post('/trips/update/{slug}', [GuideTripApiController::class, 'update']); // DONE ✅
+        Route::get('/trips/detail/update/{slug}', [GuideTripApiController::class, 'detailUpdate']); // DONE ✅
         Route::delete('/trips/delete/{slug}', [GuideTripApiController::class, 'delete']); // DONE ✅
         Route::delete('/image/delete/{media_id}', [GuideTripApiController::class, 'DeleteImage']); // DONE ✅
         Route::get('join/requests/list/{slug}', [GuideTripApiController::class, 'joinRequests']); // DONE ✅

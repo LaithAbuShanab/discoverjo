@@ -31,6 +31,11 @@ class GuideTripApiUseCase
         return $this->guideTripApiRepository->showGuideTrip($slug);
     }
 
+    public function detailUpdate($slug)
+    {
+        return $this->guideTripApiRepository->detailUpdate($slug);
+    }
+
     public function storeGuideTrip($data)
     {
         $translator = ['en' => $data['name_en'], 'ar' => $data['name_ar']];

@@ -92,7 +92,7 @@ Route::get('/onboarding/images', [SliderApiController::class, 'onboardings']); /
 // GET ALL USER GUIDES TRIPS
 Route::get('user/guide/trips', [GuideTripUserApiController::class, 'index']); // DONE ✅
 // GET SINGLE GUIDE TRIP
-Route::get('user/guide/trips/show/{guide_trip_slug}', [GuideTripApiController::class, 'show']); // DONE ✅
+Route::get('user/guide/trips/show/{slug}', [GuideTripApiController::class, 'show']); // DONE ✅
 // GET ALL GUIDE USERS
 Route::get('all/guides', [GuideTripApiController::class, 'allGuides']); // DONE ✅
 // POST GUIDE REGISTER

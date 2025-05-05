@@ -48,11 +48,10 @@ class GuideTripApiController extends Controller
         }
     }
 
-    public function show(Request $request)
+    public function show(Request $request,$slug)
     {
-        $id = $request->guide_trip_slug;
 
-        $validator = Validator::make(['guide_trip_slug' => $id], [
+        $validator = Validator::make(['guide_trip_slug' => $slug], [
             'guide_trip_slug' => ['required', 'exists:guide_trips,slug', new CheckIfGuideActiveRule()],
         ], [
             'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
@@ -65,6 +64,29 @@ class GuideTripApiController extends Controller
         try {
             $data = $validator->validated();
             $updateTrip = $this->guideTripApiUseCase->showGuideTrip($data['guide_trip_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.trip-retrieved-successfully'), $updateTrip);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
+        }
+    }
+
+    public function detailUpdate(Request $request,$slug)
+    {
+
+        $validator = Validator::make(['guide_trip_slug' => $slug], [
+            'guide_trip_slug' => ['required', 'exists:guide_trips,slug', new CheckIfGuideActiveRule(),new CheckIfGuideIsOwnerOfTrip()],
+        ], [
+            'guide_trip_slug.required' => __('validation.api.guide-trip-id-required'),
+            'guide_trip_slug.exists' => __('validation.api.guide-trip-id-does-not-exists'),
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+        try {
+            $data = $validator->validated();
+            $updateTrip = $this->guideTripApiUseCase->detailUpdate($data['guide_trip_slug']);
             return ApiResponse::sendResponse(200, __('app.api.trip-retrieved-successfully'), $updateTrip);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

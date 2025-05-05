@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GuideTripTrailResource extends JsonResource
+class GuideTripTrailUpdateResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,17 +14,17 @@ class GuideTripTrailResource extends JsonResource
      */
     public function toArray($request)
     {
-        $lang = $request->header('Content-Language') ? $request->header('Content-Language') : 'ar';
 
         return [
             'min_duration_in_minute' => $this->min_duration_in_minute,
             'max_duration_in_minute' => $this->max_duration_in_minute,
             'distance_in_meter' => $this->distance_in_meter,
-            'difficulty' => $this->translateDifficulty($this->difficulty, $lang)
+            'difficulty' => $this->getDifficultyTranslations($this->difficulty),
+
         ];
     }
 
-    protected function translateDifficulty($difficulty, $lang)
+    protected function getDifficultyTranslations($difficulty)
     {
         $translations = [
             'en' => [
@@ -41,8 +41,12 @@ class GuideTripTrailResource extends JsonResource
             ]
         ];
 
-        return $translations[$lang][$difficulty] ?? $difficulty;
+        return [
+            'en' => $translations['en'][$difficulty] ?? $difficulty,
+            'ar' => $translations['ar'][$difficulty] ?? $difficulty,
+        ];
     }
+
 
 
 

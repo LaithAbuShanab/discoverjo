@@ -105,11 +105,12 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     {
         $guideTrip = GuideTrip::findBySlug($slug);
 
-        $guideTripUser = GuideTripUser::where('guide_trip_id', $guideTrip->id)
+        $guideTripUsers = GuideTripUser::where('guide_trip_id', $guideTrip->id)
             ->where('user_id', Auth::guard('api')->user()->id)
             ->get();
 
-        if ($guideTripUser) {
+        if ($guideTripUsers) {
+            foreach ($guideTripUsers as  $guideTripUser)
             $guideTripUser->delete();
         }
     }

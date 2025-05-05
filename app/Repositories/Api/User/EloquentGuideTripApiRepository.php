@@ -272,6 +272,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 $tripTrail->distance_in_meter = $trail->distance_in_meter;
                 $tripTrail->difficulty = $trail->difficulty;
                 $tripTrail->save();
+            }else{
+                GuideTripTrail::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
             // If everything is fine, commit the transaction

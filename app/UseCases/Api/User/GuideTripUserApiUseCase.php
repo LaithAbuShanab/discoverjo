@@ -28,6 +28,26 @@ class GuideTripUserApiUseCase
         return $this->guideTripUserApiRepository->updateSubscriberInTrip($data);
     }
 
+    public function updateSingleSubscription($data)
+    {
+        return $this->guideTripUserApiRepository->updateSingleSubscription($data);
+    }
+
+    public function storeSingleSubscription($data)
+    {
+        return $this->guideTripUserApiRepository->storeSingleSubscription($data);
+    }
+
+    public function singleSubscription($id)
+    {
+        return $this->guideTripUserApiRepository->singleSubscription($id);
+    }
+
+    public function deleteSingleSubscription($id)
+    {
+        return $this->guideTripUserApiRepository->deleteSingleSubscription($id);
+    }
+
     public function deleteSubscriberInTrip($slug)
     {
         return $this->guideTripUserApiRepository->deleteSubscriberInTrip($slug);

@@ -87,19 +87,19 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         });
     }
 
-    public function updateSubscriberInTrip($data)
-    {
-        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
-
-        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->delete();
-        $subscribers = array_map(function ($subscriber) {
-            $subscriber['user_id'] = Auth::guard('api')->user()->id;
-            return $subscriber;
-        }, $data['subscribers']);
-        $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
-        activityLog('join guide trip', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
-        return;
-    }
+//    public function updateSubscriberInTrip($data)
+//    {
+//        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
+//
+//        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->delete();
+//        $subscribers = array_map(function ($subscriber) {
+//            $subscriber['user_id'] = Auth::guard('api')->user()->id;
+//            return $subscriber;
+//        }, $data['subscribers']);
+//        $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
+//        activityLog('join guide trip', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
+//        return;
+//    }
 
     public function deleteSubscriberInTrip($slug)
     {
@@ -157,5 +157,50 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'trips' => AllGuideTripResource::collection($trips),
             'pagination' => $pagination
         ];
+    }
+
+    public function updateSingleSubscription($data)
+    {
+        $guideTripUser = GuideTripUser::find($data['subscription_id']);
+
+        $guideTripUser->update([
+            'first_name'=>$data['first_name'],
+            'last_name'=>$data['last_name'],
+            'age'=>$data['age'],
+            'phone_number'=>$data['phone_number']
+        ]);
+
+        activityLog('join guide trip', $guideTripUser, 'the user update join guide trip', 'update');
+        return;
+    }
+
+    public function storeSingleSubscription($data)
+    {
+        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
+        $guideTripUser =GuideTripUser::create([
+            'guide_trip_id'=>$guideTrip->id,
+            'user_id'=>Auth::guard('api')->user()->id,
+            'first_name'=>$data['first_name'],
+            'last_name'=>$data['last_name'],
+            'age'=>$data['age'],
+            'phone_number'=>$data['phone_number'],
+            'status'=>0
+        ]);
+
+        activityLog('join guide trip', $guideTripUser, 'the user update join guide trip', 'update');
+        return;
+    }
+    public function singleSubscription($id)
+    {
+        $guideTripUser = GuideTripUser::find($id);
+        return $guideTripUser;
+    }
+
+    public function deleteSingleSubscription($id)
+    {
+        $guideTripUser = GuideTripUser::where('id',$id)->first();
+        $guideTripUser->delete();
+        return;
+
     }
 }

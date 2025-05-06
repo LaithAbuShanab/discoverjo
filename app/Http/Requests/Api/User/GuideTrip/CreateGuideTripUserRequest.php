@@ -60,6 +60,24 @@ class CreateGuideTripUserRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $names = [];
+
+            foreach ($this->input('subscribers', []) as $index => $subscriber) {
+                $fullName = strtolower(trim($subscriber['first_name'])) . ' ' . strtolower(trim($subscriber['last_name']));
+                if (in_array($fullName, $names)) {
+                    $validator->errors()->add("subscribers.$index.first_name", 'Duplicate full name found among subscribers.');
+                    $validator->errors()->add("subscribers.$index.last_name", 'Duplicate full name found among subscribers.');
+                } else {
+                    $names[] = $fullName;
+                }
+            }
+        });
+    }
+
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors()->all();

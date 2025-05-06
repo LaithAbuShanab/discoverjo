@@ -98,10 +98,25 @@ Route::middleware(['firstLogin'])->group(function () {
 
     // ALL ROUTES FOR GUIDE TRIP
     Route::group(['prefix' => 'user/guide-trip'], function () {
+        //show all subscriptions
         Route::get('/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'allSubscription']); // DONE ✅
+        //add new list of subscription
         Route::post('/store/{guide_trip_slug}', [GuideTripUserApiController::class, 'store']); // DONE ✅
-        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']); // DONE ✅
+        //delete all subscriptions
         Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']); // DONE ✅
+        //update all subscriptions should review it
+//        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']); // DONE ✅
+        //get single subscription
+        Route::get('/single/subscription/{subscription_id}', [GuideTripUserApiController::class, 'singleSubscription']);
+
+        //update single subscription
+        Route::put('/update/single/subscription/{subscription_id}', [GuideTripUserApiController::class, 'updateSingleSubscription']);
+
+        //create single subscription
+        Route::post('/store/single/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'storeSingleSubscription']);
+        //delete single subscription
+        Route::delete('/single/subscription/delete/{subscription_id}', [GuideTripUserApiController::class, 'deleteSingleSubscription']);
+
     });
 
     // ALL ROUTES FOR GUIDE RATING

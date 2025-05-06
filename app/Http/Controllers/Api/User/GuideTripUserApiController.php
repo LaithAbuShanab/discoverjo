@@ -202,7 +202,7 @@ class GuideTripUserApiController extends Controller
         $data =  array_merge($request->validated(), $validator->validated());
         try {
             $updateRequest = $this->guideTripUserApiUseCase->updateSubscriberInTrip($data);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-updated-successfully'), $updateRequest);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-users-subscription-deleted-successfully'), $updateRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

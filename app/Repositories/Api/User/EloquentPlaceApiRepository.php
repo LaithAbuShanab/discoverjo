@@ -186,7 +186,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         // Paginate results
         $places = $query->paginate($perPage);
         $placesArray = $places->toArray();
-
+        $totalCount = (clone $query)->count();
         activityLog(
             'filter places',
             $query->first(),
@@ -204,6 +204,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             ]
         );
         return [
+            'count' => $totalCount,
             'places' => PlaceResource::collection($places),
             'pagination' => [
                 'next_page_url' => $places->nextPageUrl(),

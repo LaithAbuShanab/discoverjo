@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthUserController extends Controller
@@ -46,10 +47,21 @@ class AuthUserController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        $deviceToken = $request->device_token;
+        $validator = Validator::make(['device_token' => $deviceToken], [
+            'device_token' => ['required','string', 'exists:device_tokens,token'],
+        ], [
+            'device_token.exists' => __('validation.api.the-device-token-does-not-exists'),
+            'device_token.required' => __('validation.api.the-device-token-required'),
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $validator->errors()->messages()['device_token']);
+        }
         try {
-            $this->authApiUseCase->logout();
+            $this->authApiUseCase->logout($validator->validated());
             return ApiResponse::sendResponse(200, __('app.api.you-logged-out-successfully'), null);
         } catch (\Exception $e) {
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

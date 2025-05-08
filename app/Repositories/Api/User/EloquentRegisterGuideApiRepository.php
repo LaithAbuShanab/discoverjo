@@ -46,7 +46,6 @@ class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryIn
                     $user->addMediaFromRequest('professional_file')->usingFileName($filename)->toMediaCollection('file');
                 }
             }
-            event(new Registered($user));
             adminNotification(
                 'New Guide Registered',
                 "A new guide ({$user->username}) (ID: {$user->id}) has just registered.",

@@ -10,6 +10,7 @@ use App\Models\Follow;
 use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
 use App\Models\Plan;
+use App\Models\Referral;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\UsersTrip;
@@ -50,6 +51,19 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 'status'       => 1,
             ]);
 
+            $referralCode = $userData['referral_code'] ?? null;
+
+            if ($referralCode) {
+                $referrer = User::where('referral_code', $referralCode)->first();
+                if ($referrer) {
+                    Referral::create([
+                        'referrer_id' => $referrer->id,
+                        'referred_id' => $user->id,
+                        'referral_code'=>$referralCode
+                    ]);
+                }
+            }
+
             // Notify an admin about the new user registration
             adminNotification(
                 'New User Registered',
@@ -57,7 +71,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 ['action' => 'view_user', 'action_label' => 'View User', 'action_url' => route('filament.admin.resources.users.index')]
             );
 
-            event(new Registered($user));
+//            event(new Registered($user));
             return new UserResource($user);
         });
     }

@@ -20,6 +20,8 @@ use Laravel\Passport\HasApiTokens;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Support\Str;
+
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
@@ -327,5 +329,31 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     public function isFollowing(User $user): bool
     {
         return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    // Referrals this user made
+    public function referralsMade()
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    // Referral this user received
+    public function referralReceived()
+    {
+        return $this->hasOne(Referral::class, 'referred_id');
+    }
+
+    // Generate referral code after creation
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            $prefix = substr(Str::slug($user->username), 0, 4);
+            do {
+                $code = strtoupper($prefix . rand(1000, 9999));
+            } while (User::where('referral_code', $code)->exists());
+
+            $user->referral_code = $code;
+            $user->save();
+        });
     }
 }

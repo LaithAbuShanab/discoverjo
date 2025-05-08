@@ -31,10 +31,11 @@ class RegisterApiUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string', 'alpha_dash', 'min:3', 'max:20', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'not_regex:/\s/', 'unique:' . User::class],
+            'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:20', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'not_regex:/\s/', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class, new CheckUserInBlackListRule()],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             "device_token" => ['max:255', 'required'],
+            'referral_code'=>['nullable','string'],
         ];
     }
 
@@ -45,7 +46,7 @@ class RegisterApiUserRequest extends FormRequest
             'username.required' => __('validation.api.username-is-required'),
             'username.string' => __('validation.api.username-must-be-string'),
             'username.alpha_dash' => __('validation.api.username-must-be-alpha-dash'),
-            'username.min' => __('validation.api.username-min', ['min' => 3]),
+            'username.min' => __('validation.api.username-min', ['min' => 4]),
             'username.max' => __('validation.api.username-max', ['max' => 20]),
             'username.regex' => __('validation.api.username-regex'),
             'username.not_regex' => __('validation.api.username-no-whitespace'),

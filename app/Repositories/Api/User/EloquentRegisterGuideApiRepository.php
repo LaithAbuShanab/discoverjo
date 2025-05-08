@@ -5,8 +5,10 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\UserResource;
 use App\Interfaces\Gateways\Api\User\RegisterGuideApiRepositoryInterface;
 use App\Models\DeviceToken;
+use App\Models\Follow;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LevelUp\Experience\Models\Activity;
@@ -46,6 +48,12 @@ class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryIn
                 }
             }
 
+            Follow::create([
+                'following_id' => 1,
+                'follower_id'  => $user->id,
+                'status'       => 1,
+            ]);
+            event(new Registered($user));
             adminNotification(
                 'New Guide Registered',
                 "A new guide ({$user->username}) (ID: {$user->id}) has just registered.",

@@ -9,7 +9,7 @@ interface AuthApiRepositoryInterface
 
     public function login($userData);
 
-    public function logout();
+    public function logout($deviceToken);
 
     public function deleteAccount();
 

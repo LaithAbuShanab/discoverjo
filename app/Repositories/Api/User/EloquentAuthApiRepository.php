@@ -71,7 +71,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 ['action' => 'view_user', 'action_label' => 'View User', 'action_url' => route('filament.admin.resources.users.index')]
             );
 
-//            event(new Registered($user));
+            event(new Registered($user));
             return new UserResource($user);
         });
     }
@@ -146,7 +146,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
             $existing = DeviceToken::where('user_id', $user->id)
                 ->where('token', $deviceToken)
-                ->first();
+                ->exists();
 
             if (!$existing) {
                 DeviceToken::create([
@@ -168,13 +168,15 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         }
     }
 
-    public function logout()
+    public function logout($deviceToken)
     {
         //to get logout from all devices
         $user = Auth::guard('api')->user();
         //logout from the current device
         $userToken = $user->token();
         $userToken->delete();
+        $device=DeviceToken::where('token',$deviceToken)->where('user_id',$user->id)->first();
+        $device->delete();
     }
 
     public function deleteAccount()

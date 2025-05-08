@@ -26,9 +26,9 @@ class AuthApiUseCase
         return $this->authRepository->login($request);
     }
 
-    public function logout()
+    public function logout($deviceToken)
     {
-        return $this->authRepository->logout();
+        return $this->authRepository->logout($deviceToken);
     }
 
     public function deleteAccount()

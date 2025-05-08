@@ -44,6 +44,8 @@ return [
         "rejected-trip-body"                                           => "قام المستخدم :username برفض طلبك في الرحلة :trip_name",
         'you-have-removed'                                             => 'تمت إزالتك من الرحلة',
         'you-have-removed-from-trip'                                   => 'قام المستخدم :username بإزالتك من الرحلة :trip_name.',
+        'trip-deleted'                                                 => 'تم إلغاء الرحلة',
+        'trip-deleted-body'                                            => 'تم إلغاء الرحلة التي نظمها :username. يرجى التحقق من التطبيق لمزيد من التفاصيل.',
 
         // إنشاء الرحلات والدعوات
         "new-trip-title"                                               => "يوجد رحلة جديدة",

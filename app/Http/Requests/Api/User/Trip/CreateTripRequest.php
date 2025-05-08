@@ -37,7 +37,7 @@ class CreateTripRequest extends FormRequest
             'place_slug' => ['bail', 'required', 'string', 'exists:places,slug', new ActivePlaceRule()],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'cost' => ['required', 'numeric', 'min:0'],
+            'cost' => ['nullable', 'numeric', 'min:0'],
             'age_min' => [
                 'required_if:trip_type,0,1',
                 'integer',
@@ -48,7 +48,7 @@ class CreateTripRequest extends FormRequest
                 'integer',
                 'nullable'
             ],
-            'gender' => ['required'],
+            'gender' => ['required_if:trip_type,0,1'],
             'date' => [
                 'required',
                 'date',

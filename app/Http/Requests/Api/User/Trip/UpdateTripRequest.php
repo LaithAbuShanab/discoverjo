@@ -36,19 +36,21 @@ class UpdateTripRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'cost' => ['nullable', 'numeric', 'min:0'],
             'age_min' => [
+                'nullable',
+                'integer',
+                'required_if:trip_type,0,1',
                 Rule::requiredIf(function () {
                     return request()->filled('age_max');
                 }),
-                'nullable',
-                'integer',
             ],
             'age_max' => [
-                Rule::requiredIf(function () {
-                    return request()->filled('age_min');
-                }),
                 'nullable',
                 'integer',
                 'gte:age_min',
+                'required_if:trip_type,0,1',
+                Rule::requiredIf(function () {
+                    return request()->filled('age_min');
+                }),
             ],
             'gender' => ['nullable'],
             'date' => [

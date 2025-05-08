@@ -181,6 +181,7 @@ return [
         'role'                                      => 'Role',
         'token'                                     => 'Token',
         'date'                                      => 'Date',
+        'gender'                                    => 'Gender',
 
         // Contact & Address
         'phone-number'                              => 'Phone Number',
@@ -378,7 +379,7 @@ return [
         'you-should-enter-your-birthday-first'                      => 'You should enter your birthday first.',
         'this-trip-has-exceeded-the-required-number'                => 'This trip has exceeded the required number. You can return to the homepage and search for another trip.',
         'this-journey-has-already-moved-on'                         => 'This journey has already moved on. You can return to the homepage and search for another trip.',
-        'age-or-sex-not-acceptable'                                 => 'You are not allowed to join this trip because your age or sex is not acceptable.',
+        'age-or-sex-not-acceptable'                                 => 'You are not allowed to join this trip because your age or gender is not acceptable.',
         'join-request-cancelled-by-owner'                           => 'Your join request was cancelled by the owner, so you cannot join this trip again.',
         'already-joined-this-trip'                                  => 'You have already joined this trip.',
         'creator-cannot-join-trip'                                  => 'You are the creator of this trip, so you cannot join it.',

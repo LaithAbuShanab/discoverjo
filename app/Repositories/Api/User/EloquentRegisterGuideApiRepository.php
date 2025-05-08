@@ -7,6 +7,7 @@ use App\Interfaces\Gateways\Api\User\RegisterGuideApiRepositoryInterface;
 use App\Models\DeviceToken;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LevelUp\Experience\Models\Activity;
@@ -45,7 +46,7 @@ class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryIn
                     $user->addMediaFromRequest('professional_file')->usingFileName($filename)->toMediaCollection('file');
                 }
             }
-
+            event(new Registered($user));
             adminNotification(
                 'New Guide Registered',
                 "A new guide ({$user->username}) (ID: {$user->id}) has just registered.",

@@ -30,7 +30,8 @@ class TripDetailsResource extends JsonResource
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
-            'creator_id' => $this->user_id,
+            'creator' => new UserResource($this->user),
+            'is_creator' => Auth::guard('api')->user()->id == $this->user_id,
             'name' => $this->name,
             'address' => $this->place->address,
             'region' => $this->place->region->name,

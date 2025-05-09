@@ -8,9 +8,7 @@ use App\Http\Resources\TagsResource;
 use App\Http\Resources\TripDetailsResource;
 use App\Http\Resources\TripResource;
 use App\Interfaces\Gateways\Api\User\TripApiRepositoryInterface;
-use App\Models\Admin;
 use App\Models\Conversation;
-use App\Models\DeviceToken;
 use App\Models\GroupMember;
 use App\Models\Place;
 use App\Models\Reviewable;
@@ -20,6 +18,7 @@ use App\Models\User;
 use App\Models\UsersTrip;
 use App\Notifications\Users\Trip\AcceptCancelInvitationNotification;
 use App\Notifications\Users\Trip\AcceptCancelNotification;
+use App\Notifications\Users\Trip\DeleteTripNotification;
 use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
 use App\Notifications\Users\Trip\RemoveUserTripNotification;
@@ -41,32 +40,33 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function trips()
     {
-        $userId = Auth::guard('api')->user()->id;
+        $user = Auth::guard('api')->user();
+        $userId = $user->id;
+        $userBirthday = $user->birthday;
+        $userSex = $user->sex;
+        $userAge = Carbon::parse($userBirthday)->age;
 
         $trips = Trip::whereHas('user', function ($query) {
-            $query->where('status', '1'); // Only include trips where the user status is 1
+            $query->where('status', '1');
         })
+            ->where('status', '1')
             ->where(function ($query) use ($userId) {
-                // Public trips
-                $query->where('trip_type', '0')
+                $query->where('trip_type', '0') // Public
                     ->orWhere(function ($query) use ($userId) {
-                        // Followers trips and trips created by the authenticated user
-                        $query->where('trip_type', '1')
+                        $query->where('trip_type', '1') // Followers
                             ->where(function ($query) use ($userId) {
                                 $query->whereHas('user.followers', function ($query) use ($userId) {
                                     $query->where('follower_id', $userId);
                                 })->orWhere('user_id', $userId);
                             });
-                    })->orWhere(function ($query) use ($userId) {
-                        // Specific user trips
-                        $query->where('trip_type', '2')
+                    })
+                    ->orWhere(function ($query) use ($userId) {
+                        $query->where('trip_type', '2') // Specific
                             ->whereHas('usersTrip', function ($query) use ($userId) {
-                                $query->where('user_id', $userId)
-                                    ->where('status', '1');
+                                $query->where('user_id', $userId)->where('status', '1');
                             })->orWhere('user_id', $userId);
                     });
             })
-            ->where('status', '1')
             ->where(function ($query) {
                 $query->where('trip_type', '!=', '2')
                     ->whereHas('usersTrip', function ($query) {
@@ -74,10 +74,24 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     }, '!=', DB::raw('attendance_number'))
                     ->orWhere('trip_type', '2');
             })
+            ->where(function ($query) use ($userAge, $userSex) {
+                $query->where('trip_type', '2')
+                    ->orWhere(function ($query) use ($userAge, $userSex) {
+                        $query->whereIn('sex', [$userSex, 0])
+                            ->where(function ($query) use ($userAge) {
+                                $query->whereNull('age_range')
+                                    ->orWhere(function ($query) use ($userAge) {
+                                        $query->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+                                            ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                                    });
+                            });
+                    });
+            })
             ->get();
 
         return TripResource::collection($trips);
     }
+
 
     public function allTrips()
     {
@@ -179,11 +193,11 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $trip->trip_type = $request->trip_type;
         $trip->name = $filteredName;
         $trip->description = $filteredDescription;
-        $trip->cost = $request->cost;
-        $trip->age_range = $ageRange;
-        $trip->sex = $request->gender;
+        $trip->cost = $request->cost ?? null;
+        $trip->age_range = $ageRange ?? null;
+        $trip->sex = $request->trip_type == 2 ? 0 : $request->gender;
         $trip->date_time = $dateTime;
-        $trip->attendance_number = $request->attendance_number;
+        $trip->attendance_number = $request->trip_type == 2 ? User::whereIn('slug', explode(',', $request->users))->count() : $request->attendance_number;
         $trip->save();
         $trip->tags()->attach($tags);
 
@@ -395,12 +409,46 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function remove($slug)
     {
-        $trip = Trip::where('slug', $slug)->first();
+        $trip = Trip::with(['usersTrip.user.DeviceTokenMany', 'conversation'])->where('slug', $slug)->firstOrFail();
+
+        $owner = Auth::guard('api')->user();
+
+        // Notify active users (status = 1)
+        foreach ($trip->usersTrip->where('status', '1') as $userTrip) {
+            $user = $userTrip->user;
+
+            // Send database notification
+            Notification::send($user, new DeleteTripNotification($owner, $trip));
+
+            // Send FCM notification
+            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+            if (!empty($tokens)) {
+                $lang = $user->lang ?? app()->getLocale();
+
+                $title = __('app.notifications.trip-deleted', [], $lang);
+                $body  = __('app.notifications.trip-deleted-body', ['username' => $owner->username], $lang);
+
+                $notificationData = [
+                    'title' => $title,
+                    'body'  => $body,
+                    'icon'  => asset('assets/icon/trip.png'),
+                    'sound' => 'default',
+                ];
+                sendNotification($tokens, $notificationData);
+            }
+        }
+
+        // Now update trip and user_trip statuses, and delete conversation
         $trip->status = '2';
         $trip->save();
+
         $trip->usersTrip()->update(['status' => '2']);
-        $trip->conversation()->delete();
+
+        if ($trip->conversation) {
+            $trip->conversation->delete();
+        }
     }
+
 
     public function update($request)
     {

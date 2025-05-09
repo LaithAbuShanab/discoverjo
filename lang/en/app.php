@@ -44,6 +44,8 @@ return [
         "rejected-trip-body"                                           => ":username has rejected your request for the trip :trip_name",
         'you-have-removed'                                             => 'You have been removed from the trip.',
         'you-have-removed-from-trip'                                   => 'The user :username has removed you from the trip :trip_name.',
+        'trip-deleted'                                                 => 'Trip Cancelled',
+        'trip-deleted-body'                                            => 'The trip organized by :username has been cancelled. Please check your app for more details.',
 
         // Trip Creation & Invitations
         "new-trip-title"                                               => "There is a new trip",

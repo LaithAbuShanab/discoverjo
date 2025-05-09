@@ -28,6 +28,7 @@ class UserNotificationResource extends JsonResource
             'AcceptCancelNotification'            => 'trip.png',
             'NewRequestNotification'              => 'trip.png',
             'NewTripNotification'                 => 'trip.png',
+            'DeleteTripNotification'              => 'trip.png',
         ];
 
         $engagementTypes = [

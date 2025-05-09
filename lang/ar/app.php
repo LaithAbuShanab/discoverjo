@@ -110,6 +110,10 @@ return [
         'accepted-guide-trip-body'                                     => 'تمت الموافقة على مشاركة :username في الرحلة ":trip_name".',
         'declined-guide-trip-title'                                    => 'تم رفض :username من الرحلة.',
         'declined-guide-trip-body'                                     => 'نأسف، تم رفض طلب :username للانضمام إلى الرحلة ":trip_name".',
+        'delete-request-title'                                         => 'تم إلغاء الطلب من رحلتك',
+        'delete-request-body'                                          => 'قام المستخدم :guide_user بإلغاء طلبه للانضمام إلى رحلتك :trip.',
+        'delete-user-requests-title'                                   => 'إلغاء جميع طلبات المستخدم من الرحلة',
+        'delete-user-requests-body'                                   => 'قام المستخدم :username بإلغاء جميع طلباته من الرحلة :trip.',
     ],
 
     "api" => [
@@ -206,6 +210,7 @@ return [
         // Guide Trip Api
         'the-searched-guide-trip-retrieved-successfully'               => 'تم استرجاع الرحلات المبحوث عنها بنجاح',
         'guide-trips-retrieved-successfully'                           => 'تم استرجاع رحلات المرشدين السياحيين بنجاح',
+        'guide-trip-of-specific-date-retrieved-successfully'           => 'تم استرجاع رحلة مرشد سياحي لتاريخ محدد بنجاح',
         'trip-retrieved-successfully'                                  => 'تم استرجاع رحلة المرشدين السياحيين بنجاح',
         'guide-users-retrieved-successfully'                           => 'تم استرجاع المرشدين السياحيين بنجاح',
         'trip-updated-successfully'                                    => 'تم تحديث الرحلة بنجاح',
@@ -219,6 +224,9 @@ return [
         'guide-trips-subscription-created-successfully'                => 'تم ارسال طلب اشتراكك لرحلة المرشد بنجاح',
         'guide-trips-users-subscription-updated-successfully'          => 'تم تعديل طلب اشتراكك لرحلة المرشد بنجاح',
         'guide-trips-users-subscription-deleted-successfully'          => 'تم حذف طلب اشتراكك لرحلة المرشد بنجاح',
+        'guide-trips-subscription-updated-successfully'                => 'تم تعديل طلب اشتراكك لرحلة المرشد بنجاح',
+        'guide-trips-subscription-retrieved-successfully'              => 'تم استرجاع طلب الاشتراك بنجاح',
+        'guide-trips-subscription-deleted-successfully'                => 'تم حذف طلب الاشتراك بنجاح',
 
         // Rating Guide Trip Api
         'rating-retrieved-successfully'                                => 'تم استرجاع التقييمات بنجاح',

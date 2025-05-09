@@ -182,6 +182,9 @@ return [
         'token'                                     => 'Token',
         'date'                                      => 'Date',
         'gender'                                    => 'Gender',
+        'first_name'                                => 'First Name',
+        'last_name'                                 => 'Last Name',
+        'age'                                       => 'Age',
 
         // Contact & Address
         'phone-number'                              => 'Phone Number',
@@ -603,6 +606,8 @@ return [
         "rating-min-value"                                          => "The rating must be at least 1.",
         "rating-max-value"                                          => "The rating must not be more than 5.",
         'you_did_not_make_review_for_this_guide_to_update'          => 'You have not made a review for this guide to update.',
+        'a_subscription_with_this_full_name_already_exists'         => 'A subscription with this full name already exists.',
+        'this-record-not-belong-to-you'                             => 'This record does not belong to you.',
 
         // Region Validation
         'region-id-nullable'                                       => 'The region ID field is optional.',

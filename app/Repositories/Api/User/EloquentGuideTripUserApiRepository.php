@@ -7,8 +7,9 @@ use App\Http\Resources\SubscriptionResource;
 use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
+use App\Notifications\Users\guide\DeleteAllRequestNotification;
+use App\Notifications\Users\guide\DeleteRequestNotification;
 use App\Notifications\Users\guide\NewRequestNotification;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -88,34 +89,63 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         });
     }
 
-//    public function updateSubscriberInTrip($data)
-//    {
-//        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
-//
-//        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->delete();
-//        $subscribers = array_map(function ($subscriber) {
-//            $subscriber['user_id'] = Auth::guard('api')->user()->id;
-//            return $subscriber;
-//        }, $data['subscribers']);
-//        $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
-//        activityLog('join guide trip', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
-//        return;
-//    }
+    //    public function updateSubscriberInTrip($data)
+    //    {
+    //        $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
+    //
+    //        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('user_id', Auth::guard('api')->user()->id)->delete();
+    //        $subscribers = array_map(function ($subscriber) {
+    //            $subscriber['user_id'] = Auth::guard('api')->user()->id;
+    //            return $subscriber;
+    //        }, $data['subscribers']);
+    //        $joinGuideTrip = $guideTrip->guideTripUsers()->createMany($subscribers);
+    //        activityLog('join guide trip', $joinGuideTrip->first(), 'the user update join guide trip', 'update');
+    //        return;
+    //    }
 
     public function deleteSubscriberInTrip($slug)
     {
         $guideTrip = GuideTrip::findBySlug($slug);
+        if (!$guideTrip) {
+            return response()->json(['error' => 'Trip not found'], 404);
+        }
+
+        $authUser = Auth::guard('api')->user();
 
         $guideTripUsers = GuideTripUser::where('guide_trip_id', $guideTrip->id)
-            ->where('user_id', Auth::guard('api')->user()->id)
+            ->where('user_id', $authUser->id)
             ->get();
 
-        if ($guideTripUsers) {
-            foreach ($guideTripUsers as  $guideTripUser)
+        if ($guideTripUsers->isEmpty()) {
+            return response()->json(['message' => 'No subscriptions found for this user in the trip.'], 200);
+        }
+
+        foreach ($guideTripUsers as $guideTripUser) {
             $guideTripUser->delete();
         }
-    }
 
+        $guideUser = $guideTrip->user;
+        $receiverLanguage = $guideUser->lang ?? 'en';
+        $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
+
+        Notification::send($guideUser, new DeleteAllRequestNotification($authUser, $guideTrip));
+
+        $tripName = method_exists($guideTrip, 'getTranslation')
+            ? $guideTrip->getTranslation('name', $receiverLanguage)
+            : ($receiverLanguage === 'ar' ? $guideTrip->name_ar : $guideTrip->name);
+
+        $notificationData = [
+            'title' => Lang::get('app.notifications.delete-user-requests-title', [], $receiverLanguage),
+            'body'  => Lang::get('app.notifications.delete-user-requests-body', [
+                'username' => $authUser->username,
+                'trip'     => $tripName,
+            ], $receiverLanguage),
+            'icon'  => asset('assets/icon/trip.png'),
+            'sound' => 'default',
+        ];
+
+        sendNotification($tokens, $notificationData);
+    }
 
     public function allSubscription($slug)
     {
@@ -139,7 +169,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             ->whereHas('guide', function ($query) {
                 $query->where('status', '1');
             })
-        ->paginate($perPage);
+            ->paginate($perPage);
 
 
         $tripsArray = $trips->toArray();
@@ -150,7 +180,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'total' => $tripsArray['total'],
         ];
 
-        if($query) {
+        if ($query) {
             activityLog('search for guide trips', $trips->first(), $query, 'Search');
         }
         // Pass user coordinates to the PlaceResource collection
@@ -165,10 +195,10 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         $guideTripUser = GuideTripUser::find($data['subscription_id']);
 
         $guideTripUser->update([
-            'first_name'=>$data['first_name'],
-            'last_name'=>$data['last_name'],
-            'age'=>$data['age'],
-            'phone_number'=>$data['phone_number']
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'age' => $data['age'],
+            'phone_number' => $data['phone_number']
         ]);
 
         activityLog('join guide trip', $guideTripUser, 'the user update join guide trip', 'update');
@@ -178,19 +208,46 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function storeSingleSubscription($data)
     {
         $guideTrip = GuideTrip::findBySlug($data['guide_trip_slug']);
-        $guideTripUser =GuideTripUser::create([
-            'guide_trip_id'=>$guideTrip->id,
-            'user_id'=>Auth::guard('api')->user()->id,
-            'first_name'=>$data['first_name'],
-            'last_name'=>$data['last_name'],
-            'age'=>$data['age'],
-            'phone_number'=>$data['phone_number'],
-            'status'=>0
+
+        $guideTripUser = GuideTripUser::create([
+            'guide_trip_id' => $guideTrip->id,
+            'user_id' => Auth::guard('api')->user()->id,
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'age' => $data['age'],
+            'phone_number' => $data['phone_number'],
+            'status' => 0
         ]);
+
+        $guideUser = $guideTrip->user;
+        $receiverLanguage = $guideUser->lang;
+        $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
+
+        // Save notification in DB
+        Notification::send($guideUser, new NewRequestNotification(Auth::guard('api')->user(), $guideTrip));
+
+        $authUser = Auth::guard('api')->user();
+
+        $notificationTitle = Lang::get('app.notifications.delete-request-title', [], $receiverLanguage);
+        $notificationBody = Lang::get('app.notifications.delete-request-body', [
+            'username' => $authUser->username,
+            'trip'     => $guideTrip->name
+        ], $receiverLanguage);
+
+        $notificationData = [
+            'title' => $notificationTitle,
+            'body'  => $notificationBody,
+            'icon'  => asset('assets/icon/trip.png'),
+            'sound' => 'default',
+        ];
+
+
+        sendNotification($tokens, $notificationData);
 
         activityLog('join guide trip', $guideTripUser, 'the user update join guide trip', 'update');
         return;
     }
+
     public function singleSubscription($id)
     {
         $guideTripUser = GuideTripUser::find($id);
@@ -199,19 +256,45 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
     public function deleteSingleSubscription($id)
     {
-        $guideTripUser = GuideTripUser::where('id',$id)->first();
+        $guideTripUser = GuideTripUser::where('id', $id)->first();
+
+        $guideTrip = GuideTrip::where('id', $guideTripUser->guide_trip_id)->first();
+        $guideUser = $guideTrip->user;
+        $receiverLanguage = $guideUser->lang;
+        $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
+
+        // Save notification in DB
+        Notification::send($guideUser, new DeleteRequestNotification($guideTrip, $guideTripUser));
+
+        // Get translated trip name
+        $tripName = method_exists($guideTrip, 'getTranslation')
+            ? $guideTrip->getTranslation('name', $receiverLanguage)
+            : ($receiverLanguage === 'ar' ? $guideTrip->name_ar : $guideTrip->name);
+
+        // Send push notification
+        $notificationData = [
+            'title' => Lang::get('app.notifications.delete-request-title', [], $receiverLanguage),
+            'body'  => Lang::get('app.notifications.delete-request-body', [
+                'guide_user' =>  $guideTripUser->first_name . ' ' . $guideTripUser->last_name,
+                'trip'     => $tripName,
+            ], $receiverLanguage),
+            'icon'  => asset('assets/icon/trip.png'),
+            'sound' => 'default',
+        ];
+
+        sendNotification($tokens, $notificationData);
+
         $guideTripUser->delete();
         return;
-
     }
 
     public function dateGuideTrip($date)
     {
         $perPage = config('app.pagination_per_page');
-        $query = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
-        ->orderBy('start_datetime', 'desc');
-        $eloquentGuideTrips = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
-        ->orderBy('start_datetime', 'desc')->paginate($perPage);
+        $query = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status', 'desc') // status 1 first
+            ->orderBy('start_datetime', 'desc');
+        $eloquentGuideTrips = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status', 'desc') // status 1 first
+            ->orderBy('start_datetime', 'desc')->paginate($perPage);
         $guideTripsArray = $eloquentGuideTrips->toArray();
         $pagination = [
             'next_page_url' => $guideTripsArray['next_page_url'],
@@ -219,7 +302,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'total' => $guideTripsArray['total'],
         ];
 
-        activityLog('view guide trip in specific date',$query->first(),'The user viewed guide trips in specific date '.$date['date'],'view');
+        activityLog('view guide trip in specific date', $query->first(), 'The user viewed guide trips in specific date ' . $date['date'], 'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [

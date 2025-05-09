@@ -182,6 +182,9 @@ return [
         'token'                                     => 'رمز التحقق',
         'date'                                      => 'التاريخ',
         'gender'                                    => 'الجنس',
+        'first_name'                                => 'الاسم الاول',
+        'last_name'                                 => 'اسم العائلة',
+        'age'                                       => 'العمر',
 
         // التواصل والعنوان
         'phone-number'                              => 'رقم الهاتف',
@@ -585,6 +588,8 @@ return [
         'trip_not_found'                                            => 'لم يتم العثور على الرحلة المحددة.',
         'this_trip_inactive'                                        => 'هذه الرحلة غير نشطة.',
         'cannot_update_trip_started_at'                             => 'لا يمكنك تعديل هذه الرحلة لأنها بدأت في :date.',
+        'a_subscription_with_this_full_name_already_exists'         => 'يوجد اشتراك بهذا الاسم الكامل بالفعل.',
+        'this-record-not-belong-to-you'                             => 'هذا السجل لا ينتمي لك.',
 
         // Guide Rating Validation
         'guide-id-required'                                         => 'معرّف الدليل مطلوب.',

@@ -33,11 +33,8 @@ class CheckIfThereIsDublicateRule implements ValidationRule, DataAwareRule
             ->where('first_name', $firstName)
             ->where('last_name', $lastName)
             ->exists();
-
         if ($exists) {
-            $fail('A subscription with this full name already exists.');
+            $fail(__('validation.api.a_subscription_with_this_full_name_already_exists'));
         }
     }
-
 }
-

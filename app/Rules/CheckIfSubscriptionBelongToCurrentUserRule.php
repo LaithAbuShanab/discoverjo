@@ -17,8 +17,8 @@ class CheckIfSubscriptionBelongToCurrentUserRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $exists = GuideTripUser::where('id',$value)->where('user_id',$userId)->exists();
-        if(!$exists){
+        $exists = GuideTripUser::where('id', $value)->where('user_id', $userId)->exists();
+        if (!$exists) {
             $fail(__('validation.api.this-record-not-belong-to-you'));
         }
     }

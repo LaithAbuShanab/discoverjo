@@ -2,15 +2,11 @@
 
 namespace App\Interfaces\Gateways\Api\User;
 
-
-use App\Models\GuideTrip;
-use Illuminate\Support\Facades\DB;
-
 interface GuideTripUserApiRepositoryInterface
 {
     public function allUsersForGuideTrip();
     public function storeSubscriberInTrip($data);
-//    public function updateSubscriberInTrip($data);
+    //public function updateSubscriberInTrip($data);
     public function updateSingleSubscription($data);
     public function storeSingleSubscription($data);
     public function singleSubscription($id);

@@ -9,6 +9,7 @@
 /storage/*.key
 /storage/pail
 /storage/media-library
+/config/media-library.php
 /vendor
 .env
 .env.backup

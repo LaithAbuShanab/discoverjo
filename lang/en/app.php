@@ -32,6 +32,9 @@ return [
     'verifyEmailMessage'                                               => 'You have requested to verify your email. Please click the button below to verify your email:',
     'yourNotVerified'                                                  => 'Your email has not been verified. Please activate your account before logging in.',
     'you'                                                              => 'You',
+    'account_active_notification'                                      => 'Account Activation Notification',
+    'account_active_notification'                                      => 'Your Account Has Been Activated',
+    'account_active_message'                                           => 'Hello :name, your guide account is now active. You can log in and start using all features.',
 
     "notifications" => [
 

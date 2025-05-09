@@ -4,7 +4,7 @@
     <title>@yield('title')</title>
 
     @php
-        $lang = app()->getLocale();
+        $lang = $user->lang ?? app()->getLocale();
     @endphp
 
     <style>

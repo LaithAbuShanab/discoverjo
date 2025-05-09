@@ -52,7 +52,7 @@ class TripResource extends Resource
                                     ->relationship('place', 'name')
                                     ->required()
                                     ->label('Place')
-                                    ->preload(true)
+//                                    ->preload(true)
                                     ->searchable(),
                             ]),
 

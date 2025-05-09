@@ -94,7 +94,7 @@ class PlanResource extends Resource
                                             ->label('Place')
                                             ->placeholder('Please Select Place')
                                             ->relationship('place', 'name')
-                                            ->preload()
+//                                            ->preload()
                                             ->searchable()
                                             ->required()
                                             ->columnSpan(2),

@@ -46,15 +46,13 @@ class CommentResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('user_id')
                                     ->label('User')
-                                    ->relationship('user', 'username')
-                                    ->searchable()
-                                    ->required(),
+                                    ->relationship('user', 'username'),
+
 
                                 Forms\Components\Select::make('post_id')
                                     ->label('Post Type')
-                                    ->relationship('post', 'visitable_type')
-                                    ->searchable()
-                                    ->required(),
+                                    ->relationship('post', 'visitable_type'),
+
                             ]),
 
                     ])

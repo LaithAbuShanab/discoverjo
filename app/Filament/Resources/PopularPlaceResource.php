@@ -43,7 +43,7 @@ class PopularPlaceResource extends Resource
                             ->schema([
                                 Select::make('place_id')
                                     ->label('Place')
-                                    ->preload(true)
+//                                    ->preload(true)
                                     ->searchable()
                                     ->relationship(
                                         'place',

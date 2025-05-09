@@ -43,7 +43,7 @@ class TopTenResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('place_id')
                                     ->label('Place') // Adding a label for clarity.
-                                    ->preload(true)
+//                                    ->preload(true)
                                     ->searchable()
                                     ->relationship(
                                         'place',

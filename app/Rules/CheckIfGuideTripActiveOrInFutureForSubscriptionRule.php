@@ -18,7 +18,7 @@ class CheckIfGuideTripActiveOrInFutureForSubscriptionRule implements ValidationR
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $guideTripUser = GuideTripUser::find($value);
-        if(!$guideTripUser) return;
+        if (!$guideTripUser) return;
 
         $activeTrip = GuideTrip::find($guideTripUser->guide_trip_id);
 

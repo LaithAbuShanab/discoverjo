@@ -3,9 +3,6 @@
 namespace App\Rules;
 
 use App\Models\GuideTripUser;
-use App\Models\Trip;
-use App\Models\UsersTrip;
-use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -40,8 +37,7 @@ class CheckIfFullNameSubscriptionExistsRule implements ValidationRule, DataAware
             ->exists();
 
         if ($exists) {
-            $fail('A subscription with this full name already exists.');
+            $fail(__('validation.api.a_subscription_with_this_full_name_already_exists'));
         }
     }
-
 }

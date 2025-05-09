@@ -16,11 +16,11 @@ use Spatie\Translatable\HasTranslations;
 
 class GuideTrip extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug,LogsActivity;
+    use HasFactory, InteractsWithMedia, HasTranslations, HasSlug, LogsActivity;
     protected $guarded = [];
 
     public $translatable = ['name', 'description'];
-    protected static $logAttributes = ['slug','name','description','start_datetime','end_datetime','main_price','max_attendance','status'];
+    protected static $logAttributes = ['slug', 'name', 'description', 'start_datetime', 'end_datetime', 'main_price', 'max_attendance', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'guide trip';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -37,7 +37,7 @@ class GuideTrip extends Model implements HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('guide trip')
-            ->logOnly(  ['slug','name','description','start_datetime','end_datetime','main_price','max_attendance','status'])
+            ->logOnly(['slug', 'name', 'description', 'start_datetime', 'end_datetime', 'main_price', 'max_attendance', 'status'])
             ->logOnlyDirty();
     }
 
@@ -57,8 +57,8 @@ class GuideTrip extends Model implements HasMedia
         $this->addMediaCollection('guide_trip_gallery')
 
             ->registerMediaConversions(function (Media $media) {
-                    $this->addMediaConversion('guide_trip_gallery_app')
-                        ->format('webp')->nonQueued();
+                $this->addMediaConversion('guide_trip_gallery_app')
+                    ->format('webp')->nonQueued();
             });
     }
 

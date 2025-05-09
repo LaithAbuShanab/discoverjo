@@ -110,6 +110,10 @@ return [
         'accepted-guide-trip-body'                                     => ':username has been approved to join the trip ":trip_name".',
         'declined-guide-trip-title'                                    => ':username has been declined for the trip.',
         'declined-guide-trip-body'                                     => 'Unfortunately, :username’s request to join the trip ":trip_name" was declined.',
+        'delete-request-title'                                         => 'Request Canceled from Your Trip',
+        'delete-request-body'                                          => ':guide_user has canceled their request to join your trip :trip.',
+        'delete-user-requests-title'                                   => 'User Canceled All Their Requests from the Trip',
+        'delete-user-requests-body'                                    => 'User :username has canceled all their requests from the trip :trip.',
     ],
 
     "api" => [
@@ -206,6 +210,7 @@ return [
         // Guide Trip Api
         'the-searched-guide-trip-retrieved-successfully'               => 'The searched guide trip retrieved successfully',
         'guide-trips-retrieved-successfully'                           => 'Guide trips retrieved successfully',
+        'guide-trip-of-specific-date-retrieved-successfully'           => 'Guide trip of specific date retrieved successfully',
         'trip-retrieved-successfully'                                  => 'Trip retrieved successfully',
         'guide-users-retrieved-successfully'                           => 'Guide users retrieved successfully',
         'trip-updated-successfully'                                    => 'Trip updated successfully',
@@ -219,6 +224,9 @@ return [
         'guide-trips-subscription-created-successfully'                => 'Your request for attendance created successfully',
         'guide-trips-users-subscription-updated-successfully'          => 'Your request for attendance updated successfully',
         'guide-trips-users-subscription-deleted-successfully'          => 'Your request for attendance deleted successfully',
+        'guide-trips-subscription-updated-successfully'                => 'Your request for attendance updated successfully',
+        'guide-trips-subscription-retrieved-successfully'              => 'Your request for attendance retrieved successfully',
+        'guide-trips-subscription-deleted-successfully'                => 'Your request for attendance deleted successfully',
 
         // Rating Guide Trip Api
         'rating-retrieved-successfully'                                => 'Rating retrieved successfully',

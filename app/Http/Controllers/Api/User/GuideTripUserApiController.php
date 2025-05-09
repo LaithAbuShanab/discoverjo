@@ -110,16 +110,14 @@ class GuideTripUserApiController extends Controller
         }
     }
 
-
     public function updateSingleSubscription(UpdateSingleSubscriptionRequest $request, $id)
     {
         $validator = Validator::make(['subscription_id' => $id], [
-            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id',new CheckIfSubscriptionBelongToCurrentUserRule(),new CheckIfGuideTripActiveOrInFutureForSubscriptionRule()],
+            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id', new CheckIfSubscriptionBelongToCurrentUserRule(), new CheckIfGuideTripActiveOrInFutureForSubscriptionRule()],
         ], [
             'subscription_id.required' => __('validation.api.guide-trip-id-required'),
             'subscription_id.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
-
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -139,19 +137,18 @@ class GuideTripUserApiController extends Controller
     public function singleSubscription(Request $request, $id)
     {
         $validator = Validator::make(['subscription_id' => $id], [
-            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id',new CheckIfSubscriptionBelongToCurrentUserRule()],
+            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id', new CheckIfSubscriptionBelongToCurrentUserRule()],
         ], [
             'subscription_id.required' => __('validation.api.guide-trip-id-required'),
             'subscription_id.exists' => __('validation.api.guide-trip-id-does-not-exists'),
         ]);
-
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
-        $id =$validator->validated();
+        $id = $validator->validated();
         try {
             $sendRequest = $this->guideTripUserApiUseCase->singleSubscription($id);
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-retrieved-successfully'), $sendRequest);
@@ -164,7 +161,7 @@ class GuideTripUserApiController extends Controller
     public function deleteSingleSubscription(Request $request, $id)
     {
         $validator = Validator::make(['subscription_id' => $id], [
-            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id',new CheckIfSubscriptionBelongToCurrentUserRule()],
+            'subscription_id' => ['bail', 'required', 'exists:guide_trip_users,id', new CheckIfSubscriptionBelongToCurrentUserRule()],
         ], [
             'subscription_id.required' => __('validation.api.guide-trip-id-required'),
             'subscription_id.exists' => __('validation.api.guide-trip-id-does-not-exists'),
@@ -176,16 +173,15 @@ class GuideTripUserApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
-        $id =$validator->validated();
+        $id = $validator->validated();
         try {
             $sendRequest = $this->guideTripUserApiUseCase->deleteSingleSubscription($id);
-            return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-retrieved-successfully'), $sendRequest);
+            return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-deleted-successfully'), $sendRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
-
 
     public function update(UpdateGuideTripUserRequest $request, $guide_trip_slug)
     {

@@ -53,7 +53,7 @@ class EloquentRegisterGuideApiRepository implements RegisterGuideApiRepositoryIn
                 'follower_id'  => $user->id,
                 'status'       => 1,
             ]);
-            event(new Registered($user));
+            $user->sendEmailVerificationNotification();
             adminNotification(
                 'New Guide Registered',
                 "A new guide ({$user->username}) (ID: {$user->id}) has just registered.",

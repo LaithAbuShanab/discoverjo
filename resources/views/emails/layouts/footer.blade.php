@@ -10,5 +10,5 @@
     <a href="https://linkedin.com" target="_blank">
         <img src="{{ url('assets/images/linkedin_icon.png') }}" alt="LinkedIn">
     </a>
-    <p>{{ __('app.allReserved') }} ©{{ date('Y') }} .</p>
+    <p>{{ __('app.allReserved', [], $user->lang ?? app()->getLocale()) }} ©{{ date('Y') }} .</p>
 </div>

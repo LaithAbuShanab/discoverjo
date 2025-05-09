@@ -18,5 +18,6 @@ interface GuideTripUserApiRepositoryInterface
     public function deleteSubscriberInTrip($slug);
     public function allSubscription($slug);
     public function search($query);
+    public function dateGuideTrip($date);
 
 }

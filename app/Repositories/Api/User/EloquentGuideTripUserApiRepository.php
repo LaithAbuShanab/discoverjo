@@ -8,6 +8,7 @@ use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
 use App\Notifications\Users\guide\NewRequestNotification;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -202,5 +203,28 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         $guideTripUser->delete();
         return;
 
+    }
+
+    public function dateGuideTrip($date)
+    {
+        $perPage = config('app.pagination_per_page');
+        $query = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
+        ->orderBy('start_datetime', 'desc');
+        $eloquentGuideTrips = GuideTrip::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
+        ->orderBy('start_datetime', 'desc')->paginate($perPage);
+        $guideTripsArray = $eloquentGuideTrips->toArray();
+        $pagination = [
+            'next_page_url' => $guideTripsArray['next_page_url'],
+            'prev_page_url' => $guideTripsArray['next_page_url'],
+            'total' => $guideTripsArray['total'],
+        ];
+
+        activityLog('view guide trip in specific date',$query->first(),'The user viewed guide trips in specific date '.$date['date'],'view');
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'events' => AllGuideTripResource::collection($eloquentGuideTrips),
+            'pagination' => $pagination
+        ];
     }
 }

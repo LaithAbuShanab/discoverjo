@@ -62,4 +62,8 @@ class GuideTripUserApiUseCase
     {
         return $this->guideTripUserApiRepository->search($query);
     }
+    public function dateGuideTrip($date)
+    {
+        return $this->guideTripUserApiRepository->dateGuideTrip($date);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Follow;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+
         $activity= Activity::find(1);
         if ($this->resource->getTable() == 'group_members') {
             return [
@@ -36,8 +38,14 @@ class UserResource extends JsonResource
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
                 'is_following' => Auth::guard('api')->check() && $this->id
-                    ? Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists()
+                    ? (optional(Auth::guard('api')->user()
+                        ->following()
+                        ->where('users.id', $this->id)
+                        ->first())->pivot->status ?? false)
                     : null,
+
+
+
             ];
         }
     }

@@ -52,7 +52,12 @@ class OtherUserProfileResource extends JsonResource
             'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
-            'is_following' => Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists(),
+            'is_following' => Auth::guard('api')->check() && $this->id
+                ? (optional(Auth::guard('api')->user()
+                    ->following()
+                    ->where('users.id', $this->id)
+                    ->first())->pivot->status ?? false)
+                : null,
             'tags' => $tags,
             'reviews' =>  ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),

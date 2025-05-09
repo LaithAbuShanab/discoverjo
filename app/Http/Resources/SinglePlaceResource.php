@@ -60,7 +60,9 @@ class SinglePlaceResource extends JsonResource
             ];
         });
 
-        $gallery = [];
+        $gallery = [
+            $this->getFirstMediaUrl('main_place', 'main_place_app')
+        ];
 
         foreach ($this->getMedia('place_gallery') as $image) {
             $gallery[] = $image->getUrl('place_gallery_app');

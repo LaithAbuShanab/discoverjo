@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use LevelUp\Experience\Models\Activity;
 
 class UserResource extends JsonResource
@@ -34,6 +35,8 @@ class UserResource extends JsonResource
                 'image' => $this->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
+                'is_following' => Auth::guard('api')->check()?Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists():null,
+
             ];
         }
     }

@@ -35,8 +35,9 @@ class UserResource extends JsonResource
                 'image' => $this->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
-                'is_following' => Auth::guard('api')->check()?Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists():null,
-
+                'is_following' => Auth::guard('api')->check() && $this->id
+                    ? Auth::guard('api')->user()->following()->where('users.id', $this->id)->exists()
+                    : null,
             ];
         }
     }

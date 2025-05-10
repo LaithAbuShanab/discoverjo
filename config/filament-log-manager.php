@@ -32,7 +32,7 @@ return [
     /**
      * Allow set custom logs page class.
      */
-    'page_class' => Logs::class,
+    'page_class' => \App\Filament\Pages\CustomLogs::class,
 
     /**
      * Permission Name to allow viewing logs

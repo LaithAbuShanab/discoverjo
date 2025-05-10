@@ -16,8 +16,8 @@ class AutomaticPlaceController extends Controller
 {
     public function insertPlacesFromJson()
     {
-        $jsonEn = File::get(storage_path('app/tourist_attraction-en.json'));
-        $jsonAr = File::get(storage_path('app/tourist_attraction-ar.json'));
+        $jsonEn = File::get(storage_path('app/entertainment-en.json'));
+        $jsonAr = File::get(storage_path('app/entertainment-ar.json'));
         $placesEn = json_decode($jsonEn, true);
         $placesAr = json_decode($jsonAr, true);
 

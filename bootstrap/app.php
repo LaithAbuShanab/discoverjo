@@ -48,7 +48,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'apiKey' => ApiKeyMiddleware::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'langApi' => \App\Http\Middleware\languageApi::class,
-            'signed'=>Illuminate\Routing\Middleware\ValidateSignature::class
+            'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
+            'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class
         ]);
     })
     ->withProviders([

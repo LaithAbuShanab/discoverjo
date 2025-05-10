@@ -35,6 +35,13 @@ return [
     'account_active_notification'                                      => 'إشعار تفعيل الحساب',
     'account_active_notification'                                      => 'تم تفعيل حسابك بنجاح',
     'account_active_message'                                           => 'مرحباً :name، تم تفعيل حسابك كمرشد سياحي بنجاح. يمكنك الآن تسجيل الدخول واستخدام جميع الميزات.',
+    'welcome_new_admin'                                                => 'مرحبًا بك في حساب المسؤول الجديد الخاص بك',
+    'new_admin_notification'                                           => 'مرحبًا بك في لوحة الإدارة',
+    'new_admin_message'                                                => 'مرحبًا :name، تم إضافتك كمسؤول في النظام.',
+    'login_email'                                                      => 'البريد الإلكتروني لتسجيل الدخول',
+    'temporary_password'                                               => 'كلمة المرور المؤقتة',
+    'login_to_admin_panel'                                             => 'الدخول إلى لوحة الإدارة',
+    'please_change_password_after_login'                               => 'يرجى تغيير كلمة المرور بعد تسجيل الدخول لأول مرة.',
 
     "notifications" => [
 

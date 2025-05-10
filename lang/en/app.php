@@ -35,6 +35,13 @@ return [
     'account_active_notification'                                      => 'Account Activation Notification',
     'account_active_notification'                                      => 'Your Account Has Been Activated',
     'account_active_message'                                           => 'Hello :name, your guide account is now active. You can log in and start using all features.',
+    'welcome_new_admin'                                                => 'Welcome to your new admin account',
+    'new_admin_notification'                                           => 'Welcome to the Admin Panel',
+    'new_admin_message'                                                => 'Hi :name, you have been added as an admin.',
+    'login_email'                                                      => 'Login Email',
+    'temporary_password'                                               => 'Temporary Password',
+    'login_to_admin_panel'                                             => 'Login to Admin Panel',
+    'please_change_password_after_login'                               => 'Please change your password after your first login.',
 
     "notifications" => [
 

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard;
+use App\Http\Middleware\EnforcePasswordReset;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -84,11 +85,12 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn() => auth()->user()->name)
-                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->url(fn(): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnforcePasswordReset::class
             ])
             ->navigationGroups([
                 'App users',
@@ -106,6 +108,5 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authGuard('admin')
             ->databaseNotifications();
-
     }
 }

@@ -16,8 +16,8 @@ class AutomaticPlaceController extends Controller
 {
     public function insertPlacesFromJson()
     {
-        $jsonEn = File::get(storage_path('app/amman_en_cafee.json'));
-        $jsonAr = File::get(storage_path('app/amman_ar_cafee.json'));
+        $jsonEn = File::get(storage_path('app/tourist_attraction-en.json'));
+        $jsonAr = File::get(storage_path('app/tourist_attraction-ar.json'));
         $placesEn = json_decode($jsonEn, true);
         $placesAr = json_decode($jsonAr, true);
 
@@ -66,10 +66,13 @@ class AutomaticPlaceController extends Controller
                 ];
 
 
-                $region = Region::firstOrCreate([
-                    'name->en' => $cityNameFromQueryEn ? $cityNameFromQueryEn:'there is no data here',
-                    'name->ar' => $cityNameFromQueryAr ?$cityNameFromQueryAr: 'ليس هناك معلومة باللغة العربية متوفر'
-                ]);
+                $region = Region::firstOrCreate(
+                    ['name->en' => $cityNameFromQueryEn],
+                    ['name' => [
+                        'en' => $cityNameFromQueryEn ?? 'there is no data here',
+                        'ar' => $cityNameFromQueryAr ?? 'ليس هناك معلومة باللغة العربية متوفر',
+                    ]]
+                );
                 $region->setTranslations('name', ['en' => $cityNameFromQueryEn ?? 'there is no data here', 'ar' => $cityNameFromQueryAr ?? 'there is no data here']);
 
                 // Create and save the place
@@ -91,7 +94,7 @@ class AutomaticPlaceController extends Controller
                 $place->google_place_id = $placeData['place_id'];
                 $place->save();
 
-                $place->categories()->attach([71]);
+                $place->categories()->attach([8]);
                 $place->tags()->attach([3,5]);
                 $place->setTranslations('name', $translatorName);
                 $place->setTranslations('description', $translatorDescription);

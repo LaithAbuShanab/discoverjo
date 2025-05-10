@@ -307,3 +307,31 @@ function getWeatherNow($latitude, $longitude)
 
     return $temperatures[$index];
 }
+
+function isFollowing($targetId)
+{
+    $auth = Auth::guard('api');
+
+    if (!$auth->check() || !$targetId) {
+        return null;
+    }
+
+    $authUser = $auth->user();
+
+    // Return 2 if checking self
+    if ($authUser->id === $targetId) {
+        return 2;
+    }
+
+    // Check if following and return pivot status
+    $followed = $authUser->following()
+        ->where('users.id', $targetId)
+        ->first();
+
+    if($followed){
+        return $followed->pivot->status;
+    }else{
+        return false;
+    }
+
+}

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class LikeDislikeResource extends JsonResource
 {
@@ -20,6 +21,8 @@ class LikeDislikeResource extends JsonResource
             'user_slug' => $this->user->slug,
             'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'username' => $this->user->username,
+            'is_following' =>isFollowing($this->user->id),
+
         ];
     }
 }

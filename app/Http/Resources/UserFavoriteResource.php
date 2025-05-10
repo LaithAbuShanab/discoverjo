@@ -44,6 +44,7 @@ class UserFavoriteResource extends JsonResource
                     'media' => $gallery,
                     'creator_id' => $post->user->id,
                     'creator_username' => $post->user->username,
+                    'is_following' =>isFollowing($post->user->id),
                     'creator_slug' => $post->user->slug,
                     'visitable_type' => explode('\\Models\\', $post->visitable_type)[1] ?? null,
                     'visitable_id' => $post->visitable_type::find($post->visitable_id)?->name ?? null,

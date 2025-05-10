@@ -52,6 +52,7 @@ class UserProfileResource extends JsonResource
             'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
+            'is_following' =>isFollowing($this->id),
             'username' => $this->username,
             'email' => $this->email,
             'phone_number' => $this->phone_number,
@@ -75,6 +76,7 @@ class UserProfileResource extends JsonResource
             'reviews' => ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
             'avatar' => $this->getFirstMediaUrl('avatar','avatar_app'),
+
         ];
     }
 }

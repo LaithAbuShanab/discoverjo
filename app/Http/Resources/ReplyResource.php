@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ReplyResource extends JsonResource
 {
@@ -28,6 +29,7 @@ class ReplyResource extends JsonResource
             'username' => $this->user->username,
             'user_slug' => $this->user->slug,
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
+            'is_following' =>isFollowing($this->user->id),
             'created_at' => $this->created_at->diffForHumans(),
             'content' => $this->content,
             'reply_likes' => [

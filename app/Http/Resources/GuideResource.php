@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class GuideResource extends JsonResource
 {
@@ -44,6 +45,7 @@ class GuideResource extends JsonResource
             'latitude' => $this->latitude,
             'address' => $this->address,
             'is_guide'=>$this->is_guide,
+            'is_following' =>isFollowing($this->id),
             'guide_rating' => $this->guideRatings->avg('rating'),
             'status' => $this->status,
             'description'=>$this->description,

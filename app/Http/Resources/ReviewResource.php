@@ -31,6 +31,7 @@ class ReviewResource extends JsonResource
             'created_at' => $this->created_at->diffForHumans(),
             'rating' => (int) $this->rating,
             'comment' => $this->comment,
+            'is_following' =>isFollowing($this->user->id),
             'review_likes' => [
                 'total_likes' => $filteredLike->count(),
                 'user_likes_info' => LikeDislikeResource::collection($filteredLike)

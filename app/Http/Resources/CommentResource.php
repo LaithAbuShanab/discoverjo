@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class CommentResource extends JsonResource
 {
@@ -30,6 +31,7 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'username' => $this->user->username,
             'user_slug' => $this->user->slug,
+            'is_following' =>isFollowing($this->user->id),
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),
             'content' => $this->content,

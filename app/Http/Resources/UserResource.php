@@ -27,6 +27,7 @@ class UserResource extends JsonResource
                 'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->user->getPoints(),
                 'streak' => $this->user->getCurrentStreakCount($activity),
+                'is_following' =>isFollowing($this->user->id),
             ];
         } else {
             return [
@@ -37,14 +38,7 @@ class UserResource extends JsonResource
                 'image' => $this->getFirstMediaUrl('avatar','avatar_app'),
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
-                'is_following' => Auth::guard('api')->check() && $this->id
-                    ? (optional(Auth::guard('api')->user()
-                        ->following()
-                        ->where('users.id', $this->id)
-                        ->first())->pivot->status ?? false)
-                    : null,
-
-
+                'is_following' =>isFollowing($this->id),
 
             ];
         }

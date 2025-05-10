@@ -32,6 +32,7 @@ class TripDetailsResource extends JsonResource
             'slug' => $this->slug,
             'creator' => new UserResource($this->user),
             'is_creator' => Auth::guard('api')->user()->id == $this->user_id,
+            'is_following' =>isFollowing($this->user_id),
             'name' => $this->name,
             'address' => $this->place->address,
             'region' => $this->place->region->name,

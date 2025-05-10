@@ -63,6 +63,7 @@ class GuideTripResource extends JsonResource
             'guide_slug'=>$this->guide->slug,
             "guide_username"=>$this->guide->username,
             "guide_phone_number"=>$this->guide->phone_number,
+            'is_following' =>isFollowing($this->guide->id),
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar','avatar_app'),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->guide_id,

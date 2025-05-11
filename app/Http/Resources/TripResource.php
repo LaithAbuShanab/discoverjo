@@ -20,10 +20,12 @@ class TripResource extends JsonResource
         $trip = Trip::findOrFail($this->id);
         $trip->load('usersTrip.user');
 
+
         return [
             'id' => $this->id,
             'slug'=>$this->slug,
             'creator_id'=>$this->user_id,
+            'user' => new UserResource($this->user),
             'is_following' =>isFollowing($this->user_id),
             'creator_slug'=>$this->user->slug,
             'conversation_id' => $this->conversation->id ?? null,

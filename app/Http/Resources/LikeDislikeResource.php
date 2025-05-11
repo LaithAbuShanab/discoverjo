@@ -15,12 +15,15 @@ class LikeDislikeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $fullName= $this->user->first_name ." ". $this->user->last_name;
+
         return [
             'id' => $this->id,
             'user_id' => $this->user->id,
             'user_slug' => $this->user->slug,
             'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'username' => $this->user->username,
+            'full_name'=>$fullName,
             'is_following' =>isFollowing($this->user->id),
 
         ];

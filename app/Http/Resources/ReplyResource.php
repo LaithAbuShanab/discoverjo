@@ -23,11 +23,13 @@ class ReplyResource extends JsonResource
         $filteredDisLike = $this->likes->where('status', 0)->filter(function ($disLike) {
             return $disLike->user->status == 1;
         });
+        $fullName= $this->user->first_name ." ". $this->user->last_name;
 
         return [
             'id' => $this->id,
             'username' => $this->user->username,
             'user_slug' => $this->user->slug,
+            'full_name'=>$fullName,
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'is_following' =>isFollowing($this->user->id),
             'created_at' => $this->created_at->diffForHumans(),

@@ -21,12 +21,14 @@ class ReviewResource extends JsonResource
         $filteredDisLike = $this->likeDislike->where('status', 0)->filter(function ($disLike) {
             return $disLike->user->status == 1;
         });
+        $fullName= $this->user->first_name ." ". $this->user->last_name;
 
         return [
             'id' => $this->id,
             'username' => $this->user->username,
             'user_id'=>$this->user->id,
             'user_slug'=>$this->user->slug,
+            'full_name'=>$fullName,
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),
             'rating' => (int) $this->rating,

@@ -46,6 +46,8 @@ class GuideTripUpdateDetailResource extends JsonResource
         {
             $countRequest= $this->requestGuideTripUsers()->count();
         }
+        $fullName= $this->guide->first_name ." ". $this->guide->last_name;
+
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -59,6 +61,7 @@ class GuideTripUpdateDetailResource extends JsonResource
             'guide_id'=>$this->guide_id,
             'guide_slug'=>$this->guide->slug,
             "guide_username"=>$this->guide->username,
+            'full_name'=>$fullName,
             "guide_phone_number"=>$this->guide->phone_number,
             'guide_rating' => $this->guide->guideRatings->avg('rating'),
             'guide_avatar' => $this->guide->getFirstMediaUrl('avatar','avatar_app'),

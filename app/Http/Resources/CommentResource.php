@@ -27,10 +27,12 @@ class CommentResource extends JsonResource
             return $reply->user->status == 1;
         });
 
+        $fullName= $this->user->first_name ." ". $this->user->last_name;
         return [
             'id' => $this->id,
             'username' => $this->user->username,
             'user_slug' => $this->user->slug,
+            'full_name'=>$fullName,
             'is_following' =>isFollowing($this->user->id),
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),

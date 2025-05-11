@@ -16,10 +16,13 @@ class UserTripResource extends JsonResource
     public function toArray(Request $request): array
     {
         $activity = Activity::find(1);
+        $fullName= $this->user->first_name ." ". $this->user->last_name;
+
         return [
             'id' => $this->user->id,
             'slug' => $this->user->slug,
             'username' => $this->user->username,
+            'full_name'=>$fullName,
             'email' => $this->user->email,
             'status' => $this->status,
             'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),

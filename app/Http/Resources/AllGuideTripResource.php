@@ -17,7 +17,7 @@ class AllGuideTripResource extends JsonResource
     public function toArray(Request $request): array
     {
         $activity= Activity::find(1);
-
+        $fullName= $this->guide->first_name ." ". $this->guide->last_name;
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -30,6 +30,7 @@ class AllGuideTripResource extends JsonResource
                 ->filter(fn($userTrip) => $userTrip->user && $userTrip->user->status == 1)
                 ->count(),
             'guide_username' => $this->guide->username,
+            'full_name' => $fullName,
             'guide_slug' => $this->guide->slug,
             'is_following' => isFollowing($this->guide->id),
             'guide_points' => $this->guide->getPoints(),

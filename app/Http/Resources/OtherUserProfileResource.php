@@ -36,6 +36,7 @@ class OtherUserProfileResource extends JsonResource
 
         $reviews = $this->reviews()->paginate($paginationPerPage);
         $activity = Activity::find(1);
+        $fullName= $this->first_name ." ". $this->last_name;
 
         return [
             'id' => $this->id,
@@ -43,6 +44,7 @@ class OtherUserProfileResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
+            'full_name'=>$fullName,
             'is_guide' => $this->is_guide,
             'guide_rating' => $this->is_guide ? $this->guideRatings->avg('rating') : false,
             'gender' => $gender[$this->lang][$this->sex],

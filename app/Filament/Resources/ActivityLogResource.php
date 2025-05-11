@@ -96,7 +96,7 @@ class ActivityLogResource extends Resource
                         TextInput::make('causer_id')
                             ->afterStateHydrated(function ($component, ?Model $record) {
                                 /** @phpstan-ignore-next-line */
-                                return $component->state($record->causer?->username);
+                                return $component->state($record->causer?$record->causer->username:"guest");
                             })
                             ->label(__('activitylog::forms.fields.causer.label')),
 
@@ -241,7 +241,7 @@ class ActivityLogResource extends Resource
             ->getStateUsing(function (Model $record) {
                 // Check if causer is null or causer_id is null
                 if ($record->causer_id == null || $record->causer == null) {
-                    return new HtmlString('&mdash;');
+                    return"guest";
                 }
 
                 // Return the causer's name if causer exists

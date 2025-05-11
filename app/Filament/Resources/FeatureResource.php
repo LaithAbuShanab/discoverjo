@@ -86,7 +86,7 @@ class FeatureResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
+                    ->searchable()->sortable(),
                 SpatieMediaLibraryImageColumn::make('image')->collection('feature_active')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),

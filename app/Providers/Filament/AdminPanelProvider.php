@@ -70,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
                 ActivitylogPlugin::make()
+                    ->resource(\App\Filament\Resources\ActivityLogResource::class)
                     ->navigationGroup('System')
                     ->navigationIcon('heroicon-o-wrench')
                     ->navigationCountBadge(true),

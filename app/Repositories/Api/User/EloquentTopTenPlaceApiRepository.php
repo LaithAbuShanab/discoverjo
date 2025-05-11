@@ -16,6 +16,7 @@ class EloquentTopTenPlaceApiRepository implements TopTenPlaceApiRepositoryInterf
     {
         $topTenPlaces = TopTen::whereHas('place', fn($query) => $query->where('status', 1))->get();
         $shuffledTopTenPlaces = $topTenPlaces->shuffle();
+        activityLog('top ten', $topTenPlaces->first(), 'the user view top ten list', 'search');
         return new TopTenPlaceResource($shuffledTopTenPlaces);
     }
     public function search($query)

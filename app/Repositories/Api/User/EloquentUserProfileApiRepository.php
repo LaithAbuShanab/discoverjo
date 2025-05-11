@@ -71,11 +71,14 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $perPage = config('app.pagination_per_page');
 
-        $users = User::where('status', 1)->where(function ($queryBuilder) use ($query) {
-            $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
-                ->orWhere('last_name', 'LIKE', "%{$query}%")
-                ->orWhere('username', 'LIKE', "%{$query}%");
-        })
+        $users = User::query()
+            ->where('status', 1)
+            ->when($query, function ($queryBuilder) use ($query) {
+                $queryBuilder->whereRaw(
+                    "MATCH(first_name, last_name, username) AGAINST (? IN BOOLEAN MODE)",
+                    [$query . '*']
+                );
+            })
             ->paginate($perPage);
 
 

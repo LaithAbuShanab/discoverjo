@@ -26,14 +26,15 @@ class UserPostResource extends JsonResource
         $filteredComment = $this->comments->filter(function ($comment) {
             return $comment->user->status == 1;
         });
-
+        $visitable = $this->visitable_type::find($this->visitable_id);
         return [
             'id' => $this->id,
             'visitable_type' => explode("\\Models\\", $this->visitable_type)[1],
             'user' => new UserResource($this->user),
             'created_at' => $this->created_at->diffForHumans(),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePosts->contains('id', $this->id) : false,
-            'name' => $this->visitable_type::find($this->visitable_id)?->name,
+            'name' =>$visitable?->name,
+            'slug' =>$visitable?->slug,
             'content' => $this->content,
             'images' => $this->getMedia('post')->map(function ($media) {
                 // Check if the conversion exists

@@ -230,9 +230,20 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $validator = Validator::make($request->only('query'), [
-            'query' => 'nullable|string|max:255|regex:/^[\pL\pN\s.,\-]+$/u'
+        $symbols = ["'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'];
+        $cleanQuery = str_replace($symbols, '', $request->input('query'));
+
+// Optional: remove any other characters not Arabic/English using preg_replace
+//        $cleanQuery = preg_replace('/[^a-zA-Z\u{0600}-\u{06FF}\s]/u', '', $cleanQuery);
+
+        $request->merge([
+            'query' => $cleanQuery
         ]);
+
+        $validator = Validator::make($request->only('query'), [
+            'query' => 'nullable|string|max:255'
+        ]);
+
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_UNPROCESSABLE_ENTITY, __('app.api.invalid-input'), $validator->errors());

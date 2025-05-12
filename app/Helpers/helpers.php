@@ -361,3 +361,16 @@ function isFollowing($targetId)
     }
 
 }
+
+function sanitizeQuery($query)
+{
+    $symbols = [
+        "'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=',
+        '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'
+    ];
+
+    // Replace symbols with space
+    $query = str_replace($symbols, ' ', $query);
+
+    return trim($query);
+}

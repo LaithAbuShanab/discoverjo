@@ -230,11 +230,7 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $symbols = ["'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'];
-        $cleanQuery = str_replace($symbols, '', $request->input('query'));
-
-// Optional: remove any other characters not Arabic/English using preg_replace
-//        $cleanQuery = preg_replace('/[^a-zA-Z\u{0600}-\u{06FF}\s]/u', '', $cleanQuery);
+        $cleanQuery = sanitizeQuery($request->input('query'));
 
         $request->merge([
             'query' => $cleanQuery
@@ -250,11 +246,7 @@ class GuideTripUserApiController extends Controller
         }
 
         $query = $validator->validated()['query'] ?? null;
-        if ($query !== null) {
-            $query = trim($query);
-        }
 
-        dd($query);
 
         try {
             $places = $this->guideTripUserApiUseCase->search($query);

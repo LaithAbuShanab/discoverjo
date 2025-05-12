@@ -19,12 +19,13 @@ class TrackVisits
     {
         $userId = auth()->guard('api')->user()->id ?? null;
         $ip = $request->ip();
+        $today = now()->toDateString();
 
-        $cacheKey = 'visit_' . ($userId ?? $ip);
+        $cacheKey = 'visit_' . ($userId ?? $ip) . '_' . $today;
 
-        $notVisitedRecently = Cache::add($cacheKey, true, now()->addMinutes(1));
+        $notVisitedToday = Cache::add($cacheKey, true, now()->addDay());
 
-        if ($notVisitedRecently) {
+        if ($notVisitedToday) {
             Visit::create([
                 'user_id' => $userId,
                 'ip_address' => $ip,
@@ -35,4 +36,5 @@ class TrackVisits
 
         return $next($request);
     }
+
 }

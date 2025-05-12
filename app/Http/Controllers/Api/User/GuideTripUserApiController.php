@@ -230,20 +230,21 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
-        $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
+        $validator = Validator::make($request->only('query'), [
+            'query' => 'nullable|string|max:255|regex:/^[\pL\pN\s.,\-]+$/u'
         ]);
-        $validatedQuery = $validator->validated()['query'];
-        $input = strip_tags(trim($validatedQuery));
 
-        if ($input !== null) {
-            $input = preg_replace('/[^a-zA-Z0-9\s\p{Arabic}.,-]/u', '', $input);
-            $input = trim($input);
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_UNPROCESSABLE_ENTITY, __('app.api.invalid-input'), $validator->errors());
+        }
+
+        $query = $validator->validated()['query'] ?? null;
+        if ($query !== null) {
+            $query = trim($query);
         }
 
         try {
-            $places = $this->guideTripUserApiUseCase->search($input);
+            $places = $this->guideTripUserApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

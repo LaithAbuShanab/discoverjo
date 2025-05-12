@@ -86,7 +86,6 @@ class PopularPlaceResource extends Resource
                 Tables\Columns\TextColumn::make('place.phone_number')->searchable(),
                 RatingColumn::make('place.rating')->theme(RatingTheme::HalfStars)->sortable()->color('warning')->default(0.0),
                 Tables\Columns\TextColumn::make('place.region.name')->searchable()->sortable(),
-                SpatieMediaLibraryImageColumn::make('place.Media')->allCollections()->circular()->stacked(),
             ])
             ->filters([
                 //

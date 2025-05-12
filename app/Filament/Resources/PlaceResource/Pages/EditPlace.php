@@ -45,6 +45,7 @@ class EditPlace extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         unset($data['openingHours']);
+        unset($data['location']);
 
         return $data;
     }

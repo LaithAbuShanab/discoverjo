@@ -254,6 +254,8 @@ class GuideTripUserApiController extends Controller
             $query = trim($query);
         }
 
+        dd($query);
+
         try {
             $places = $this->guideTripUserApiUseCase->search($query);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);

@@ -194,21 +194,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function search( $query)
     {
         $perPage = config('app.pagination_per_page');
-
-        $trips = GuideTrip::query()
-            ->when($query, function ($q) use ($query) {
-                $searchTerm = "%{$query}%";
-
-                $q->where(function ($queryBuilder) use ($searchTerm) {
-                    $queryBuilder
-                        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(`name`, '$.\"en\"')) LIKE ?", [$searchTerm])
-                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(`name`, '$.\"ar\"')) LIKE ?", [$searchTerm])
-                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(`description`, '$.\"en\"')) LIKE ?", [$searchTerm])
-                        ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(`description`, '$.\"ar\"')) LIKE ?", [$searchTerm]);
-                });
-            })
-            ->whereHas('guide', function ($q) {
-                $q->where('status', 1);
+        $escapedQuery = '%' . addcslashes($query, '%_') . '%';
+        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
+            $queryBuilder->where('name->en', 'like', $escapedQuery)
+                ->orWhere('name->ar', 'like', $escapedQuery)
+                ->orWhere('description->en', 'like', $escapedQuery)
+                ->orWhere('description->ar', 'like', $escapedQuery);
+        })
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1');
             })
             ->paginate($perPage);
 

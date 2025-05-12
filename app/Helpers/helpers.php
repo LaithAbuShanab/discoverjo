@@ -120,12 +120,37 @@ function sendNotification($deviceTokens, $data)
 }
 
 
+//function activityLog($logName, $model, $description, $event, $extraProps = [])
+//{
+//    $activity = activity($logName)
+//        ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
+//        ->withProperties(array_merge([
+//            'ip' => request()->ip(),
+//            'user_agent' => request()->header('User-Agent'),
+//        ], $extraProps));
+//
+//    $activity->event($event);
+//
+//    if ($model) {
+//        $activity->performedOn($model);
+//    }
+//
+//    $activity->log($description);
+//}
+
 function activityLog($logName, $model, $description, $event, $extraProps = [])
 {
+    $ip = request()->header('X-Forwarded-For') ?? request()->ip();
+
+    // Handle cases where X-Forwarded-For contains multiple IPs
+    if (is_string($ip) && str_contains($ip, ',')) {
+        $ip = trim(explode(',', $ip)[0]); // get the first IP (client IP)
+    }
+
     $activity = activity($logName)
         ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
         ->withProperties(array_merge([
-            'ip' => request()->ip(),
+            'ip' => $ip,
             'user_agent' => request()->header('User-Agent'),
         ], $extraProps));
 
@@ -137,6 +162,7 @@ function activityLog($logName, $model, $description, $event, $extraProps = [])
 
     $activity->log($description);
 }
+
 
 function adminNotification($title = null, $body = null, $options = [])
 {

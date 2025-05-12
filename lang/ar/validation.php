@@ -282,6 +282,8 @@ return [
 
         // أولوية العرض
         'priority'                                  => 'الأولوية',
+
+        'query'                                     => 'البحث',
     ],
 
     'api' => [
@@ -565,6 +567,7 @@ return [
         'guide-trip-user-id-does-not-exists'                        => 'رقم معرف طلب الانضمام غير موجود',
         'the-user-not-longer-active'                                => 'المستخدم غير نشيط.',
         'you-did-not-join-to-this-trip'                             => 'أنت لم تنضم إلى هذه الرحلة',
+        'search-query-contains-invalid-characters' => 'The input contains too many special characters (3 or more are not allowed).',
 
         // User Guide Trip Validation
         'trip_registration_closed'                                  => 'لم يعد بإمكانك التسجيل في هذه الرحلة.',

@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
 
 class GuideTripUserApiController extends Controller
 {
@@ -231,19 +233,30 @@ class GuideTripUserApiController extends Controller
     public function search(Request $request)
     {
         $validator = Validator::make($request->only('query'), [
-            'query' => 'nullable|string|max:255'
+            'query' => [
+                'bail',
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $matches = preg_match_all("/[^\p{Arabic}a-zA-Z0-9\s]/u", $value, $out);
+
+                    if ($matches >= 3) {
+                        $fail(__('validation.api.search-query-contains-invalid-characters'));
+                    }
+                },
+            ]
         ]);
 
-
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_UNPROCESSABLE_ENTITY, __('app.api.invalid-input'), $validator->errors());
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
         $query = $validator->validated()['query'] ?? null;
         if ($query !== null) {
             $query = trim($query);
         }
-
 
         try {
             $places = $this->guideTripUserApiUseCase->search($query);

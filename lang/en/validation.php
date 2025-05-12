@@ -282,6 +282,8 @@ return [
 
         // Priority
         'priority'                                  => 'Priority',
+
+        'query'                                     => 'Query',
     ],
 
     'api' => [
@@ -567,6 +569,7 @@ return [
         'guide-trip-user-id-does-not-exists'                        => 'Guide trip user id does not exists',
         'the-user-not-longer-active'                                => 'The user is no longer active.',
         'you-did-not-join-to-this-trip'                             => 'you did not join to this trip',
+        'search-query-contains-invalid-characters'                  => 'The search query contains invalid characters.',
 
         // User Guide Trip Validation
         'trip_registration_closed'                                  => 'You can no longer register for this trip.',

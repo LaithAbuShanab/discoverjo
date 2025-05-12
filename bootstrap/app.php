@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
+            \App\Http\Middleware\TrackVisits::class,
         ]);
 
         $middleware->alias([
@@ -49,7 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'langApi' => \App\Http\Middleware\languageApi::class,
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
-            'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class
+            'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
         ]);
     })
     ->withProviders([

@@ -370,7 +370,7 @@ function sanitizeQuery($query)
     ];
 
     // Replace symbols with space
-    $query = str_replace($symbols, ' ', $query);
+    $query = str_replace($symbols, '', $query);
 
     return trim($query);
 }

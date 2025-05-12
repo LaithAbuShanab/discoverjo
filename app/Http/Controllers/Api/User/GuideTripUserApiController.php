@@ -230,7 +230,9 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $cleanQuery = sanitizeQuery($request->input('query'));
+        $symbols = ["'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'];
+        $cleanQuery = str_replace($symbols, '', $request->input('query'));
+
 
         $request->merge([
             'query' => $cleanQuery
@@ -246,6 +248,10 @@ class GuideTripUserApiController extends Controller
         }
 
         $query = $validator->validated()['query'] ?? null;
+        if ($query !== null) {
+            $query = trim($query);
+        }
+
 
         try {
             $places = $this->guideTripUserApiUseCase->search($query);

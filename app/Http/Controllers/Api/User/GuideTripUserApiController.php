@@ -230,14 +230,6 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $symbols = ["'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'];
-        $cleanQuery = str_replace($symbols, '', $request->input('query'));
-
-
-        $request->merge([
-            'query' => $cleanQuery
-        ]);
-
         $validator = Validator::make($request->only('query'), [
             'query' => 'nullable|string|max:255'
         ]);

@@ -237,6 +237,11 @@ class GuideTripUserApiController extends Controller
         $validatedQuery = $validator->validated()['query'];
         $input = strip_tags(trim($validatedQuery));
 
+        if ($input !== null) {
+            $input = preg_replace('/[^a-zA-Z0-9\s\p{Arabic}.,-]/u', '', $input);
+            $input = trim($input);
+        }
+
         try {
             $places = $this->guideTripUserApiUseCase->search($input);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);

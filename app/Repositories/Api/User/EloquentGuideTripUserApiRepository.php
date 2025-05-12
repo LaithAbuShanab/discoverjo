@@ -194,51 +194,34 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function search( $query)
     {
         $perPage = config('app.pagination_per_page');
-        $page = request('page', 1);
-        $offset = ($page - 1) * $perPage;
+        $escapedQuery = '%' . addcslashes($query, '%_') . '%';
+        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
+            $queryBuilder->where('name->en', 'like', $escapedQuery)
+                ->orWhere('name->ar', 'like', $escapedQuery)
+                ->orWhere('description->en', 'like', $escapedQuery)
+                ->orWhere('description->ar', 'like', $escapedQuery);
+        })
+            ->whereHas('guide', function ($query) {
+                $query->where('status', '1');
+            })
+            ->paginate($perPage);
 
-        $bindings = [];
-        $sql = "SELECT * FROM guide_trips
-            WHERE EXISTS (
-                SELECT 1 FROM users
-                WHERE users.id = guide_trips.guide_id
-                AND users.status = ?
-            )";
 
-        $bindings[] = 1;
+        $tripsArray = $trips->toArray();
+
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
+            'total' => $tripsArray['total'],
+        ];
 
         if ($query) {
-            $searchTerm = '%' . $query . '%';
-            $sql .= " AND (
-            JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"en\"')) LIKE ?
-            OR JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"ar\"')) LIKE ?
-            OR JSON_UNQUOTE(JSON_EXTRACT(description, '$.\"en\"')) LIKE ?
-            OR JSON_UNQUOTE(JSON_EXTRACT(description, '$.\"ar\"')) LIKE ?
-        )";
-            array_push($bindings, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+            activityLog('search for guide trips', $trips->first(), $query, 'Search');
         }
-
-        $sql .= " LIMIT ? OFFSET ?";
-        array_push($bindings, $perPage, $offset);
-
-        $trips = DB::select($sql, $bindings);
-
-//        dd($trips);
-        // Simulate pagination
-//        $pagination = [
-//            'next_page_url' => count($trips) === $perPage ? url()->current() . '?query=' . urlencode($query) . '&page=' . ($page + 1) : null,
-//            'prev_page_url' => $page > 1 ? url()->current() . '?query=' . urlencode($query) . '&page=' . ($page - 1) : null,
-//            'total' => null, // requires a separate count(*) query if needed
-//        ];
-
-//        if ($query) {
-//            activityLog('search for guide trips', $trips[0] ?? null, $query, 'Search');
-//        }
-
-        return $trips;
+        // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' => AllGuideTripResource::collection(collect($trips)),
-//            'pagination' => $pagination
+            'trips' => AllGuideTripResource::collection($trips),
+            'pagination' => $pagination
         ];
     }
 

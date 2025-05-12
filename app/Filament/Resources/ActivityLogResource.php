@@ -236,19 +236,26 @@ class ActivityLogResource extends Resource
 
     public static function getCauserNameColumnComponent(): Column
     {
-        return TextColumn::make('causer.name')
-            ->label(__('activitylog::tables.columns.causer.label'))
+        return TextColumn::make('causer_name') // Not a real DB column
+        ->label(__('activitylog::tables.columns.causer.label'))
             ->getStateUsing(function (Model $record) {
-                // Check if causer is null or causer_id is null
-                if ($record->causer_id == null || $record->causer == null) {
-                    return"guest";
+                if (is_null($record->causer_id) || is_null($record->causer)) {
+                    $ip = $record->properties['ip'] ?? 'guest';
+                    return $ip;
                 }
 
-                // Return the causer's name if causer exists
-                return $record->causer->username;
-            })
-            ->searchable();
+                if ($record->causer_type === \App\Models\Admin::class) {
+                    return $record->causer->name ?? 'admin';
+                }
+
+                if ($record->causer_type === \App\Models\User::class) {
+                    return $record->causer->username ?? 'user';
+                }
+
+                return 'unknown';
+            });
     }
+
 
     public static function getPropertiesColumnComponent(): Column
     {

@@ -81,6 +81,9 @@ class SuggestionPlaceResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('place_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('address')
@@ -98,6 +101,7 @@ class SuggestionPlaceResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])
@@ -110,6 +114,7 @@ class SuggestionPlaceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+
     }
 
     public static function getRelations(): array

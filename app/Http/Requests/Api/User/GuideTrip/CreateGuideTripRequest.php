@@ -179,10 +179,11 @@ class CreateGuideTripRequest extends FormRequest
 
             if ($this->input('is_trail')) {
                 $this->validateJsonObject('trail', $validator, [
-                    'min_duration_in_minute' => ['required', 'integer', 'min:0'],
-                    'max_duration_in_minute' => ['required', 'integer', 'gt:min_duration_in_minute'],
-                    'distance_in_meter' => ['required', 'numeric', 'min:0'],
+                    'min_duration_in_minute' => ['required', 'numeric', 'min:0', 'max:999.99'], // decimal(5,2)
+                    'max_duration_in_minute' => ['required', 'numeric', 'gt:min_duration_in_minute', 'max:999.99'], // decimal(5,2)
+                    'distance_in_meter' => ['required', 'numeric', 'min:0', 'max:9999.99'], // decimal(6,2)
                     'difficulty' => ['required', 'integer', 'in:0,1,2,3'],
+
                 ]);
             }
         });

@@ -69,6 +69,12 @@ class SinglePlaceResource extends JsonResource
         }
 
         $posts = $this->posts->filter(function ($post) {
+            if($post->privacy == 0)
+            {
+                $userId = Auth::guard('api')->user()->id;
+                return $post->user_id == $userId;
+
+            }
             if ($post->privacy == 1) {
                 return true;
             }
@@ -77,7 +83,8 @@ class SinglePlaceResource extends JsonResource
             if ($post->privacy == 2) {
                 // Assuming you have access to the authenticated user
                 $user = Auth::guard('api')->user();
-                return $user && $user->isFollowing($post->user); // or $post->creator
+                $owner = $user->id == $post->user_id;
+                return $owner || $user->isFollowing($post->user); // or $post->creator
             }
 
             return false;

@@ -88,7 +88,7 @@ class SinglePlaceResource extends JsonResource
             }
 
             return false;
-        });
+        })->sortByDesc('id')->values();
 
         $weather = null;
         $temp = getWeatherNow($placeLat, $placeLng);

@@ -25,7 +25,7 @@ class CreateMessageRequest extends FormRequest
         return [
             'conversation_id' => ['required', 'exists:conversations,id', new GroupChatIndexRule($this->conversation_id)],
             'message_txt' => 'nullable|string',
-            'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp3,wav,mp4,mov,avi|max:10000',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp3,wav,mp4,mov,avi|max:50000',
         ];
     }
     public function messages()

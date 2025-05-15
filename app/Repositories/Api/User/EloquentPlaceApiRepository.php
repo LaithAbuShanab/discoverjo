@@ -63,8 +63,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     }
     public function search($query)
     {
-        $userLat = request()->lat ? request()->lat : null;
-        $userLng = request()->lng ? request()->lng : null;
+        $user = Auth::guard('api')->user();
+
+        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
         $perPage = config('app.pagination_per_page');
         $places = Place::selectRaw(
             'places.*,
@@ -216,8 +218,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     public function allSearch($query)
     {
         // Get user coordinates if provided
-        $userLat = request()->lat ? request()->lat : null;
-        $userLng = request()->lng ? request()->lng : null;
+        $user = Auth::guard('api')->user();
+
+        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
         $perPage =  config('app.pagination_per_page');
         /**
          * SEARCH PLACES

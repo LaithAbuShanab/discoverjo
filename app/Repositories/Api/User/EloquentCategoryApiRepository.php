@@ -43,8 +43,11 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
         $allSubcategories = $category->children()->whereHas('places')->get();
 
-        $userLat = request()->lat ? request()->lat : null;
-        $userLng = request()->lng ? request()->lng : null;
+        $user = Auth::guard('api')->user();
+
+        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+
 
         $user = Auth::guard('api')->check();
 //        if($user && !$userLat &$user->)

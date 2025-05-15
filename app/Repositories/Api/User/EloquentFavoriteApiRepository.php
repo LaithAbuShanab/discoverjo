@@ -67,8 +67,10 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
     public function favSearch($searchTerm)
     {
         $perPage = config('app.pagination_per_page');
-        $userLat = request()->lat ? request()->lat : null;
-        $userLng = request()->lng ? request()->lng : null;
+        $user = Auth::guard('api')->user();
+
+        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
 
         $user = Auth::guard('api')->user();
         $userId = Auth::guard('api')->user()->id;

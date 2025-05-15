@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class CategoryResource extends Resource
 {
@@ -56,6 +55,7 @@ class CategoryResource extends Resource
                                     ->maxLength(255)
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Additional Details')
@@ -71,10 +71,12 @@ class CategoryResource extends Resource
                                     ->label('Category Image')
                                     ->collection('main_category')
                                     ->disk('s3')
+                                    ->openable()
                                     ->conversion('main_category_app')
 
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -86,11 +88,9 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->searchable(),
-                SpatieMediaLibraryImageColumn::make('image')->collection('main_category')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
-                    //                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('priority')
                     ->numeric()

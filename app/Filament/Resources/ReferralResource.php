@@ -3,21 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReferralResource\Pages;
-use App\Filament\Resources\ReferralResource\RelationManagers;
 use App\Models\Referral;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ReferralResource extends Resource
 {
     protected static ?string $model = Referral::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'App users';
+
+    protected static ?string $navigationParentItem = "Users";
 
     public static function form(Form $form): Form
     {
@@ -74,8 +75,6 @@ class ReferralResource extends Resource
     {
         return [
             'index' => Pages\ListReferrals::route('/'),
-//            'create' => Pages\CreateReferral::route('/create'),
-//            'edit' => Pages\EditReferral::route('/{record}/edit'),
         ];
     }
 }

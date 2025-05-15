@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 use Filament\Forms\Components\{Section, Grid};
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -25,7 +26,7 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('id', "!=", 1)->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
@@ -194,7 +195,7 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sex')
-                    ->numeric()
+                    ->label('Gender')
                     ->sortable()
                     ->formatStateUsing(fn($state) => $state === 1 ? 'male' : ($state === 2 ? 'female' : null)),
                 Tables\Columns\TextColumn::make('email')
@@ -241,7 +242,8 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('id', '!=', 1));
     }
 
     public static function getRelations(): array

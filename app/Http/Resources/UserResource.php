@@ -2,10 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Follow;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 use LevelUp\Experience\Models\Activity;
 
 class UserResource extends JsonResource

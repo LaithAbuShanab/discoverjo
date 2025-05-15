@@ -9,12 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class TagResource extends Resource
 {
@@ -56,6 +53,7 @@ class TagResource extends Resource
                                     ->maxLength(255),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Tag Images')
@@ -76,6 +74,7 @@ class TagResource extends Resource
                                     ->required(),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -85,9 +84,7 @@ class TagResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
-                SpatieMediaLibraryImageColumn::make('image')->collection('tag_active')->label('Image')->circular(),
+                Tables\Columns\TextColumn::make('id')->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),

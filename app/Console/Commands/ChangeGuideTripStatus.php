@@ -28,18 +28,21 @@ class ChangeGuideTripStatus extends Command
      */
     public function handle()
     {
-        $now = now()->toDateTimeString(); // Ensure the format matches your DB
+        $now = now();
 
-//        $updatedGuideTrips = GuideTrip::where('status', '1')
-//            ->where('end_datetime', '<', $now)
-//            ->update(['status' => '0']);
+        // نحسب عدد الرحلات التي ستتغير حالتها
+        $count = DB::table('guide_trips')
+            ->where('status', 1)
+            ->where('end_datetime', '<', $now)
+            ->count();
 
-        $updatedGuideTrips =DB::unprepared("UPDATE guide_trips SET status = 0, updated_at = NOW() WHERE status = 1 AND end_datetime < NOW()");
+        // ننفذ التحديث بدون استخدام prepared statement لتجنب الخطأ
+        DB::unprepared("UPDATE guide_trips SET status = 0, updated_at = NOW() WHERE status = 1 AND end_datetime < NOW()");
 
-        // Log the changes
-        Log::info("Guide trip statuses updated: {$updatedGuideTrips}");
+        // نسجل الحدث في السجل
+        Log::info("Guide trip statuses updated: {$count}");
 
-        // Output for CLI
-        $this->info("Updated {$updatedGuideTrips} guide trips.");
+        // نعرض النتيجة في الـ CLI
+        $this->info("Updated {$count} guide trips.");
     }
 }

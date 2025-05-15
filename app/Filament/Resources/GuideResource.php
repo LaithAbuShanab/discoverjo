@@ -10,8 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Illuminate\Support\Facades\Hash;
 
 class GuideResource extends Resource
 {
@@ -70,6 +68,7 @@ class GuideResource extends Resource
                                     ->label('Date of Birth'),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 // Account Security Section
@@ -82,6 +81,7 @@ class GuideResource extends Resource
                                     ->label('Email Verified At'),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 // Guide Details Section
@@ -109,6 +109,7 @@ class GuideResource extends Resource
                                     ->numeric(),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 // Social & Preferences Section
@@ -139,6 +140,7 @@ class GuideResource extends Resource
                                     ->required(),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 // Status & Description Section
@@ -159,6 +161,7 @@ class GuideResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Image & Attachment')
@@ -181,6 +184,7 @@ class GuideResource extends Resource
                                     ->downloadable(), // Adds a download button
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -190,7 +194,6 @@ class GuideResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('avatar')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('username')->searchable(),
                 Tables\Columns\BooleanColumn::make('status')->getStateUsing(fn($record) => $record->status === 1),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),

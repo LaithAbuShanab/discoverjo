@@ -9,12 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class FeatureResource extends Resource
 {
@@ -57,6 +54,7 @@ class FeatureResource extends Resource
                                     ->maxLength(255),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Feature Images')
@@ -68,15 +66,14 @@ class FeatureResource extends Resource
                                     ->label('Feature Active Image')
                                     ->collection('feature_active')
                                     ->conversion('feature_active_app'),
-//                                    ->required(),
 
                                 SpatieMediaLibraryFileUpload::make('feature_inactive_image')
                                     ->label('Feature Inactive Image')
                                     ->collection('feature_inactive')
                                     ->conversion('feature_inactive_app'),
-//                                    ->required(),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])->columns(1);
     }
@@ -85,9 +82,7 @@ class FeatureResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable()->sortable(),
-                SpatieMediaLibraryImageColumn::make('image')->collection('feature_active')->label('Image')->circular(),
+                Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),

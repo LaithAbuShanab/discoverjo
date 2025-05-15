@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\GuideTrip;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ChangeGuideTripStatus extends Command
@@ -27,11 +28,13 @@ class ChangeGuideTripStatus extends Command
      */
     public function handle()
     {
-        $now = now();
+        $now = now()->toDateTimeString(); // Ensure the format matches your DB
 
-        $updatedGuideTrips = GuideTrip::where('status', '1')
-            ->where('end_datetime', '<', $now)
-            ->update(['status' => '0']);
+//        $updatedGuideTrips = GuideTrip::where('status', '1')
+//            ->where('end_datetime', '<', $now)
+//            ->update(['status' => '0']);
+
+        $updatedGuideTrips =DB::unprepared("UPDATE guide_trips SET status = 0, updated_at = NOW() WHERE status = 1 AND end_datetime < NOW()");
 
         // Log the changes
         Log::info("Guide trip statuses updated: {$updatedGuideTrips}");

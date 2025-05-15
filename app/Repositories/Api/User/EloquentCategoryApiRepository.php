@@ -8,6 +8,7 @@ use App\Http\Resources\PlaceResource;
 use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Models\Category;
 use App\Models\Place;
+use Illuminate\Support\Facades\Auth;
 
 class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 {
@@ -44,6 +45,9 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
 
         $userLat = request()->lat ? request()->lat : null;
         $userLng = request()->lng ? request()->lng : null;
+
+        $user = Auth::guard('api')->check();
+//        if($user && !$userLat &$user->)
 
         $places = Place::selectRaw(
             'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',

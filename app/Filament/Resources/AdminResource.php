@@ -13,7 +13,6 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Resources\Pages\CreateRecord;
 
 class AdminResource extends Resource
@@ -28,13 +27,14 @@ class AdminResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return (string) static::getModel()::where('id', '!=', 1)->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
         return 'primary';
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -55,6 +55,7 @@ class AdminResource extends Resource
                                     ->maxLength(255),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Security')
@@ -65,7 +66,7 @@ class AdminResource extends Resource
                                 Forms\Components\TextInput::make('password')
                                     ->label('Password')
                                     ->password()
-                                    ->required(fn($livewire) => $livewire instanceof CreateRecord) // Required only on create
+                                    ->required(fn($livewire) => $livewire instanceof CreateRecord)
                                     ->revealable()
                                     ->maxLength(255)
                                     ->dehydrateStateUsing(fn($state) => bcrypt($state)),
@@ -74,6 +75,7 @@ class AdminResource extends Resource
                             ])
 
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Roles & Permissions')
@@ -86,6 +88,7 @@ class AdminResource extends Resource
                             ->searchable()
                             ->required(fn($livewire) => $livewire instanceof CreateRecord),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -95,7 +98,6 @@ class AdminResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('admin_profile')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
                 Tables\Columns\TextColumn::make('lang')->searchable(),

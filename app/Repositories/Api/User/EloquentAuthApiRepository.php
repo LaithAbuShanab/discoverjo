@@ -14,13 +14,13 @@ use App\Models\Referral;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\UsersTrip;
+use App\Models\Visit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use LevelUp\Experience\Models\Activity;
 use mysql_xdevapi\Exception;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Auth\Events\Registered;
 
 class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 {
@@ -59,7 +59,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                     Referral::create([
                         'referrer_id' => $referrer->id,
                         'referred_id' => $user->id,
-                        'referral_code'=>$referralCode
+                        'referral_code' => $referralCode
                     ]);
                 }
             }
@@ -75,6 +75,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             return new UserResource($user);
         });
     }
+
     public function login($userData)
     {
         $now = Carbon::now('Asia/Riyadh');
@@ -98,6 +99,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             if ($user->status == 4) {
                 throw new \Exception(__('validation.api.wait-for-admin-to-accept-your-application'));
             }
+
             if ($user->status == 0) {
                 $user->status = 1;
                 $user->save();
@@ -122,7 +124,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 GuideTripUser::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
             }
 
-//            $user->tokens()->where('name', 'mobile')->delete();
+            //$user->tokens()->where('name', 'mobile')->delete();
 
             // CHeck If This User Verify Email
             if (!$user->hasVerifiedEmail()) {
@@ -134,14 +136,11 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 return new UserLoginResource($user);
             }
 
-
-
             $token = $user->createToken('mobile')->accessToken;
             $tokenWebsite = $user->createToken('website')->accessToken;
             $user->token = $token;
             $user->token_website = $tokenWebsite;
             $user->verified_email = true;
-
             $deviceToken = $userData['device_token'];
 
             $existing = DeviceToken::where('user_id', $user->id)
@@ -154,12 +153,8 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                     'token' => $deviceToken,
                 ]);
             }
-//            $existingDeviceToken = DeviceToken::where('user_id', $user->id)->first();
-//            if ($existingDeviceToken) {
-//                $existingDeviceToken->update(['token' => $userData['device_token']]);
-//            } else {
-//                DeviceToken::create(['user_id' => $user->id, 'token' => $userData['device_token']]);
-//            }
+
+            $this->trackUserLoginVisit($user);
             activityLog('User', $user, 'the user logged in', 'login');
 
             return new UserLoginResource($user);
@@ -175,7 +170,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         //logout from the current device
         $userToken = $user->token();
         $userToken->delete();
-        $device=DeviceToken::where('token',$deviceToken)->where('user_id',$user->id)->first();
+        $device = DeviceToken::where('token', $deviceToken)->where('user_id', $user->id)->first();
         $device->delete();
     }
 
@@ -245,5 +240,33 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             }
         }
         GuideTripUser::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
+    }
+
+    private function trackUserLoginVisit($user): void
+    {
+        $ip = request()->ip();
+        $userAgent = request()->userAgent();
+        $today = now()->toDateString();
+
+        $alreadyExists = Visit::where('user_id', $user->id)
+            ->whereDate('created_at', $today)
+            ->exists();
+
+        if (!$alreadyExists) {
+            $updated = Visit::whereNull('user_id')
+                ->where('ip_address', $ip)
+                ->where('user_agent', $userAgent)
+                ->whereDate('created_at', $today)
+                ->update(['user_id' => $user->id]);
+
+            if ($updated === 0) {
+                Visit::create([
+                    'user_id' => $user->id,
+                    'ip_address' => $ip,
+                    'user_agent' => $userAgent,
+                    'platform' => php_uname('s'),
+                ]);
+            }
+        }
     }
 }

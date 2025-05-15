@@ -14,6 +14,11 @@ class StatsOverviewWidget extends BaseWidget
 
     protected static ?int $sort = 0;
 
+    public static function canView(): bool
+    {
+        return false;
+    }
+
     /**
      * Get the stats to display in the widget.
      *

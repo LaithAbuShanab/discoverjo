@@ -42,56 +42,18 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $user = Auth::guard('api')->user();
         $userId = $user->id;
-        $userBirthday = $user->birthday;
+        $userAge = Carbon::parse($user->birthday)->age;
         $userSex = $user->sex;
-        $userAge = Carbon::parse($userBirthday)->age;
 
-        $trips = Trip::whereHas('user', function ($query) {
-            $query->where('status', '1');
-        })
+        $trips = Trip::whereHas('user', fn($q) => $q->where('status', '1'))
             ->where('status', '1')
-            ->where(function ($query) use ($userId) {
-                $query->where('trip_type', '0') // Public
-                    ->orWhere(function ($query) use ($userId) {
-                        $query->where('trip_type', '1') // Followers
-                            ->where(function ($query) use ($userId) {
-                                $query->whereHas('user.followers', function ($query) use ($userId) {
-                                    $query->where('follower_id', $userId);
-                                })->orWhere('user_id', $userId);
-                            });
-                    })
-                    ->orWhere(function ($query) use ($userId) {
-                        $query->where('trip_type', '2') // Specific
-                            ->whereHas('usersTrip', function ($query) use ($userId) {
-                                $query->where('user_id', $userId)->where('status', '1');
-                            })->orWhere('user_id', $userId);
-                    });
-            })
-            ->where(function ($query) {
-                $query->where('trip_type', '!=', '2')
-                    ->whereHas('usersTrip', function ($query) {
-                        $query->where('status', '1');
-                    }, '!=', DB::raw('attendance_number'))
-                    ->orWhere('trip_type', '2');
-            })
-            ->where(function ($query) use ($userAge, $userSex) {
-                $query->where('trip_type', '2')
-                    ->orWhere(function ($query) use ($userAge, $userSex) {
-                        $query->whereIn('sex', [$userSex, 0])
-                            ->where(function ($query) use ($userAge) {
-                                $query->whereNull('age_range')
-                                    ->orWhere(function ($query) use ($userAge) {
-                                        $query->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
-                                            ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
-                                    });
-                            });
-                    });
-            })
+            ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
+            ->where(fn($q) => $this->applyCapacityCheck($q))
+            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
             ->get();
 
         return TripResource::collection($trips);
     }
-
 
     public function allTrips()
     {
@@ -449,7 +411,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         }
     }
 
-
     public function update($request)
     {
         $trip = Trip::where('slug', $request->trip_slug)->first();
@@ -674,5 +635,57 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             return false;
         }
         return true;
+    }
+
+    private function applyTripTypeVisibility($query, $userId)
+    {
+        $query->where('trip_type', '0') // Public
+            ->orWhere(function ($q) use ($userId) {
+                $q->where('trip_type', '1') // Followers
+                    ->where(function ($q) use ($userId) {
+                        $q->whereHas('user.followers', fn($q) => $q->where('follower_id', $userId))
+                            ->orWhere('user_id', $userId);
+                    });
+            })
+            ->orWhere(function ($q) use ($userId) {
+                $q->where('trip_type', '2') // Specific
+                    ->whereHas('usersTrip', fn($q) => $q->where('user_id', $userId)->where('status', '1'))
+                    ->orWhere('user_id', $userId);
+            });
+
+        return $query;
+    }
+
+    private function applyCapacityCheck($query)
+    {
+        $query->where(function ($q) {
+            $q->where('trip_type', '!=', '2')
+                ->whereHas('usersTrip', fn($q) => $q->where('status', '1'), '!=', DB::raw('attendance_number'))
+                ->orWhere('trip_type', '2');
+        });
+
+        return $query;
+    }
+
+    private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
+    {
+        $query->where(function ($q) use ($userId, $userSex, $userAge) {
+            $q->where('user_id', $userId) // صاحب الرحلة
+                ->orWhere(function ($q) use ($userSex, $userAge) {
+                    $q->where('trip_type', '2') // المخصصة
+                        ->orWhere(function ($q) use ($userSex, $userAge) {
+                            $q->whereIn('sex', [$userSex, 0])
+                                ->where(function ($q) use ($userAge) {
+                                    $q->whereNull('age_range')
+                                        ->orWhere(function ($q) use ($userAge) {
+                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                                        });
+                                });
+                        });
+                });
+        });
+
+        return $query;
     }
 }

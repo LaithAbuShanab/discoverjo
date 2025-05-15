@@ -11,7 +11,6 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rule;
 
@@ -74,14 +73,16 @@ class SliderResource extends Resource
                                     ->numeric()
                                     ->rules([
                                         Rule::unique('sliders', 'priority')
-                                            ->where(fn ($query) =>
-                                            $query->where('type', request()->input('type')) // Ensure unique priority per type
+                                            ->where(
+                                                fn($query) =>
+                                                $query->where('type', request()->input('type')) // Ensure unique priority per type
                                             ),
                                     ])
                                     ->label('Priority'),
                             ]),
 
                     ])
+                    ->collapsible()
                     ->columns(1),
 
                 Section::make('Additional Details')
@@ -96,6 +97,7 @@ class SliderResource extends Resource
                                     ->conversion('slider_app')
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -107,12 +109,9 @@ class SliderResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->searchable(),
-                SpatieMediaLibraryImageColumn::make('image')->collection('slider')->label('Image')->circular(),
-
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\ToggleColumn::make('status'),
-
                 Tables\Columns\TextColumn::make('priority')
                     ->numeric()
                     ->sortable(),

@@ -10,31 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TrackVisits
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        $userId = auth()->guard('api')->user()->id ?? null;
         $ip = $request->ip();
+        $userAgent = $request->userAgent();
         $today = now()->toDateString();
 
-        $cacheKey = 'visit_' . ($userId ?? $ip) . '_' . $today;
+        $visitorKey = sha1($ip . '|' . $userAgent . '|' . $today);
 
-        $notVisitedToday = Cache::add($cacheKey, true, now()->addDay());
+        $notVisitedToday = Cache::add('visit_' . $visitorKey, true, now()->addDay());
 
         if ($notVisitedToday) {
             Visit::create([
-                'user_id' => $userId,
+                'user_id' => auth()->guard('api')->user()->id ?? null,
                 'ip_address' => $ip,
-                'user_agent' => $request->userAgent(),
+                'user_agent' => $userAgent,
                 'platform' => php_uname('s'),
             ]);
         }
 
         return $next($request);
     }
-
 }

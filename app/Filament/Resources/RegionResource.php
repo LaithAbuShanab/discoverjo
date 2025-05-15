@@ -11,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Illuminate\Support\Str;
 
 class RegionResource extends Resource
 {
@@ -52,6 +51,7 @@ class RegionResource extends Resource
                                     ->maxLength(255),
                             ]),
                     ])
+                    ->collapsible()
                     ->columns(1),
             ])
             ->columns(1);
@@ -61,9 +61,7 @@ class RegionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('id')->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('slug')->toggleable(isToggledHiddenByDefault: true)->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -74,7 +72,7 @@ class RegionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

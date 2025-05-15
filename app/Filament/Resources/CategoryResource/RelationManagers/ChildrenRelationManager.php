@@ -7,7 +7,6 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -56,7 +55,6 @@ class ChildrenRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('category_active')->label('Image')->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')

@@ -8,6 +8,7 @@ use App\Interfaces\Gateways\Api\User\SubCategoryApiRepositoryInterface;
 use App\Models\Category;
 use App\Models\Place;
 use App\Models\SubCategory;
+use Illuminate\Support\Facades\Auth;
 
 
 class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterface
@@ -22,9 +23,10 @@ class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterf
 
         $id = $subCategory->id;
 
-        // Retrieve user coordinates from the request
-        $userLat = request()->query('lat', null);
-        $userLng = request()->query('lng', null);
+        $user = Auth::guard('api')->user();
+
+        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
 
         // Set the number of places per page
         $perPage = config('app.pagination_per_page'); // Adjust this number as needed

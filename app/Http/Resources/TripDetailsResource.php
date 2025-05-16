@@ -27,6 +27,14 @@ class TripDetailsResource extends JsonResource
             return $review->user->status == 1;
         });
 
+        $gallery = [
+            $this->getFirstMediaUrl('main_place', 'main_place_app')
+        ];
+
+        foreach ($this->getMedia('place_gallery') as $image) {
+            $gallery[] = $image->getUrl('place_gallery_app');
+        }
+
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -36,7 +44,7 @@ class TripDetailsResource extends JsonResource
             'name' => $this->name,
             'address' => $this->place->address,
             'region' => $this->place->region->name,
-            'place_gallery' => $this->place->getMedia('place_gallery')->pluck('original_url'),
+            'place_gallery' => $gallery,
             'description' => $this->description,
             'tags' => $this->tags->map(function ($tag) {
                 return [

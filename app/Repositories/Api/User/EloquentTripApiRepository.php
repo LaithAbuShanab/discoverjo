@@ -23,6 +23,7 @@ use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
 use App\Notifications\Users\Trip\RemoveUserTripNotification;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
@@ -572,33 +573,68 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function search($query)
     {
-        $perPage =  config('app.pagination_per_page');
+        $perPage = config('app.pagination_per_page');
+        $user = Auth::guard('api')->user();
+        $allTrips= null;
+        if ($user) {
+            $userId = $user->id;
+            $userAge = Carbon::parse($user->birthday)->age;
+            $userSex = $user->sex;
 
+            // User's own trips matching search query
+            $ownTrips = Trip::where('user_id', $userId)
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', "%$query%")
+                        ->orWhere('description', 'like', "%$query%");
+                })
+                ->whereHas('user', fn($q) => $q->where('status', '1'));
 
-        $trips = Trip::where(function ($q) use ($query) {
-            $q->where('name', 'like', "%$query%")
-                ->orWhere('description', 'like', "%$query%");
-        })
-            ->whereHas('user', function ($query) {
-                $query->where('status', '1'); // Ensure only trips where the owner is active
-            })
-            ->paginate($perPage);
+            // Other users' trips matching search query
+            $otherTrips = Trip::where('user_id', '!=', $userId)
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', "%$query%")
+                        ->orWhere('description', 'like', "%$query%");
+                })
+                ->whereHas('user', fn($q) => $q->where('status', '1'))
+                ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
+//                ->where(fn($q) => $this->applyCapacityCheck($q))
+                ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
-        $tripsArray = $trips->toArray();
+            // Merge and paginate
+            $allTrips = $ownTrips->union($otherTrips)
+                ->orderBy('status', 'desc')
+                ->orderBy('date_time', 'desc')
+                ->paginate($perPage);
+        } else {
+            // Guest users see only public trips
+            $allTrips = Trip::where('trip_type', 0)
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', "%$query%")
+                        ->orWhere('description', 'like', "%$query%");
+                })
+                ->whereHas('user', fn($q) => $q->where('status', '1'))
+                ->orderBy('status', 'desc')
+                ->orderBy('date_time', 'desc')
+                ->paginate($perPage);
+        }
+
+        $tripsArray = $allTrips->toArray();
         $pagination = [
             'next_page_url' => $tripsArray['next_page_url'],
-            'prev_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['prev_page_url'],
             'total' => $tripsArray['total'],
         ];
+
         if ($query) {
-            activityLog('trip', $trips->first(), $query, 'search');
+            activityLog('trip', $allTrips->first(), $query, 'search');
         }
-        // Pass user coordinates to the PlaceResource collection
+
         return [
-            'trips' => TripResource::collection($trips),
-            'pagination' => $pagination
+            'trips' => TripResource::collection($allTrips),
+            'pagination' => $pagination,
         ];
     }
+
 
     private function handleTripTypeNotifications($request, $trip)
     {
@@ -715,4 +751,59 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         return $query;
     }
+
+    public function dateTrips($date)
+    {
+        $perPage = config('app.pagination_per_page');
+        $user = Auth::guard('api')->user();
+
+        if($user){
+            $userId = $user->id;
+            $userAge = Carbon::parse($user->birthday)->age;
+            $userSex = $user->sex;
+            $ownTrips = Trip::where('user_id', $userId)
+                ->whereDate('date_time', '=', $date)
+                ->whereHas('user', fn($q) => $q->where('status', '1'));
+
+            // Other users' trips on the specified date (apply filters, allow any status)
+            $otherTrips = Trip::where('user_id', '!=', $userId)
+                ->whereDate('date_time', '=', $date)
+                ->whereHas('user', fn($q) => $q->where('status', '1'))
+                ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
+//                ->where(fn($q) => $this->applyCapacityCheck($q))
+                ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
+
+            // Combine and sort
+            $allTrips = $ownTrips->union($otherTrips)
+                ->orderBy('status', 'desc')
+                ->orderBy('date_time', 'desc')
+                ->paginate($perPage);
+        }else{
+            $allTrips = Trip::where('trip_type',0)
+                ->whereDate('date_time', '=', $date)->paginate($perPage);
+        }
+        // Own trips on the specified date (bypass filters, allow any status)
+
+
+
+        $tripsArray = $allTrips->toArray();
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['prev_page_url'],
+            'total' => $tripsArray['total'],
+        ];
+
+        activityLog(
+            'view trips in specific date',
+            $allTrips->first(),
+            'The user viewed trips on ' . $date,
+            'view'
+        );
+
+        return [
+            'trips' => TripResource::collection($allTrips),
+            'pagination' => $pagination,
+        ];
+    }
+
 }

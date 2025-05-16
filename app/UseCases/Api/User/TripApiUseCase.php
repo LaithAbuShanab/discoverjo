@@ -126,4 +126,9 @@ class TripApiUseCase
     {
         return $this->tripApiRepository->removeUser($data);
     }
+
+    public function dateTrips($date)
+    {
+        return $this->tripApiRepository->dateTrips($date['date']);
+    }
 }

@@ -20,7 +20,6 @@ class TripResource extends JsonResource
         $trip = Trip::findOrFail($this->id);
         $trip->load('usersTrip.user');
 
-
         return [
             'id' => $this->id,
             'slug'=>$this->slug,

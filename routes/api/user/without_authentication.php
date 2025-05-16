@@ -110,6 +110,8 @@ Route::get('plan/filter', [PlanApiController::class, 'filter']); // DONE ✅
 
 Route::get('date/guide-trips', [GuideTripUserApiController::class, 'dateGuideTrip'])->name('date.guide.trip'); // DONE ✅
 
+Route::get('date/trips', [TripApiController::class, 'dateTrips']); // DONE ✅
+
 require __DIR__ . '/auth_user.php';
 
 Route::fallback(function () {

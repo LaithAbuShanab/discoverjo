@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\User\Event\DayRequest;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
 use App\Rules\CheckIfTheOwnerOfTripActiveRule;
 use App\Rules\CheckUserTripExistsRule;
@@ -392,5 +393,18 @@ class TripApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
+    }
+
+    public function dateTrips(DayRequest $request)
+    {
+        try {
+            $trips = $this->tripApiUseCase->dateTrips($request->validated());
+            return ApiResponse::sendResponse(200, __('app.api.trips-of-specific-date-retrieved-successfully'), $trips);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
+        }
+
     }
 }

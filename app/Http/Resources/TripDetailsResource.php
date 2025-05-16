@@ -27,16 +27,9 @@ class TripDetailsResource extends JsonResource
             return $review->user->status == 1;
         });
 
-        $gallery = collect([
-            $this->place->getFirstMediaUrl('main_place', 'main_place_app'),
-        ])
-            ->merge(
-                $this->place->getMedia('place_gallery')->map(
-                    fn($image) => $image->getUrl('place_gallery_app')
-                )
-            )
-            ->filter() // removes nulls in case no main image exists
-            ->values();
+        $gallery =  array_merge(
+        [$this->place->getFirstMediaUrl('main_place', 'main_place_app')],
+        $this->place->getMedia('place_gallery')->map(fn($image) => $image->getUrl('place_gallery_app'))->all());
 
 
         $data = [

@@ -28,10 +28,10 @@ class TripDetailsResource extends JsonResource
         });
 
         $gallery = collect([
-            $this->getFirstMediaUrl('main_place', 'main_place_app'),
+            $this->place->getFirstMediaUrl('main_place', 'main_place_app'),
         ])
             ->merge(
-                $this->getMedia('place_gallery')->map(
+                $this->place->getMedia('place_gallery')->map(
                     fn($image) => $image->getUrl('place_gallery_app')
                 )
             )

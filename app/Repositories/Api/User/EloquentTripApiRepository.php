@@ -38,6 +38,23 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return TagsResource::collection($tags);
     }
 
+//    public function trips()
+//    {
+//        $user = Auth::guard('api')->user();
+//        $userId = $user->id;
+//        $userAge = Carbon::parse($user->birthday)->age;
+//        $userSex = $user->sex;
+//
+//        $trips = Trip::whereHas('user', fn($q) => $q->where('status', '1'))
+//            ->where('status', '1')
+//            ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
+//            ->where(fn($q) => $this->applyCapacityCheck($q))
+//            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
+//            ->get();
+//
+//        return TripResource::collection($trips);
+//    }
+
     public function trips()
     {
         $user = Auth::guard('api')->user();
@@ -45,15 +62,25 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $userAge = Carbon::parse($user->birthday)->age;
         $userSex = $user->sex;
 
-        $trips = Trip::whereHas('user', fn($q) => $q->where('status', '1'))
+        // Trips created by the user (should bypass all filters)
+        $ownTrips = Trip::where('user_id', $userId)
+            ->whereHas('user', fn($q) => $q->where('status', '1'))
+            ->where('status', '1');
+
+        // Trips not created by the user but pass all filters
+        $otherTrips = Trip::where('user_id', '!=', $userId)
+            ->whereHas('user', fn($q) => $q->where('status', '1'))
             ->where('status', '1')
             ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
             ->where(fn($q) => $this->applyCapacityCheck($q))
-            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
-            ->get();
+            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
+
+        // Merge and sort
+        $trips = $ownTrips->union($otherTrips)->orderBy('date_time')->get();
 
         return TripResource::collection($trips);
     }
+
 
     public function allTrips()
     {

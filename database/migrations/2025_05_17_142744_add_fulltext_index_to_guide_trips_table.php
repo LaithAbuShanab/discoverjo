@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // إنشاء الأعمدة المشتقة من JSON
         DB::statement("
             ALTER TABLE guide_trips
-            ADD COLUMN name_en TEXT GENERATED ALWAYS AS (json_unquote(json_extract(name, '$.en'))) STORED,
-            ADD COLUMN name_ar TEXT GENERATED ALWAYS AS (json_unquote(json_extract(name, '$.ar'))) STORED
+            ADD COLUMN name_en TEXT GENERATED ALWAYS AS (json_unquote(json_extract(name, '$.en'))) STORED AFTER status,
+            ADD COLUMN name_ar TEXT GENERATED ALWAYS AS (json_unquote(json_extract(name, '$.ar'))) STORED AFTER name_en
         ");
 
-        // إضافة فهرس FULLTEXT عبر Blueprint
         Schema::table('guide_trips', function (Blueprint $table) {
             $table->fullText(['name_en', 'name_ar'], 'guide_trips_fulltext_name');
         });
@@ -31,12 +29,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // حذف الفهارس أولًا
         Schema::table('guide_trips', function (Blueprint $table) {
             $table->dropFullText('guide_trips_fulltext_name');
         });
 
-        // ثم حذف الأعمدة المشتقة
         DB::statement("
             ALTER TABLE guide_trips
             DROP COLUMN name_en,

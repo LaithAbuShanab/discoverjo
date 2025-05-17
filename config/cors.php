@@ -35,7 +35,8 @@ return [
         'Content-Language',
         'X-API-KEY',
         'Accept',
-        'Host'
+        'Host',
+        'X-Content-Type-Options'
     ],
 
     'exposed_headers' => [],

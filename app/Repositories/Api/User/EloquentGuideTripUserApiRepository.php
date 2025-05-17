@@ -159,6 +159,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
+        $query=  DB::getPdo()->quote($query);
         $trips = GuideTrip::query()
             ->whereHas('guide', function ($query) {
                 $query->where('status', 1);

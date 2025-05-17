@@ -19,7 +19,7 @@ class NewReviewDisLikeNotification extends Notification
     {
         $this->user = $user;
 
-        $type =  class_basename($review->reviewable_type);;
+        $type = strtolower(class_basename($review->reviewable_type));
         $slug = $review->reviewable->slug;
         $review_id = $review->id;
 

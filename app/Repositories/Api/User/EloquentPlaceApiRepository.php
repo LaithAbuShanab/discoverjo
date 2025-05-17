@@ -18,17 +18,12 @@ use App\Models\GuideTrip;
 use App\Models\Place;
 use App\Models\Plan;
 use App\Models\Region;
-use App\Models\Reviewable;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Volunteering;
-use App\Notifications\Users\review\NewReviewDisLikeNotification;
-use App\Notifications\Users\review\NewReviewLikeNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Notification;
 use LevelUp\Experience\Models\Activity;
 
 
@@ -62,6 +57,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         activityLog('visited place', $place, 'The user delete visited place', 'delete');
 
     }
+
     public function search($query)
     {
         $user = Auth::guard('api')->user();
@@ -216,6 +212,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             ],
         ];
     }
+
     public function allSearch($query)
     {
         // Get user coordinates if provided

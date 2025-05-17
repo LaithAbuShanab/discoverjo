@@ -166,7 +166,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             })
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->whereRaw(
-                    "MATCH(name_en, name_ar, description_en, description_ar) AGAINST (? IN BOOLEAN MODE)",
+                    "MATCH(name_en, name_ar) AGAINST (? IN BOOLEAN MODE)",
                     [$query . '*']
                 );
             })

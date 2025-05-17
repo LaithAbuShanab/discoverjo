@@ -23,7 +23,6 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "mokhosh/filament-rating": "^1.4",
         "outerweb/filament-translatable-fields": "^2.1",
-        "protonemedia/laravel-cross-eloquent-search": "^3.6",
         "pusher/pusher-php-server": "^7.2",
         "rmsramos/activitylog": "^1.0",
         "spatie/laravel-activitylog": "^4.10",

@@ -163,7 +163,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         $results = Search::new()
             ->addFullText(GuideTrip::class, ['name_en', 'name_ar'], ['mode' => 'boolean'])
-            ->paginate($perPage)
+            ->paginate((int) $perPage)
             ->search($query);
 
         return [

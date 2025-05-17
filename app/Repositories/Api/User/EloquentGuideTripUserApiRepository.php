@@ -161,8 +161,8 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         $perPage = config('app.pagination_per_page');
 
         // نحمي القيمة بإضافة % للبحث الجزئي
-        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
-
+//        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
+        $escapedQuery=DB::getPdo()->quote($query);
         // استعلام البحث
         $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
             $queryBuilder

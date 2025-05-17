@@ -157,14 +157,12 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return  SubscriptionResource::collection($subscription);
     }
 
-
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
 
         $results = Search::new()
-            ->add(GuideTrip::class, ['name_en', 'name_ar'])
-            ->beginWithWildcard()
+            ->addFullText(GuideTrip::class, ['name_en', 'name_ar'], ['mode' => 'boolean'])
             ->paginate($perPage)
             ->search($query);
 

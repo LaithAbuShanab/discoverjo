@@ -247,8 +247,11 @@ class GuideTripUserApiController extends Controller
 
         $query = $validator->validated()['query'] ?? null;
         if ($query !== null) {
-            $query = trim($query);
+            $symbols = str_split('!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~');
+            $query = str_replace($symbols, ' ', $query);
+            $query = preg_replace('/\s+/', ' ', $query);
         }
+
 
         try {
             $places = $this->guideTripUserApiUseCase->search($query);

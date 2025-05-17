@@ -156,27 +156,22 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return  SubscriptionResource::collection($subscription);
     }
 
-    public function search($query)
+    public function search( $query)
     {
         $perPage = config('app.pagination_per_page');
-
-        // نحمي القيمة بإضافة % للبحث الجزئي
-//        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
         $escapedQuery=DB::getPdo()->quote($query);
-        // استعلام البحث
+
         $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
-            $queryBuilder
-                ->whereRaw("LOWER(json_value(name, '$.en')) LIKE LOWER(?)", [$escapedQuery])
-                ->orWhereRaw("LOWER(json_value(name, '$.ar')) LIKE LOWER(?)", [$escapedQuery])
-                ->orWhereRaw("LOWER(json_value(description, '$.en')) LIKE LOWER(?)", [$escapedQuery])
-                ->orWhereRaw("LOWER(json_value(description, '$.ar')) LIKE LOWER(?)", [$escapedQuery]);
+            $queryBuilder->where('name->en', 'like', $escapedQuery)
+                ->orWhere('name->ar', 'like', $escapedQuery)
+                ->orWhere('description->en', 'like', $escapedQuery)
+                ->orWhere('description->ar', 'like', $escapedQuery);
         })
             ->whereHas('guide', function ($query) {
                 $query->where('status', '1');
             })
             ->paginate($perPage);
 
-        // بيانات الصفحة
         $pagination = [
             'next_page_url' => $trips->nextPageUrl(),
             'prev_page_url' => $trips->previousPageUrl(),
@@ -188,7 +183,6 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'pagination' => $pagination
         ];
     }
-
 
     public function updateSingleSubscription($data)
     {

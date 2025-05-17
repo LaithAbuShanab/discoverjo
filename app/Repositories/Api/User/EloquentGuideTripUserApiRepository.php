@@ -156,21 +156,22 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return  SubscriptionResource::collection($subscription);
     }
 
-
-    public function search( $query)
+    public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-        $escapedQuery = '%' . addcslashes($query, '%_') . '%';
+        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
+
         $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
-            $queryBuilder->where('name->en', 'like', $escapedQuery)
-                ->orWhere('name->ar', 'like', $escapedQuery)
-                ->orWhere('description->en', 'like', $escapedQuery)
-                ->orWhere('description->ar', 'like', $escapedQuery);
+            $queryBuilder
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.en')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.en')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.ar')) LIKE ?", [$escapedQuery]);
         })
-            ->whereHas('guide', function ($query) {
-                $query->where('status', '1');
-            })
-            ->paginate($perPage);
+        ->whereHas('guide', function ($query) {
+            $query->where('status', '1');
+        })
+        ->paginate($perPage);
 
         $pagination = [
             'next_page_url' => $trips->nextPageUrl(),

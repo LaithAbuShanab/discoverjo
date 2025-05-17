@@ -234,17 +234,9 @@ class GuideTripUserApiController extends Controller
     {
         $validator = Validator::make($request->only('query'), [
             'query' => [
-                'bail',
                 'nullable',
                 'string',
                 'max:255',
-                function ($attribute, $value, $fail) {
-                    $matches = preg_match_all("/[^\p{Arabic}a-zA-Z0-9\s]/u", $value, $out);
-
-                    if ($matches >= 3) {
-                        $fail(__('validation.api.search-query-contains-invalid-characters'));
-                    }
-                },
             ]
         ]);
 

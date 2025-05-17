@@ -70,13 +70,13 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-
+        $quotedQuery= DB::getPdo()->quote($query);
         $users = User::query()
             ->where('status', 1)
-            ->when($query, function ($queryBuilder) use ($query) {
+            ->when($query, function ($queryBuilder) use ($quotedQuery) {
                 $queryBuilder->whereRaw(
                     "MATCH(first_name, last_name, username) AGAINST (? IN BOOLEAN MODE)",
-                    [$query . '*']
+                    [$quotedQuery . '*']
                 );
             })
             ->paginate($perPage);

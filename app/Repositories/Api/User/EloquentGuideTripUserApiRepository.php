@@ -156,19 +156,19 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return  SubscriptionResource::collection($subscription);
     }
 
-    public function search( $query)
+    public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-        $escapedQuery=DB::getPdo()->quote($query);
-
-        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
-            $queryBuilder->where('name->en', 'like', $escapedQuery)
-                ->orWhere('name->ar', 'like', $escapedQuery)
-                ->orWhere('description->en', 'like', $escapedQuery)
-                ->orWhere('description->ar', 'like', $escapedQuery);
-        })
+        $query=  DB::getPdo()->quote($query);
+        $trips = GuideTrip::query()
             ->whereHas('guide', function ($query) {
-                $query->where('status', '1');
+                $query->where('status', 1);
+            })
+            ->when($query, function ($queryBuilder) use ($query) {
+                $queryBuilder->whereRaw(
+                    "MATCH(name_en, name_ar, description_en, description_ar) AGAINST (? IN BOOLEAN MODE)",
+                    [$query . '*']
+                );
             })
             ->paginate($perPage);
 
@@ -178,11 +178,44 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'total' => $trips->total(),
         ];
 
+        if ($query) {
+            activityLog('guide_trip', $trips->first(), $query, 'search');
+        }
+
         return [
             'trips' => AllGuideTripResource::collection($trips),
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ];
     }
+
+
+//    public function search( $query)
+//    {
+//        $perPage = config('app.pagination_per_page');
+//        $escapedQuery=DB::getPdo()->quote($query);
+//
+//        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
+//            $queryBuilder->where('name->en', 'like', $escapedQuery)
+//                ->orWhere('name->ar', 'like', $escapedQuery)
+//                ->orWhere('description->en', 'like', $escapedQuery)
+//                ->orWhere('description->ar', 'like', $escapedQuery);
+//        })
+//            ->whereHas('guide', function ($query) {
+//                $query->where('status', '1');
+//            })
+//            ->paginate($perPage);
+//
+//        $pagination = [
+//            'next_page_url' => $trips->nextPageUrl(),
+//            'prev_page_url' => $trips->previousPageUrl(),
+//            'total' => $trips->total(),
+//        ];
+//
+//        return [
+//            'trips' => AllGuideTripResource::collection($trips),
+//            'pagination' => $pagination
+//        ];
+//    }
 
     public function updateSingleSubscription($data)
     {

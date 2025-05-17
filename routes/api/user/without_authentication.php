@@ -115,5 +115,7 @@ Route::get('date/trips', [TripApiController::class, 'dateTrips']); // DONE ✅
 require __DIR__ . '/auth_user.php';
 
 Route::fallback(function () {
-    return response()->json(['msg' => 'this url not exists in this project walaa 7abibi fix the url :) ']);
+    return response()->json([
+        'message' => 'NOT FOUND REQUEST URL',
+    ], 404);
 });

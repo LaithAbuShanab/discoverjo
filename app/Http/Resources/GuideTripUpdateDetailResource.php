@@ -33,7 +33,7 @@ class GuideTripUpdateDetailResource extends JsonResource
 
         $gallery = [];
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
-            $gallery[] = $image->getUrl('guide_trip_gallery_app');
+            $gallery[] = $image->getUrl();
         }
         $filteredReviews = $this->reviews->filter(function ($review) {
             return $review->user->status == 1;

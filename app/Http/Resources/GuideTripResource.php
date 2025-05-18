@@ -35,7 +35,7 @@ class GuideTripResource extends JsonResource
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
             $gallery[] = [
                 'id' => $image->id,
-                'url' => $image->getUrl('guide_trip_gallery_app'),
+                'url' => $image->getUrl(),
             ];
         }
         $filteredReviews = $this->reviews->filter(function ($review) {

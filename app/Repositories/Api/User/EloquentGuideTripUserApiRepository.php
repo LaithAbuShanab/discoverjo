@@ -160,19 +160,31 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
+        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
+        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
+            $queryBuilder
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.en')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.en')) LIKE ?", [$escapedQuery])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.ar')) LIKE ?", [$escapedQuery]);
+        })->whereHas('guide', function ($query) {
+            $query->where('status', '1');
+        })
+            ->paginate($perPage);
 
-        $results = Search::new()
-            ->addFullText(GuideTrip::class, ['name_en', 'name_ar'], ['mode' => 'boolean'])
-            ->paginate((int) $perPage)
-            ->search($query);
+        $pagination = [
+            'next_page_url' => $trips->nextPageUrl(),
+            'prev_page_url' => $trips->previousPageUrl(),
+            'total' => $trips->total(),
+        ];
+
+        if ($query) {
+            activityLog('guide_trip', $trips->first(), $query, 'search');
+        }
 
         return [
-            'trips' => AllGuideTripResource::collection($results),
-            'pagination' => [
-                'next_page_url' => $results->nextPageUrl(),
-                'prev_page_url' => $results->previousPageUrl(),
-                'total' => $results->total(),
-            ],
+            'trips' => AllGuideTripResource::collection($trips),
+            'pagination' => $pagination,
         ];
     }
 

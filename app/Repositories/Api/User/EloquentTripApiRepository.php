@@ -730,23 +730,46 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return $query;
     }
 
+//    private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
+//    {
+//        $query->where(function ($q) use ($userId, $userSex, $userAge) {
+//            $q->where('user_id', $userId) // صاحب الرحلة
+//                ->orWhere(function ($q) use ($userSex, $userAge) {
+//                    $q->where('trip_type', '2') // المخصصة
+//                        ->orWhere(function ($q) use ($userSex, $userAge) {
+//                            $q->whereIn('sex', [$userSex, 0])
+//                                ->where(function ($q) use ($userAge) {
+//                                    $q->whereNull('age_range')
+//                                        ->orWhere(function ($q) use ($userAge) {
+//                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+//                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+//                                        });
+//                                });
+//                        });
+//                });
+//        });
+//
+//        return $query;
+//    }
+
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {
         $query->where(function ($q) use ($userId, $userSex, $userAge) {
             $q->where('user_id', $userId) // صاحب الرحلة
+            ->orWhere(function ($q) use ($userSex, $userAge) {
+                $q->where('trip_type', '2') // المخصصة - لا نطبق فلاتر الجنس والعمر هنا
                 ->orWhere(function ($q) use ($userSex, $userAge) {
-                    $q->where('trip_type', '2') // المخصصة
-                        ->orWhere(function ($q) use ($userSex, $userAge) {
-                            $q->whereIn('sex', [$userSex, 0])
-                                ->where(function ($q) use ($userAge) {
-                                    $q->whereNull('age_range')
-                                        ->orWhere(function ($q) use ($userAge) {
-                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
-                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
-                                        });
+                    // فقط للرحلات العامة أو للمتابعين
+                    $q->whereIn('sex', [$userSex, 0])
+                        ->where(function ($q) use ($userAge) {
+                            $q->whereNull('age_range')
+                                ->orWhere(function ($q) use ($userAge) {
+                                    $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+                                        ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
                                 });
                         });
                 });
+            });
         });
 
         return $query;

@@ -99,6 +99,8 @@ function sendNotification($deviceTokens, $data)
     if (isset($data['notification'])) {
         $notification = FirebaseNotification::create($data['notification']['title'], $data['notification']['body']);
         $dataPayload = $data['data'] ?? [];
+        $dataPayload['icon'] = asset('assets/images/logo_eyes_yellow.jpeg');
+        $dataPayload['sound'] =  'ping_sound';
     } else {
         $notification = FirebaseNotification::create($data['title'], $data['body']);
         $dataPayload = [];

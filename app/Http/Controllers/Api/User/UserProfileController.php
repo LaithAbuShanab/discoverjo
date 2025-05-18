@@ -71,7 +71,7 @@ class UserProfileController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => 'required|string|max:255'
+            'query' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\_\.@]+$/'
         ]);
         $validatedQuery = $validator->validated()['query'];
         try {

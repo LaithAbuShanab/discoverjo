@@ -71,8 +71,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     {
         $perPage = config('app.pagination_per_page');
 //        $quotedQuery= DB::getPdo()->quote($query);
-        $users = User::query()
-            ->where('status', 1)
+        $users = User::where('status', 1)
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->whereFullText(
                     ['first_name', 'last_name', 'username'],

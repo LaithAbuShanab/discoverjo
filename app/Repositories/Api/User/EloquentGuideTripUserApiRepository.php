@@ -160,16 +160,17 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-        $escapedQuery = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
-        $trips = GuideTrip::where(function ($queryBuilder) use ($escapedQuery) {
-            $queryBuilder
-                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.en')) LIKE ?", [$escapedQuery])
-                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar')) LIKE ?", [$escapedQuery])
-                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.en')) LIKE ?", [$escapedQuery])
-                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(description, '$.ar')) LIKE ?", [$escapedQuery]);
-        })->whereHas('guide', function ($query) {
-            $query->where('status', '1');
+
+        $trips = GuideTrip::whereHas('guide', function ($q) {
+            $q->where('status', '1');
         })
+            ->when($query, function ($q) use ($query) {
+                $q->whereFullText(
+                    ['name_en', 'name_ar'],
+                    $query,
+                    ['mode' => 'boolean']
+                );
+            })
             ->paginate($perPage);
 
         $pagination = [
@@ -187,6 +188,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'pagination' => $pagination,
         ];
     }
+
 
     public function updateSingleSubscription($data)
     {

@@ -58,6 +58,7 @@ class UserProfileResource extends JsonResource
             'phone_number' => $this->phone_number,
             'lang' => $this->lang,
             'gender' => $gender[$this->lang][$this->sex],
+            'referral_code'=>$this->referral_code,
             'birth_of_day' => $this->birthday,
             'points' => $this->getPoints(),
             'streak' =>  $streak ? $this->getCurrentStreakCount($activity) : 0,

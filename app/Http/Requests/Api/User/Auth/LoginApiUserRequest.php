@@ -30,7 +30,7 @@ class LoginApiUserRequest extends FormRequest
         return [
             'usernameOrEmail' => ['required', 'string', 'max:255'],
             'password' => ['required',  Rules\Password::defaults()],
-            "device_token" => ['required', 'max:255'],
+            "fcm_device_token" => ['required', 'max:255'],
         ];
     }
 

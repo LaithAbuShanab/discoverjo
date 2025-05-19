@@ -21,6 +21,7 @@ class UserLoginResource extends JsonResource
             'address' => $this->address,
             'verified_email'=>$this->verified_email,
             'is_guide'=>$this->is_guide,
+            'referral_code'=>$this->referral_code,
             'first_login'=>$this->status==2?true:false,
             'avatar'=>$this->getFirstMediaUrl('avatar','avatar_app'),
             'token'=>$this->token,

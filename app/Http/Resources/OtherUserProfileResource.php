@@ -46,6 +46,7 @@ class OtherUserProfileResource extends JsonResource
             'username' => $this->username,
             'full_name'=>$fullName,
             'is_guide' => $this->is_guide,
+            'referral_code'=>$this->referral_code,
             'guide_rating' => $this->is_guide ? $this->guideRatings->avg('rating') : false,
             'gender' => $gender[$this->lang][$this->sex],
             'points' => $this->getPoints(),

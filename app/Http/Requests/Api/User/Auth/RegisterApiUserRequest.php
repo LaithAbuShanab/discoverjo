@@ -34,7 +34,7 @@ class RegisterApiUserRequest extends FormRequest
             'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:20', 'regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/', 'not_regex:/\s/', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class, new CheckUserInBlackListRule()],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            "device_token" => ['max:255', 'required'],
+            "device_token" => ['max:255', 'nullable'],
             'referral_code'=>['nullable','string'],
         ];
     }

@@ -74,7 +74,7 @@ class UserProfileController extends Controller
             'query' => 'required|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
         ]);
         $validatedQuery = $validator->validated()['query'];
-        $cleanedQuery = $this->cleanQuery($validatedQuery);
+        $cleanedQuery = cleanQuery($validatedQuery);
         try {
             $users = $this->userProfileApiUseCase->search($cleanedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
@@ -219,64 +219,6 @@ class UserProfileController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-    }
-
-    public function cleanQuery(string $query): string
-    {
-        $dangerousWords = [
-            'sleep',
-            'dbms_lock.sleep',
-            'dbms_pipe.receive_message',
-            'utl_inaddr.get_host_address',
-            'utl_http.request',
-            'utl_tcp.connect',
-            'utl_smtp.open_connection',
-            'pg_sleep',
-            'pg_sleep_for',
-            'pg_sleep_until',
-            'benchmark',
-            'waitfor delay',
-            'waitfor time',
-            'case',
-            'when',
-            'then',
-            'else',
-            'if',
-            'begin',
-            'end',
-            'exec',
-            'execute',
-            'declare',
-            'dual',
-            'sysdate',
-            'systimestamp',
-            'current_timestamp',
-            'now',
-            'select',
-            'from',
-            'union',
-            'where',
-            'and',
-            'or',
-            'null',
-            'is',
-            'not',
-            'exists',
-            'having',
-            'cast',
-            'convert',
-            'create',
-            'drop',
-            'insert',
-            'update',
-            'delete',
-            'alter',
-        ];
-
-        // Build a regex pattern to remove all dangerous keywords, case-insensitive
-        $pattern = '/\b(' . implode('|', array_map('preg_quote', $dangerousWords)) . ')\b/i';
-
-        return preg_replace($pattern, '', $query);
     }
 
 }

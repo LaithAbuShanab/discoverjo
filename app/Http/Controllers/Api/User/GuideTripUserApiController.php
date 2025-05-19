@@ -232,29 +232,20 @@ class GuideTripUserApiController extends Controller
 
     public function search(Request $request)
     {
-        $validator = Validator::make($request->only('query'), [
-            'query' => [
-                'nullable',
-                'string',
-                'max:255',
-            ]
+        $query = $request->input('query');
+        $validator = Validator::make(['query' => $query], [
+            'query' => 'required|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
         ]);
+        $validatedQuery = $validator->validated()['query'];
+        $cleanedQuery = cleanQuery($validatedQuery);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
-        $query = $validator->validated()['query'] ?? null;
-        if ($query !== null) {
-            $symbols = str_split('!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~');
-            $query = str_replace($symbols, ' ', $query);
-            $query = preg_replace('/\s+/', ' ', $query);
-        }
-
-
         try {
-            $places = $this->guideTripUserApiUseCase->search($query);
+            $places = $this->guideTripUserApiUseCase->search($cleanedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

@@ -36,35 +36,38 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
         return AllCategoriesResource::collection($shuffledCategories);
     }
 
-    public function allPlacesByCategory($slug)
+    public function allPlacesByCategory($data)
     {
         $perPage = config('app.pagination_per_page');
-        $category = Category::with('children')->where('slug', $slug)->first();
+        $category = Category::with('children')->where('slug', $data['category_slug'])->first();
 
         $allSubcategories = $category->children()->whereHas('places')->get();
 
         $user = Auth::guard('api')->user();
 
-        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
 
+        if ($userLat !== null && $userLng !== null) {
+            $placesQuery = Place::selectRaw(
+                'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
+                [$userLat, $userLng, $userLat]
+            );
+        } else {
+            $placesQuery = Place::select('places.*')->selectRaw('NULL AS distance');
+        }
 
-        $user = Auth::guard('api')->check();
-//        if($user && !$userLat &$user->)
-
-        $places = Place::selectRaw(
-            'places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
-            [$userLat, $userLng, $userLat]
-        )
+        $places = $placesQuery
             ->where('status', 1)
             ->whereHas('categories', function ($query) use ($category) {
                 $query->where('category_id', $category->id)
                     ->orWhereIn('category_id', $category->children->pluck('id'));
             })
-            ->orderBy('distance')
+            ->when($userLat !== null && $userLng !== null, function ($q) {
+                $q->orderBy('distance');
+            })
             ->paginate($perPage)
             ->appends(['lat' => $userLat, 'lng' => $userLng]);
-
 
         $placesArray = $places->toArray();
         if ($userLat && $userLng) {

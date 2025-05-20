@@ -27,9 +27,9 @@ class CategoryApiUseCase
         return $this->categoryRepository->shuffleAllCategories();
     }
 
-    public function allPlacesByCategory($slug)
+    public function allPlacesByCategory($data)
     {
-        return $this->categoryRepository->allPlacesByCategory($slug);
+        return $this->categoryRepository->allPlacesByCategory($data);
     }
 
     public function search($query)

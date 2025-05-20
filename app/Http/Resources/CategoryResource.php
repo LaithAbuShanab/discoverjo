@@ -17,7 +17,6 @@ class CategoryResource extends JsonResource
         $userLat = $request->lat ? $request->lat : null;
         $userLng = $request->lng ? $request->lng : null;
 
-
         return [
             'id' => $this->id,
             'slug'=>$this->slug,

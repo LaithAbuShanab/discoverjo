@@ -58,18 +58,35 @@ class CategoryApiController extends Controller
     public function categoryPlaces(Request $request)
     {
         $slug = $request->category_slug;
-        $validator = Validator::make(['category_slug' => $slug], [
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(['category_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'category_slug' => ['required', 'exists:categories,slug', new CheckIfCategoryIsParentRule()],
+            'lat'   => [
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                'numeric',
+                'between:-90,90',
+            ],
+            'lng'   => [
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                'numeric',
+                'between:-180,180',
+            ],
         ], [
             'category_slug.exists' => __('validation.api.the-selected-category-id-does-not-exists'),
             'category_slug.required' => __('validation.api.the-category-id-required'),
         ]);
 
+
+        $data = $validator->validated();
+
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $validator->errors()->messages()['category_slug']);
         }
         try {
-            $allPlaces = $this->categoryApiUseCase->allPlacesByCategory($validator->validated()['category_slug']);
+            $allPlaces = $this->categoryApiUseCase->allPlacesByCategory($data);
             return ApiResponse::sendResponse(200,  __('app.api.places-subcategories-retrieved-successfully'), $allPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

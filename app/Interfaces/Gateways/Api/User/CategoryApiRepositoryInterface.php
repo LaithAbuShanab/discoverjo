@@ -11,7 +11,7 @@ interface CategoryApiRepositoryInterface
 
     public function shuffleAllCategories();
 
-    public function allPlacesByCategory($slug);
+    public function allPlacesByCategory($data);
 
     public function search($query);
 

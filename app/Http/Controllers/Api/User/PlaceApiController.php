@@ -100,7 +100,7 @@ class PlaceApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => 'nullable|string|max:255',
+                'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
                 'lat'   => [
                     'nullable',
                     'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places

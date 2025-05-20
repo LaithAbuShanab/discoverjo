@@ -4,9 +4,19 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class PopularPlaceResource extends JsonResource
 {
+    protected $lat;
+    protected $lng;
+
+    public function __construct($resource, $lat = null, $lng = null)
+    {
+        parent::__construct($resource);
+        $this->lat = $lat;
+        $this->lng = $lng;
+    }
     /**
      * Transform the resource into an array.
      *
@@ -14,8 +24,9 @@ class PopularPlaceResource extends JsonResource
      */
     public function toArray($request)
     {
-        $userLat = $request->lat ? $request->lat : null;
-        $userLng = $request->lng ? $request->lng : null;
+
+        $userLat = $this->lat;
+        $userLng = $this->lng;
 
         return $this->map(function ($place) use ($userLat, $userLng) {
             $placeLat = $place->place->latitude;

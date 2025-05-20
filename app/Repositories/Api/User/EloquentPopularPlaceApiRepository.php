@@ -10,6 +10,7 @@ use App\Interfaces\Gateways\Api\User\PopularPlaceApiRepositoryInterface;
 use App\Models\Category;
 use App\Models\Place;
 use App\Models\PopularPlace;
+use Illuminate\Support\Facades\Auth;
 
 
 class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInterface
@@ -17,11 +18,18 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
 
 
 
-    public function popularPlaces()
+    public function popularPlaces($data)
     {
+        $user = Auth::guard('api')->user();
+
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
         $popularPlace = PopularPlace::whereHas('place', fn($query) => $query->where('status', 1))->get();
         $shuffledPopularPlaces = $popularPlace->shuffle();
-        return new PopularPlaceResource($shuffledPopularPlaces);
+        return PopularPlaceResource::collection($shuffledPopularPlaces)->additional([
+            'lat' => $userLat,
+            'lng' =>$userLng,
+        ]);
     }
 
     public function search($query)

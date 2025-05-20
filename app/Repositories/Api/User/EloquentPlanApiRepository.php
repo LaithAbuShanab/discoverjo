@@ -174,29 +174,26 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-        // Check if the user is authenticated
-        if (!Auth::guard('api')->user()) {
-            $plans = Plan::where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })->where('creator_type', 'App\Models\Admin')->paginate($perPage);
+        $user = Auth::guard('api')->user();
+
+        $plansQuery = Plan::query()
+            ->when($query, function ($q) use ($query) {
+                $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+            });
+
+        if (!$user) {
+            $plansQuery->where('creator_type', 'App\Models\Admin');
         } else {
-            $plans = Plan::where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })->where(function ($queryBuilder) {
-                $queryBuilder->where('creator_type', 'App\Models\Admin')
-                    ->orWhere(function ($queryBuilder) {
-                        $queryBuilder->where('creator_type', 'App\Models\User')
-                            ->where('creator_id', Auth::guard('api')->user()->id);
+            $plansQuery->where(function ($q) use ($user) {
+                $q->where('creator_type', 'App\Models\Admin')
+                    ->orWhere(function ($subQ) use ($user) {
+                        $subQ->where('creator_type', 'App\Models\User')
+                            ->where('creator_id', $user->id);
                     });
-            })->paginate($perPage);
+            });
         }
 
+        $plans = $plansQuery->paginate($perPage);
         $plansArray = $plans->toArray();
 
         $pagination = [

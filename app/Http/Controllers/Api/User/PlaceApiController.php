@@ -116,7 +116,7 @@ class PlaceApiController extends Controller
             ]
         );
         $validated = $validator->validated();
-        $validatedQuery = cleanQuery($validated['query'] ?? null);
+        $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
         $data = array_merge($validated, ['query' => $validatedQuery]);
 
         try {

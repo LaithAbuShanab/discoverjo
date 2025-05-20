@@ -71,10 +71,11 @@ class UserProfileController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => 'required|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
+            'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
         ]);
         $validatedQuery = $validator->validated()['query'];
-        $cleanedQuery = cleanQuery($validatedQuery);
+        $cleanedQuery =$validatedQuery !== null ? cleanQuery($validatedQuery) : null;
+
         try {
             $users = $this->userProfileApiUseCase->search($cleanedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);

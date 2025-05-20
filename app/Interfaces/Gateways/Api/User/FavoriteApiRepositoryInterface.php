@@ -8,6 +8,6 @@ interface FavoriteApiRepositoryInterface
     public function createFavorite($data);
     public function unfavored($data);
     public function allUserFavorite();
-    public function favSearch($query);
+    public function favSearch($data);
 
 }

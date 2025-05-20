@@ -123,7 +123,7 @@ class PlaceApiController extends Controller
         $data = array_merge($validated, ['query' => $validatedQuery]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);
         }
         try {
             $places = $this->placeApiUseCase->search($data);

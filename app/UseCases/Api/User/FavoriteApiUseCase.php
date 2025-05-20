@@ -47,7 +47,7 @@ class FavoriteApiUseCase
         return $this->favoriteApiRepository->allUserFavorite();
     }
 
-    public function favSearch($query){
-        return $this->favoriteApiRepository->favSearch($query);
+    public function favSearch($data){
+        return $this->favoriteApiRepository->favSearch($data);
     }
 }

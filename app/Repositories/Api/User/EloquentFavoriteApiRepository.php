@@ -64,13 +64,14 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         return new UserFavoriteResource($user);
     }
 
-    public function favSearch($searchTerm)
+    public function favSearch($data)
     {
-        $perPage = config('app.pagination_per_page');
+        $searchTerm= $data['query'];
         $user = Auth::guard('api')->user();
 
-        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
+        $perPage =  config('app.pagination_per_page');
 
         $user = Auth::guard('api')->user();
         $userId = Auth::guard('api')->user()->id;

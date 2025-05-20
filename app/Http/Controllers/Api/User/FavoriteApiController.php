@@ -102,12 +102,33 @@ class FavoriteApiController extends Controller
     public function favSearch(Request $request)
     {
         $query = $request->input('query');
-        $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
-        ]);
-        $validatedQuery = $validator->validated()['query'];
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(
+            ['query' => $query, 'lat' => $lat, 'lng' => $lng],
+            [
+                'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
+                'lat'   => [
+                    'bail',
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    'numeric',
+                    'between:-90,90',
+                ],
+                'lng'   => [
+                    'bail',
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    'numeric',
+                    'between:-180,180',
+                ],
+            ]
+        );
+        $validated = $validator->validated();
+        $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
+        $data = array_merge($validated, ['query' => $validatedQuery]);
         try {
-            $users = $this->favoriteApiUseCase->favSearch($validatedQuery);
+            $users = $this->favoriteApiUseCase->favSearch($data);
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {

@@ -8,6 +8,7 @@ use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
 use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
 use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
+use App\Rules\StrictFloatRule;
 use App\UseCases\Api\User\PlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -102,12 +103,14 @@ class PlaceApiController extends Controller
             [
                 'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
                 'lat'   => [
+                    'bail',
                     'nullable',
-                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
                     'numeric',
                     'between:-90,90',
                 ],
                 'lng'   => [
+                    'bail',
                     'nullable',
                     'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
                     'numeric',
@@ -119,6 +122,9 @@ class PlaceApiController extends Controller
         $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
         $data = array_merge($validated, ['query' => $validatedQuery]);
 
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['slug']);
+        }
         try {
             $places = $this->placeApiUseCase->search($data);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-place-retrieved-successfully'), $places);
@@ -130,8 +136,42 @@ class PlaceApiController extends Controller
 
     public function filter(FilterPlaceRequest $request)
     {
+
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(
+            ['lat' => $lat, 'lng' => $lng],
+            [
+                'lat'   => [
+                    'bail',
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    'numeric',
+                    'between:-90,90',
+                ],
+                'lng'   => [
+                    'bail',
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    'numeric',
+                    'between:-180,180',
+                ],
+            ]
+        );
+
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
+        }
+        $validated = array_merge(
+            $request->validated(),
+            [
+                'lat' => $validator->validated()['lat'] ?? null,
+                'lng' => $validator->validated()['lng'] ?? null,
+            ]
+        );
+
         try {
-            $places = $this->placeApiUseCase->filter($request->validated());
+            $places = $this->placeApiUseCase->filter($validated);
             return ApiResponse::sendResponse(200,  __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

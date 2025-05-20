@@ -8,15 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PopularPlaceResource extends JsonResource
 {
-    protected $lat;
-    protected $lng;
-
-    public function __construct($resource, $lat = null, $lng = null)
-    {
-        parent::__construct($resource);
-        $this->lat = $lat;
-        $this->lng = $lng;
-    }
     /**
      * Transform the resource into an array.
      *
@@ -24,31 +15,20 @@ class PopularPlaceResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        $userLat = $this->lat;
-        $userLng = $this->lng;
-
-        return $this->map(function ($place) use ($userLat, $userLng) {
-            $placeLat = $place->place->latitude;
-            $placeLng = $place->place->longitude;
-
-            $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
-
             return [
-//                'id' => $place->id,
-                'place_id' => $place->place->id,
-                'place_slug'=>$place->place->slug,
-                'name' => $place->place->name,
-                'description'=>$place->place->description,
-                'image' => $place->place->getFirstMediaUrl('main_place','main_place_app'),
-                'region' => $place->place->region->name,
-                'address' => $place->place->address,
-                'rating' => $place->place->rating,
-                'local_price' => $place->local_price,
-                'foreign_price'=>$place->foreign_price,
-                'distance' => $distance,
+//                'id' => $this->id,
+                'place_id' => $this->place->id,
+                'place_slug'=>$this->place->slug,
+                'name' => $this->place->name,
+                'description'=>$this->place->description,
+                'image' => $this->place->getFirstMediaUrl('main_place','main_place_app'),
+                'region' => $this->place->region->name,
+                'address' => $this->place->address,
+                'rating' => $this->place->rating,
+                'local_price' => $this->local_price,
+                'foreign_price'=>$this->foreign_price,
+                'distance' => $this->distance,
             ];
-        });
     }
 
 

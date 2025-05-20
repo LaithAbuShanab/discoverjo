@@ -62,7 +62,7 @@ class FilterPlaceRequest extends FormRequest
                 }
             }],
 
-            'region' => 'nullable|string',
+            'region' => 'nullable|string|exists:regions,slug',
             'min_cost' => 'nullable|integer|between:1,4',
             'max_cost' => 'nullable|integer|between:1,4|gte:min_cost',
             'features' => ['nullable', function ($attribute, $value, $fail) {

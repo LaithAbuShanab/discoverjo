@@ -124,8 +124,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
     public function filter($data)
     {
-        $userLat = request()->input('lat');
-        $userLng = request()->input('lng');
+        $user = Auth::guard('api')->user();
+
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
         $perPage =  config('app.pagination_per_page');
 
         // Decode inputs

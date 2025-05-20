@@ -62,20 +62,36 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     {
         $user = Auth::guard('api')->user();
 
-        $userLat = $data['lat'] ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = $data['lng'] ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
         $query= $data['query'];
         $perPage = config('app.pagination_per_page');
-        $placesQuery = Place::selectRaw(
-            'places.*,
-         (6371 * acos(cos(radians(?)) * cos(radians(places.latitude)) * cos(radians(places.longitude) - radians(?)) + sin(radians(?)) * sin(radians(places.latitude)))) AS distance',
-            [$userLat, $userLng, $userLat]
-        )
-            ->where('status', 1)
-            ->when($query, function ($q) use ($query) {
-                $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
-            })
-            ->orderBy('distance');
+        if ($userLat !== null && $userLng !== null) {
+            $placesQuery = Place::selectRaw(
+                'places.*,
+             (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(places.latitude)) *
+                cos(radians(places.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(places.latitude))
+             )) AS distance',
+                [$userLat, $userLng, $userLat]
+            )
+                ->where('status', 1)
+                ->when($query, function ($q) use ($query) {
+                    $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+                })
+                ->orderBy('distance');
+        } else {
+            $placesQuery = Place::select('places.*')
+                ->selectRaw('NULL AS distance')
+                ->where('status', 1)
+                ->when($query, function ($q) use ($query) {
+                    $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+                });
+        }
+
 
         $places = $placesQuery->paginate($perPage);
         $placesArray = $places->toArray();

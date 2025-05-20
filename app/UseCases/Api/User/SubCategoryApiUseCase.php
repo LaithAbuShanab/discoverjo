@@ -13,8 +13,8 @@ class SubCategoryApiUseCase
         $this->subCategoryApiRepository = $subCategoryApiRepository;
     }
 
-    public function singleSubCategory($slug)
+    public function singleSubCategory($data)
     {
-        return $this->subCategoryApiRepository->singleSubCategory($slug);
+        return $this->subCategoryApiRepository->singleSubCategory($data);
     }
 }

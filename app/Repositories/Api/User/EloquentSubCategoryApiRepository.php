@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Auth;
 
 class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterface
 {
-    public function singleSubCategory($slug)
+    public function singleSubCategory($data)
     {
         // Fetch the child category by ID and ensure it's not a main category
-        $subCategory = Category::where('slug', $slug)
+        $subCategory = Category::where('slug', $data['subcategory_slug'])
             ->whereNotNull('parent_id')
             ->with('places')
             ->firstOrFail();
@@ -25,22 +25,22 @@ class EloquentSubCategoryApiRepository implements SubCategoryApiRepositoryInterf
 
         $user = Auth::guard('api')->user();
 
-        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
 
         // Set the number of places per page
         $perPage = config('app.pagination_per_page'); // Adjust this number as needed
 
         // Retrieve places associated with the specific child category
-        $places = Place::selectRaw('places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])
-            ->where('status',1)
-            ->whereIn('id', function ($query) use ($id) {
-                $query->select('place_id')
-                    ->from('place_categories')
-                    ->where('category_id', $id);
-            })
-            ->orderBy('distance') // Sort by distance
-            ->paginate($perPage);
+            $places = Place::selectRaw('places.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance', [$userLat, $userLng, $userLat])
+                ->where('status', 1)
+                ->whereIn('id', function ($query) use ($id) {
+                    $query->select('place_id')
+                        ->from('place_categories')
+                        ->where('category_id', $id);
+                })
+                ->orderBy('distance') // Sort by distance
+                ->paginate($perPage);
 
         // Convert pagination result to array and include pagination metadata
         $placesArray = $places->toArray();

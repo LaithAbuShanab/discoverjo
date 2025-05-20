@@ -22,8 +22,10 @@ class SubCategoryApiController extends Controller
 
     public function singleSubCategory(Request $request)
     {
+        $lat = request()->lat;
+        $lng = request()->lng;
         $slug = $request->subcategory_slug;
-        $validator = Validator::make(['subcategory_slug' => $slug], [
+        $validator = Validator::make(['subcategory_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'subcategory_slug' => [
                 'required',
                 'exists:categories,slug',
@@ -32,6 +34,20 @@ class SubCategoryApiController extends Controller
                         $fail(__('app.api.this-is-main-category'));
                     }
                 }
+            ],
+            'lat'   => [
+                'bail',
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                'numeric',
+                'between:-90,90',
+            ],
+            'lng'   => [
+                'bail',
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                'numeric',
+                'between:-180,180',
             ],
             [
                 'subcategory_slug.required' => __('validation.api.subcategory-is-required'),
@@ -44,7 +60,7 @@ class SubCategoryApiController extends Controller
         }
         try {
             $data = $validator->validated();
-            $subCategory = $this->subCategoryApiUseCase->singleSubCategory($data['subcategory_slug']);
+            $subCategory = $this->subCategoryApiUseCase->singleSubCategory($data);
 
             return ApiResponse::sendResponse(200, __('app.api.places-of-subcategories-retrieved-successfully'), $subCategory);
         } catch (\Exception $e) {

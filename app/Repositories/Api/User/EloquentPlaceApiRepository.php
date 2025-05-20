@@ -58,27 +58,26 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
     }
 
-    public function search($query)
+    public function search($data)
     {
         $user = Auth::guard('api')->user();
 
-        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = $data['lat'] ?? ($user && $user->latitude ? $user->latitude : null);
+        $userLng = $data['lng'] ?? ($user && $user->longitude ? $user->longitude : null);
+        $query= $data['query'];
         $perPage = config('app.pagination_per_page');
-        $places = Place::selectRaw(
+        $placesQuery = Place::selectRaw(
             'places.*,
-         ( 6371 * acos( cos( radians(?) ) * cos( radians( places.latitude ) ) * cos( radians( places.longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( places.latitude ) ) ) ) AS distance',
+         (6371 * acos(cos(radians(?)) * cos(radians(places.latitude)) * cos(radians(places.longitude) - radians(?)) + sin(radians(?)) * sin(radians(places.latitude)))) AS distance',
             [$userLat, $userLng, $userLat]
         )
             ->where('status', 1)
-            ->where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })->orderBy('distance') // Sort by distance
-            ->paginate($perPage);
+            ->when($query, function ($q) use ($query) {
+                $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+            })
+            ->orderBy('distance');
 
+        $places = $placesQuery->paginate($perPage);
         $placesArray = $places->toArray();
 
         if ($userLat && $userLng) {

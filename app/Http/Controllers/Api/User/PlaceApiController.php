@@ -95,12 +95,32 @@ class PlaceApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
-        ]);
-        $validatedQuery = $validator->validated()['query'];
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(
+            ['query' => $query, 'lat' => $lat, 'lng' => $lng],
+            [
+                'query' => 'nullable|string|max:255',
+                'lat'   => [
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    'numeric',
+                    'between:-90,90',
+                ],
+                'lng'   => [
+                    'nullable',
+                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    'numeric',
+                    'between:-180,180',
+                ],
+            ]
+        );
+        $validated = $validator->validated();
+        $validatedQuery = cleanQuery($validated['query'] ?? null);
+        $data = array_merge($validated, ['query' => $validatedQuery]);
+
         try {
-            $places = $this->placeApiUseCase->search($validatedQuery);
+            $places = $this->placeApiUseCase->search($data);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

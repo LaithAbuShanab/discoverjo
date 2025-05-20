@@ -11,7 +11,7 @@ interface PlaceApiRepositoryInterface
 
     public function deleteVisitedPlace($slug);
 
-    public function search($query);
+    public function search($data);
 
     public function allSearch($query);
 

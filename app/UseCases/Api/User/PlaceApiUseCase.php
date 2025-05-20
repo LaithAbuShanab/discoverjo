@@ -27,8 +27,8 @@ class PlaceApiUseCase
         return $this->placeApiRepository->deleteVisitedPlace($slug);
     }
 
-    public function search($query){
-        return $this->placeApiRepository->search($query);
+    public function search($data){
+        return $this->placeApiRepository->search($data);
     }
     public function filter($data){
         return $this->placeApiRepository->filter($data);

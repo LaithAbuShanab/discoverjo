@@ -124,6 +124,9 @@ class FavoriteApiController extends Controller
                 ],
             ]
         );
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
+        }
         $validated = $validator->validated();
         $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
         $data = array_merge($validated, ['query' => $validatedQuery]);

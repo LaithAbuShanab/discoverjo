@@ -447,12 +447,20 @@ function cleanQuery( $query)
         'delete',
         'alter',
         '--',
+        "'",
+        ';',  // query separator
+        '\'', // single quote
+        '"',  // double quote
+        '`',  // backtick
+        '=',  // equal
     ];
 
     // Build a regex pattern to remove all dangerous keywords, case-insensitive
     $pattern = '/\b(' . implode('|', array_map('preg_quote', $dangerousWords)) . ')\b/i';
 
     if($query != null){
+        $query =preg_replace($pattern, '', $query);
+        $query =str_replace($dangerousWords,"", $query);
         return preg_replace($pattern, '', $query);
     }else{
         return $query;

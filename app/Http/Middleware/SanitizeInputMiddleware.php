@@ -30,6 +30,7 @@ class SanitizeInputMiddleware
 
     public function handle(Request $request, Closure $next)
     {
+
         foreach ($this->excludedRoutes as $excluded) {
             if ($request->is($excluded)) {
                 return $next($request);
@@ -39,12 +40,12 @@ class SanitizeInputMiddleware
         // Sanitize all inputs
         $sanitized = $this->sanitizeRecursive($request->all());
         $request->merge($sanitized);
-
         return $next($request);
     }
 
     protected function sanitizeRecursive($data)
     {
+
         return collect($data)->map(function ($value) {
             if (is_array($value)) {
                 return $this->sanitizeRecursive($value);

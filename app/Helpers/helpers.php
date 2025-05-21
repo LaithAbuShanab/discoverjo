@@ -446,6 +446,7 @@ function cleanQuery( $query)
         'update',
         'delete',
         'alter',
+        '--',
     ];
 
     // Build a regex pattern to remove all dangerous keywords, case-insensitive

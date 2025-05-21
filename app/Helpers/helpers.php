@@ -396,7 +396,7 @@ function sanitizeQuery($query)
     return trim($query);
 }
 
-function cleanQuery(string $query): string
+function cleanQuery( $query): string
 {
     $dangerousWords = [
         'sleep',
@@ -451,5 +451,10 @@ function cleanQuery(string $query): string
     // Build a regex pattern to remove all dangerous keywords, case-insensitive
     $pattern = '/\b(' . implode('|', array_map('preg_quote', $dangerousWords)) . ')\b/i';
 
-    return preg_replace($pattern, '', $query);
+    if($query != null){
+        return preg_replace($pattern, '', $query);
+    }else{
+        return $query;
+    }
+
 }

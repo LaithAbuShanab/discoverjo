@@ -27,6 +27,7 @@ class SubCategoryApiController extends Controller
         $slug = $request->subcategory_slug;
         $validator = Validator::make(['subcategory_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'subcategory_slug' => [
+                'bail',
                 'required',
                 'exists:categories,slug',
                 function ($attribute, $value, $fail) {

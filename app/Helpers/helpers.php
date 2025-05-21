@@ -401,7 +401,7 @@ function cleanQuery($query)
     if (!is_string($query) || trim($query) === '') {
         return '';
     }
-
+    $query = urldecode($query);
     $dangerousWords = [
         'sleep',
         'dbms_lock\.sleep',

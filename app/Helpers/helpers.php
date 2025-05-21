@@ -450,6 +450,17 @@ function cleanQuery($query)
         'update',
         'delete',
         'alter',
+        '--',
+        ';',
+        '#',
+        '/*',
+        '*/',
+        '\'',
+        '"',
+        '`',
+        '=',
+        'OR',
+        'AND'
     ];
 
     // Combine into regex pattern

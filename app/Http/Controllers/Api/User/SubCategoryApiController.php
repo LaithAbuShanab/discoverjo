@@ -29,6 +29,7 @@ class SubCategoryApiController extends Controller
             'subcategory_slug' => [
                 'bail',
                 'required',
+                'regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
                 'exists:categories,slug',
                 function ($attribute, $value, $fail) {
                     if (Category::where('slug', $value)->whereNull('parent_id')->exists()) {

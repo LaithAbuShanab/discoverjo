@@ -31,6 +31,7 @@ class SanitizeInputMiddleware
     public function handle(Request $request, Closure $next)
     {
 
+
         foreach ($this->excludedRoutes as $excluded) {
             if ($request->is($excluded)) {
                 return $next($request);

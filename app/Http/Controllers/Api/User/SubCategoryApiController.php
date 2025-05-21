@@ -22,8 +22,10 @@ class SubCategoryApiController extends Controller
 
     public function singleSubCategory(Request $request)
     {
-        $input = $request->only(['subcategory_slug', 'lat', 'lng']);
-        $validator = Validator::make($input, [
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $slug = $request->subcategory_slug;
+        $validator = Validator::make(['subcategory_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'subcategory_slug' => [
                 'bail',
                 'required',

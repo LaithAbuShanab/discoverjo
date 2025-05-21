@@ -237,7 +237,7 @@ class GuideTripUserApiController extends Controller
             'query' => 'required|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
         ]);
         $validatedQuery = $validator->validated()['query'];
-        $cleanedQuery = cleanQuery($validatedQuery);
+
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -245,7 +245,7 @@ class GuideTripUserApiController extends Controller
         }
 
         try {
-            $places = $this->guideTripUserApiUseCase->search($cleanedQuery);
+            $places = $this->guideTripUserApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

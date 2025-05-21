@@ -183,9 +183,11 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
     public function PlacesCurrentLocation($request)
     {
-        $userLat = $request['lat'];
-        $userLng = $request['lng'];
-        $distanceKm = $request['area'] ?? 2;
+        $user = Auth::guard('api')->user();
+
+        $userLat = isset($request['lat']) ? floatval($request['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
+        $userLng = isset($request['lng']) ? floatval($request['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
+        $distanceKm = $request['area'] ? floatval($request['area']): 2;
 
         $categoriesSlugs = isset($request['categories']) ? explode(',', $request['categories']) : [];
         $subcategoriesSlugs = isset($request['subcategories']) ? explode(',', $request['subcategories']) : [];

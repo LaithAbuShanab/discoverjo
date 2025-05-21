@@ -32,9 +32,9 @@ class PlacesOfCurrentLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lng' => ['required'],
-            'lat' => ['required'],
-            'area' => ['nullable'],
+            'lng' => ['bail','numeric', 'nullable', 'regex:/^-?\d{1,3}(\.\d{1,6})?$/', 'between:-180,180',],
+            'lat' => ['bail', 'numeric','nullable', 'regex:/^-?\d{1,3}(\.\d{1,6})?$/', 'between:-90,90'],
+            'area' => ['nullable','numeric'],
             'categories' => ['nullable', function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values) || empty($values)) {

@@ -466,7 +466,6 @@ function cleanQuery($query)
     $pattern = '/' . implode('|', array_map(function($word) {
             return '(' . $word . ')';
         }, $dangerousWords)) . '/i';
-
     // Clean malicious keywords
     $cleaned = preg_replace($pattern, '', $query);
 

@@ -396,22 +396,26 @@ function sanitizeQuery($query)
     return trim($query);
 }
 
-function cleanQuery( $query): string
+function cleanQuery($query): string
 {
+    if (!is_string($query) || trim($query) === '') {
+        return '';
+    }
+
     $dangerousWords = [
         'sleep',
-        'dbms_lock.sleep',
-        'dbms_pipe.receive_message',
-        'utl_inaddr.get_host_address',
-        'utl_http.request',
-        'utl_tcp.connect',
-        'utl_smtp.open_connection',
+        'dbms_lock\.sleep',
+        'dbms_pipe\.receive_message',
+        'utl_inaddr\.get_host_address',
+        'utl_http\.request',
+        'utl_tcp\.connect',
+        'utl_smtp\.open_connection',
         'pg_sleep',
         'pg_sleep_for',
         'pg_sleep_until',
         'benchmark',
-        'waitfor delay',
-        'waitfor time',
+        'waitfor\s+delay',
+        'waitfor\s+time',
         'case',
         'when',
         'then',
@@ -448,13 +452,12 @@ function cleanQuery( $query): string
         'alter',
     ];
 
-    // Build a regex pattern to remove all dangerous keywords, case-insensitive
-    $pattern = '/\b(' . implode('|', array_map('preg_quote', $dangerousWords)) . ')\b/i';
+    // Combine into regex pattern
+    $pattern = '/\b(' . implode('|', $dangerousWords) . ')\b/i';
 
-    if($query != null){
-        return preg_replace($pattern, '', $query);
-    }else{
-        return $query;
-    }
+    // Remove dangerous words
+    $cleaned = preg_replace($pattern, '', $query);
 
+    // Normalize whitespace
+    return trim(preg_replace('/\s+/', ' ', $cleaned));
 }

@@ -396,7 +396,7 @@ function sanitizeQuery($query)
     return trim($query);
 }
 
-function cleanQuery($query): string
+function cleanQuery($query)
 {
     if (!is_string($query) || trim($query) === '') {
         return '';

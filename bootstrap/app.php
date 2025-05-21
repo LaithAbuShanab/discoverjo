@@ -38,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
             \App\Http\Middleware\TrackVisits::class,
+            \App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
 
         $middleware->alias([
@@ -51,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'langApi' => \App\Http\Middleware\languageApi::class,
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
             'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
+            'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
     })
     ->withProviders([

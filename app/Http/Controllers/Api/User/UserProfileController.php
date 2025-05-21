@@ -74,10 +74,9 @@ class UserProfileController extends Controller
             'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
         ]);
         $validatedQuery = $validator->validated()['query'];
-        $cleanedQuery =$validatedQuery !== null ? cleanQuery($validatedQuery) : null;
 
         try {
-            $users = $this->userProfileApiUseCase->search($cleanedQuery);
+            $users = $this->userProfileApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

@@ -447,6 +447,7 @@ function cleanQuery( $query)
         'delete',
         'alter',
         '--',
+        '%',
         "'",
         ';',  // query separator
         '\'', // single quote

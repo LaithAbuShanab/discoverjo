@@ -459,14 +459,15 @@ function cleanQuery($query)
         '"',      // double quote
         '`',      // backtick
         '=',      // equal sign
+        'OR',
+        'AND'
 
     ];
 
-    // Build a pattern safely
-    $pattern = '/' . implode('|', array_map(function($word) {
-            return '(' . $word . ')';
-        }, $dangerousWords)) . '/i';
-    // Clean malicious keywords
+    // Combine into regex pattern
+    $pattern = '/\b(' . implode('|', $dangerousWords) . ')\b/i';
+
+    // Remove dangerous words
     $cleaned = preg_replace($pattern, '', $query);
 
     // Normalize whitespace

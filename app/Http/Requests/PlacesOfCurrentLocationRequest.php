@@ -20,6 +20,14 @@ class PlacesOfCurrentLocationRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'categories' => cleanQuery($this->input('categories')),
+            'subcategories' =>cleanQuery($this->input('subcategories')),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

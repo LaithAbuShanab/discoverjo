@@ -450,18 +450,6 @@ function cleanQuery($query)
         'update',
         'delete',
         'alter',
-        '--',     // SQL comment
-        ';',      // statement separator
-        '#',      // MySQL comment
-        '/*',     // multi-line comment start
-        '*/',     // multi-line comment end
-        '\'',     // single quote
-        '"',      // double quote
-        '`',      // backtick
-        '=',      // equal sign
-        'OR',
-        'AND'
-
     ];
 
     // Combine into regex pattern

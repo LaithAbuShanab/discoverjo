@@ -22,15 +22,6 @@ class SubCategoryApiController extends Controller
 
     public function singleSubCategory(Request $request)
     {
-        $allowed = ['subcategory_slug', 'lat', 'lng'];
-        $unexpected = collect(request()->all())->keys()->diff($allowed);
-
-        if ($unexpected->isNotEmpty()) {
-            return ApiResponse::sendResponse(
-                400,
-                'Invalid parameters: ' . $unexpected->implode(', ')
-            );
-        }
         $lat = request()->lat;
         $lng = request()->lng;
         $slug = $request->subcategory_slug;

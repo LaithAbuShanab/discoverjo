@@ -450,12 +450,24 @@ function cleanQuery($query)
         'update',
         'delete',
         'alter',
+        '--',     // SQL comment
+        ';',      // statement separator
+        '#',      // MySQL comment
+        '/*',     // multi-line comment start
+        '*/',     // multi-line comment end
+        '\'',     // single quote
+        '"',      // double quote
+        '`',      // backtick
+        '=',      // equal sign
+
     ];
 
-    // Combine into regex pattern
-    $pattern = '/\b(' . implode('|', $dangerousWords) . ')\b/i';
+    // Build a pattern safely
+    $pattern = '/' . implode('|', array_map(function($word) {
+            return '(' . $word . ')';
+        }, $dangerousWords)) . '/i';
 
-    // Remove dangerous words
+    // Clean malicious keywords
     $cleaned = preg_replace($pattern, '', $query);
 
     // Normalize whitespace

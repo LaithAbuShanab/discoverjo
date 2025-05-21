@@ -205,10 +205,9 @@ class PlanApiController extends Controller
             ]
         );
         $validated = $validator->validated();
-        $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
 
         try {
-            $plan = $this->planApiUseCase->search($validatedQuery);
+            $plan = $this->planApiUseCase->search($validated);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

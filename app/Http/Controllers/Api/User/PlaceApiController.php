@@ -119,8 +119,6 @@ class PlaceApiController extends Controller
             ]
         );
         $data = $validator->validated();
-//        $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
-//        $data = array_merge($validated, ['query' => $validatedQuery]);
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);

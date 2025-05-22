@@ -77,7 +77,7 @@ class CheckIfHasInjectionBasedTimeRule implements ValidationRule
         // ✅ Step 4: Check if any dangerous word exists in the input
         foreach ($dangerousWords as $word) {
             if (str_contains($lowerValue, $word)) {
-                $fail("The {$attribute} contains a potentially dangerous keyword: {$word}");
+                $fail("invalid input");
                 return;
             }
         }

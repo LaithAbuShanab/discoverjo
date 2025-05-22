@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Api\User;
 
+use App\Http\Resources\CommentResource;
 use App\Interfaces\Gateways\Api\User\CommentApiRepositoryInterface;
 use App\Models\Comment;
 use App\Models\Post;
@@ -73,7 +74,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         $activity = Activity::find(1);
         $user->recordStreak($activity);
 
-        return $comment;
+        return new CommentResource($comment);
     }
     public function updateComment($data)
     {

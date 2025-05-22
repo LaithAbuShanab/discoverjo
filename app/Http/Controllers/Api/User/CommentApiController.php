@@ -28,8 +28,8 @@ class CommentApiController extends Controller
     public function commentStore(CreateCommentRequest $request)
     {
         try {
-            $this->commentApiUseCase->createComment($request->validated());
-            return ApiResponse::sendResponse(200,  __('app.api.comment-created-successfully'), []);
+           $comment =  $this->commentApiUseCase->createComment($request->validated());
+            return ApiResponse::sendResponse(200,  __('app.api.comment-created-successfully'), $comment);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

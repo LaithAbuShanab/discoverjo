@@ -244,7 +244,8 @@ class GuideTripUserApiController extends Controller
         }
 
         try {
-            $places = $this->guideTripUserApiUseCase->search($validatedQuery);
+
+            $places = $this->guideTripUserApiUseCase->search(cleanQuery($validatedQuery));
             return ApiResponse::sendResponse(200, __('app.api.the-searched-guide-trip-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

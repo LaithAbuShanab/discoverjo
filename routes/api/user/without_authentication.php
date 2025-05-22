@@ -76,7 +76,7 @@ Route::get('all/volunteering/search', [VolunteeringApiController::class, 'search
 // GET SEARCHABLE TRIPS
 Route::get('all/trip/search', [TripApiController::class, 'search']); // DONE ✅
 // GET SEARCHABLE GUIDES
-Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search'])->middleware('sanitize'); // DONE ✅
+Route::get('all/guide-trip/search', [GuideTripUserApiController::class, 'search']); // DONE ✅
 // GET SEARCHABLE PLANS
 Route::get('all/plan/search', [PlanApiController::class, 'search']); // DONE ✅
 // GET SEARCHABLE USERS

@@ -20,6 +20,7 @@ class CheckLatLngRule implements ValidationRule
         // Apply regex to the **original string**, not the float
         if (!preg_match('/^-?\d{1,3}(\.\d{1,8})?$/', trim($value))) {
             $fail("The {$attribute} must have up to 6 decimal places and max 3 digits before the dot.");
+            return;
         }
     }
 }

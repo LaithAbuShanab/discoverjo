@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
             \App\Http\Middleware\TrackVisits::class,
-            \App\Http\Middleware\SanitizeInputMiddleware::class,
+//            \App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
 
         $middleware->alias([

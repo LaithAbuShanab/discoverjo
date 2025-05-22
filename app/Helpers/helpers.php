@@ -403,6 +403,7 @@ function cleanQuery( $query)
         'dbms_lock.sleep',
         'dbms_pipe.receive_message',
         'utl_inaddr.get_host_address',
+        'utl_inaddr.get_host_name',
         'utl_http.request',
         'utl_tcp.connect',
         'utl_smtp.open_connection',

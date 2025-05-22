@@ -76,7 +76,7 @@ class UserProfileController extends Controller
         $validatedQuery = $validator->validated()['query'];
 
         try {
-            $users = $this->userProfileApiUseCase->search($validatedQuery);
+            $users = $this->userProfileApiUseCase->search( cleanQuery($validatedQuery));
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

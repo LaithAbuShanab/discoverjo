@@ -318,7 +318,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function reviews()
     {
-        return $this->hasMany(Reviewable::class);
+        return $this->hasMany(Reviewable::class)->latest();
     }
 
     public function conversations(): HasMany

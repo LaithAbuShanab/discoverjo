@@ -51,7 +51,7 @@ class Volunteering extends Model implements HasMedia
 
     public function reviews(): MorphMany
     {
-        return $this->morphMany(Reviewable::class, 'reviewable');
+        return $this->morphMany(Reviewable::class, 'reviewable')->latest();
     }
 
     public function posts()

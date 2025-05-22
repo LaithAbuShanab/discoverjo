@@ -30,7 +30,7 @@ class TopTenPlaceResource extends JsonResource
                 'place_slug'=>$place->place->slug,
                 'name' => $place->place->name,
                 'description'=>$place->place->description,
-                'image' => $place->place->getFirstMediaUrl('main_place','main_place_app'),
+                'image' => $place->place->getFirstMediaUrl('main_place'),
                 'region' => $place->place->region->name,
                 'address' => $place->place->address,
                 'rating' => $place->place->rating,

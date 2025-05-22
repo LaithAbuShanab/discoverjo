@@ -40,15 +40,15 @@ class SubCategoryApiController extends Controller
             'lat'   => [
                 'bail',
                 'nullable',
-                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-                'numeric',
+//                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+//                'numeric',
                 'between:-90,90',
             ],
             'lng'   => [
                 'bail',
                 'nullable',
-                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-                'numeric',
+//                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+//                'numeric',
                 'between:-180,180',
             ],
             [

@@ -67,34 +67,27 @@ class CategoryApiController extends Controller
 
         $validator = Validator::make(['category_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'category_slug' => ['bail','required', 'exists:categories,slug', new CheckIfCategoryIsParentRule()],
-//            'lat'   => [
-//                'bail',
-//                'nullable',
-//                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-//                'numeric',
-//                'between:-90,90',
-//            ],
-//            'lng'   => [
-//                'bail',
-//                'nullable',
-//                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-//                'numeric',
-//                'between:-180,180',
-//            ],
+            'lat'   => [
+                'bail',
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                'numeric',
+                'between:-90,90',
+            ],
+            'lng'   => [
+                'bail',
+                'nullable',
+                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                'numeric',
+                'between:-180,180',
+            ],
         ], [
             'category_slug.exists' => __('validation.api.the-selected-category-id-does-not-exists'),
             'category_slug.required' => __('validation.api.the-category-id-required'),
         ]);
 
 
-        $data = array_merge(
-            $validator->validated(),
-            [
-                'lat' => $request->has('lat') ? floatval($request->lat) : null,
-                'lng' => $request->has('lng') ? floatval($request->lng) : null,
-            ]
-        );
-
+        $data = $validator->validated();
 
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $validator->errors()->messages()['category_slug']);

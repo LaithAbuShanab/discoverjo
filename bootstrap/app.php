@@ -51,7 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'langApi' => \App\Http\Middleware\languageApi::class,
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
             'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
-//            'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
+            'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
     })
     ->withProviders([

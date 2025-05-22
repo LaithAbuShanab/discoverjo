@@ -8,6 +8,7 @@ use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
 use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
 use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
+use App\Rules\CheckLatLngRule;
 use App\Rules\StrictFloatRule;
 use App\UseCases\Api\User\PlaceApiUseCase;
 use Illuminate\Http\Request;
@@ -108,6 +109,7 @@ class PlaceApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                    'numeric',
                     'between:-90,90',
+                    new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
@@ -115,6 +117,7 @@ class PlaceApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
 //                    'numeric',
                     'between:-180,180',
+                    new CheckLatLngRule()
                 ],
             ]
         );
@@ -146,6 +149,7 @@ class PlaceApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                    'numeric',
                     'between:-90,90',
+                    new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
@@ -153,6 +157,7 @@ class PlaceApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                    'numeric',
                     'between:-180,180',
+                    new CheckLatLngRule()
                 ],
             ]
         );

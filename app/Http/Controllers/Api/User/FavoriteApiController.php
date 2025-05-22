@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Rules\CheckIfExistsInFavoratblesRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfUserTypeActiveRule;
+use App\Rules\CheckLatLngRule;
 use App\UseCases\Api\User\FavoriteApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -114,6 +115,7 @@ class FavoriteApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                    'numeric',
                     'between:-90,90',
+                    new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
@@ -121,6 +123,7 @@ class FavoriteApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
 //                    'numeric',
                     'between:-180,180',
+                    new CheckLatLngRule()
                 ],
             ]
         );

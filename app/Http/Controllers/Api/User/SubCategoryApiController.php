@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Rules\CheckLatLngRule;
 use App\UseCases\Api\User\SubCategoryApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -43,6 +44,7 @@ class SubCategoryApiController extends Controller
 //                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                'numeric',
                 'between:-90,90',
+                new CheckLatLngRule()
             ],
             'lng'   => [
                 'bail',
@@ -50,6 +52,7 @@ class SubCategoryApiController extends Controller
 //                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
 //                'numeric',
                 'between:-180,180',
+                new CheckLatLngRule()
             ],
             [
                 'subcategory_slug.required' => __('validation.api.subcategory-is-required'),

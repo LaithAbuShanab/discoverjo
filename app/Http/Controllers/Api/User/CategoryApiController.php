@@ -57,9 +57,14 @@ class CategoryApiController extends Controller
 
     public function categoryPlaces(Request $request)
     {
+        $request->merge([
+            'lat' => $request->has('lat') ? floatval($request->lat) : null,
+            'lng' => $request->has('lng') ? floatval($request->lng) : null,
+        ]);
         $slug = $request->category_slug;
-        $lat = request()->lat;
-        $lng = request()->lng;
+        $lat = $request->lat;
+        $lng = $request->lng;
+
         $validator = Validator::make(['category_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
             'category_slug' => ['bail','required', 'exists:categories,slug', new CheckIfCategoryIsParentRule()],
             'lat'   => [

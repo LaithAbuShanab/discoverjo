@@ -13,12 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__ . '/../routes/channels.php', // ✅ Added channels route
         health: '/up',
         then: function () {
-            Route::middleware(['api', 'guest', 'apiKey'])
+            Route::middleware(['api', 'guest', 'apiKey','sanitize'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/without_authentication.php'));
 
-            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey'])
+            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey','sanitize'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/with_authentication.php'));
@@ -38,7 +38,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
             \App\Http\Middleware\TrackVisits::class,
-//            \App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
 
         $middleware->alias([

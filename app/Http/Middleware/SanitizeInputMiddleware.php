@@ -9,16 +9,6 @@ class SanitizeInputMiddleware
 {
     // List of route names or URIs to exclude
     protected $excludedRoutes = [
-        'login',
-        'register',
-        'logout',
-        'verification.verify',
-        'verification.send',
-        'password.email',
-        'password.reset',
-        'password.store',
-        'change-password',
-
         // Direct URI paths if route names aren't used
         'auth/*',
         'email/verify/*',

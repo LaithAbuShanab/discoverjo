@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Requests\Api\User\category\SubcategoriesOfCategoriesRequest;
 use App\Http\Controllers\Controller;
 use App\Rules\CheckIfCategoryIsParentRule;
+use App\Rules\CheckLatLngRule;
 use App\UseCases\Api\User\CategoryApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -73,6 +74,7 @@ class CategoryApiController extends Controller
 //                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
 //                'numeric',
                 'between:-90,90',
+                new CheckLatLngRule()
             ],
             'lng'   => [
                 'bail',
@@ -80,6 +82,7 @@ class CategoryApiController extends Controller
 //                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
 //                'numeric',
                 'between:-180,180',
+                new CheckLatLngRule()
             ],
         ], [
             'category_slug.exists' => __('validation.api.the-selected-category-id-does-not-exists'),

@@ -61,7 +61,7 @@ class CategoryApiController extends Controller
         $lat = request()->lat;
         $lng = request()->lng;
         $validator = Validator::make(['category_slug' => $slug, 'lat' => $lat, 'lng' => $lng], [
-            'category_slug' => ['required', 'exists:categories,slug', new CheckIfCategoryIsParentRule()],
+            'category_slug' => ['bail','required', 'exists:categories,slug', new CheckIfCategoryIsParentRule()],
             'lat'   => [
                 'nullable',
                 'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places

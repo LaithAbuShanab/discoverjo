@@ -7,7 +7,7 @@ interface PopularPlaceApiRepositoryInterface
 {
 
 
-    public function popularPlaces($data);
+    public function popularPlaces();
     public function search($query);
 
 }

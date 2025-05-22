@@ -18,28 +18,10 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
 
 
 
-    public function popularPlaces($data)
+    public function popularPlaces()
     {
-        $user = Auth::guard('api')->user();
-
-        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
-        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
-
         $popularPlaces = PopularPlace::whereHas('place', fn($query) => $query->where('status', 1))->get();
         $shuffledPopularPlaces = $popularPlaces->shuffle();
-
-        // Calculate and attach distance
-        foreach ($shuffledPopularPlaces as $place) {
-            $placeLat = $place->place->latitude ?? null;
-            $placeLng = $place->place->longitude ?? null;
-
-            $distance = ($userLat && $userLng && $placeLat && $placeLng)
-                ? haversineDistance($userLat, $userLng, $placeLat, $placeLng)
-                : null;
-
-            $place->distance = $distance;
-        }
-
         return PopularPlaceResource::collection($shuffledPopularPlaces);
     }
 

@@ -27,7 +27,6 @@ class PopularPlaceResource extends JsonResource
                 'rating' => $this->place->rating,
                 'local_price' => $this->local_price,
                 'foreign_price'=>$this->foreign_price,
-                'distance' => $this->distance,
             ];
     }
 

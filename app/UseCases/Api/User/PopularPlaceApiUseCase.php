@@ -16,9 +16,9 @@ class PopularPlaceApiUseCase
 
 
 
-    public function popularPlaces($data)
+    public function popularPlaces()
     {
-        return $this->popularPlaceApiRepository->popularPlaces($data);
+        return $this->popularPlaceApiRepository->popularPlaces();
     }
     public function search($query)
     {

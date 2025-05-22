@@ -22,26 +22,9 @@ class PopularPlaceApiController extends Controller
      */
     public function popularPlaces()
     {
-        $lat = request()->lat;
-        $lng = request()->lng;
-        $validator = Validator::make(['lat' => $lat, 'lng' => $lng], [
-            'lat'   => [
-                'bail',
-                'nullable',
-                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-                'numeric',
-                'between:-90,90',
-            ],
-            'lng'   => [
-                'bail',
-                'nullable',
-                'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-                'numeric',
-                'between:-180,180',
-            ]
-        ]);
+
         try {
-            $popularPlaces = $this->popularPlaceApiUseCase->popularPlaces($validator->validate());
+            $popularPlaces = $this->popularPlaceApiUseCase->popularPlaces();
 
             return ApiResponse::sendResponse(200, __('app.api.popular-places-retrieved-successfully'), $popularPlaces);
         } catch (\Exception $e) {

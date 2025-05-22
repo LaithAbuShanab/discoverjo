@@ -13,12 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__ . '/../routes/channels.php', // ✅ Added channels route
         health: '/up',
         then: function () {
-            Route::middleware(['api', 'guest', 'apiKey','sanitize'])
+            Route::middleware(['api', 'guest', 'apiKey'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/without_authentication.php'));
 
-            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey','sanitize'])
+            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/with_authentication.php'));
@@ -51,7 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'langApi' => \App\Http\Middleware\languageApi::class,
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
             'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
-            'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
+//            'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
         ]);
     })
     ->withProviders([

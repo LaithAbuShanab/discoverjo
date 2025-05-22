@@ -446,14 +446,7 @@ function cleanQuery( $query)
         'update',
         'delete',
         'alter',
-        '--',
-        '%',
-        "'",
-        ';',  // query separator
-        '\'', // single quote
-        '"',  // double quote
-        '`',  // backtick
-        '=',  // equal
+
     ];
 
     // Build a regex pattern to remove all dangerous keywords, case-insensitive

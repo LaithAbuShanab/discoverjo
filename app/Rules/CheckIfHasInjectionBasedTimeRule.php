@@ -69,6 +69,7 @@ class CheckIfHasInjectionBasedTimeRule implements ValidationRule
             'update',
             'delete',
             'alter',
+            'randomblob'
         ];
 
         // ✅ Step 3: Normalize the input for comparison

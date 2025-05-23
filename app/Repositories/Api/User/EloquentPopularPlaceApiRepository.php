@@ -26,21 +26,24 @@ class EloquentPopularPlaceApiRepository implements PopularPlaceApiRepositoryInte
     }
 
 
-    public function search($query)
+    public function search($data)
     {
-        $places = PopularPlace::whereHas('place', function ($queryBuilder) use ($query) {
+
+        $query= $data['query'];
+        $places = PopularPlace::with('place')->whereHas('place', function ($queryBuilder) use ($query) {
             $queryBuilder->where('status', 1)
-            ->where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(places.description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            });
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($q2) use ($query) {
+                        $q2->where('name_en', 'like', '%' . $query . '%')
+                            ->orWhere('name_ar', 'like', '%' . $query . '%');
+                    });
+                });
         })->get();
+
         if($query) {
             activityLog('popular place', $places->first(), $query, 'search');
         }
-        return new PopularPlaceResource($places);
+        return  PopularPlaceResource::collection($places);
     }
 
 }

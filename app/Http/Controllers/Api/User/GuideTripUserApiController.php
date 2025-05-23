@@ -13,6 +13,7 @@ use App\Rules\CheckIfGuideActiveRule;
 use App\Rules\CheckIfGuideTripActiveOrInFuture;
 use App\Rules\CheckIfGuideTripActiveOrInFutureForSubscriptionRule;
 use App\Rules\CheckIfGuideTripUserExistRule;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfSubscriptionBelongToCurrentUserRule;
 use App\Rules\CheckIfUserHasJoinedInTripRule;
 use App\Rules\CheckIfUserHasJoinedRule;
@@ -234,7 +235,7 @@ class GuideTripUserApiController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => ['bail','nullable','string','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u','max:255'],
+            'query' => ['bail','nullable','string','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u','max:255',new CheckIfHasInjectionBasedTimeRule()],
         ]);
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);

@@ -232,7 +232,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         ];
     }
 
-    public function allSearch($query)
+    public function allSearch($data)
     {
         // Get user coordinates if provided
         $user = Auth::guard('api')->user();
@@ -240,6 +240,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
         $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
         $perPage =  config('app.pagination_per_page');
+        $query= $data['query'];
         /**
          * SEARCH PLACES
          */

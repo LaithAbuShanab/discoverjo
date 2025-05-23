@@ -26,10 +26,10 @@ class StoreContactUsApiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'required|email',
-            'subject' => 'nullable',
-            'message' => 'required',
+            'subject' => 'nullable|string|max:255',
+            'message' => 'required|string',
             "images" => ['nullable'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz|max:10000'],
         ];

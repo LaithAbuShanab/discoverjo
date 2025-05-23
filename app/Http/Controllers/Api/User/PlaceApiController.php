@@ -103,7 +103,7 @@ class PlaceApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => ['nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
+                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
                 'lat'   => [
                     'bail',
                     'nullable',
@@ -187,7 +187,7 @@ class PlaceApiController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
+            'query' => 'bail,nullable|string|max:255'
         ]);
         $validatedQuery = $validator->validated()['query'];
         try {

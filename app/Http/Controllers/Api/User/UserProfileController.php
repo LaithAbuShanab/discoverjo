@@ -90,7 +90,7 @@ class UserProfileController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
+            'query' => 'bail|nullable|string|max:255'
         ]);
         $validatedQuery = $validator->validated()['query'];
         try {

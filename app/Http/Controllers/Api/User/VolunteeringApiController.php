@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Event\DayRequest;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckUserInterestExistsRule;
 use App\Rules\CheckUserInterestRule;
 use App\UseCases\Api\User\VolunteeringApiUseCase;
@@ -126,7 +127,7 @@ class VolunteeringApiController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => ['nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'],
+            'query' => ['nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
         ]);
         $validatedQuery = $validator->validated()['query'];
         try {

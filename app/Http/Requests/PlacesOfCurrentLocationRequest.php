@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Helpers\ApiResponse;
 use App\Models\Category;
+use App\Rules\CheckLatLngRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -33,10 +34,10 @@ class PlacesOfCurrentLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lng' => ['bail','numeric', 'nullable', 'regex:/^-?\d{1,3}(\.\d{1,6})?$/', 'between:-180,180',],
-            'lat' => ['bail', 'numeric','nullable', 'regex:/^-?\d{1,3}(\.\d{1,6})?$/', 'between:-90,90'],
+            'lng' => ['bail', 'nullable', 'between:-180,180',new CheckLatLngRule()],
+            'lat' => ['bail','nullable','between:-90,90',new CheckLatLngRule(),],
             'area' => ['nullable','numeric'],
-            'categories' => ['nullable', function ($attribute, $value, $fail) {
+            'categories' => ['bail','nullable','regex:/^[\p{Arabic}a-zA-Z0-9\s\-_\,]+$/u',function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values) || empty($values)) {
                     return $fail(__('validation.api.the-categories-be-string-separated-by-comma'));
@@ -52,7 +53,7 @@ class PlacesOfCurrentLocationRequest extends FormRequest
                     }
                 }
             }],
-            'subcategories' => ['nullable', function ($attribute, $value, $fail) {
+            'subcategories' => ['bail','nullable', 'regex:/^[\p{Arabic}a-zA-Z0-9\s\-_\,]+$/u',function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values)) {
                     return $fail(__('validation.api.the-subcategories-must-be-string-separated-by-comma'));

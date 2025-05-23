@@ -329,11 +329,12 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         })
             ->when($query, function ($q) use ($query) {
                 $q->where(function ($q2) use ($query) {
-                    $q2->where('name_en', 'like', $query)
-                        ->orWhere('name_ar', 'like', $query);
+                    $q2->where('name_en', 'like', '%' . $query . '%')
+                        ->orWhere('name_ar', 'like', '%' . $query . '%');
                 });
             })
             ->paginate($perPage);
+
 
         $guideTripsArray = $guideTrips->toArray();
         $paginationGuideTrips = [

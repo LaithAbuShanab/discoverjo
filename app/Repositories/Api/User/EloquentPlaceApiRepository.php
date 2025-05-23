@@ -68,7 +68,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $perPage = config('app.pagination_per_page');
 
         // Sanitize query input
-        $safeQuery = $query ? '%' . addcslashes($query, '%_') . '%' : null;
+        $safeQuery = $query;
 
         if ($userLat !== null && $userLng !== null) {
             $placesQuery = Place::selectRaw(

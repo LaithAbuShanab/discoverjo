@@ -222,49 +222,56 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
         $regionSlug = $data['region'] ?? null;
         $regionId = null;
 
-        if ($regionSlug != null) {
+        // Get region ID from slug
+        if ($regionSlug !== null) {
             $regionId = Region::findBySlug($regionSlug)?->id;
         }
 
-        // Base query for filtering plans
+        // Start building base query
         $baseQuery = Plan::query();
 
-        // Check if the user is authenticated
+        // Authenticated user filtering
         if (!Auth::guard('api')->user()) {
             $baseQuery->where('creator_type', 'App\Models\Admin');
         } else {
-            $baseQuery->where(function ($queryBuilder) {
-                $queryBuilder->where('creator_type', 'App\Models\Admin')
-                    ->orWhere(function ($queryBuilder) {
-                        $queryBuilder->where('creator_type', 'App\Models\User')
+            $baseQuery->where(function ($query) {
+                $query->where('creator_type', 'App\Models\Admin')
+                    ->orWhere(function ($query) {
+                        $query->where('creator_type', 'App\Models\User')
                             ->where('creator_id', Auth::guard('api')->user()->id);
                     });
             });
         }
 
-        // Filter by number of days
-        $baseQuery->when($numberOfDays != null, function ($queryBuilder) use ($numberOfDays) {
-            $queryBuilder->whereExists(function ($subQuery) use ($numberOfDays) {
-                $subQuery->select(DB::raw(1))
-                    ->from('plan_days')
-                    ->whereRaw('plans.id = plan_days.plan_id')
-                    ->groupBy('plan_id')
-                    ->havingRaw('COUNT(*) = ?', [$numberOfDays]);
-            });
-        });
+        // Apply OR-based filtering logic
+        if ($numberOfDays !== null || $regionId !== null) {
+            $baseQuery->where(function ($query) use ($numberOfDays, $regionId) {
 
-        // Filter by region
-        $baseQuery->when($regionId != null, function ($queryBuilder) use ($regionId) {
-            $queryBuilder->whereHas('days.activities.place', function ($queryBuilder) use ($regionId) {
-                $queryBuilder->orWhere('region_id', $regionId);
-            });
-        });
+                // Filter by number of days
+                if ($numberOfDays !== null) {
+                    $query->orWhereExists(function ($subQuery) use ($numberOfDays) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('plan_days')
+                            ->whereRaw('plans.id = plan_days.plan_id')
+                            ->groupBy('plan_id')
+                            ->havingRaw('COUNT(*) = ?', [$numberOfDays]);
+                    });
+                }
 
-        // Execute the query and get the results
+                // Filter by region
+                if ($regionId !== null) {
+                    $query->orWhereHas('days.activities.place', function ($q) use ($regionId) {
+                        $q->where('region_id', $regionId);
+                    });
+                }
+
+            });
+        }
+
+        // Execute query with pagination
         $plans = $baseQuery->paginate($perPage);
 
-
-        // Prepare pagination data
+        // Prepare pagination info
         $plansArray = $plans->toArray();
         $pagination = [
             'next_page_url' => $plansArray['next_page_url'] ?? null,
@@ -272,12 +279,13 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
             'total' => $plansArray['total'] ?? 0,
         ];
 
-        // Prepare response data
+        // Prepare final response
         $response = [
             'plans' => PlanResource::collection($plans),
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ];
 
+        // Optional: Log filtered results for debugging
         $this->logFilteredPlans($baseQuery->get(), $numberOfDays, $regionSlug);
 
         return $response;

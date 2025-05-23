@@ -96,14 +96,13 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
     public function search($query)
     {
         $categories = Category::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
         })->whereNull('parent_id')->get();
+
         if($query){
             activityLog('search for category ',$categories->first(), $query,'search',);
-
         }
-
         return AllCategoriesResource::collection($categories);
     }
 }

@@ -127,10 +127,8 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         $perPage =  config('app.pagination_per_page');
 
         $eloquentVolunteerings = Volunteering::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(description, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
         })->paginate($perPage);
 
         $volunteeringArray = $eloquentVolunteerings->toArray();

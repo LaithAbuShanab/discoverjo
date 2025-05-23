@@ -186,12 +186,38 @@ class PlaceApiController extends Controller
     public function allSearch(Request $request)
     {
         $query = $request->input('query');
-        $validator = Validator::make(['query' => $query], [
-            'query' => 'bail,nullable|string|max:255'
-        ]);
-        $validatedQuery = $validator->validated()['query'];
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(
+            ['query' => $query, 'lat' => $lat, 'lng' => $lng],
+            [
+                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
+                'lat'   => [
+                    'bail',
+                    'nullable',
+//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+//                    'numeric',
+                    'between:-90,90',
+                    new CheckLatLngRule()
+                ],
+                'lng'   => [
+                    'bail',
+                    'nullable',
+//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+//                    'numeric',
+                    'between:-180,180',
+                    new CheckLatLngRule()
+                ],
+            ]
+        );
+
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);
+        }
+        $data = $validator->validated();
+
         try {
-            $places = $this->placeApiUseCase->allSearch($validatedQuery);
+            $places = $this->placeApiUseCase->allSearch($data);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-place-retrieved-successfully'), $places);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

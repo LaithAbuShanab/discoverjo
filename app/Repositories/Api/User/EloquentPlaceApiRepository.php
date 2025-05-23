@@ -237,8 +237,8 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         // Get user coordinates if provided
         $user = Auth::guard('api')->user();
 
-        $userLat = request()->lat ?? ($user && $user->latitude ? $user->latitude : null);
-        $userLng = request()->lng ?? ($user && $user->longitude ? $user->longitude : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
         $perPage =  config('app.pagination_per_page');
         /**
          * SEARCH PLACES
@@ -257,20 +257,39 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'prev_page_url' => $usersArray['prev_page_url'],
             'total'         => $usersArray['total'],
         ];
-        $places = Place::where('status', 1)->selectRaw(
-            'places.*,
-         (6371 * acos( cos( radians(?) ) * cos( radians(places.latitude) ) *
-         cos( radians(places.longitude) - radians(?) ) + sin( radians(?) ) *
-         sin( radians(places.latitude) ) )) AS distance',
-            [$userLat, $userLng, $userLat]
-        )
-            ->where(function ($queryBuilder) use ($query) {
-                // Only search within the "name" fields (both English and Arabic)
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })
-            ->orderBy('distance')
-            ->paginate($perPage);
+        if ($userLat !== null && $userLng !== null) {
+            $placesQuery = Place::selectRaw(
+                'places.*,
+             (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(places.latitude)) *
+                cos(radians(places.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(places.latitude))
+             )) AS distance',
+                [$userLat, $userLng, $userLat]
+            )
+                ->where('status', 1)
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($q2) use ($query) {
+                        $q2->where('name_en', 'like', '%' . $query . '%')
+                            ->orWhere('name_ar', 'like', '%' . $query . '%');
+                    });
+                })
+                ->orderBy('distance');
+        } else {
+            $placesQuery = Place::select('places.*')
+                ->selectRaw('NULL AS distance')
+                ->where('status', 1)
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($q2) use ($query) {
+                        $q2->where('name_en', 'like', '%' . $query . '%')
+                            ->orWhere('name_ar', 'like', '%' . $query . '%');
+                    });
+                });
+        }
+
+        $places = $placesQuery->paginate($perPage);
 
         $placesArray = $places->toArray();
         if ($userLat && $userLng) {
@@ -290,10 +309,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
          * SEARCH EVENTS
          */
         $events = Event::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-        })
-            ->paginate($perPage);
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
+        })->paginate($perPage);
 
         $eventsArray = $events->toArray();
         $paginationEvents = [
@@ -305,12 +323,14 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         /**
          * SEARCH GUIDE TRIPS
          */
-        $guideTrips = GuideTrip::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
+        $guideTrips = GuideTrip::whereHas('guide', function ($q) {
+            $q->where('status', '1');
         })
-            ->whereHas('guide', function ($query) {
-                $query->where('status', '1'); // Ensures only active guides are included
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($q2) use ($query) {
+                    $q2->where('name_en', 'like', $query)
+                        ->orWhere('name_ar', 'like', $query);
+                });
             })
             ->paginate($perPage);
 
@@ -326,10 +346,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
          * SEARCH VOLUNTEERING
          */
         $volunteerings = Volunteering::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-        })
-            ->paginate($perPage);
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
+        })->paginate($perPage);
 
         $volunteeringsArray = $volunteerings->toArray();
         $paginationVolunteerings = [
@@ -394,27 +413,31 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         /**
          * SEARCH PLANS
          */
-        if (!Auth::guard('api')->user()) {
-            $plans = Plan::where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })
-                ->where('creator_type', 'App\Models\Admin')
-                ->paginate($perPage);
+        $user = Auth::guard('api')->user();
+        $perPage = config('app.pagination_per_page');
+
+        $plansQuery = Plan::query()
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($q2) use ($query) {
+                    $q2->where('name_en', 'like', '%' . $query . '%')
+                        ->orWhere('name_ar', 'like', '%' . $query . '%');
+                });
+            });
+
+        if (!$user) {
+            $plansQuery->where('creator_type', 'App\Models\Admin');
         } else {
-            $plans = Plan::where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($query) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($query) . '%']);
-            })
-                ->where(function ($queryBuilder) {
-                    $queryBuilder->where('creator_type', 'App\Models\Admin')
-                        ->orWhere(function ($queryBuilder) {
-                            $queryBuilder->where('creator_type', 'App\Models\User')
-                                ->where('creator_id', Auth::guard('api')->user()->id);
-                        });
-                })
-                ->paginate($perPage);
+            $plansQuery->where(function ($q) use ($user) {
+                $q->where('creator_type', 'App\Models\Admin')
+                    ->orWhere(function ($subQ) use ($user) {
+                        $subQ->where('creator_type', 'App\Models\User')
+                            ->where('creator_id', $user->id);
+                    });
+            });
         }
+
+        $plans = $plansQuery->paginate($perPage);
+
         $plansArray = $plans->toArray();
         $paginationPlans = [
             'next_page_url' => $plansArray['next_page_url'],

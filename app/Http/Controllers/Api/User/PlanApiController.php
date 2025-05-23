@@ -8,6 +8,7 @@ use App\Http\Requests\Api\User\Plan\CreatePlanApiRequest;
 use App\Http\Requests\Api\User\Plan\FilterPlanRequest;
 use App\Http\Requests\Api\User\Plan\UpdatePlanApiRequest;
 use App\Rules\CheckIfExistsInFavoratblesRule;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfPlanBelongsToUser;
 use App\Rules\CheckIfPlanBelongsToUserOrAdmin;
@@ -197,17 +198,16 @@ class PlanApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-
-        $validator = Validator::make(
-            ['query' => $query],
-            [
-                'query' => 'bail|nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
-            ]
-        );
-        $validated = $validator->validated();
+        $validator = Validator::make(['query' => $query], [
+            'query' => ['bail','nullable','string','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u','max:255',new CheckIfHasInjectionBasedTimeRule()],
+        ]);
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);
+        }
+        $validatedQuery = $validator->validated()['query'];
 
         try {
-            $plan = $this->planApiUseCase->search($validated['query']);
+            $plan = $this->planApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-searched-plan-retrieved-successfully'), $plan);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

@@ -178,8 +178,12 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
 
         $plansQuery = Plan::query()
             ->when($query, function ($q) use ($query) {
-                $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+                $q->where(function ($q2) use ($query) {
+                    $q2->where('name_en', 'like', '%' . $query . '%')
+                        ->orWhere('name_ar', 'like', '%' . $query . '%');
+                });
             });
+
 
         if (!$user) {
             $plansQuery->where('creator_type', 'App\Models\Admin');

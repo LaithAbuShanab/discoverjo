@@ -22,6 +22,13 @@ class ReviewResource extends JsonResource
             return $disLike->user->status == 1;
         });
         $fullName= $this->user->first_name ." ". $this->user->last_name;
+        $reviewableType = class_basename($this->reviewable_type);
+
+        $reviewableSlug = null;
+        if (class_exists($this->reviewable_type)) {
+            $reviewableInstance = $this->reviewable_type::find($this->reviewable_id);
+            $reviewableSlug = $reviewableInstance?->slug;
+        }
 
         return [
             'id' => $this->id,
@@ -34,6 +41,8 @@ class ReviewResource extends JsonResource
             'rating' => (int) $this->rating,
             'comment' => $this->comment,
             'is_following' =>isFollowing($this->user->id),
+            'review_type'=>$reviewableType,
+            'review_slug'=>$reviewableSlug,
             'review_likes' => [
                 'total_likes' => $filteredLike->count(),
                 'user_likes_info' => LikeDislikeResource::collection($filteredLike)

@@ -74,8 +74,11 @@ class UserProfileController extends Controller
         $validator = Validator::make(['query' => $query], [
             'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()]
         ]);
-        $validatedQuery = $validator->validated()['query'];
 
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);
+        }
+        $validatedQuery = $validator->validated()['query'];
         try {
             $users = $this->userProfileApiUseCase->search($validatedQuery);
             return ApiResponse::sendResponse(200, __('app.api.the-users-retried-successfully'), $users);

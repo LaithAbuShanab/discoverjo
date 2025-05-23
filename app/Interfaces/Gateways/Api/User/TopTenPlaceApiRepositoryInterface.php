@@ -8,6 +8,6 @@ interface TopTenPlaceApiRepositoryInterface
 
 
     public function topTenPlaces();
-    public function search($query);
+    public function search($data);
 
 }

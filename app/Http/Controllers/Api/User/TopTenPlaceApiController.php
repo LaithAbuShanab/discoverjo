@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Rules\CheckLatLngRule;
 use App\UseCases\Api\User\TopTenPlaceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -35,12 +36,36 @@ class TopTenPlaceApiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $validator = Validator::make(['query' => $query], [
-            'query' => 'nullable|string|max:255'
-        ]);
-        $validatedQuery = $validator->validated()['query'];
+        $lat = request()->lat;
+        $lng = request()->lng;
+        $validator = Validator::make(
+            ['query' => $query, 'lat' => $lat, 'lng' => $lng],
+            [
+                'query' => ['nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'],
+                'lat'   => [
+                    'bail',
+                    'nullable',
+//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+//                    'numeric',
+                    'between:-90,90',
+                    new CheckLatLngRule()
+                ],
+                'lng'   => [
+                    'bail',
+                    'nullable',
+//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+//                    'numeric',
+                    'between:-180,180',
+                    new CheckLatLngRule()
+                ],
+            ]
+        );
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);
+        }
+        $data = $validator->validated();
         try {
-            $topTenPlaces = $this->topTenPlaceApiUseCase->search($validatedQuery);
+            $topTenPlaces = $this->topTenPlaceApiUseCase->search($data);
             return ApiResponse::sendResponse(200, __('app.api.searched-top-ten-places-retrieved-successfully'), $topTenPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

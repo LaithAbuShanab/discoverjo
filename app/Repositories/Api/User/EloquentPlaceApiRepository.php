@@ -335,7 +335,6 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             })
             ->paginate($perPage);
 
-
         $guideTripsArray = $guideTrips->toArray();
         $paginationGuideTrips = [
             'next_page_url' => $guideTripsArray['next_page_url'],

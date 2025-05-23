@@ -165,13 +165,13 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             $q->where('status', '1');
         })
             ->when($query, function ($q) use ($query) {
-                $q->whereFullText(
-                    ['name_en', 'name_ar'],
-                    $query,
-                    ['mode' => 'boolean']
-                );
+                $q->where(function ($q2) use ($query) {
+                    $q2->where('name_en', 'like', $query)
+                        ->orWhere('name_ar', 'like', $query);
+                });
             })
             ->paginate($perPage);
+
 
         $pagination = [
             'next_page_url' => $trips->nextPageUrl(),

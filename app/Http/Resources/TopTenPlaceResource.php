@@ -15,30 +15,18 @@ class TopTenPlaceResource extends JsonResource
 
     public function toArray($request)
     {
-        $userLat = $request->lat ? $request->lat : null;
-        $userLng = $request->lng ? $request->lng : null;
-
-        return $this->map(function ($place) use ($userLat, $userLng) {
-            $placeLat = $place->place->latitude;
-            $placeLng = $place->place->longitude;
-
-            $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
-
             return [
-
-                'place_id' => $place->place->id,
-                'place_slug'=>$place->place->slug,
-                'name' => $place->place->name,
-                'description'=>$place->place->description,
-                'image' => $place->place->getFirstMediaUrl('main_place'),
-                'region' => $place->place->region->name,
-                'address' => $place->place->address,
-                'rating' => $place->place->rating,
-                'rank' => $place->rank,
-                'distance' => $distance,
-                'status'=>$place->place->status,
+                'place_id' => $this->place->id,
+                'place_slug'=>$this->place->slug,
+                'name' => $this->place->name,
+                'description'=>$this->place->description,
+                'image' => $this->place->getFirstMediaUrl('main_place'),
+                'region' => $this->place->region->name,
+                'address' => $this->place->address,
+                'rating' => $this->place->rating,
+                'rank' => $this->rank,
+                'status'=>$this->place->status,
             ];
-        });
     }
 
 

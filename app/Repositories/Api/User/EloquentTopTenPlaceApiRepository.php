@@ -31,7 +31,6 @@ class EloquentTopTenPlaceApiRepository implements TopTenPlaceApiRepositoryInterf
                     });
                 });
         })->get();
-
         if($query) {
             activityLog('top ten', $places->first(), $query, 'search');
         }

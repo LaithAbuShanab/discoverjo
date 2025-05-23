@@ -102,17 +102,43 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 
     public function followers($user_slug)
     {
+        $perPage = config('app.pagination_per_page');
         $followingUser = User::findBySlug($user_slug);
-        $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->get();
+        $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->paginate($perPage);
         activityLog('view other users follows', $followingUser, 'the user view followers of this user ', 'view');
-        return FollowerResource::collection($followers);
+
+        $followersArray = $followers->toArray();
+        $pagination = [
+            'next_page_url' => $followersArray['next_page_url'],
+            'prev_page_url' => $followersArray['next_page_url'],
+            'total' => $followersArray['total'],
+        ];
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'followers' => FollowerResource::collection($followers),
+            'pagination' => $pagination
+        ];
     }
 
     public function followings($user_slug)
     {
+        $perPage = config('app.pagination_per_page');
         $follower = User::findBySlug($user_slug);
-        $followers = Follow::where('follower_id', $follower->id)->where('status', 1)->get();
+        $followings = Follow::where('follower_id', $follower->id)->where('status', 1)->paginate($perPage);
         activityLog('view other users followings', $follower, 'the user view followings of this user ', 'view');
-        return FollowingResource::collection($followers);
+//        return FollowingResource::collection($followers);
+        $followingsArray = $followings->toArray();
+        $pagination = [
+            'next_page_url' => $followingsArray['next_page_url'],
+            'prev_page_url' => $followingsArray['next_page_url'],
+            'total' => $followingsArray['total'],
+        ];
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'followings' => FollowerResource::collection($followings),
+            'pagination' => $pagination
+        ];
     }
 }

@@ -17,6 +17,7 @@ class UserVisitedPlaceResource extends JsonResource
         return [
             'name'=>$this->name,
             'slug'=>$this->slug,
+            'main_image' => $this->getFirstMediaUrl('main_place','main_place_app'),
             'longitude'=>$this->longitude,
             'latitude'=>$this->latitude
 

@@ -150,7 +150,7 @@ class PlaceApiController extends Controller
 //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
 //                    'numeric',
                     'between:-90,90',
-                    new CheckLatLngRule()
+                    new CheckLatLngRule(),
                 ],
                 'lng'   => [
                     'bail',

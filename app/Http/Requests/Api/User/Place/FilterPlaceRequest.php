@@ -28,7 +28,7 @@ class FilterPlaceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'categories' => ['nullable', function ($attribute, $value, $fail) {
+            'categories' => ['bail','nullable','regex:/^[\p{Arabic}a-zA-Z0-9\s\-_\,]+$/u', function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values) || empty($values)) {
                     return $fail(__('validation.api.the-categories-be-string-separated-by-comma'));
@@ -45,7 +45,7 @@ class FilterPlaceRequest extends FormRequest
                 }
             }],
 
-            'subcategories' => ['nullable', function ($attribute, $value, $fail) {
+            'subcategories' => ['bail','nullable','regex:/^[\p{Arabic}a-zA-Z0-9\s\-_\,]+$/u',function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values)) {
                     return $fail(__('validation.api.the-subcategories-must-be-string-separated-by-comma'));
@@ -62,10 +62,10 @@ class FilterPlaceRequest extends FormRequest
                 }
             }],
 
-            'region' => 'nullable|string|exists:regions,slug',
-            'min_cost' => 'nullable|integer|between:1,4',
-            'max_cost' => 'nullable|integer|between:1,4|gte:min_cost',
-            'features' => ['nullable', function ($attribute, $value, $fail) {
+            'region' => 'bail|nullable|string|exists:regions,slug',
+            'min_cost' =>'bail|nullable|integer|between:1,4',
+            'max_cost' =>'bail|nullable|integer|between:1,4|gte:min_cost',
+            'features' => ['bail','nullable','regex:/^[\p{Arabic}a-zA-Z0-9\s\-_\,]+$/u', function ($attribute, $value, $fail) {
                 $values = explode(',', $value);
                 if (!is_array($values)) {
                     return $fail(__('validation.api.the-features-must-be-string-separated-by-comma'));
@@ -78,8 +78,8 @@ class FilterPlaceRequest extends FormRequest
                     }
                 }
             }],
-            'min_rate' => 'nullable|integer|between:1,5',
-            'max_rate' => 'nullable|integer|between:1,5|gte:min_rate',
+            'min_rate' => 'bail|nullable|integer|between:1,5',
+            'max_rate' => 'bail|nullable|integer|between:1,5|gte:min_rate',
         ];
     }
 

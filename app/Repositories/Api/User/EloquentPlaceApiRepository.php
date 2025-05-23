@@ -64,8 +64,12 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
         $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
         $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
-        $query= $data['query'];
+        $query = $data['query'] ?? null;
         $perPage = config('app.pagination_per_page');
+
+        // Sanitize query input
+        $safeQuery = $query ? '%' . addcslashes($query, '%_') . '%' : null;
+
         if ($userLat !== null && $userLng !== null) {
             $placesQuery = Place::selectRaw(
                 'places.*,
@@ -79,19 +83,24 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
                 [$userLat, $userLng, $userLat]
             )
                 ->where('status', 1)
-                ->when($query, function ($q) use ($query) {
-                    $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+                ->when($query, function ($q) use ($safeQuery) {
+                    $q->where(function ($q2) use ($safeQuery) {
+                        $q2->where('name_en', 'like', $safeQuery)
+                            ->orWhere('name_ar', 'like', $safeQuery);
+                    });
                 })
                 ->orderBy('distance');
         } else {
             $placesQuery = Place::select('places.*')
                 ->selectRaw('NULL AS distance')
                 ->where('status', 1)
-                ->when($query, function ($q) use ($query) {
-                    $q->whereFullText(['name_en', 'name_ar'], $query, ['mode' => 'boolean']);
+                ->when($query, function ($q) use ($safeQuery) {
+                    $q->where(function ($q2) use ($safeQuery) {
+                        $q2->where('name_en', 'like', $safeQuery)
+                            ->orWhere('name_ar', 'like', $safeQuery);
+                    });
                 });
         }
-
 
         $places = $placesQuery->paginate($perPage);
         $placesArray = $places->toArray();

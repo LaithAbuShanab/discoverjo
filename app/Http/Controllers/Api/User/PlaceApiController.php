@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Place\FilterPlaceRequest;
 use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfExistsInVistedPlaceTableRule;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfNotExistsInVistedPlaceTableRule;
 use App\Rules\CheckLatLngRule;
 use App\Rules\StrictFloatRule;
@@ -102,7 +103,7 @@ class PlaceApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => 'nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
+                'query' => ['nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
                 'lat'   => [
                     'bail',
                     'nullable',

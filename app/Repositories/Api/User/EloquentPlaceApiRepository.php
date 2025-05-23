@@ -62,13 +62,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     {
         $user = Auth::guard('api')->user();
 
-        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
-        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
+        $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
+        $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
         $query = $data['query'] ?? null;
         $perPage = config('app.pagination_per_page');
-
-        // Sanitize query input
-        $safeQuery = $query;
 
         if ($userLat !== null && $userLng !== null) {
             $placesQuery = Place::selectRaw(
@@ -83,10 +80,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
                 [$userLat, $userLng, $userLat]
             )
                 ->where('status', 1)
-                ->when($query, function ($q) use ($safeQuery) {
-                    $q->where(function ($q2) use ($safeQuery) {
-                        $q2->where('name_en', 'like', $safeQuery)
-                            ->orWhere('name_ar', 'like', $safeQuery);
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($q2) use ($query) {
+                        $q2->where('name_en', 'like', '%' . $query . '%')
+                            ->orWhere('name_ar', 'like', '%' . $query . '%');
                     });
                 })
                 ->orderBy('distance');
@@ -94,10 +91,10 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             $placesQuery = Place::select('places.*')
                 ->selectRaw('NULL AS distance')
                 ->where('status', 1)
-                ->when($query, function ($q) use ($safeQuery) {
-                    $q->where(function ($q2) use ($safeQuery) {
-                        $q2->where('name_en', 'like', $safeQuery)
-                            ->orWhere('name_ar', 'like', $safeQuery);
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($q2) use ($query) {
+                        $q2->where('name_en', 'like', '%' . $query . '%')
+                            ->orWhere('name_ar', 'like', '%' . $query . '%');
                     });
                 });
         }
@@ -113,21 +110,17 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             $parameterPrevious = $placesArray['prev_page_url'] ? $placesArray['prev_page_url'] . '&lat=' . $userLat . "&lng=" . $userLng : null;
         }
 
-        if($query) {
+        if ($query) {
             activityLog('Place', $places->first(), $query, 'search');
         }
 
-        // Convert pagination result to array and include pagination metadata
-        $pagination = [
-            'next_page_url' => $parameterNext,
-            'prev_page_url' => $parameterPrevious,
-            'total' => $placesArray['total'],
-        ];
-
-        // Pass user coordinates to the PlaceResource collection
         return [
             'places' => PlaceResource::collection($places),
-            'pagination' => $pagination
+            'pagination' => [
+                'next_page_url' => $parameterNext,
+                'prev_page_url' => $parameterPrevious,
+                'total' => $placesArray['total'],
+            ]
         ];
     }
 

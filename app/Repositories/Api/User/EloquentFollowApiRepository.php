@@ -137,7 +137,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'followings' => FollowerResource::collection($followings),
+            'followings' => FollowingResource::collection($followings),
             'pagination' => $pagination
         ];
     }

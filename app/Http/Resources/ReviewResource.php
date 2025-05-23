@@ -42,7 +42,7 @@ class ReviewResource extends JsonResource
             'comment' => $this->comment,
             'is_following' =>isFollowing($this->user->id),
             'review_type'=>$reviewableType,
-            'review_slug'=>$reviewableSlug,
+            'review_type_slug'=>$reviewableSlug,
             'review_likes' => [
                 'total_likes' => $filteredLike->count(),
                 'user_likes_info' => LikeDislikeResource::collection($filteredLike)

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Event;
 
 use App\Helpers\ApiResponse;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,7 +27,7 @@ class DayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'required|date',
+            'date' => ['bail','required','date_format:Y-m-d', new CheckIfHasInjectionBasedTimeRule()],
         ];
     }
     public function messages()

@@ -31,6 +31,10 @@ class GuideTripUpdateDetailResource extends JsonResource
             $requirements[] = $requirement->getTranslations('item');
         }
 
+        $assemblies =[];
+        foreach ($this->assemblies as $assembly) {
+            $assemblies[] = $assembly->getTranslations('place');
+        }
         $gallery = [];
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
             $gallery[] = $image->getUrl();
@@ -68,7 +72,7 @@ class GuideTripUpdateDetailResource extends JsonResource
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->guide_id,
             'request_count'=>$countRequest,
             "activities"=>$activities,
-            "assemblies"=>GuideTripAssemblyResource::collection($this->assemblies),
+            "assemblies"=>GuideTripAssemblyResource::collection($assemblies),
             "age_price"=>GuideTripPriceAgeResource::collection($this->priceAges),
             "price_include"=>$priceIncludes,
             "requirements"=>$requirements,

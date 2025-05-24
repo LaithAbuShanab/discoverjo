@@ -19,8 +19,14 @@ class AddCspHeaderToApiMiddleware
 
         if ($request->is('api/*')) {
             $response->headers->set('Content-Security-Policy',
-                "default-src 'none'; img-src 'self' https://discoverjordan.s3.eu-north-1.amazonaws.com; script-src 'none'; font-src 'self'; style-src 'self';"
+                "default-src 'none'; " .
+                "img-src 'self' https://your-bucket.s3.amazonaws.com data:; " .
+                "style-src 'self' 'unsafe-inline'; " .
+                "font-src 'self'; " .
+                "frame-src 'none'; " .
+                "script-src 'none';"
             );
+
         }
 
         return $response;

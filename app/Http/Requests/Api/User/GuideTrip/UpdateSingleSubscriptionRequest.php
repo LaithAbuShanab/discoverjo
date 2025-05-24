@@ -26,7 +26,9 @@ class UpdateSingleSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'   => ['required', 'string', 'max:255', new CheckIfFullNameSubscriptionExistsRule()],
+            'first_name'   => ['required', 'string', 'max:255',
+//                new CheckIfFullNameSubscriptionExistsRule()
+            ],
             'last_name'    => ['required', 'string', 'max:255'],
             'age'          => ['required', 'integer', 'min:0'],
             'phone_number' => ['required', 'string', 'max:20'],

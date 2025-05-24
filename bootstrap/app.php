@@ -13,12 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__ . '/../routes/channels.php', // ✅ Added channels route
         health: '/up',
         then: function () {
-            Route::middleware(['api', 'guest', 'apiKey'])
+            Route::middleware(['api', 'guest', 'apiKey', 'throttle:30,1'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/without_authentication.php'));
 
-            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey'])
+            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey', 'throttle:30,1'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/with_authentication.php'));

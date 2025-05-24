@@ -33,6 +33,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 ->from('follows')
                 ->join('users', 'users.id', '=', 'follows.following_id')
                 ->where('follows.follower_id', $userId)
+                ->where('follows.status', 1)
                 ->where('users.status', 1); // Only active users
         })
             ->whereIn('privacy', [1, 2])

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class TopTenPlaceResource extends JsonResource
 {
@@ -26,6 +27,7 @@ class TopTenPlaceResource extends JsonResource
                 'rating' => $this->place->rating,
                 'rank' => $this->rank,
                 'status'=>$this->place->status,
+                'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id',  $this->place) : false,
             ];
     }
 

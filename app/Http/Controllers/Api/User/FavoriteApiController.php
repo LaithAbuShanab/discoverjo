@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Rules\CheckIfExistsInFavoratblesRule;
+use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfUserTypeActiveRule;
 use App\Rules\CheckLatLngRule;
@@ -108,7 +109,7 @@ class FavoriteApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => 'bail|nullable|string|max:255|regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',
+                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u',new CheckIfHasInjectionBasedTimeRule()],
                 'lat'   => [
                     'bail',
                     'nullable',
@@ -131,10 +132,9 @@ class FavoriteApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages());
         }
         $validated = $validator->validated();
-        $validatedQuery = $validated['query'] !== null ? cleanQuery($validated['query']) : null;
-        $data = array_merge($validated, ['query' => $validatedQuery]);
+
         try {
-            $users = $this->favoriteApiUseCase->favSearch($data);
+            $users = $this->favoriteApiUseCase->favSearch($validated);
 
             return ApiResponse::sendResponse(200, __('app.api.the-searched-favorite-retrieved-successfully'), $users);
         } catch (\Exception $e) {

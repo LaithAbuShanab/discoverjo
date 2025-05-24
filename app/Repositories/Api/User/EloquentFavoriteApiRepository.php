@@ -74,24 +74,30 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
         $perPage =  config('app.pagination_per_page');
 
         $user = Auth::guard('api')->user();
-        $userId = Auth::guard('api')->user()->id;
-        // place search
-        $places = Place::where('status', 1)
+
+        $placesQuery = Place::where('status', 1)
             ->whereHas('favoritedBy', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
-            })
-            ->selectRaw('places.*,
+            });
+
+        if (!is_null($userLat) && !is_null($userLng)) {
+            $placesQuery->selectRaw('places.*,
         (6371 * acos(
             cos(radians(?)) * cos(radians(places.latitude)) *
             cos(radians(places.longitude) - radians(?)) +
             sin(radians(?)) * sin(radians(places.latitude))
         )) AS distance', [$userLat, $userLng, $userLat])
-            ->where(function ($query) use ($searchTerm) {
-                $query->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
-            })
-            ->orderBy('distance')
+                ->orderBy('distance');
+        } else {
+            $placesQuery->selectRaw('places.*, NULL AS distance');
+        }
+
+        $places = $placesQuery->where(function ($query) use ($searchTerm) {
+            $query->where('name_en', 'like', '%' . $searchTerm . '%')
+                ->orWhere('name_ar', 'like', '%' . $searchTerm . '%');
+        })
             ->paginate($perPage);
+
 
         $placesArray = $places->toArray();
 
@@ -112,10 +118,11 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
             $query->where('user_id', $user->id);
         })
             ->where(function ($query) use ($searchTerm) {
-                $query->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%']);
+                $query->where('name_en', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('name_ar', 'like', '%' . $searchTerm . '%');
             })
             ->paginate($perPage);
+
 
         $eventsArray = $events->toArray();
         $paginationEvents = [
@@ -128,10 +135,11 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
             $query->where('user_id', $user->id);
         })
             ->where(function ($query) use ($searchTerm) {
-                $query->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%']);
+                $query->where('name_en', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('name_ar', 'like', '%' . $searchTerm . '%');
             })
             ->paginate($perPage);
+
 
         $volunteeringArray = $volunteering->toArray();
         $paginationVolunteering = [
@@ -161,14 +169,16 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
 
         $guideTrips = GuideTrip::whereHas('favoritedBy', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->where(function ($queryBuilder) use ($searchTerm) {
-            $queryBuilder->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) like ?', ['%' . strtolower($searchTerm) . '%'])
-                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) like ?', ['%' . strtolower($searchTerm) . '%']);
         })
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('name_en', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('name_ar', 'like', '%' . $searchTerm . '%');
+            })
             ->whereHas('guide', function ($query) {
                 $query->where('status', '1');
             })
             ->paginate($perPage);
+
 
         $guideTripsArray = $guideTrips->toArray();
         $paginationGuideTrips = [
@@ -181,10 +191,11 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
             $query->where('user_id', $user->id);
         })
             ->where(function ($query) use ($searchTerm) {
-                $query->whereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.en"))) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
-                    ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, "$.ar"))) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
+                $query->where('name_en', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('name_ar', 'like', '%' . $searchTerm . '%');
             })
             ->paginate($perPage);
+
 
         $plansArray = $plans->toArray();
         $paginationPlans = [

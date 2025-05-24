@@ -27,7 +27,7 @@ class TopTenPlaceResource extends JsonResource
                 'rating' => $this->place->rating,
                 'rank' => $this->rank,
                 'status'=>$this->place->status,
-                'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id',  $this->place) : false,
+                'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id',  $this->place->id) : false,
             ];
     }
 

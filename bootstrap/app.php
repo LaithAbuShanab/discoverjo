@@ -38,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
             \App\Http\Middleware\TrackVisits::class,
+            \App\Http\Middleware\AddCspHeaderToApiMiddleware::class,
         ]);
 
         $middleware->alias([

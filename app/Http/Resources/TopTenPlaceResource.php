@@ -16,6 +16,7 @@ class TopTenPlaceResource extends JsonResource
 
     public function toArray($request)
     {
+        $user = Auth::guard('api')->user();
             return [
                 'place_id' => $this->place->id,
                 'place_slug'=>$this->place->slug,
@@ -27,7 +28,7 @@ class TopTenPlaceResource extends JsonResource
                 'rating' => $this->place->rating,
                 'rank' => $this->rank,
                 'status'=>$this->place->status,
-                'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id',  $this->place->id) : false,
+                'favorite' => $user ? $user->favoritePlaces->contains($this->place->id) : false,
             ];
     }
 

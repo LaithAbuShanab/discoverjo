@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('api.')
                 ->group(base_path('routes/api/user/without_authentication.php'));
 
-            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey', 'throttle:30,1'])
+            Route::middleware(['api', 'auth:api', 'verifiedEmail', 'inactiveUser', 'apiKey', 'throttle:30,1','csp'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api/user/with_authentication.php'));
@@ -38,7 +38,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\languageApi::class,
             \App\Http\Middleware\ApiKeyMiddleware::class,
             \App\Http\Middleware\TrackVisits::class,
-            \App\Http\Middleware\AddCspHeaderToApiMiddleware::class,
         ]);
 
         $middleware->alias([
@@ -53,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
             'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
             'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
+            'csp'=>\App\Http\Middleware\AddCspHeaderToApiMiddleware::class,
         ]);
     })
     ->withProviders([

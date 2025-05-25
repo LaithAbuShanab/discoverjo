@@ -55,7 +55,6 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $place = Place::findBySlug($slug);
         $user->visitedPlace()->detach($place->id);
         activityLog('visited place', $place, 'The user delete visited place', 'delete');
-
     }
 
     public function search($data)
@@ -240,7 +239,8 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $userLat = isset($data['lat']) ? floatval($data['lat']) : ($user?->latitude !== null ? floatval($user->latitude) : null);
         $userLng = isset($data['lng']) ? floatval($data['lng']) : ($user?->longitude !== null ? floatval($user->longitude) : null);
         $perPage =  config('app.pagination_per_page');
-        $query= $data['query'];
+        $query = $data['query'];
+
         /**
          * SEARCH PLACES
          */
@@ -361,7 +361,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         /**
          * SEARCH TRIPS (Non-guide trips)
          */
-        $allTrips= null;
+        $allTrips = null;
         if ($user) {
             $userId = $user->id;
             $userAge = Carbon::parse($user->birthday)->age;
@@ -369,6 +369,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
             // User's own trips matching search query
             $ownTrips = Trip::where('user_id', $userId)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
@@ -377,13 +378,14 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
             // Other users' trips matching search query
             $otherTrips = Trip::where('user_id', '!=', $userId)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
                 })
                 ->whereHas('user', fn($q) => $q->where('status', '1'))
                 ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-//                ->where(fn($q) => $this->applyCapacityCheck($q))
+                //->where(fn($q) => $this->applyCapacityCheck($q))
                 ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
             // Merge and paginate
@@ -394,6 +396,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         } else {
             // Guest users see only public trips
             $allTrips = Trip::where('trip_type', 0)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
@@ -446,7 +449,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
             'total'         => $plansArray['total'],
         ];
 
-        if($query) {
+        if ($query) {
             activityLog('all search for places', $places->first(), $query, 'search');
         }
 
@@ -488,16 +491,16 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     private function applyTripTypeVisibility($query, $userId)
     {
         $query->where('trip_type', '0') // Public
-        ->orWhere(function ($q) use ($userId) {
-            $q->where('trip_type', '1') // Followers
-            ->where(function ($q) use ($userId) {
-                $q->whereHas('user.followers', fn($q) => $q->where('follower_id', $userId))
-                    ->orWhere('user_id', $userId);
-            });
-        })
+            ->orWhere(function ($q) use ($userId) {
+                $q->where('trip_type', '1') // Followers
+                    ->where(function ($q) use ($userId) {
+                        $q->whereHas('user.followers', fn($q) => $q->where('follower_id', $userId))
+                            ->orWhere('user_id', $userId);
+                    });
+            })
             ->orWhere(function ($q) use ($userId) {
                 $q->where('trip_type', '2') // Specific
-                ->whereHas('usersTrip', fn($q) => $q->where('user_id', $userId)->where('status', '1'))
+                    ->whereHas('usersTrip', fn($q) => $q->where('user_id', $userId)->where('status', '1'))
                     ->orWhere('user_id', $userId);
             });
 
@@ -508,22 +511,21 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
     {
         $query->where(function ($q) use ($userId, $userSex, $userAge) {
             $q->where('user_id', $userId) // صاحب الرحلة
-            ->orWhere(function ($q) use ($userSex, $userAge) {
-                $q->where('trip_type', '2') // المخصصة
                 ->orWhere(function ($q) use ($userSex, $userAge) {
-                    $q->whereIn('sex', [$userSex, 0])
-                        ->where(function ($q) use ($userAge) {
-                            $q->whereNull('age_range')
-                                ->orWhere(function ($q) use ($userAge) {
-                                    $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
-                                        ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                    $q->where('trip_type', '2') // المخصصة
+                        ->orWhere(function ($q) use ($userSex, $userAge) {
+                            $q->whereIn('sex', [$userSex, 0])
+                                ->where(function ($q) use ($userAge) {
+                                    $q->whereNull('age_range')
+                                        ->orWhere(function ($q) use ($userAge) {
+                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                                        });
                                 });
                         });
                 });
-            });
         });
 
         return $query;
     }
-
 }

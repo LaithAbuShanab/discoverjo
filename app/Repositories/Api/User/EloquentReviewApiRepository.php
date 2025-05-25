@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use LevelUp\Experience\Models\Activity;
+use Illuminate\Notifications\DatabaseNotification;
 
 class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
 {
@@ -152,7 +153,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         DB::beginTransaction();
 
         try {
-            $review = Reviewable::find($data['review_id']);
+            $review = Reviewable::findOrFail($data['review_id']);
             $authUser = Auth::guard('api')->user();
             $status = $data['status'] === 'like' ? '1' : '0';
             $userReview = $review->user;
@@ -161,27 +162,28 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             $tokens = $userReview->DeviceTokenMany->pluck('token')->toArray();
 
             $existingLike = $review->like()->where('user_id', $authUser->id)->first();
-            $notificationData = [];
 
             if ($existingLike) {
-                if ($existingLike->pivot->status != $status) {
-                    $review->like()->updateExistingPivot($authUser->id, ['status' => $status]);
-                } else {
+                $previousStatus = $existingLike->pivot->status;
+
+                if ($previousStatus == $status) {
+                    // Case 1 or 3 - Removing existing like/dislike
                     $review->like()->detach($authUser->id);
+
+                    // Delete old notification
+                    $this->deleteReviewNotification($userReview->id, $review->id, $previousStatus);
+
                     DB::commit();
                     return;
                 }
+
+                // Case 2 - Switch between like and dislike
+                $review->like()->updateExistingPivot($authUser->id, ['status' => $status]);
+                $this->deleteReviewNotification($userReview->id, $review->id, $previousStatus);
             } else {
+                // First-time like or dislike
                 $review->like()->attach($authUser->id, ['status' => $status]);
             }
-
-            $type = $status === '1' ? 'like' : 'dislike';
-            $notificationData = [
-                'title' => Lang::get("app.notifications.new-review-{$type}", [], $receiverLang),
-                'body'  => Lang::get("app.notifications.new-user-{$type}-in-review", ['username' => $authUser->username], $receiverLang),
-                'icon'  => asset('assets/icon/speaker.png'),
-                'sound' => 'default',
-            ];
 
             if (!$isSelfReview) {
                 if ($status === '1') {
@@ -191,7 +193,14 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 }
             }
 
-            if (!empty($notificationData)) {
+            $notificationData = [
+                'title' => Lang::get("app.notifications.new-review-{$data['status']}", [], $receiverLang),
+                'body'  => Lang::get("app.notifications.new-user-{$data['status']}-in-review", ['username' => $authUser->username], $receiverLang),
+                'icon'  => asset('assets/icon/speaker.png'),
+                'sound' => 'default',
+            ];
+
+            if (!empty($tokens)) {
                 sendNotification($tokens, $notificationData);
             }
 
@@ -203,6 +212,17 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    private function deleteReviewNotification($userId, $reviewId, $status)
+    {
+        $type = (string) $status === '1' ? NewReviewLikeNotification::class : NewReviewDisLikeNotification::class;
+        if ($type) {
+            DatabaseNotification::where('notifiable_id', $userId)
+                ->where('type', $type)
+                ->where('data->options->review_id', $reviewId)
+                ->delete();
         }
     }
 }

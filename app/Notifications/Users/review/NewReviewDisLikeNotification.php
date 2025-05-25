@@ -48,10 +48,10 @@ class NewReviewDisLikeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title_en' => __('app.notifications.new-review-dislike'),
-            'title_ar' => __('app.notifications.new-review-dislike'),
-            'body_en'  => __('app.notifications.new-user-dislike-in-review', ['username' => $this->user->username]),
-            'body_ar'  => __('app.notifications.new-user-dislike-in-review', ['username' => $this->user->username]),
+            'title_en' => __('app.notifications.new-review-dislike', [], 'en'),
+            'title_ar' => __('app.notifications.new-review-dislike', [], 'ar'),
+            'body_en'  => __('app.notifications.new-user-dislike-in-review', ['username' => $this->user->username], 'en'),
+            'body_ar'  => __('app.notifications.new-user-dislike-in-review', ['username' => $this->user->username], 'ar'),
             "options" => $this->review
         ];
     }

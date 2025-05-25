@@ -39,23 +39,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return TagsResource::collection($tags);
     }
 
-//    public function trips()
-//    {
-//        $user = Auth::guard('api')->user();
-//        $userId = $user->id;
-//        $userAge = Carbon::parse($user->birthday)->age;
-//        $userSex = $user->sex;
-//
-//        $trips = Trip::whereHas('user', fn($q) => $q->where('status', '1'))
-//            ->where('status', '1')
-//            ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-//            ->where(fn($q) => $this->applyCapacityCheck($q))
-//            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
-//            ->get();
-//
-//        return TripResource::collection($trips);
-//    }
-
     public function trips()
     {
         $user = Auth::guard('api')->user();
@@ -81,7 +64,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         return TripResource::collection($trips);
     }
-
 
     public function allTrips()
     {
@@ -575,39 +557,38 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $user = Auth::guard('api')->user();
-        $allTrips= null;
+        $allTrips = null;
+
         if ($user) {
             $userId = $user->id;
             $userAge = Carbon::parse($user->birthday)->age;
             $userSex = $user->sex;
 
-            // User's own trips matching search query
             $ownTrips = Trip::where('user_id', $userId)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
                 })
                 ->whereHas('user', fn($q) => $q->where('status', '1'));
 
-            // Other users' trips matching search query
             $otherTrips = Trip::where('user_id', '!=', $userId)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
                 })
                 ->whereHas('user', fn($q) => $q->where('status', '1'))
                 ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-//                ->where(fn($q) => $this->applyCapacityCheck($q))
                 ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
-            // Merge and paginate
             $allTrips = $ownTrips->union($otherTrips)
                 ->orderBy('status', 'desc')
                 ->orderBy('date_time', 'desc')
                 ->paginate($perPage);
         } else {
-            // Guest users see only public trips
             $allTrips = Trip::where('trip_type', 0)
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
@@ -634,7 +615,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'pagination' => $pagination,
         ];
     }
-
 
     private function handleTripTypeNotifications($request, $trip)
     {
@@ -712,7 +692,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             })
             ->orWhere(function ($q) use ($userId) {
                 $q->where('trip_type', '2') // Specific
-                    ->whereHas('usersTrip', fn($q) => $q->where('user_id', $userId)->where('status', '1'))
+                    ->whereHas('usersTrip', fn($q) => $q->where('user_id', $userId)->whereIn('status', ['0', '1']))
                     ->orWhere('user_id', $userId);
             });
 
@@ -730,46 +710,24 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return $query;
     }
 
-//    private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
-//    {
-//        $query->where(function ($q) use ($userId, $userSex, $userAge) {
-//            $q->where('user_id', $userId) // صاحب الرحلة
-//                ->orWhere(function ($q) use ($userSex, $userAge) {
-//                    $q->where('trip_type', '2') // المخصصة
-//                        ->orWhere(function ($q) use ($userSex, $userAge) {
-//                            $q->whereIn('sex', [$userSex, 0])
-//                                ->where(function ($q) use ($userAge) {
-//                                    $q->whereNull('age_range')
-//                                        ->orWhere(function ($q) use ($userAge) {
-//                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
-//                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
-//                                        });
-//                                });
-//                        });
-//                });
-//        });
-//
-//        return $query;
-//    }
-
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {
         $query->where(function ($q) use ($userId, $userSex, $userAge) {
             $q->where('user_id', $userId) // صاحب الرحلة
-            ->orWhere(function ($q) use ($userSex, $userAge) {
-                $q->where('trip_type', '2') // المخصصة - لا نطبق فلاتر الجنس والعمر هنا
                 ->orWhere(function ($q) use ($userSex, $userAge) {
-                    // فقط للرحلات العامة أو للمتابعين
-                    $q->whereIn('sex', [$userSex, 0])
-                        ->where(function ($q) use ($userAge) {
-                            $q->whereNull('age_range')
-                                ->orWhere(function ($q) use ($userAge) {
-                                    $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
-                                        ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                    $q->where('trip_type', '2') // المخصصة - لا نطبق فلاتر الجنس والعمر هنا
+                        ->orWhere(function ($q) use ($userSex, $userAge) {
+                            // فقط للرحلات العامة أو للمتابعين
+                            $q->whereIn('sex', [$userSex, 0])
+                                ->where(function ($q) use ($userAge) {
+                                    $q->whereNull('age_range')
+                                        ->orWhere(function ($q) use ($userAge) {
+                                            $q->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.min")) AS UNSIGNED) <= ?', [$userAge])
+                                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(age_range, "$.max")) AS UNSIGNED) >= ?', [$userAge]);
+                                        });
                                 });
                         });
                 });
-            });
         });
 
         return $query;
@@ -780,20 +738,22 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $perPage = config('app.pagination_per_page');
         $user = Auth::guard('api')->user();
 
-        if($user){
+        if ($user) {
             $userId = $user->id;
             $userAge = Carbon::parse($user->birthday)->age;
             $userSex = $user->sex;
+
             $ownTrips = Trip::where('user_id', $userId)
                 ->whereDate('date_time', '=', $date)
+                ->whereIn('status', [0, 1]) // Filter for status 0 or 1
                 ->whereHas('user', fn($q) => $q->where('status', '1'));
 
             // Other users' trips on the specified date (apply filters, allow any status)
             $otherTrips = Trip::where('user_id', '!=', $userId)
                 ->whereDate('date_time', '=', $date)
+                ->whereIn('status', [0, 1]) // Filter for status 0 or 1
                 ->whereHas('user', fn($q) => $q->where('status', '1'))
                 ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-//                ->where(fn($q) => $this->applyCapacityCheck($q))
                 ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
             // Combine and sort
@@ -801,13 +761,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 ->orderBy('status', 'desc')
                 ->orderBy('date_time', 'desc')
                 ->paginate($perPage);
-        }else{
-            $allTrips = Trip::where('trip_type',0)
+        } else {
+            $allTrips = Trip::where('trip_type', 0)
                 ->whereDate('date_time', '=', $date)->paginate($perPage);
         }
-        // Own trips on the specified date (bypass filters, allow any status)
-
-
 
         $tripsArray = $allTrips->toArray();
         $pagination = [
@@ -828,5 +785,4 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             'pagination' => $pagination,
         ];
     }
-
 }

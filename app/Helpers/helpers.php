@@ -113,12 +113,11 @@ function sendNotification($deviceTokens, $data)
 
     // Send the message
     if (is_array($deviceTokens)) {
-        $response = $messaging->sendMulticast($message, ['cdRW6LskSRucoim7RpxS6X:APA91bEnfzQaV8_75hMlAQgjU3FpUV8C2txKbYq4orNJ-XN5kWBp01GmsfBdFwuWJWMMNuyQ0gznJsSRfyJq0wUEixo03uf7VaO2FukThwK4SlzeW8XrahE']);
+        $response = $messaging->sendMulticast($message, $deviceTokens);
     } else {
         $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));
     }
 
-    dd($response);
     return $response;
 }
 

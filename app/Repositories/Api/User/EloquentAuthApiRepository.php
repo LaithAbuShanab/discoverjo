@@ -248,11 +248,16 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         $userAgent = request()->userAgent();
         $today = now()->toDateString();
 
-        $alreadyExists = Visit::where('user_id', $user->id)
+        $visit = Visit::where('user_id', $user->id)
             ->whereDate('created_at', $today)
-            ->exists();
+            ->first();
 
-        if (!$alreadyExists) {
+        if ($visit) {
+            if ($visit->ip_address !== $ip) {
+                $visit->ip_address = $ip;
+                $visit->save();
+            }
+        } else {
             $updated = Visit::whereNull('user_id')
                 ->where('ip_address', $ip)
                 ->where('user_agent', $userAgent)

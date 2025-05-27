@@ -33,7 +33,7 @@ class VisitsSummaryStats extends BaseWidget
         $guestQuery = Visit::whereNull('user_id');
         $topTenPlacesId = TopTen::get()->pluck('place_id');
         $topTenQuery = Activity::where('log_name','place')->where('subject_type','App\Models\Place')->whereIn('subject_id', $topTenPlacesId);
-        $authUserQuery = Activity::select('causer_id', 'subject_id', DB::raw('NULL as ip'),'created_at')
+        $authUserQuery = Activity::select('causer_id', 'subject_id')
             ->where('log_name', 'place')
             ->where('subject_type', 'App\Models\Place')
             ->where('causer_type', 'App\Models\User')
@@ -42,7 +42,7 @@ class VisitsSummaryStats extends BaseWidget
 
 
 // Group B: Guests (causer_type is null, distinct IPs)
-        $guestQuery = Activity::select(DB::raw('NULL as causer_id'), 'subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"),'')
+        $guestQuery = Activity::select('subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"),'')
             ->where('log_name', 'place')
             ->where('subject_type', 'App\Models\Place')
             ->whereNull('causer_type')

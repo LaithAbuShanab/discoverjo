@@ -42,7 +42,7 @@ class VisitsSummaryStats extends BaseWidget
 
 
 // Group B: Guests (causer_type is null, distinct IPs)
-        $guestQuery = Activity::select('subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"),'')
+        $guestQuery = Activity::select('subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"))
             ->where('log_name', 'place')
             ->where('subject_type', 'App\Models\Place')
             ->whereNull('causer_type')

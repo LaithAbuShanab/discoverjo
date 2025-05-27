@@ -33,22 +33,22 @@ class VisitsSummaryStats extends BaseWidget
         $guestQuery = Visit::whereNull('user_id');
         $topTenPlacesId = TopTen::get()->pluck('place_id');
         $topTenQuery = Activity::where('log_name','place')->where('subject_type','App\Models\Place')->whereIn('subject_id', $topTenPlacesId);
-        $authUserQuery = Activity::select('causer_id', 'subject_id')
-            ->where('log_name', 'place')
-            ->where('subject_type', 'App\Models\Place')
-            ->where('causer_type', 'App\Models\User')
-            ->whereIn('subject_id', $topTenPlacesId)
-            ->groupBy('causer_id', 'subject_id'); // enforce uniqueness on both columns
+//        $authUserQuery = Activity::select('causer_id', 'subject_id')
+//            ->where('log_name', 'place')
+//            ->where('subject_type', 'App\Models\Place')
+//            ->where('causer_type', 'App\Models\User')
+//            ->whereIn('subject_id', $topTenPlacesId)
+//            ->groupBy('causer_id', 'subject_id'); // enforce uniqueness on both columns
 
 
 // Group B: Guests (causer_type is null, distinct IPs)
-        $guestQuery = Activity::select('subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"))
-            ->where('log_name', 'place')
-            ->where('subject_type', 'App\Models\Place')
-            ->whereNull('causer_type')
-            ->whereIn('subject_id', $topTenPlacesId)
-            ->whereRaw("JSON_EXTRACT(properties, '$.ip') IS NOT NULL")
-            ->distinct();
+//        $guestQuery = Activity::select('subject_id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(properties, '$.ip')) as ip"))
+//            ->where('log_name', 'place')
+//            ->where('subject_type', 'App\Models\Place')
+//            ->whereNull('causer_type')
+//            ->whereIn('subject_id', $topTenPlacesId)
+//            ->whereRaw("JSON_EXTRACT(properties, '$.ip') IS NOT NULL")
+//            ->distinct();
 
 
 
@@ -58,17 +58,17 @@ class VisitsSummaryStats extends BaseWidget
             $userQuery->whereBetween('created_at', [$startDate, $endDate]);
             $guestQuery->whereBetween('created_at', [$startDate, $endDate]);
             $topTenQuery->whereBetween('created_at', [$startDate, $endDate]);
-            $authUserQuery->whereBetween('created_at', [$startDate, $endDate]);
-            $guestQuery->whereBetween('created_at', [$startDate, $endDate]);
+//            $authUserQuery->whereBetween('created_at', [$startDate, $endDate]);
+//            $guestQuery->whereBetween('created_at', [$startDate, $endDate]);
         }
 
         // Get counts
         $allVisits   = $visitQuery->count();
         $userVisits  = $userQuery->count();
         $guestVisits = $guestQuery->count();
-        $topTenUnique= $authUserQuery->count();
+//        $topTenUnique= $authUserQuery->count();
         $topTen = $topTenQuery->count();
-        $guest = $guestQuery->count();
+//        $guest = $guestQuery->count();
 
         return [
             Stat::make('📊 Total Visits', $allVisits)
@@ -94,18 +94,18 @@ class VisitsSummaryStats extends BaseWidget
                 ->descriptionIcon('heroicon-o-eye')
                 ->chart([5, 10, 8, 12, 15, 12, 16])
                 ->color('info'),
-
-            Stat::make('🧑‍🦱 Top Ten views unique Auth user ', $topTenUnique)
-                ->description('Number of distinct authenticated users who viewed the top 10 places. Each user is counted only once per place.')
-                ->descriptionIcon('heroicon-o-eye')
-                ->chart([5, 10, 8, 12, 15, 12, 16])
-                ->color('danger'),
-
-            Stat::make('🧑‍🦱 Top Ten views unique Guest ', $guest)
-                ->description('Number of distinct guest views for the top 10 places, identified by unique IP addresses. Each IP is counted once per place.')
-                ->descriptionIcon('heroicon-o-eye')
-                ->chart([5, 10, 8, 12, 15, 12, 16])
-                ->color('warning'),
+//
+//            Stat::make('🧑‍🦱 Top Ten views unique Auth user ', $topTenUnique)
+//                ->description('Number of distinct authenticated users who viewed the top 10 places. Each user is counted only once per place.')
+//                ->descriptionIcon('heroicon-o-eye')
+//                ->chart([5, 10, 8, 12, 15, 12, 16])
+//                ->color('danger'),
+//
+//            Stat::make('🧑‍🦱 Top Ten views unique Guest ', $guest)
+//                ->description('Number of distinct guest views for the top 10 places, identified by unique IP addresses. Each IP is counted once per place.')
+//                ->descriptionIcon('heroicon-o-eye')
+//                ->chart([5, 10, 8, 12, 15, 12, 16])
+//                ->color('warning'),
 
         ];
     }

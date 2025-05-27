@@ -14,7 +14,6 @@ Route::get('generate-slug', function () {
         $guideTrip->slug = Str::slug($guideTrip->name);
         $guideTrip->save();
     }
-
     return response()->json([
         'message' => 'Slugs generated successfully!',
         'count' => $guideTripsWithoutSlug->count(),

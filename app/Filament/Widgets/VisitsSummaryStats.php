@@ -38,7 +38,7 @@ class VisitsSummaryStats extends BaseWidget
             ->where('subject_type', 'App\Models\Place')
             ->where('causer_type', 'App\Models\User')
             ->whereIn('subject_id', $topTenPlacesId)
-            ->distinct();
+            ->groupBy('causer_id', 'subject_id'); // enforce uniqueness on both columns
 
 
 // Group B: Guests (causer_type is null, distinct IPs)

@@ -100,7 +100,7 @@ function sendNotification($deviceTokens, $data)
         $notification = FirebaseNotification::create($data['notification']['title'], $data['notification']['body']);
         $dataPayload = $data['data'] ?? [];
         $dataPayload['icon'] = asset('assets/images/logo_eyes_yellow.jpeg');
-        $dataPayload['sound'] =  'ping_sound';
+        $dataPayload['sound'] =  'default';
     } else {
         $notification = FirebaseNotification::create($data['title'], $data['body']);
         $dataPayload = [];

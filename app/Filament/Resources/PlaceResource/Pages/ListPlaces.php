@@ -20,6 +20,12 @@ class ListPlaces extends ListRecords
 
         ];
     }
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PlaceResource\Widgets\MostViewedPlacesChart::class,
+        ];
+    }
 
     public function getTabs(): array
     {

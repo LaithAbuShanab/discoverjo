@@ -18,7 +18,7 @@ class TrackVisits
 
         $visitorKey = sha1($ip . '|' . $userAgent . '|' . $today);
 
-        $notVisitedToday = Cache::add('visits_' . $visitorKey, true, now()->addDay());
+        $notVisitedToday = Cache::add('visitsv1_' . $visitorKey, true, now()->addDay());
 
         if ($notVisitedToday) {
 
@@ -32,7 +32,6 @@ class TrackVisits
 
             $numberOfGuests = Visit::whereNull('user_id')
                 ->where('ip_address', $ip)
-                ->where('user_agent', $userAgent)
                 ->whereDate('created_at', $today)
                 ->count();
 

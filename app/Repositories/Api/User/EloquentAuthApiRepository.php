@@ -260,7 +260,6 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         } else {
             $updated = Visit::whereNull('user_id')
                 ->where('ip_address', $ip)
-                ->where('user_agent', $userAgent)
                 ->whereDate('created_at', $today)
                 ->update(['user_id' => $user->id]);
 

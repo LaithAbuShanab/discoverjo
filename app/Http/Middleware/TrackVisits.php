@@ -18,7 +18,7 @@ class TrackVisits
 
         $visitorKey = sha1($ip . '|' . $userAgent . '|' . $today);
 
-        $notVisitedToday = Cache::add('visit_' . $visitorKey, true, now()->addDay());
+        $notVisitedToday = Cache::add('visits_' . $visitorKey, true, now()->addDay());
 
         if ($notVisitedToday) {
 

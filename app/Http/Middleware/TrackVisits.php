@@ -21,12 +21,29 @@ class TrackVisits
         $notVisitedToday = Cache::add('visit_' . $visitorKey, true, now()->addDay());
 
         if ($notVisitedToday) {
-            Visit::create([
-                'user_id' => auth()->guard('api')->user()->id ?? null,
-                'ip_address' => $ip,
-                'user_agent' => $userAgent,
-                'platform' => php_uname('s'),
-            ]);
+
+            $previousTodayLoginAuth = false;
+            if (auth()->guard('api')->user()) {
+                $previousTodayLoginAuth = Visit::where('user_id', auth()->guard('api')->user()->id)
+                    ->whereDate('created_at', $today);
+
+                $previousTodayLoginAuth = $previousTodayLoginAuth->exists();
+            }
+
+            $numberOfGuests = Visit::whereNull('user_id')
+                ->where('ip_address', $ip)
+                ->where('user_agent', $userAgent)
+                ->whereDate('created_at', $today)
+                ->count();
+
+            if ($previousTodayLoginAuth || $numberOfGuests === 0) {
+                Visit::create([
+                    'user_id' => auth()->guard('api')->user()->id ?? null,
+                    'ip_address' => $ip,
+                    'user_agent' => $userAgent,
+                    'platform' => php_uname('s'),
+                ]);
+            }
         }
 
         return $next($request);

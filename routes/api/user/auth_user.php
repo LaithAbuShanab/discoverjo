@@ -22,6 +22,6 @@ Route::post('/email/verification-notification', EmailVerificationNotificationCon
 
 
 Route::post('/forgot-password', PasswordResetLinkController::class)->name('password.email');
-Route::get('user/reset-password/{token}', [AuthUserController::class, 'resetPassword'])->name('password.reset')->withoutMiddleware('apiKey');
+Route::get('user/reset-password/{token}', [AuthUserController::class, 'resetPassword'])->name('password.reset')->withoutMiddleware(['apiKey','csp']);
 Route::post('/reset-password', NewPasswordController::class)->name('password.store')->withoutMiddleware('apiKey');;
 Route::post('/change-password', CurrentUserNewPasswordController::class)->middleware('auth:api');

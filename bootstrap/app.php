@@ -53,7 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'signed' => Illuminate\Routing\Middleware\ValidateSignature::class,
             'enforcePasswordReset' => \App\Http\Middleware\EnforcePasswordReset::class,
             'sanitize'=>App\Http\Middleware\SanitizeInputMiddleware::class,
-//            'csp'=>\App\Http\Middleware\AddCspHeaderToApiMiddleware::class,
+            'csp'=>\App\Http\Middleware\AddCspHeaderToApiMiddleware::class,
         ]);
     })
     ->withProviders([

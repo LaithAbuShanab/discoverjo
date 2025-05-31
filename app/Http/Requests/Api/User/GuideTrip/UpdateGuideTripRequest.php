@@ -63,14 +63,15 @@ class UpdateGuideTripRequest extends  FormRequest
             'max_attendance' => ['required', 'integer', 'min:1'],
             'gallery' => ['nullable'],
             'gallery.*' => ['file', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz,mp4,mov,avi,mkv,flv,wmv', 'max:50000'],
-            'activities' => ['required', 'string'],
-            'price_include' => ['required', 'string'],
-            'price_age' => ['nullable', 'string'],
-            'assembly' => ['required', 'string'],
-            'required_items' => ['nullable', 'string'],
+            'activities' => ['required'],
+            'price_include' => ['required'],
+            'price_age' => ['nullable'],
+            'assembly' => ['required'],
+            'required_items' => ['nullable'],
             'is_trail' => ['nullable', 'boolean'],
-            'trail' => ['nullable', 'string'],
+            'trail' => ['nullable'],
             'main_image' => ['nullable', 'image', 'max:2048'],
+            'payment_method' => ['nullable'],
         ];
     }
 

@@ -137,4 +137,9 @@ class GuideTrip extends Model implements HasMedia
     {
         return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
     }
+
+    public function paymentMethods()
+    {
+        return $this->hasMany(GuideTripPaymentMethod::class);
+    }
 }

@@ -11,6 +11,7 @@ use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripActivity;
 use App\Models\GuideTripAssembly;
+use App\Models\GuideTripPaymentMethod;
 use App\Models\GuideTripPriceAge;
 use App\Models\GuideTripPriceInclude;
 use App\Models\GuideTripRequirement;
@@ -94,7 +95,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         return new GuideTripUpdateDetailResource($guideTrip);
     }
 
-    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage)
+    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage,$paymentMethods)
     {
         DB::beginTransaction();
         try {
@@ -119,7 +120,16 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     ->toMediaCollection('main_image');
             }
 
-
+            if($paymentMethods !== null){
+                foreach ($paymentMethods as $paymentMethod) {
+                    $paymentMethodTranslate = ['en' => $paymentMethod->en, 'ar' => $paymentMethod->ar];
+                    $guideTripPayment = new GuideTripPaymentMethod();
+                    $guideTripPayment->guide_trip_id = $guideTrip->id;
+                    $guideTripPayment->method = $paymentMethodTranslate;
+                    $guideTripPayment->save();
+                    $guideTripPayment->method = $guideTripPayment->setTranslations('method', $paymentMethodTranslate);
+                }
+            }
 
             foreach ($activities as $activity) {
                 $activityTranslate = ['en' => $activity->en, 'ar' => $activity->ar];
@@ -200,7 +210,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         }
     }
 
-    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage)
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage,$paymentMethods)
     {
         DB::beginTransaction();
         try {
@@ -226,11 +236,25 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     ->toMediaCollection('main_image');
             }
 
+
             if ($gallery !== null) {
                 foreach ($gallery as $image) {
                     $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
                     $filename = Str::random(10) . '_' . time() . '.' . $extension;
                     $guideTrip->addMedia($image)->usingFileName($filename)->toMediaCollection('guide_trip_gallery');
+                }
+            }
+
+
+            if($paymentMethods !== null){
+                GuideTripPaymentMethod::where('guide_trip_id', $guideTrip->id)->delete();
+                foreach ($paymentMethods as $paymentMethod) {
+                    $paymentMethodTranslate = ['en' => $paymentMethod->en, 'ar' => $paymentMethod->ar];
+                    $guideTripPayment = new GuideTripPaymentMethod();
+                    $guideTripPayment->guide_trip_id = $guideTrip->id;
+                    $guideTripPayment->method = $paymentMethodTranslate;
+                    $guideTripPayment->save();
+                    $guideTripPayment->method = $guideTripPayment->setTranslations('method', $paymentMethodTranslate);
                 }
             }
 
@@ -325,7 +349,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     {
         $media = Media::find($id);
         if ($media->collection_name === 'main_image') {
-            return response()->json(['status' => 400, 'msg' => 'You cannot delete the main image'], 400);
+            return response()->json(['status' => 400, 'msg' => 'You cannot delete the main image update it in Guide trip update screen'], 400);
         }
         $media->delete();
     }

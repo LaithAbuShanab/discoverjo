@@ -63,6 +63,7 @@ class GuideTripApiUseCase
 
             json_decode($trailData),
             isset($data['main_image']) ? $data['main_image'] : null,
+            json_decode($data['payment_method']),
         );
     }
 
@@ -91,6 +92,7 @@ class GuideTripApiUseCase
             isset($data['required_items']) ? json_decode($data['required_items']) : null,
             json_decode($trailData),
             isset($data['main_image']) ? $data['main_image'] : null,
+            json_decode($data['payment_method']),
         );
     }
 

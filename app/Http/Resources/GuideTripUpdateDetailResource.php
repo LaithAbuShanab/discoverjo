@@ -58,6 +58,10 @@ class GuideTripUpdateDetailResource extends JsonResource
         }
         $fullName= $this->guide->first_name ." ". $this->guide->last_name;
 
+        $paymentMethods = [];
+        foreach ($this->paymentMethods as $singleMethod) {
+            $paymentMethods[] = $singleMethod->getTranslations('method');
+        }
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -83,6 +87,7 @@ class GuideTripUpdateDetailResource extends JsonResource
             "age_price"=>GuideTripPriceAgeResource::collection($this->priceAges),
             "price_include"=>$priceIncludes,
             "requirements"=>$requirements,
+            "payment_methods"=>$paymentMethods,
             "trail"=> new GuideTripTrailUpdateResource($this->trail),
 //            "join_request"=>GuideTripUserResource::collection($this->guideTripUsers),
             'gallery'=>$gallery,

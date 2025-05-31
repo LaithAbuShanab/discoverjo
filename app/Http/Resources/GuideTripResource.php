@@ -31,6 +31,11 @@ class GuideTripResource extends JsonResource
             $requirements[] = $requirement->item;
         }
 
+        $paymentMethods = [];
+        foreach ($this->paymentMethods as $singleMethod) {
+            $paymentMethods[] = $singleMethod->method;
+        }
+
         $gallery = [];
         foreach ($this->getMedia('guide_trip_gallery') as $image) {
             $gallery[] = [
@@ -75,6 +80,7 @@ class GuideTripResource extends JsonResource
             "activities"=>$activities,
             "assemblies"=>GuideTripAssemblyResource::collection($this->assemblies),
             "age_price"=>GuideTripPriceAgeResource::collection($this->priceAges),
+            "payment_methods"=>$paymentMethods,
             "price_include"=>$priceIncludes,
             "requirements"=>$requirements,
             "trail"=> new GuideTripTrailResource($this->trail),

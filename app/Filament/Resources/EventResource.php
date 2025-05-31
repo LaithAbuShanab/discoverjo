@@ -86,8 +86,8 @@ class EventResource extends Resource
                             ]),
                         Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('price')->placeholder('Please Enter Price')->required()->numeric(),
-                                Forms\Components\TextInput::make('attendance_number')->placeholder('Please Enter Attendance Number')->required()->numeric(),
+                                Forms\Components\TextInput::make('price')->placeholder('Please Enter Price')->numeric(),
+                                Forms\Components\TextInput::make('attendance_number')->placeholder('Please Enter Attendance Number')->numeric(),
                             ]),
                         Grid::make(2)
                             ->schema([

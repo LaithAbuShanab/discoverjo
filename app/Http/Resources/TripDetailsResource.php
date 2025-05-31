@@ -62,7 +62,7 @@ class TripDetailsResource extends JsonResource
             'time' => Carbon::parse($this->date_time)->format('H:i:s'),
             'attendance_number' => $this->attendance_number,
             'attendances' => UserResource::collection($this->usersTrip->where('status', '1')->pluck('user')),
-            'users_request' => UserTripResource::collection($this->usersTrip),
+            'users_request' => UserTripResource::collection($this->usersTrip->where('status', '0')->get()),
             'status' => $this->status,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
         ];

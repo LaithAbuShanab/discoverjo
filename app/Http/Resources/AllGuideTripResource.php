@@ -25,7 +25,8 @@ class AllGuideTripResource extends JsonResource
             'price'=>$this->main_price,
             'start_time'=>$this->start_datetime,
             'max_attendance'=>$this->max_attendance,
-            'image' => $this->getMedia('guide_trip_gallery')->first()?->getUrl(),
+            'main_image'=> $this->getFirstMediaUrl('main_image'),
+//            'image' => $this->getMedia('guide_trip_gallery')->first()?->getUrl(),
             'number_of_request' => $this->guideTripUsers
                 ->filter(fn($userTrip) => $userTrip->user && $userTrip->user->status == 1)
                 ->count(),

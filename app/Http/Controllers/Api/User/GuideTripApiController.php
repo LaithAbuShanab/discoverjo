@@ -96,6 +96,7 @@ class GuideTripApiController extends Controller
 
     public function store(CreateGuideTripRequest $request)
     {
+
         try {
             $createTrip = $this->guideTripApiUseCase->storeGuideTrip($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.trip-created-successfully'), $createTrip);

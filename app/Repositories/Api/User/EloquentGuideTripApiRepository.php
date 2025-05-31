@@ -94,7 +94,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         return new GuideTripUpdateDetailResource($guideTrip);
     }
 
-    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)
+    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage)
     {
         DB::beginTransaction();
         try {
@@ -110,6 +110,16 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     $guideTrip->addMedia($image)->usingFileName($filename)->toMediaCollection('guide_trip_gallery');
                 }
             }
+
+            if (!empty($mainImage) && $mainImage->isValid()) {
+                $extension = $mainImage->getClientOriginalExtension();
+                $filename = Str::random(10) . '_' . time() . '.' . $extension;
+                $guideTrip->addMedia($mainImage)
+                    ->usingFileName($filename)
+                    ->toMediaCollection('main_image');
+            }
+
+
 
             foreach ($activities as $activity) {
                 $activityTranslate = ['en' => $activity->en, 'ar' => $activity->ar];
@@ -190,7 +200,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         }
     }
 
-    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail)
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage)
     {
         DB::beginTransaction();
         try {
@@ -199,6 +209,22 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             $guideTrip->update($mainData);
             $guideTrip->setTranslations('name', $mainData['name']);
             $guideTrip->setTranslations('description', $mainData['description']);
+
+            if (!empty($mainImage) && $mainImage->isValid()) {
+                // Delete the old main image if it exists
+                $existingMedia = $guideTrip->getFirstMedia('main_image');
+                if ($existingMedia) {
+                    $existingMedia->delete();
+                }
+
+                // Add the new main image
+                $extension = $mainImage->getClientOriginalExtension();
+                $filename = Str::random(10) . '_' . time() . '.' . $extension;
+
+                $guideTrip->addMedia($mainImage)
+                    ->usingFileName($filename)
+                    ->toMediaCollection('main_image');
+            }
 
             if ($gallery !== null) {
                 foreach ($gallery as $image) {
@@ -297,7 +323,11 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
     public function deleteImage($id)
     {
-        Media::find($id)->delete();
+        $media = Media::find($id);
+        if ($media->collection_name === 'main_image') {
+            return response()->json(['status' => 400, 'msg' => 'You cannot delete the main image'], 400);
+        }
+        $media->delete();
     }
 
     public function joinRequests($slug)

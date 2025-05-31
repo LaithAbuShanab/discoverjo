@@ -38,6 +38,7 @@ class GuideTripApiUseCase
 
     public function storeGuideTrip($data)
     {
+
         $translator = ['en' => $data['name_en'], 'ar' => $data['name_ar']];
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
         $trailData =  $data['is_trail'] ? $data['trail'] : null;
@@ -60,7 +61,8 @@ class GuideTripApiUseCase
             json_decode($data['assembly']),
             isset($data['required_items']) ? json_decode($data['required_items']) : null,
 
-            json_decode($trailData)
+            json_decode($trailData),
+            isset($data['main_image']) ? $data['main_image'] : null,
         );
     }
 
@@ -87,7 +89,8 @@ class GuideTripApiUseCase
             isset($data['price_age']) ? json_decode($data['price_age']) : null,
             json_decode($data['assembly']),
             isset($data['required_items']) ? json_decode($data['required_items']) : null,
-            json_decode($trailData)
+            json_decode($trailData),
+            isset($data['main_image']) ? $data['main_image'] : null,
         );
     }
 

@@ -70,6 +70,7 @@ class UpdateGuideTripRequest extends  FormRequest
             'required_items' => ['nullable', 'string'],
             'is_trail' => ['nullable', 'boolean'],
             'trail' => ['nullable', 'string'],
+            'main_image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 

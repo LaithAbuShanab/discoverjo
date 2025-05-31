@@ -6,8 +6,8 @@ interface GuideTripApiRepositoryInterface
 {
     public function AllGuideTrip();
     public function allGuides();
-    public function storeGuideTrip($mainData, $gallery,$activities, $priceInclude,$priceAge,$assembly,$requiredItem, $trail);
-    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail);
+    public function storeGuideTrip($mainData, $gallery,$activities, $priceInclude,$priceAge,$assembly,$requiredItem, $trail,$mainImage);
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage);
     public function deleteGuideTrip($slug);
     public function deleteImage($id);
     public function showGuideTrip($slug);

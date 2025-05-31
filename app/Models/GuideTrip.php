@@ -54,6 +54,11 @@ class GuideTrip extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
+        $this->addMediaCollection('main_image')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('main_image_app')->format('webp')->nonQueued();
+            });
         $this->addMediaCollection('guide_trip_gallery')
 
             ->registerMediaConversions(function (Media $media) {

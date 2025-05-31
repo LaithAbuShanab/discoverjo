@@ -56,6 +56,7 @@ class GuideTripResource extends JsonResource
             'slug'=>$this->slug,
             "name"=>$this->name,
             "description"=>$this->description,
+            'main_image'=> $this->getFirstMediaUrl('main_image'),
             "start_datetime"=>$this->start_datetime,
             "end_datetime"=>$this->end_datetime,
             "price"=>$this->main_price,

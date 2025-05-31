@@ -18,26 +18,25 @@ class TrackVisits
 
         $visitorKey = sha1($ip . '|' . $userAgent . '|' . $today);
 
-        $notVisitedToday = Cache::add('visitsv1_' . $visitorKey, true, now()->addDay());
+        $notVisitedToday = Cache::add('visitsv2_' . $visitorKey, true, now()->addDay());
 
         if ($notVisitedToday) {
+            $user = auth()->guard('api')->user();
 
-            $previousTodayLoginAuth = false;
-            if (auth()->guard('api')->user()) {
-                $previousTodayLoginAuth = Visit::where('user_id', auth()->guard('api')->user()->id)
-                    ->whereDate('created_at', $today);
+            $alreadyVisited = Visit::query()
+                ->when($user, function ($query) use ($user, $today) {
+                    return $query->where('user_id', $user->id)
+                                 ->whereDate('created_at', $today);
+                }, function ($query) use ($ip, $today) {
+                    return $query->whereNull('user_id')
+                                 ->where('ip_address', $ip)
+                                 ->whereDate('created_at', $today);
+                })
+                ->exists();
 
-                $previousTodayLoginAuth = $previousTodayLoginAuth->exists();
-            }
-
-            $numberOfGuests = Visit::whereNull('user_id')
-                ->where('ip_address', $ip)
-                ->whereDate('created_at', $today)
-                ->count();
-
-            if ($previousTodayLoginAuth || $numberOfGuests === 0) {
+            if (! $alreadyVisited) {
                 Visit::create([
-                    'user_id' => auth()->guard('api')->user()->id ?? null,
+                    'user_id' => $user->id ?? null,
                     'ip_address' => $ip,
                     'user_agent' => $userAgent,
                     'platform' => php_uname('s'),
@@ -47,4 +46,5 @@ class TrackVisits
 
         return $next($request);
     }
+
 }

@@ -21,6 +21,7 @@ use LevelUp\Experience\Models\Activity;
 
 class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 {
+
     public function createComment($data)
     {
         // Apply filtering pipeline
@@ -33,42 +34,44 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 
         $data['content'] = $filteredContent;
         $comment = Comment::create($data);
-        $userPost = Post::find($data['post_id'])->user;
+        $commentUser = Auth::guard('api')->user();
 
         if ($data['parent_id'] == null) {
-            // To Save Notification In Database
-            Notification::send($userPost, new NewCommentNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
+            $post = Post::find($data['post_id']);
+            $userPost = $post->user;
 
-            // To Send Notification To Owner Using Firebase Cloud Messaging
-            $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
-            $receiverLanguage = $userPost->lang;
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-comment', [], $receiverLanguage),
-                'body'  => Lang::get('app.notifications.new-user-comment-in-post', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                'icon'  => asset('assets/icon/new.png'),
-                'sound' => 'default',
-            ];
+            if ($commentUser->id != $userPost->id) {
+                Notification::send($userPost, new NewCommentNotification($commentUser, $comment->id, $data['post_id']));
 
-            sendNotification($tokens, $notificationData);
+                $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
+                $receiverLanguage = $userPost->lang;
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-comment', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-user-comment-in-post', ['username' => $commentUser->username], $receiverLanguage),
+                    'icon'  => asset('assets/icon/new.png'),
+                    'sound' => 'default',
+                ];
+                sendNotification($tokens, $notificationData);
+            }
         } else {
             $parentComment = Comment::find($data['parent_id']);
             $userParentComment = User::find($parentComment->user_id);
-            $tokens = $userParentComment->DeviceTokenMany->pluck('token')->toArray();
-            $receiverLanguage = $userParentComment->lang;
 
-            // To Save Notification In Database
-            Notification::send($userParentComment, new NewReplyNotification(Auth::guard('api')->user(), $comment->id, $data['post_id']));
+            if ($commentUser->id != $userParentComment->id) {
+                Notification::send($userParentComment, new NewReplyNotification($commentUser, $comment->id, $data['post_id']));
 
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-reply', [], $receiverLanguage),
-                'body' => Lang::get('app.notifications.new-user-reply-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
-            sendNotification($tokens, $notificationData);
+                $tokens = $userParentComment->DeviceTokenMany->pluck('token')->toArray();
+                $receiverLanguage = $userParentComment->lang;
+                $notificationData = [
+                    'title' => Lang::get('app.notifications.new-reply', [], $receiverLanguage),
+                    'body' => Lang::get('app.notifications.new-user-reply-in-comment', ['username' => $commentUser->username], $receiverLanguage),
+                    'sound' => 'default',
+                ];
+                sendNotification($tokens, $notificationData);
+            }
         }
 
-
-        //add points and streak
+        // add points and streak
         $user = User::find($data['user_id']);
         $user->addPoints(10);
         $activity = Activity::find(1);
@@ -76,6 +79,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 
         return new CommentResource($comment);
     }
+
     public function updateComment($data)
     {
         $filteredContent = app(Pipeline::class)
@@ -92,6 +96,7 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
         ]);
         return $comment;
     }
+
     public function deleteComment($id)
     {
         $comment = Comment::find($id);

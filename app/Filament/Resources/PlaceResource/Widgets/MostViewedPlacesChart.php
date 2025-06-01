@@ -13,7 +13,7 @@ class MostViewedPlacesChart extends ChartWidget
 
     public ?string $startDate = null;
     public ?string $endDate = null;
-
+    protected int | string | array $columnSpan = [ 'md' => 2, 'xl' => 3, ];
 
     protected function getData(): array
     {

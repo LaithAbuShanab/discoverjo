@@ -68,7 +68,7 @@ class GuideTripUpdateDetailResource extends JsonResource
             "name"=>$this->getTranslations('name'),
             "description"=>$this->getTranslations('description'),
             "start_datetime"=>$this->start_datetime,
-            'main_image'=> $this->getFirstMediaUrl('main_image'),
+            'main_image'=> $this->getFirstMediaUrl('main_image','main_image_app'),
             "end_datetime"=>$this->end_datetime,
             "price"=>$this->main_price,
             "max_attendance"=>$this->max_attendance,

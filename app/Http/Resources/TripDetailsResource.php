@@ -28,16 +28,26 @@ class TripDetailsResource extends JsonResource
         });
 
         $gallery =  array_merge(
-        [$this->place->getFirstMediaUrl('main_place', 'main_place_app')],
-        $this->place->getMedia('place_gallery')->map(fn($image) => $image->getUrl('place_gallery_app'))->all());
+            [$this->place->getFirstMediaUrl('main_place', 'main_place_app')],
+            $this->place->getMedia('place_gallery')->map(fn($image) => $image->getUrl('place_gallery_app'))->all()
+        );
 
+        $tripType = match ($this->trip_type) {
+            1 => __('app.trip_type_1'),
+            2 => __('app.trip_type_2'),
+            default => __('app.trip_type_0'),
+        };
 
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
+            'selected_type' => [
+                'id'   => $this->trip_type,
+                'name' => $tripType
+            ],
             'creator' => new UserResource($this->user),
             'is_creator' => Auth::guard('api')->user()->id == $this->user_id,
-            'is_following' =>isFollowing($this->user_id),
+            'is_following' => isFollowing($this->user_id),
             'name' => $this->name,
             'address' => $this->place->address,
             'region' => $this->place->region->name,

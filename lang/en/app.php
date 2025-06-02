@@ -42,6 +42,9 @@ return [
     'temporary_password'                                               => 'Temporary Password',
     'login_to_admin_panel'                                             => 'Login to Admin Panel',
     'please_change_password_after_login'                               => 'Please change your password after your first login.',
+    'trip_type_0'                                                      => 'Public trip',
+    'trip_type_1'                                                      => 'Follower trip',
+    'trip_type_2'                                                      => 'Specific trip',
 
     "notifications" => [
 

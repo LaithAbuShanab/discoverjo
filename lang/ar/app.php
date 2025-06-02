@@ -42,6 +42,9 @@ return [
     'temporary_password'                                               => 'كلمة المرور المؤقتة',
     'login_to_admin_panel'                                             => 'الدخول إلى لوحة الإدارة',
     'please_change_password_after_login'                               => 'يرجى تغيير كلمة المرور بعد تسجيل الدخول لأول مرة.',
+    'trip_type_0'                                                      => 'رحلة عامة',
+    'trip_type_1'                                                      => 'رحلة مع المتابعين',
+    'trip_type_2'                                                      => 'رحلة محددة',
 
     "notifications" => [
 

@@ -14,17 +14,24 @@ class FollowingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $fullName= $this->followingUser->first_name ." ". $this->followingUser->last_name;
+        $followingUser = $this->followingUser;
+
+        // Safely handle missing or inactive user
+        if (!$followingUser || $followingUser->status !== 1) {
+            return [];
+        }
+
+        $fullName = trim("{$followingUser->first_name} {$followingUser->last_name}");
 
         return [
-            'id'=>$this->id,
-            'following_id'=>$this->followingUser->id,
-            'following_slug'=>$this->followingUser->slug,
-            'following_name'=>$this->followingUser->username,
-            'full_name'=>$fullName,
-            'following_image' => $this->followingUser?->getMedia('avatar')->first()?->getUrl('avatar_app'),
-            'status'=>$this->status,
-
+            'id' => $this->id,
+            'following_id' => $followingUser->id,
+            'following_slug' => $followingUser->slug,
+            'following_name' => $followingUser->username,
+            'full_name' => $fullName,
+            'following_image' => $followingUser->getMedia('avatar')->first()?->getUrl('avatar_app'),
+            'status' => $this->status,
         ];
     }
+
 }

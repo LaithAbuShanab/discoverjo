@@ -214,9 +214,15 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         }
 
 
-        // Execute the query and paginate
-        // Paginate the results
-        $places = $query->get();
+        $count = (clone $query)->count();
+
+        // Then apply limit only if needed
+        if ($count > 100) {
+            $places = $query->orderBy('distance')->limit(100)->get();
+        } else {
+            $places = $query->orderBy('distance')->get();
+        }
+
         activityLog(
             'places around',
             $places->first(),

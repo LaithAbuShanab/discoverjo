@@ -23,7 +23,7 @@ use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
 use App\Notifications\Users\Trip\RemoveUserTripNotification;
 use Carbon\Carbon;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
@@ -423,51 +423,62 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function update($request)
     {
-        $trip = Trip::where('slug', $request->trip_slug)->first();
+        $trip = Trip::where('slug', $request->trip_slug)->firstOrFail();
 
-        if ($request->name) {
-            $filteredName = app(Pipeline::class)
-                ->send($request->name)
-                ->through([ContentFilter::class])
-                ->thenReturn();
+        // Use pipeline for filtering if applicable
+        $filteredName = $request->name ? app(Pipeline::class)
+            ->send($request->name)
+            ->through([ContentFilter::class])
+            ->thenReturn() : $trip->name;
+
+        $filteredDescription = $request->description ? app(Pipeline::class)
+            ->send($request->description)
+            ->through([ContentFilter::class])
+            ->thenReturn() : $trip->description;
+
+        $cost = $request->trip_type == 2 ? null : ($request->cost ?? $trip->cost);
+
+        $trip->fill([
+            'trip_type' => $request->trip_type ?? $trip->trip_type,
+            'place_id' => Place::where('slug', $request->place_slug)->value('id') ?? $trip->place_id,
+            'name' => $filteredName,
+            'description' => $filteredDescription,
+            'cost' => $cost,
+            'sex' => $request->gender ?? $trip->gender,
+            'attendance_number' => $request->attendance_number ?? $trip->attendance_number,
+        ]);
+
+        if ($request->trip_type == 2) {
+            $trip->age_range = null;
+        } elseif ($request->has(['age_min', 'age_max'])) {
+            $trip->age_range = json_encode([
+                'min' => $request->age_min,
+                'max' => $request->age_max,
+            ]);
         }
 
-        if ($request->description) {
-            $filteredDescription = app(Pipeline::class)
-                ->send($request->description)
-                ->through([ContentFilter::class])
-                ->thenReturn();
-        }
-
-        // get place id by slug
-        $place_id = Place::where('slug', $request->place_slug)->first()->id;
-
-        $trip->place_id = $place_id  ?? $trip->place_id;
-        $trip->name = $request->name ? $filteredName : $trip->name;
-        $trip->description = $request->description ? $filteredDescription : $trip->description;
-        $trip->cost = $request->cost ?? $trip->cost;
-        $trip->sex = $request->gender ?? $trip->gender;
-        $trip->attendance_number = $request->attendance_number ?? $trip->attendance_number;
-
-        if (isset($request->age_min) && isset($request->age_max)) {
-            $age_range = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
-            $trip->age_range = $age_range;
-        }
-
-        if (isset($request->date) && isset($request->time)) {
-            $date_time = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
-            $trip->date_time = $date_time;
+        if ($request->has(['date', 'time'])) {
+            $trip->date_time = Carbon::createFromFormat('Y-m-d H:i:s', "{$request->date} {$request->time}");
         }
 
         $trip->save();
 
-        if (isset($request->tags)) {
-            $tags = collect(explode(',', $request->tags))->map(function ($tag) {
-                $tagModel = Tag::where('slug', trim($tag))->first();
-                return $tagModel ? $tagModel->id : null;
-            })->filter()->toArray();
-            $trip->tags()->sync($tags);
+        if ($request->filled('tags')) {
+            $tagIds = collect(explode(',', $request->tags))
+                ->map(fn($tag) => Tag::where('slug', trim($tag))->value('id'))
+                ->filter()
+                ->all();
+
+            $trip->tags()->sync($tagIds);
         }
+
+        $trip->usersTrip()->delete();
+
+        DatabaseNotification::where('type', TripNewTripNotification::class)
+            ->whereJsonContains('data->options->trip_id', $trip->id)
+            ->delete();
+
+        $this->handleTripTypeNotifications($request, $trip);
     }
 
     public function removeUser($request)

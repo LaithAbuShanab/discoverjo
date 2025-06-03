@@ -5,7 +5,9 @@ namespace App\Http\Requests\Api\User\Trip;
 use App\Helpers\ApiResponse;
 use App\Rules\ActivePlaceRule;
 use App\Rules\CheckIfCanMakeTripRule;
+use App\Rules\CheckIfFollowersExistenceRule;
 use App\Rules\CheckTagExistsRule;
+use App\Rules\CheckUserExistsRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -84,6 +86,11 @@ class UpdateTripRequest extends FormRequest
 
             'attendance_number' => ['nullable', 'integer', 'min:1'],
             'tags' => ['nullable', new CheckTagExistsRule()],
+            'users' => [
+                'required_if:trip_type,2',
+                new CheckIfFollowersExistenceRule(),
+                new CheckUserExistsRule(),
+            ]
         ];
     }
 
@@ -112,6 +119,7 @@ class UpdateTripRequest extends FormRequest
             'attendance_number.integer' => __('validation.api.attendance_number_integer'),
             'attendance_number.min' => __('validation.api.attendance_number_min'),
             'tags.nullable' => __('validation.api.tags_nullable'),
+            'users.required_if' => __('validation.api.users_required_if'),
         ];
     }
 

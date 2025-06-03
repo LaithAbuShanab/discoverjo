@@ -45,6 +45,9 @@ return [
     'trip_type_0'                                                      => 'Public trip',
     'trip_type_1'                                                      => 'Follower trip',
     'trip_type_2'                                                      => 'Specific trip',
+    'male'                                                             => 'Male',
+    'female'                                                           => 'Female',
+    'both'                                                             => 'Both',
 
     "notifications" => [
 

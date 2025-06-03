@@ -45,6 +45,9 @@ return [
     'trip_type_0'                                                      => 'رحلة عامة',
     'trip_type_1'                                                      => 'رحلة مع المتابعين',
     'trip_type_2'                                                      => 'رحلة محددة',
+    'both'                                                             => 'كلا الحنسن',
+    'male'                                                             => 'ذكر',
+    'female'                                                           => 'انثي',
 
     "notifications" => [
 

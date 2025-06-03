@@ -288,6 +288,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     $createPriceAge->price = $singlePrice->cost;
                     $createPriceAge->save();
                 }
+            }else{
+                GuideTripPriceAge::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
             GuideTripAssembly::where('guide_trip_id', $guideTrip->id)->delete();
@@ -311,6 +313,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     $createRequiredItem->save();
                     $createRequiredItem->item = $createRequiredItem->setTranslations('item', $requiredItemTranslate);
                 }
+            }else{
+                GuideTripRequirement::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
             if ($trail) {

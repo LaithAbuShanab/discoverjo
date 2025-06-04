@@ -24,18 +24,6 @@ class FollowerResource extends JsonResource
             return [];
         }
 
-        // Default is_follow to false
-        $isFollow = false;
-
-        if ($authUser) {
-            $followed = $authUser->following()
-                ->where('users.id', $followerUser->id)
-                ->first();
-
-            if ($followed) {
-                $isFollow = $followed->pivot->status;
-            }
-        }
 
         return [
             'id' => $this->id,
@@ -45,7 +33,7 @@ class FollowerResource extends JsonResource
             'full_name' => trim("{$followerUser->first_name} {$followerUser->last_name}"),
             'follower_image' => $followerUser->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'status' => $this->status,
-            'is_follow' => $isFollow,
+            'is_following' =>isFollowing($followerUser->id),
         ];
     }
 

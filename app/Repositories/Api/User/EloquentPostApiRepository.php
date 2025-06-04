@@ -156,6 +156,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
     {
         $post = Post::find($id);
         $post->delete();
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function favorite($id)
@@ -176,6 +178,8 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $post = Post::find($id);
         activityLog('post', $post, 'the user unfavored the post', 'unfavored');
         $user->favoritePosts()->detach($id);
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function postLike($data)
@@ -253,16 +257,17 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                         Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
                     }
                 }
+                $user = Auth::guard('api')->user();
+                $user->addPoints(10);
+                $activity = Activity::find(1);
+                $user->recordStreak($activity);
             }
 
             if (!empty($notificationData) && $authUser->id != $post->user_id) {
                 sendNotification($tokens, $notificationData);
             }
 
-            $user = Auth::guard('api')->user();
-            $user->addPoints(10);
-            $activity = Activity::find(1);
-            $user->recordStreak($activity);
+
 
             activityLog($data['status'], $post, 'the user ' . $data['status'] . ' the post', $data['status']);
 

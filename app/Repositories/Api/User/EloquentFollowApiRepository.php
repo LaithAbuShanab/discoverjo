@@ -42,10 +42,12 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 
     public function unfollow($following_slug)
     {
+        $user = Auth::guard('api')->user();
         $followingId = User::findBySlug($following_slug);
-        $id = Auth::guard('api')->user()->id;
+        $id = $user->id;
         $follow = Follow::where('follower_id', $id)->where('following_id', $followingId->id)->first();
         $follow->delete();
+        $user->deductPoints(10);
     }
 
 

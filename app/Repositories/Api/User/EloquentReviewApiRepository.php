@@ -146,6 +146,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
 
         activityLog('review', $reviewItem, 'the user delete review', 'delete');
+        $user->deductPoints(10);
     }
 
     public function reviewsLike($data)
@@ -183,6 +184,8 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             } else {
                 // First-time like or dislike
                 $review->like()->attach($authUser->id, ['status' => $status]);
+                $authUser->addPoints(10);
+                $authUser->recordStreak(Activity::find(1));
             }
 
             if (!$isSelfReview) {
@@ -205,8 +208,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             }
 
             activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
-            $authUser->addPoints(10);
-            $authUser->recordStreak(Activity::find(1));
+
 
             DB::commit();
         } catch (\Throwable $e) {

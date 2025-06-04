@@ -347,6 +347,8 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         $guideTrip = GuideTrip::findBySlug($slug);
         $guideTrip->clearMediaCollection('guide_trip_gallery');
         $guideTrip->delete();
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function deleteImage($id)

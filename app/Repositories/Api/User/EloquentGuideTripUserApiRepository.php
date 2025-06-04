@@ -146,6 +146,8 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         ];
 
         sendNotification($tokens, $notificationData);
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function allSubscription($slug)

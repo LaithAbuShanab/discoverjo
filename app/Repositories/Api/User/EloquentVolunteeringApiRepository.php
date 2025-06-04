@@ -120,6 +120,7 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         $volunteeringId =$volunteering->id;
         $user->volunteeringInterestables()->detach($volunteeringId);
         ActivityLog('volunteering',$volunteering,'the user disinterest in the volunteering','disinterest');
+        $user->deductPoints(10);
     }
 
     public function search($query)

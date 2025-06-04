@@ -144,6 +144,8 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     {
         $plan = Plan::where('slug', $slug)->first();
         $plan->delete();
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
     }
 
     public function show($slug)

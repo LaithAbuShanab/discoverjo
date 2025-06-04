@@ -48,6 +48,7 @@ class EloquentGuideRatingApiApiRepository implements GuideRatingApiRepositoryInt
         $guide =User::findBySlug($slug);
         $deleteRatingGuide = RatingGuide::where('guide_id',$guide->id)->where('user_id',$userId)->first();
         $deleteRatingGuide->delete();
+        $user->deductPoints(10);
     }
 
     public function showGuideRating($slug)

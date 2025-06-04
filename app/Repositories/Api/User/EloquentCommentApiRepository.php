@@ -99,6 +99,8 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 
     public function deleteComment($id)
     {
+        $user = Auth::guard('api')->user();
+        $user->deductPoints(10);
         $comment = Comment::find($id);
         $comment->delete();
     }
@@ -166,16 +168,17 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                     Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
                 }
             }
+            $user = Auth::guard('api')->user();
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
         }
 
         if (!empty($notificationData) && $comment->user_id != Auth::guard('api')->user()->id) {
             sendNotification($tokens, $notificationData);
         }
 
-        $user = Auth::guard('api')->user();
-        $user->addPoints(10);
-        $activity = Activity::find(1);
-        $user->recordStreak($activity);
+
         ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
     }
 }

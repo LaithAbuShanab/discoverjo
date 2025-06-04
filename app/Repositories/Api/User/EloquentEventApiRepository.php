@@ -111,6 +111,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
         $event= Event::findBySlug($slug);
         $eventId = $event?->id;
         $user->eventInterestables()->detach($eventId);
+        $user->deductPoints(10);
         ActivityLog('event',$event,'the user disinterest in the event','disinterest');
     }
 

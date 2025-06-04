@@ -50,7 +50,7 @@ class GuideTripResource extends JsonResource
         $joined = Auth::guard('api')->check()
             ? Auth::guard('api')->user()->guideTripUsers->contains('guide_trip_id', $this->id)
             : false;
-        if(Auth::guard('api')->user()->id == $this->guide_id)
+        if(Auth::guard('api')->user()?->id == $this->guide_id)
         {
             $countRequest= $this->requestGuideTripUsers()->count();
         }

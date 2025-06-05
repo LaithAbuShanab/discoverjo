@@ -424,6 +424,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function update($request)
     {
         $trip = Trip::where('slug', $request->trip_slug)->firstOrFail();
+        $oldType = $trip->trip_type;
 
         // Use pipeline for filtering if applicable
         $filteredName = $request->name ? app(Pipeline::class)
@@ -472,13 +473,15 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             $trip->tags()->sync($tagIds);
         }
 
-        $trip->usersTrip()->delete();
+        if ($oldType != $request->trip_type) {
+            $trip->usersTrip()->delete();
 
-        DatabaseNotification::where('type', TripNewTripNotification::class)
-            ->whereJsonContains('data->options->trip_id', $trip->id)
-            ->delete();
+            DatabaseNotification::where('type', TripNewTripNotification::class)
+                ->whereJsonContains('data->options->trip_id', $trip->id)
+                ->delete();
 
-        $this->handleTripTypeNotifications($request, $trip);
+            $this->handleTripTypeNotifications($request, $trip);
+        }
     }
 
     public function removeUser($request)

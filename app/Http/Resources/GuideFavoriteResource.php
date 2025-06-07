@@ -22,6 +22,7 @@ class GuideFavoriteResource extends JsonResource
             'id'=>$this->id,
             'slug'=>$this->slug,
             "name"=>$this->name,
+            'main_image'=> $this->getFirstMediaUrl('main_image','main_image_app'),
             "description"=>$this->description,
             "start_datetime"=>$this->start_datetime,
             "end_datetime"=>$this->end_datetime,

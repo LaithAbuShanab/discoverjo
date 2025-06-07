@@ -52,5 +52,11 @@ class FollowApiUseCase
         return $this->followRepository->followings($user_slug);
     }
 
+    public function removeFollower($user_slug)
+    {
+        return $this->followRepository->removeFollower($user_slug);
+    }
+
+
 
 }

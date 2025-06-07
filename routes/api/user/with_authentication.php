@@ -132,6 +132,7 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/followers/requests', [FollowApiController::class, 'followersRequest']); // DONE ✅
         Route::post('/create/{following_slug}', [FollowApiController::class, 'follow']); // DONE ✅
         Route::delete('/delete/{following_slug}', [FollowApiController::class, 'unfollow']); // DONE ✅
+        Route::delete('/remove/follower/{follower_slug}', [FollowApiController::class, 'removeFollower']); // DONE ✅
         Route::get('/followers/{user_slug}', [FollowApiController::class, 'followers']); // DONE ✅
         Route::get('/followings/{user_slug}', [FollowApiController::class, 'followings']); // DONE ✅
         Route::put('/accept/following-request/{follower_slug}', [FollowApiController::class, 'acceptFollowerRequest']); // DONE ✅

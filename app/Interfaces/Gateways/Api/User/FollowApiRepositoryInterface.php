@@ -12,7 +12,7 @@ interface FollowApiRepositoryInterface
     public function followersRequest();
     public function followers($user_slug);
     public function followings($user_slug);
-
+    public function removeFollower($user_slug);
 
 
 }

@@ -143,4 +143,14 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'pagination' => $pagination
         ];
     }
+    public function removeFollower($user_slug)
+    {
+        $user = Auth::guard('api')->user();
+        $follower = User::findBySlug($user_slug);
+        $id = $user->id;
+        $follow = Follow::where('follower_id', $follower->id)->where('following_id', $id)->first();
+        $follow->delete();
+        $user->deductPoints(10);
+    }
+
 }

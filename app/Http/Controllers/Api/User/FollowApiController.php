@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Rules\CheckIfFollowerFollowCurrentUserRule;
 use App\Rules\CheckIfFollowerFollowingExistsRule;
 use App\Rules\CheckIfFollowerFollowingNotExistsRule;
 use App\Rules\CheckIfFollowerFollowingUserRule;
@@ -76,6 +77,34 @@ class FollowApiController extends Controller
         try {
             $follows = $this->followApiUseCase->unfollow($validator->validated()['following_slug']);
             return ApiResponse::sendResponse(200, __('app.api.follows-deleted-successfully'), $follows);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
+        }
+    }
+
+    public function removeFollower(Request $request, $follower_slug)
+    {
+
+        $validator = Validator::make(
+            ['follower_slug' => $follower_slug],
+            [
+                'follower_slug' => ['bail', 'required', 'exists:users,slug', new CheckIfFollowerFollowCurrentUserRule(),  new CheckIfUserActiveRule()],
+            ],
+            [
+                'follower_slug.required' => __('validation.api.the-following-id-is-required'),
+                'follower_slug.exists' => __('validation.api.the-following-id-does-not-exists'),
+            ]
+        );
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+
+        try {
+            $follows = $this->followApiUseCase->removeFollower($validator->validated()['follower_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.follower-deleted-successfully'), $follows);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());

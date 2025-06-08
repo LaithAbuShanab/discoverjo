@@ -21,9 +21,11 @@ use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Support\Str;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
 
 
-class User extends Authenticatable implements MustVerifyEmail, HasMedia
+class User extends Authenticatable implements MustVerifyEmail, HasMedia,FilamentUser,HasName
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
@@ -355,5 +357,14 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
             $user->referral_code = $code;
             $user->save();
         });
+    }
+
+    public function getFilamentName(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        return true;
     }
 }

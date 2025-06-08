@@ -4,105 +4,110 @@ namespace App\Policies;
 
 use App\Models\GuideTrip;
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class GuideTripPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the admin can view any models.
-     */
-    public function viewAny(Admin $admin): bool
+    public function viewAny(User|Admin $user): bool
     {
-        return $admin->can('view_any_guide::trip');
+        // Example rule: both can see it, or apply role-specific logic
+        return true;
     }
 
-    /**
-     * Determine whether the admin can view the model.
-     */
-    public function view(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function view(User|Admin $user, GuideTrip $trip): bool
     {
-        return $admin->can('view_guide::trip');
+        // Admins can view all, users only their own
+        if ($user instanceof Admin) {
+            return true;
+        }
+
+        return $trip->guide_id === $user->id;
     }
 
-    /**
-     * Determine whether the admin can create models.
-     */
-    public function create(Admin $admin): bool
+    public function create(User|Admin $user): bool
     {
-        return $admin->can('create_guide::trip');
+        // Maybe only Users can create?
+        return true;
     }
 
-    /**
-     * Determine whether the admin can update the model.
-     */
-    public function update(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function update(User|Admin $user, GuideTrip $trip): bool
     {
-        return $admin->can('update_guide::trip');
+        if ($user instanceof Admin) {
+            return true;
+        }
+
+        return $trip->guide_id === $user->id;
     }
 
-    /**
-     * Determine whether the admin can delete the model.
-     */
-    public function delete(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function delete(User|Admin $user, GuideTrip $trip): bool
     {
-        return $admin->can('delete_guide::trip');
+        if ($user instanceof Admin) {
+            return true;
+        }
+
+        return $trip->guide_id === $user->id;
     }
+
 
     /**
      * Determine whether the admin can bulk delete.
      */
-    public function deleteAny(Admin $admin): bool
+    public function deleteAny(User|Admin $user): bool
     {
-        return $admin->can('delete_any_guide::trip');
+        return $user->can('delete_any_guide::trip');
     }
 
     /**
      * Determine whether the admin can permanently delete the model.
      */
-    public function forceDelete(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function forceDelete(User|Admin $user, GuideTrip $guideTripPolicy): bool
     {
-        return $admin->can('force_delete_guide::trip');
+        return $user->can('force_delete_guide::trip');
     }
 
     /**
      * Determine whether the admin can permanently bulk delete models.
      */
-    public function forceDeleteAny(Admin $admin): bool
+    public function forceDeleteAny(User|Admin $user): bool
     {
-        return $admin->can('force_delete_any_guide::trip');
+        return $user->can('force_delete_any_guide::trip');
     }
 
     /**
      * Determine whether the admin can restore the model.
      */
-    public function restore(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function restore(User|Admin $user, GuideTrip $guideTripPolicy): bool
     {
-        return $admin->can('restore_guide::trip');
+        return $user->can('restore_guide::trip');
     }
 
     /**
      * Determine whether the admin can bulk restore models.
      */
-    public function restoreAny(Admin $admin): bool
+    public function restoreAny(User|Admin $user): bool
     {
-        return $admin->can('restore_any_guide::trip');
+        return $user->can('restore_any_guide::trip');
     }
 
     /**
      * Determine whether the admin can replicate the model.
      */
-    public function replicate(Admin $admin, GuideTrip $guideTripPolicy): bool
+    public function replicate(User|Admin $user, GuideTrip $guideTripPolicy): bool
     {
-        return $admin->can('replicate_guide::trip');
+        return $user->can('replicate_guide::trip');
     }
 
     /**
      * Determine whether the admin can reorder models.
      */
-    public function reorder(Admin $admin): bool
+    public function reorder(User|Admin $user): bool
     {
-        return $admin->can('reorder_guide::trip');
+        return $user->can('reorder_guide::trip');
     }
+
+
+
 }

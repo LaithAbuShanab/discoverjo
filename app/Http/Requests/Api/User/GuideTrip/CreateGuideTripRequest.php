@@ -179,6 +179,11 @@ class CreateGuideTripRequest extends FormRequest
                 'ar' => ['required', 'string'],
             ]);
 
+            $this->validateJsonArray('payment_method', $validator, [
+                'en' => ['required', 'string'],
+                'ar' => ['required', 'string'],
+            ]);
+
             if ($this->input('is_trail')) {
                 $this->validateJsonObject('trail', $validator, [
                     'min_duration_in_minute' => ['required', 'numeric', 'min:0', 'max:999.99'], // decimal(5,2)

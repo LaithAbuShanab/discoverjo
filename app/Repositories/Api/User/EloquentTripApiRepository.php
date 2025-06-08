@@ -140,63 +140,81 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function createTrip($request)
     {
-        $tags = collect(explode(',', $request->tags))->map(function ($tag) {
-            $tagModel = Tag::where('slug', trim($tag))->first();
-            return $tagModel ? $tagModel->id : null;
-        })->filter()->toArray();
+        DB::beginTransaction();
 
-        $ageRange = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
+        try {
+            $tags = collect(explode(',', $request->tags))->map(function ($tag) {
+                $tagModel = Tag::where('slug', trim($tag))->first();
+                return $tagModel ? $tagModel->id : null;
+            })->filter()->toArray();
 
-        $dateTime = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
+            $ageRange = json_encode(['min' => $request->age_min, 'max' => $request->age_max]);
 
-        $filteredName = app(Pipeline::class)
-            ->send($request->name)
-            ->through([ContentFilter::class])
-            ->thenReturn();
+            $dateTime = Carbon::createFromFormat('Y-m-d H:i:s', $request->date . ' ' . $request->time);
 
-        $filteredDescription = app(Pipeline::class)
-            ->send($request->description)
-            ->through([ContentFilter::class])
-            ->thenReturn();
+            $filteredName = app(Pipeline::class)
+                ->send($request->name)
+                ->through([ContentFilter::class])
+                ->thenReturn();
 
-        $trip = new Trip();
-        $trip->user_id = Auth::guard('api')->user()->id;
-        $trip->place_id = Place::where('slug', $request->place_slug)->first()->id;
-        $trip->trip_type = $request->trip_type;
-        $trip->name = $filteredName;
-        $trip->description = $filteredDescription;
-        $trip->cost = $request->cost ?? null;
-        $trip->age_range = $ageRange ?? null;
-        $trip->sex = $request->trip_type == 2 ? 0 : $request->gender;
-        $trip->date_time = $dateTime;
-        $trip->attendance_number = $request->trip_type == 2 ? User::whereIn('slug', explode(',', $request->users))->count() : $request->attendance_number;
-        $trip->save();
-        $trip->tags()->attach($tags);
+            $filteredDescription = app(Pipeline::class)
+                ->send($request->description)
+                ->through([ContentFilter::class])
+                ->thenReturn();
 
-        // Create Trip Conversation
-        $conversation = new Conversation();
-        $conversation->trip_id = $trip->id;
-        $conversation->save();
+            $trip = new Trip();
+            $trip->user_id = Auth::guard('api')->user()->id;
+            $trip->place_id = Place::where('slug', $request->place_slug)->first()->id ?? null;
 
-        $first_member = new GroupMember();
-        $first_member->user_id =  Auth::guard('api')->user()->id;
-        $first_member->conversation_id = $conversation->id;
-        $first_member->joined_datetime = now();
-        $first_member->save();
+            // Rollback if place not found
+            if (!$trip->place_id) {
+                DB::rollBack();
+                return response()->json(['error' => 'Invalid place_slug'], 422);
+            }
 
-        $createdTrip = Trip::find($trip->id);
+            $trip->trip_type = $request->trip_type;
+            $trip->name = $filteredName;
+            $trip->description = $filteredDescription;
+            $trip->cost = $request->cost ?? null;
+            $trip->age_range = $ageRange ?? null;
+            $trip->sex = $request->trip_type == 2 ? 0 : $request->gender;
+            $trip->date_time = $dateTime;
+            $trip->attendance_number = $request->trip_type == 2
+                ? User::whereIn('slug', explode(',', $request->users))->count()
+                : $request->attendance_number;
+            $trip->save();
+            $trip->tags()->attach($tags);
 
-        // Notify an admin about the new user registration
-        adminNotification(
-            'New Trip',
-            'A new trip has been create by ' . Auth::guard('api')->user()->username,
-            ['action' => 'view_trip', 'action_label' => 'View Trip', 'action_url' => route('filament.admin.resources.trips.view', $trip)]
-        );
+            // Create Trip Conversation
+            $conversation = new Conversation();
+            $conversation->trip_id = $trip->id;
+            $conversation->save();
 
-        //send notification for specific user & Followers of this user
-        $this->handleTripTypeNotifications($request, $trip);
+            $first_member = new GroupMember();
+            $first_member->user_id = Auth::guard('api')->user()->id;
+            $first_member->conversation_id = $conversation->id;
+            $first_member->joined_datetime = now();
+            $first_member->save();
 
-        return new TripResource($createdTrip);
+            $createdTrip = Trip::find($trip->id);
+
+            // Notify an admin about the new user registration
+            adminNotification(
+                'New Trip',
+                'A new trip has been create by ' . Auth::guard('api')->user()->username,
+                ['action' => 'view_trip', 'action_label' => 'View Trip', 'action_url' => route('filament.admin.resources.trips.view', $trip)]
+            );
+
+            // Send notification for specific user & Followers of this user
+            $this->handleTripTypeNotifications($request, $trip);
+
+            DB::commit(); // ✅ Commit only if everything passes
+
+            return new TripResource($createdTrip);
+        } catch (\Throwable $e) {
+            DB::rollBack(); // ❌ Rollback on failure
+            throw $e; // Or return error response
+        }
     }
 
     // When Creator Accept Or Reject User
@@ -357,6 +375,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     }
 
     // WHEN USER LEAVE THE TRIP
+
     public function cancelJoinTrip($slug, $request)
     {
         $trip_id = Trip::where('slug', $slug)->first()->id;
@@ -636,9 +655,28 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         if ($request->trip_type == 1) {
             $followers = $user->followers()->get();
 
-            foreach ($followers as $follower) {
-                $receiverLanguage = $follower->lang;
+            // Decode age range from trip
+            $ageRange = json_decode($trip->age_range, true);
+            $minAge = $ageRange['min'] ?? 0;
+            $maxAge = $ageRange['max'] ?? 100;
 
+            foreach ($followers as $follower) {
+                // Skip if the trip is gender-specific and the follower doesn't match
+                if ($trip->sex != 2 && $follower->sex != $trip->sex) {
+                    continue;
+                }
+
+                // Calculate age
+                if (!$follower->birthday) continue;
+                $age = \Carbon\Carbon::parse($follower->birthday)->age;
+
+                // Skip if age not in range
+                if ($age < $minAge || $age > $maxAge) {
+                    continue;
+                }
+
+                // Passed filters: send notifications
+                $receiverLanguage = $follower->lang;
                 $notificationData = [
                     'title' => Lang::get('app.notifications.new-trip-title', [], $receiverLanguage),
                     'body'  => Lang::get('app.notifications.new-trip-body', ['username' => $user->username], $receiverLanguage),
@@ -727,11 +765,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {
         $query->where(function ($q) use ($userId, $userSex, $userAge) {
-            $q->where('user_id', $userId) // صاحب الرحلة
+            $q->where('user_id', $userId)
                 ->orWhere(function ($q) use ($userSex, $userAge) {
-                    $q->where('trip_type', '2') // المخصصة - لا نطبق فلاتر الجنس والعمر هنا
+                    $q->where('trip_type', '2')
                         ->orWhere(function ($q) use ($userSex, $userAge) {
-                            // فقط للرحلات العامة أو للمتابعين
                             $q->whereIn('sex', [$userSex, 0])
                                 ->where(function ($q) use ($userAge) {
                                     $q->whereNull('age_range')

@@ -48,7 +48,8 @@ class NewPostLikeNotification extends Notification
             'options'  => [
                 'type'    => 'single_post',
                 'slug'    => null,
-                'post_id' => $this->postId
+                'post_id' => $this->postId,
+                'user_id' => $this->user->id ?? null
             ]
         ];
     }

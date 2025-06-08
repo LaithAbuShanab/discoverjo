@@ -44,9 +44,10 @@ class NewFollowRequestNotification extends Notification
             "body_en" => "The User " . $this->user->username . " has send your new following request",
             "body_ar" => "المستخدم قام بارسال طلب متابعة جديد " . $this->user->username,
             "options" => [
-                'type'    => 'list_followers',
-                'slug'    => $this->following->slug,
-                'user_id' => $this->following->id
+                'type'      => 'list_followers',
+                'slug'      => $this->following->slug,
+                'user_id'   => $this->following->id,
+                'user_s_id' => $this->user->id
             ]
         ];
     }

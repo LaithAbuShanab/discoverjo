@@ -38,7 +38,7 @@ class NewPostDisLikeNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $username = $this->user->name;
+        $username = $this->user->username;
 
         return [
             "title_en" => __('app.notifications.new-post-dislike-title', [], 'en'),
@@ -48,7 +48,8 @@ class NewPostDisLikeNotification extends Notification
             'options'  => [
                 'type'    => 'single_post',
                 'slug'    => null,
-                'post_id' => $this->postId
+                'post_id' => $this->postId,
+                'user_id' => $this->user->id ?? null
             ]
         ];
     }

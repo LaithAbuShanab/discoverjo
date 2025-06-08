@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\DB;
 use LevelUp\Experience\Models\Activity;
 
 
@@ -99,86 +100,131 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
 
     public function deleteComment($id)
     {
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
-        $comment = Comment::find($id);
-        $comment->delete();
+        DB::beginTransaction();
+
+        try {
+            $user = Auth::guard('api')->user();
+            $user->deductPoints(10);
+
+            $comment = Comment::findOrFail($id);
+
+            DB::table('notifications')
+                ->where('type', 'App\\Notifications\\Users\\Post\\NewCommentNotification')
+                ->where('notifiable_type', get_class($comment->post->user))
+                ->where('notifiable_id', $comment->post->user->id)
+                ->where('data', 'LIKE', '%"options"%')
+                ->where('data', 'LIKE', '%"comment_id":' . $comment->id . '%')
+                ->delete();
+
+            $comment->delete();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function commentLike($data)
     {
-        $comment = Comment::find($data['comment_id']);
-        $userComment = User::find($comment->user_id);
-        $tokens = $userComment->DeviceTokenMany->pluck('token')->toArray();
-        $receiverLanguage = $userComment->lang;
-        $notificationData = [];
-        $status = $data['status'] == "like" ? '1' : '0';
+        DB::beginTransaction();
 
-        $existingLike = $comment->likes()->where('user_id', Auth::guard('api')->user()->id)->first();
-        if ($existingLike) {
-            if ($existingLike->status != $status) {
-                $existingLike->update(['status' => $status]);
+        try {
+            $authUser = Auth::guard('api')->user();
+            $comment = Comment::findOrFail($data['comment_id']);
+            $userComment = User::findOrFail($comment->user_id);
+            $tokens = $userComment->DeviceTokenMany->pluck('token')->toArray();
+            $receiverLanguage = $userComment->lang;
+            $status = $data['status'] == "like" ? '1' : '0';
 
-                if ($comment->user_id != Auth::guard('api')->user()->id) {
-                    if ($data['status'] == "like") {
+            $existingLike = $comment->likes()->where('user_id', $authUser->id)->first();
+
+            $likeNotificationType = NewCommentLikeNotification::class;
+            $dislikeNotificationType = NewCommentDisLikeNotification::class;
+
+            $deleteNotification = function ($type) use ($authUser, $comment) {
+                DB::table('notifications')
+                    ->where('type', $type)
+                    ->where('notifiable_type', get_class($comment->user))
+                    ->where('notifiable_id', $comment->user_id)
+                    ->where('data', 'LIKE', '%"comment_id":' . $comment->id . '%')
+                    ->where('data', 'LIKE', '%"user_id":' . $authUser->id . '%')
+                    ->delete();
+            };
+
+            $notificationData = [];
+
+            if ($existingLike) {
+                if ($existingLike->status != $status) {
+                    $deleteNotification($existingLike->status === '1' ? $likeNotificationType : $dislikeNotificationType);
+                    $existingLike->update(['status' => $status]);
+
+                    if ($comment->user_id != $authUser->id) {
+                        if ($status === '1') {
+                            $notificationData = [
+                                'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => $authUser->username], $receiverLanguage),
+                                'icon'  => asset('assets/icon/speaker.png'),
+                                'sound' => 'default',
+                            ];
+                            Notification::send($userComment, new NewCommentLikeNotification($authUser, $comment->id, $comment->post_id));
+                        } else {
+                            $notificationData = [
+                                'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => $authUser->username], $receiverLanguage),
+                                'icon'  => asset('assets/icon/speaker.png'),
+                                'sound' => 'default',
+                            ];
+                            Notification::send($userComment, new NewCommentDisLikeNotification($authUser, $comment->id, $comment->post_id));
+                        }
+                    }
+                } else {
+                    // التفاعل نفسه مرة ثانية → حذف اللايك/دسلايك والإشعار
+                    $existingLike->delete();
+                    $deleteNotification($status === '1' ? $likeNotificationType : $dislikeNotificationType);
+                }
+            } else {
+                $comment->likes()->create([
+                    'user_id' => $authUser->id,
+                    'status' => $status,
+                ]);
+
+                if ($comment->user_id != $authUser->id) {
+                    if ($status === '1') {
                         $notificationData = [
                             'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                            'icon' => asset('assets/icon/speaker.png'),
+                            'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => $authUser->username], $receiverLanguage),
+                            'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-                        Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
+                        Notification::send($userComment, new NewCommentLikeNotification($authUser, $comment->id, $comment->post_id));
                     } else {
                         $notificationData = [
                             'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                            'icon' => asset('assets/icon/speaker.png'),
+                            'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => $authUser->username], $receiverLanguage),
+                            'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
                         ];
-
-                        Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
+                        Notification::send($userComment, new NewCommentDisLikeNotification($authUser, $comment->id, $comment->post_id));
                     }
                 }
-            } else {
-                $existingLike->delete();
+
+                $authUser->addPoints(10);
+                $activity = Activity::find(1);
+                $authUser->recordStreak($activity);
             }
-        } else {
-            $comment->likes()->create([
-                'user_id' => Auth::guard('api')->user()->id,
-                'status' => $status,
-            ]);
 
-            if ($comment->user_id != Auth::guard('api')->user()->id) {
-                if ($data['status'] == "like") {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-comment-like', [], $receiverLanguage),
-                        'body'  => Lang::get('app.notifications.new-user-like-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'icon' => asset('assets/icon/speaker.png'),
-                        'sound' => 'default',
-                    ];
-                    Notification::send($userComment, new NewCommentLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
-                } else {
-                    $notificationData = [
-                        'title' => Lang::get('app.notifications.new-comment-dislike', [], $receiverLanguage),
-                        'body'  => Lang::get('app.notifications.new-user-dislike-in-comment', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'icon' => asset('assets/icon/speaker.png'),
-                        'sound' => 'default',
-                    ];
-
-                    Notification::send($userComment, new NewCommentDisLikeNotification(Auth::guard('api')->user(), $comment->id, $comment->post_id));
-                }
+            if (!empty($notificationData) && $comment->user_id != $authUser->id) {
+                sendNotification($tokens, $notificationData);
             }
-            $user = Auth::guard('api')->user();
-            $user->addPoints(10);
-            $activity = Activity::find(1);
-            $user->recordStreak($activity);
+
+            ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        if (!empty($notificationData) && $comment->user_id != Auth::guard('api')->user()->id) {
-            sendNotification($tokens, $notificationData);
-        }
-
-
-        ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);
     }
+
 }

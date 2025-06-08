@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\Users\follow\AcceptFollowRequestNotification;
 use App\Notifications\Users\follow\NewFollowRequestNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
 use LevelUp\Experience\Models\Activity;
@@ -42,14 +43,36 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
 
     public function unfollow($following_slug)
     {
-        $user = Auth::guard('api')->user();
-        $followingId = User::findBySlug($following_slug);
-        $id = $user->id;
-        $follow = Follow::where('follower_id', $id)->where('following_id', $followingId->id)->first();
-        $follow->delete();
-        $user->deductPoints(10);
-    }
+        DB::beginTransaction();
 
+        try {
+            $user = Auth::guard('api')->user();
+            $followingUser = User::findBySlug($following_slug);
+            $followingId = $followingUser->id;
+
+            $follow = Follow::where('follower_id', $user->id)
+                ->where('following_id', $followingId)
+                ->first();
+
+            if ($follow) {
+                $follow->delete();
+                $user->deductPoints(10);
+
+                DB::table('notifications')
+                    ->where('type', 'App\\Notifications\\Users\\Follow\\NewFollowRequestNotification')
+                    ->where('notifiable_type', get_class($followingUser))
+                    ->where('notifiable_id', $followingId)
+                    ->where('data', 'LIKE', '%"user_s_id":' . $user->id . '%')
+                    ->where('data', 'LIKE', '%"list_followers"%')
+                    ->delete();
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 
     public function acceptFollower($follower_slug)
     {
@@ -129,7 +152,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $follower = User::findBySlug($user_slug);
         $followings = Follow::where('follower_id', $follower->id)->where('status', 1)->paginate($perPage);
         activityLog('view other users followings', $follower, 'the user view followings of this user ', 'view');
-//        return FollowingResource::collection($followers);
+        //        return FollowingResource::collection($followers);
         $followingsArray = $followings->toArray();
         $pagination = [
             'next_page_url' => $followingsArray['next_page_url'],
@@ -152,5 +175,4 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $follow->delete();
         $user->deductPoints(10);
     }
-
 }

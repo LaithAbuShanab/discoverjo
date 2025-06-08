@@ -30,7 +30,6 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
     public function addReview($data)
     {
         DB::beginTransaction();
-
         try {
             $user = Auth::guard('api')->user();
 
@@ -66,40 +65,43 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 ->latest('created_at') // Make sure this column exists
                 ->value('id');
 
-            if (in_array($data['type'], ['trip', 'guideTrip'])) {
-                $userPost = $reviewItem->user;
-                $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
-                $receiverLanguage = $userPost->lang;
+                if (in_array($data['type'], ['trip', 'guideTrip'])) {
+                    $userPost = $reviewItem->user;
 
-                $dataBaseNotification = [
-                    'title_en'     => Lang::get('app.notifications.new-review', [], 'en'),
-                    'title_ar'     => Lang::get('app.notifications.new-review', [], 'ar'),
-                    'body_en'      => Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
-                        'username' => Auth::guard('api')->user()->username
-                    ], 'en'),
-                    'body_ar'      => Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
-                        'username' => Auth::guard('api')->user()->username
-                    ], 'ar'),
+                    if ($userPost->id !== $user->id) {
+                        $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
+                        $receiverLanguage = $userPost->lang;
 
-                    'type'         => 'review_' . $data['type'],
-                    'slug'         => $data['slug'],
-                    'review_id'    => $reviewPivotId
-                ];
+                        $dataBaseNotification = [
+                            'title_en'     => Lang::get('app.notifications.new-review', [], 'en'),
+                            'title_ar'     => Lang::get('app.notifications.new-review', [], 'ar'),
+                            'body_en'      => Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
+                                'username' => $user->username
+                            ], 'en'),
+                            'body_ar'      => Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
+                                'username' => $user->username
+                            ], 'ar'),
 
-                $title = Lang::get('app.notifications.new-review', [], $receiverLanguage);
-                $body = Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
-                    'username' => Auth::guard('api')->user()->username
-                ], $receiverLanguage);
-                $firebaseNotification = [
-                    'title' => $title,
-                    'body'  => $body,
-                    'icon'  => asset('assets/icon/speaker.png'),
-                    'sound' => 'default',
-                ];
+                            'type'         => 'review_' . $data['type'],
+                            'slug'         => $data['slug'],
+                            'review_id'    => $reviewPivotId
+                        ];
 
-                Notification::send($userPost, new NewReviewNotification($dataBaseNotification));
-                sendNotification($tokens, $firebaseNotification);
-            }
+                        $title = Lang::get('app.notifications.new-review', [], $receiverLanguage);
+                        $body = Lang::get('app.notifications.new-user-review-in-' . $data['type'], [
+                            'username' => $user->username
+                        ], $receiverLanguage);
+                        $firebaseNotification = [
+                            'title' => $title,
+                            'body'  => $body,
+                            'icon'  => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ];
+
+                        Notification::send($userPost, new NewReviewNotification($dataBaseNotification));
+                        sendNotification($tokens, $firebaseNotification);
+                    }
+                }
 
             $user->addPoints(10);
             $activity = Activity::find(1);

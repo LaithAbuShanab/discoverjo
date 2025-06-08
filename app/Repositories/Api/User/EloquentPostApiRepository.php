@@ -154,8 +154,15 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function delete($id)
     {
-        $post = Post::find($id);
+        $post = Post::findOrFail($id);
+
+        DB::table('notifications')
+            ->where('type', 'App\\Notifications\\Users\\Post\\NewPostFollowersNotification')
+            ->where('data', 'LIKE', '%"post_id":' . $post->id . '%')
+            ->delete();
+
         $post->delete();
+
         $user = Auth::guard('api')->user();
         $user->deductPoints(10);
     }
@@ -189,44 +196,56 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         try {
             $post = Post::findOrFail($data['post_id']);
             $status = $data['status'] == "like" ? '1' : '0';
+            $authUser = Auth::guard('api')->user();
             $userPost = $post->user;
             $receiverLanguage = $userPost->lang;
             $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
-            $notificationData = [];
 
-            $authUser = Auth::guard('api')->user();
             $existingLike = $post->likes()->where('user_id', $authUser->id)->first();
+
+            // Define notification types
+            $likeNotificationType = NewPostLikeNotification::class;
+            $dislikeNotificationType = NewPostDisLikeNotification::class;
+
+            $deleteNotification = function ($type) use ($authUser, $post) {
+                DB::table('notifications')
+                    ->where('type', $type)
+                    ->where('notifiable_id', $post->user_id)
+                    ->where('notifiable_type', get_class($post->user))
+                    ->where('data', 'LIKE', '%"post_id":' . $post->id . '%')
+                    ->where('data', 'LIKE', '%"user_id":' . $authUser->id . '%')
+                    ->where('data', 'LIKE', '%"options%') // optional: ensures it's in "options"
+                    ->delete();
+            };
 
             if ($existingLike) {
                 if ($existingLike->status != $status) {
-                    // $post->likes()->updateExistingPivot($authUser->id, ['status' => $status]);
                     $existingLike->update(['status' => $status]);
+
+                    $deleteNotification($existingLike->status === '1' ? $dislikeNotificationType : $likeNotificationType);
 
                     if ($authUser->id != $post->user_id) {
                         if ($status === '1') {
-                            $notificationData = [
-                                'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-post-like-body', [
-                                    'username' => $authUser->username
-                                ], $receiverLanguage),
-                                'icon'  => asset('assets/icon/speaker.png'),
-                                'sound' => 'default',
-                            ];
                             Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
-                        } else {
-                            $notificationData = [
-                                'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-post-dislike-body', [
-                                    'username' => $authUser->username
-                                ], $receiverLanguage),
+                            sendNotification($tokens, [
+                                'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
                                 'icon'  => asset('assets/icon/speaker.png'),
                                 'sound' => 'default',
-                            ];
+                            ]);
+                        } else {
                             Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
+                            sendNotification($tokens, [
+                                'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                                'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
+                                'icon'  => asset('assets/icon/speaker.png'),
+                                'sound' => 'default',
+                            ]);
                         }
                     }
                 } else {
-                    $post->likes()->where('user_id', $authUser->id)->delete();
+                    $existingLike->delete();
+                    $deleteNotification($status === '1' ? $likeNotificationType : $dislikeNotificationType);
                 }
             } else {
                 $post->likes()->create([
@@ -236,38 +255,29 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
                 if ($authUser->id != $post->user_id) {
                     if ($status === '1') {
-                        $notificationData = [
-                            'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-post-like-body', [
-                                'username' => $authUser->username
-                            ], $receiverLanguage),
-                            'icon'  => asset('assets/icon/speaker.png'),
-                            'sound' => 'default',
-                        ];
                         Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
-                    } else {
-                        $notificationData = [
-                            'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-post-dislike-body', [
-                                'username' => $authUser->username
-                            ], $receiverLanguage),
+                        sendNotification($tokens, [
+                            'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
                             'icon'  => asset('assets/icon/speaker.png'),
                             'sound' => 'default',
-                        ];
+                        ]);
+                    } else {
                         Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
+                        sendNotification($tokens, [
+                            'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                            'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
+                            'icon'  => asset('assets/icon/speaker.png'),
+                            'sound' => 'default',
+                        ]);
                     }
                 }
-                $user = Auth::guard('api')->user();
-                $user->addPoints(10);
+
+                // Add points
+                $authUser->addPoints(10);
                 $activity = Activity::find(1);
-                $user->recordStreak($activity);
+                $authUser->recordStreak($activity);
             }
-
-            if (!empty($notificationData) && $authUser->id != $post->user_id) {
-                sendNotification($tokens, $notificationData);
-            }
-
-
 
             activityLog($data['status'], $post, 'the user ' . $data['status'] . ' the post', $data['status']);
 

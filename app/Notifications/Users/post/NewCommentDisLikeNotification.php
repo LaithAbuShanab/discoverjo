@@ -50,6 +50,7 @@ class NewCommentDisLikeNotification extends Notification
                 'slug'       => null,
                 'post_id'    => $this->postId,
                 'comment_id' => $this->commentId,
+                'user_id'    => $this->user->id
             ]
         ];
     }

@@ -64,7 +64,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
     public function allGuides()
     {
         $perPage = config('app.pagination_per_page');
-        $guides = User::where('status', 1)->where('is_guide', 1)->paginate($perPage);
+        $guides = User::where('status', 1)->where('type', 2)->paginate($perPage);
         $guidesArray = $guides->toArray();
 
         $pagination = [

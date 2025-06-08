@@ -85,7 +85,7 @@ class Notification extends Page implements HasForms
                                         CheckboxList::make('selectedUsers')
                                             ->label('')
                                             ->options(
-                                                User::where('is_guide', '!=', 1)
+                                                User::where('type', '==', 1)
                                                     ->pluck('username', 'id')
                                                     ->toArray()
                                             )
@@ -97,7 +97,7 @@ class Notification extends Page implements HasForms
                                         CheckboxList::make('selectedGuideUsers')
                                             ->label('')
                                             ->options(
-                                                User::where('is_guide', 1)
+                                                User::where('type', 1)
                                                     ->pluck('username', 'id')
                                                     ->toArray()
                                             )

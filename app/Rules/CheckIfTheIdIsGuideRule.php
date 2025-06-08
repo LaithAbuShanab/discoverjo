@@ -17,7 +17,7 @@ class CheckIfTheIdIsGuideRule implements ValidationRule
     {
         $user = User::findBySlug($value);
         if (!$user) return;
-        if (!$user->is_guide) {
+        if ($user->type != 2) {
             $fail(__('validation.api.the-provided-id-not-guide'));
         }
         if ($user->status != 1) {

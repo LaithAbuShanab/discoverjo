@@ -18,6 +18,11 @@ class UserProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isGuide = 0;
+        if($this->type ==2)
+        {
+            $isGuide = 1;
+        }
         $paginationPerPage = config('app.pagination_per_page');
 
         $tags = $this->tags->map(function ($tag) {
@@ -66,8 +71,8 @@ class UserProfileResource extends JsonResource
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
             'address' => $this->address,
-            'is_guide' => $this->is_guide,
-            'guide_rating' => $this->is_guide ? $this->guideRatings->avg('rating') : false,
+            'is_guide' =>$isGuide,
+            'guide_rating' => $isGuide ? $this->guideRatings->avg('rating') : false,
             'status' => $this->status,
             'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),

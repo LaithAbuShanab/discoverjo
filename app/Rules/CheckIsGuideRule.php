@@ -16,7 +16,7 @@ class CheckIsGuideRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $user = Auth::guard('api')->user();
-        if (!$user->is_guide || $user->status !== 1) {
+        if ($user->type != 2 || $user->status !== 1) {
             $fail(__('validation.api.you_should_be_guide_to_create_guide_trip'));
         }
     }

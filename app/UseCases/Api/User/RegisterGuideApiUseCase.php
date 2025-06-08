@@ -27,7 +27,7 @@ class RegisterGuideApiUseCase
                 'description' => $request['description'],
                 'phone_number' => $request['phone_number'],
                 'status' => 4,
-                'is_guide' => 1,
+                'type' => 2,
                 'lang' => $lang
             ],
 

@@ -11,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
-use Filament\Forms\Components\{Section, Grid};
+use Filament\Forms\Components\{Section, Grid, Select};
 use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
@@ -158,9 +158,14 @@ class UserResource extends Resource
                                     ->default(2)
                                     ->label('Status'),
 
-                                Forms\Components\Toggle::make('is_guide')
-                                    ->required()
-                                    ->label('Is Guide?'),
+                                Select::make('type')
+                                    ->label('type')
+                                    ->options([
+                                        '1' => 'User',
+                                        '2' => 'Guide',
+                                        '3' => 'Provider',
+                                        '4' => 'Chalet Provider',
+                                    ]),
                             ]),
                     ])
                     ->columns(1),

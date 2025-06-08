@@ -14,13 +14,18 @@ class UserLoginResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isGuide = 0;
+        if($this->type ==2)
+        {
+            $isGuide = 1;
+        }
         return [
             'id' => $this->id,
             'username' => $this->username,
             'email' => $this->email,
             'address' => $this->address,
             'verified_email'=>$this->verified_email,
-            'is_guide'=>$this->is_guide,
+            'is_guide'=>$isGuide,
             'referral_code'=>$this->referral_code,
             'first_login'=>$this->status==2?true:false,
             'avatar'=>$this->getFirstMediaUrl('avatar','avatar_app'),

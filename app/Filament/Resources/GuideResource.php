@@ -27,7 +27,7 @@ class GuideResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('is_guide', 1)->count();
+        return static::getModel()::where('type', 1)->count();
     }
 
     public static function form(Form $form): Form
@@ -84,15 +84,20 @@ class GuideResource extends Resource
                     ->collapsible()
                     ->columns(1),
 
-                // Guide Details Section
+                 //Guide Details Section
                 Section::make('Guide Details')
                     ->description('Details related to guide status and points.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Toggle::make('is_guide')
-                                    ->label('Is Guide?')
-                                    ->required(),
+                                Select::make('type')
+                                    ->label('type')
+                                    ->options([
+                                        '1' => 'User',
+                                        '2' => 'Guide',
+                                        '3' => 'Provider',
+                                        '4' => 'Chalet Provider',
+                                    ]),
 
                                 TextInput::make('points')
                                     ->label('Points')
@@ -212,7 +217,7 @@ class GuideResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->modifyQueryUsing(fn($query) => $query->where('is_guide', 1));
+            ])->modifyQueryUsing(fn($query) => $query->where('type', 2));
     }
 
     public static function getRelations(): array

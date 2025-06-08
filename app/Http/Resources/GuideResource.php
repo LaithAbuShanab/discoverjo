@@ -29,6 +29,11 @@ class GuideResource extends JsonResource
                 1 => 'ذكر', 2=>'انثى'],
             'en'=>[1=>'Male', 2 =>'Female']
         ];
+        $isGuide = 0;
+        if($this->type ==2)
+        {
+            $isGuide = 1;
+        }
         return [
             'id' => $this->id,
             'slug'=>$this->slug,
@@ -44,7 +49,7 @@ class GuideResource extends JsonResource
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
             'address' => $this->address,
-            'is_guide'=>$this->is_guide,
+            'is_guide'=>$isGuide,
             'is_following' =>isFollowing($this->id),
             'guide_rating' => $this->guideRatings->avg('rating'),
             'status' => $this->status,

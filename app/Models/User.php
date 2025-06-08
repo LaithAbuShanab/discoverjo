@@ -51,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'longitude',
         'latitude',
         'status',
-        'is_guide',
+        'type',
     ];
 
     protected $hidden = [

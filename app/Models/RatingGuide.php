@@ -35,6 +35,6 @@ class RatingGuide extends Model
 
     public function guide()
     {
-        return $this->belongsTo(User::class, 'guide_id')->where('is_guide', true);
+        return $this->belongsTo(User::class, 'guide_id')->where('type', 2);
     }
 }

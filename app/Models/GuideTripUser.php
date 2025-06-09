@@ -39,4 +39,12 @@ class GuideTripUser extends Model
     {
         return $this->belongsTo(GuideTrip::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($guideTripUser) {
+            $guideTripUser->user_id = $guideTripUser->user_id ?? auth()->id();
+        });
+    }
+
 }

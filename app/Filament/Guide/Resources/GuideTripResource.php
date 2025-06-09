@@ -4,6 +4,8 @@ namespace App\Filament\Guide\Resources;
 
 use App\Filament\Guide\Resources\GuideTripResource\Pages;
 use App\Filament\Guide\Resources\GuideTripResource\RelationManagers;
+use App\Filament\Guide\Resources\GuideTripResource\RelationManagers\GuideTripUsersRelationManager;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Concerns\Translatable;
 use App\Models\GuideTrip;
@@ -101,12 +103,21 @@ class GuideTripResource extends Resource
                     ])
                     ->columnSpanFull(),
 
-                // 🔹 Status Selection
-                Section::make('Trip Status')
+
+                Section::make('Region & status')
                     ->schema([
-                        Forms\Components\Toggle::make('status')->required()->inline(false),
+                        Grid::make(1)->schema([
+                            Select::make('region_id')->label('Region')->relationship('region', 'name')->required(),
+                            // 🔹 Status Selection
+                            Section::make('Trip Status')
+                                ->schema([
+                                    Forms\Components\Toggle::make('status')->required()->inline(false),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
                     ])
-                    ->columnSpanFull(),
+                    ->collapsible()
+                    ->columns(1),
 
                 // 🔹 Trip Activities & Assemblies (Side by Side)
                 Section::make('Trip Details')
@@ -376,7 +387,7 @@ class GuideTripResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GuideTripUsersRelationManager::class,
         ];
     }
 

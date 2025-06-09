@@ -22,6 +22,7 @@ class AllGuideTripResource extends JsonResource
             'id'=>$this->id,
             'slug'=>$this->slug,
             'name'=>$this->name,
+            'region'=>new RegionResource($this->region),
             'price'=>$this->main_price,
             'start_time'=>$this->start_datetime,
             'max_attendance'=>$this->max_attendance,

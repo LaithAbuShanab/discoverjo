@@ -142,4 +142,8 @@ class GuideTrip extends Model implements HasMedia
     {
         return $this->hasMany(GuideTripPaymentMethod::class);
     }
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
 }

@@ -72,6 +72,7 @@ class UpdateGuideTripRequest extends  FormRequest
             'trail' => ['nullable'],
             'main_image' => ['nullable', 'image', 'max:2048'],
             'payment_method' => ['nullable'],
+            'region'=>['required','string','exists:regions,slug'],
         ];
     }
 

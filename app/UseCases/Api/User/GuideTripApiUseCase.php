@@ -3,6 +3,7 @@
 namespace App\UseCases\Api\User;
 
 use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
+use App\Models\Region;
 use Illuminate\Support\Facades\Auth;
 
 class GuideTripApiUseCase
@@ -42,6 +43,7 @@ class GuideTripApiUseCase
         $translator = ['en' => $data['name_en'], 'ar' => $data['name_ar']];
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
         $trailData =  $data['is_trail'] ? $data['trail'] : null;
+        $regionId= Region::findBySlug($data['region'])->id;
 
         return $this->guideTripApiRepository->storeGuideTrip(
             [
@@ -51,7 +53,8 @@ class GuideTripApiUseCase
                 'main_price' => $data['main_price'],
                 'start_datetime' => $data['start_datetime'],
                 'end_datetime' => $data['end_datetime'],
-                'max_attendance' => $data['max_attendance']
+                'max_attendance' => $data['max_attendance'],
+                'region_id' => $regionId,
             ],
 
             isset($data['gallery']) ? $data['gallery'] : null,
@@ -73,6 +76,7 @@ class GuideTripApiUseCase
         $translator = ['en' => $data['name_en'], 'ar' => $data['name_ar']];
         $translatorDescription = ['en' => $data['description_en'], 'ar' => $data['description_ar']];
         $trailData = $data['is_trail'] ? $data['trail'] : null;
+        $regionId= Region::findBySlug($data['region'])->id;
 
         return $this->guideTripApiRepository->updateGuideTrip(
             [
@@ -81,7 +85,8 @@ class GuideTripApiUseCase
                 'main_price' => $data['main_price'],
                 'start_datetime' => $data['start_datetime'],
                 'end_datetime' => $data['end_datetime'],
-                'max_attendance' => $data['max_attendance']
+                'max_attendance' => $data['max_attendance'],
+                'region_id' => $regionId,
             ],
             $slug,
             isset($data['gallery']) ? $data['gallery'] : null,

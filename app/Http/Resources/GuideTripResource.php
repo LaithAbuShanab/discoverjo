@@ -61,6 +61,7 @@ class GuideTripResource extends JsonResource
             'slug'=>$this->slug,
             "name"=>$this->name,
             "description"=>$this->description,
+            'region'=>new RegionResource($this->region),
             'main_image'=> $this->getFirstMediaUrl('main_image','main_image_app'),
             "start_datetime"=>$this->start_datetime,
             "end_datetime"=>$this->end_datetime,

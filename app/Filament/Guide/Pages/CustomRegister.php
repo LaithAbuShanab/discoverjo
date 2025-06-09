@@ -241,6 +241,8 @@ class CustomRegister extends BaseRegister
             }
         }
 
+        $user->sendEmailVerificationNotification();
+
 //        Auth::guard('guide')->login($user);
 
         return app(RegisterResponse::class);

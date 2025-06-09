@@ -3,6 +3,8 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Guide\Pages\Dashboard;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,6 +22,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentTranslatableFields\Filament\Plugins\FilamentTranslatableFieldsPlugin;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class GuidePanelProvider extends PanelProvider
 {
@@ -32,7 +36,7 @@ class GuidePanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->authGuard('guide')
-            ->login() // Enable login
+            ->login(\App\Filament\Guide\Pages\CustomLogin::class)
             ->discoverResources(in: app_path('Filament/Guide/Resources'), for: 'App\\Filament\\Guide\\Resources')
             ->discoverPages(in: app_path('Filament/Guide/Pages'), for: 'App\\Filament\\Guide\\Pages')
             ->pages([
@@ -67,4 +71,6 @@ class GuidePanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
     }
+
+
 }

@@ -15,6 +15,10 @@ class CheckUserInBlackListRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if ($attribute == 'data.email') {
+            $attribute = 'email';
+        }
+
         // Check if the value exists in the BlockedUser model
         if (BlockedUser::where($attribute, $value)->exists()) {
             $fail(__('validation.api.this_email_in_black_list'));

@@ -217,7 +217,8 @@ class GuideResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->modifyQueryUsing(fn($query) => $query->where('type', 2));
+            ]);
+            // ->modifyQueryUsing(fn($query) => $query->where('type', 2));
     }
 
     public static function getRelations(): array

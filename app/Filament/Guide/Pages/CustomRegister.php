@@ -2,51 +2,71 @@
 
 namespace App\Filament\Guide\Pages;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
+use Filament\Pages\Auth\Register as BaseRegister;
 use App\Models\User;
-use App\Rules\CheckTagExistsRule;
 use App\Rules\CheckUserInBlackListRule;
 use App\Rules\MinAgeRule;
-use Filament\Pages\Page;
-use Filament\Pages\Auth\Register as BaseRegister;
-use Illuminate\Validation\Rule;
-
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Pages\Auth\Register;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-
 
 class CustomRegister extends BaseRegister
 {
+    public function getMaxWidth(): string
+    {
+        return '5xl';
+    }
+
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
                 $this->makeForm()
+                    ->model(User::class)
                     ->schema([
-                        $this->getFirstNameField(),
-                        $this->getLastNameField(),
-                        $this->getUsernameField(),
-                        $this->getBirthdayField(),
-                        $this->getGenderField(),
-                        $this->getEmailField(),
-                        $this->getPhoneNumberField(),
-                        $this->getDescriptionField(),
-                        $this->getTagsField(),
-                        $this->getImageField(),
-                        $this->getProfessionalFileField(),
-                        $this->getDeviceTokenField(),
-                        $this->getPasswordField(),
-                        $this->getPasswordConfirmationField(),
+                        Wizard::make([
+                            Step::make('Personal Information')
+                                ->schema([
+                                    $this->getFirstNameField(),
+                                    $this->getLastNameField(),
+                                    $this->getUsernameField(),
+                                    $this->getBirthdayField(),
+                                    $this->getGenderField(),
+                                ]),
+
+                            Step::make('Contact Information')
+                                ->schema([
+                                    $this->getEmailField(),
+                                    $this->getPhoneNumberField(),
+                                ]),
+
+                            Step::make('Profile Details')
+                                ->schema([
+                                    $this->getDescriptionField(),
+                                    $this->getTagsField(),
+                                    $this->getImageField(),
+                                    $this->getProfessionalFileField(),
+                                ]),
+
+                            Step::make('Security')
+                                ->schema([
+                                    $this->getPasswordField(),
+                                    $this->getPasswordConfirmationField(),
+                                ]),
+                        ])
                     ])
                     ->statePath('data')
+                    ->columns(1)
             ),
         ];
     }
@@ -54,12 +74,14 @@ class CustomRegister extends BaseRegister
     protected function getFirstNameField(): TextInput
     {
         return TextInput::make('first_name')
+            ->placeholder('Please Enter First Name')
             ->required();
     }
 
     protected function getLastNameField(): TextInput
     {
         return TextInput::make('last_name')
+            ->placeholder('Please Enter Last Name')
             ->required();
     }
 
@@ -72,6 +94,8 @@ class CustomRegister extends BaseRegister
             ->alphaDash()
             ->rule('regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/')
             ->rule('not_regex:/\s/')
+            ->placeholder('Please Enter Username')
+            ->required()
             ->unique(User::class, 'username');
     }
 
@@ -90,6 +114,8 @@ class CustomRegister extends BaseRegister
                 2 => 'Female',
             ])
             ->required()
+            ->searchable()
+            ->placeholder('Please Select Gender')
             ->rule(Rule::in([1, 2]));
     }
 
@@ -100,59 +126,55 @@ class CustomRegister extends BaseRegister
             ->maxLength(255)
             ->required()
             ->unique(User::class, 'email')
+            ->placeholder('Please Enter Email')
             ->rule(new CheckUserInBlackListRule());
     }
 
     protected function getPhoneNumberField(): TextInput
     {
         return TextInput::make('phone_number')
+            ->placeholder('Please Enter Phone Number')
             ->required();
     }
 
     protected function getDescriptionField(): Textarea
     {
         return Textarea::make('description')
+            ->placeholder('Please Enter Description')
             ->required();
     }
 
-    protected function getTagsField(): TagsInput
+    protected function getTagsField(): Select
     {
-        return TagsInput::make('tags')
+        return Select::make('tags')
+            ->label('Tags')
+            ->relationship('tags', 'name')
+            ->multiple()
+            ->searchable()
+            ->preload()
             ->required()
-            ->rule(new CheckTagExistsRule());
+            ->placeholder('Please select tags')
+            ->minItems(3);
     }
 
-    protected function getImageField(): FileUpload
+    protected function getImageField(): SpatieMediaLibraryFileUpload
     {
-        return FileUpload::make('image')
-            ->image()
-            ->required();
+        return SpatieMediaLibraryFileUpload::make('image')
+            ->label('Guide Image')
+            ->collection('avatar')
+            ->disk('s3')
+            ->openable()
+            ->conversion('avatar_app');
     }
 
-    protected function getProfessionalFileField(): FileUpload
+    protected function getProfessionalFileField(): SpatieMediaLibraryFileUpload
     {
-        return FileUpload::make('professional_file')
-            ->required()
-            ->acceptedFileTypes([
-                'application/pdf',
-                'image/jpeg',
-                'image/png',
-                'image/jpg',
-                'image/gif',
-                'image/svg+xml',
-                'image/webp',
-                'image/bmp',
-                'image/tiff',
-                'image/x-icon',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ]);
-    }
-
-    protected function getDeviceTokenField(): TextInput
-    {
-        return TextInput::make('device_token')
-            ->required()
-            ->maxLength(255);
+        return SpatieMediaLibraryFileUpload::make('professional_file')
+            ->label('Professional File')
+            ->collection('file')
+            ->disk('s3')
+            ->openable()
+            ->conversion('file_preview');
     }
 
     protected function getPasswordField(): TextInput
@@ -161,6 +183,7 @@ class CustomRegister extends BaseRegister
             ->password()
             ->required()
             ->confirmed()
+            ->placeholder('Please Enter Password')
             ->rule(Rules\Password::defaults());
     }
 
@@ -168,9 +191,57 @@ class CustomRegister extends BaseRegister
     {
         return TextInput::make('password_confirmation')
             ->password()
+            ->placeholder('Please Enter Password Confirmation')
             ->required();
     }
 
+    /**
+     * @return ?RegistrationResponse
+     */
+    public function register(): ?RegistrationResponse
+    {
+        $data = $this->form->getState();
+
+        $user = User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'username' => $data['username'],
+            'birthday' => $data['birthday'],
+            'gender' => $data['gender'],
+            'email' => $data['email'],
+            'phone_number' => $data['phone_number'],
+            'description' => $data['description'],
+            'password' => Hash::make($data['password']),
+            'status' => 4,
+            'type' => 2
+        ]);
+
+        if (!empty($this->data['tags'])) {
+            $user->tags()->sync($this->data['tags']);
+        }
+
+        if (isset($this->data['image']) && !empty($this->data['image'])) {
+            foreach ($this->data['image'] as $media) {
+                $filename = Str::random(10) . '_' . time() . '.' . $media->getClientOriginalExtension();
+
+                $user->addMedia($media->getRealPath())
+                    ->usingFileName($filename)
+                    ->toMediaCollection('avatar');
+            }
+        }
+
+        if (isset($this->data['professional_file']) && $this->data['professional_file']) {
+            foreach ($this->data['professional_file'] as $media) {
+                $filename = Str::random(10) . '_' . time() . '.' . $media->getClientOriginalExtension();
+
+                $user->addMedia($media->getRealPath())
+                    ->usingFileName($filename)
+                    ->toMediaCollection('file');
+            }
+        }
+
+        Auth::guard('guide')->login($user);
+
+        return app(RegistrationResponse::class);
+    }
 }
-
-

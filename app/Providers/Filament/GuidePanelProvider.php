@@ -30,18 +30,16 @@ class GuidePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->authGuard('guide')
             ->login(\App\Filament\Guide\Pages\CustomLogin::class)
             ->registration(\App\Filament\Guide\Pages\CustomRegister::class)
+            ->brandName('Guide Panel')
             ->discoverResources(in: app_path('Filament/Guide/Resources'), for: 'App\\Filament\\Guide\\Resources')
             ->discoverPages(in: app_path('Filament/Guide/Pages'), for: 'App\\Filament\\Guide\\Pages')
             ->pages([
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Guide/Widgets'), for: 'App\\Filament\\Guide\\Widgets')
-            ->widgets([
-
-            ])
+            ->widgets([])
             ->plugins([
 
                 FilamentTranslatableFieldsPlugin::make()
@@ -64,8 +62,7 @@ class GuidePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->authGuard('guide');
     }
-
-
 }

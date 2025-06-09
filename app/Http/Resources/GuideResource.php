@@ -18,25 +18,21 @@ class GuideResource extends JsonResource
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
-                'slug'=>$tag->slug,
+                'slug' => $tag->slug,
                 'image_active' => $tag->getFirstMediaUrl('tag_active', 'tag_active_app'),
-                'image_inactive'=> $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
+                'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
         });
 
-        $gender = [
-            'ar'=>[
-                1 => 'ذكر', 2=>'انثى'],
-            'en'=>[1=>'Male', 2 =>'Female']
-        ];
+        $gender = ['ar' => [1 => 'ذكر', 2 => 'انثى'], 'en' => [1 => 'Male', 2 => 'Female']];
         $isGuide = 0;
-        if($this->type ==2)
-        {
+
+        if ($this->type == 2) {
             $isGuide = 1;
         }
         return [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
@@ -49,19 +45,19 @@ class GuideResource extends JsonResource
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
             'address' => $this->address,
-            'is_guide'=>$isGuide,
-            'is_following' =>isFollowing($this->id),
+            'is_guide' => $isGuide,
+            'is_following' => isFollowing($this->id),
             'guide_rating' => $this->guideRatings->avg('rating'),
             'status' => $this->status,
-            'description'=>$this->description,
+            'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
-            'tags'=>$tags,
-            'posts'=>UserPostResource::collection($this->posts),
-            'reviews'=>ReviewResource::collection($this->reviews),
-            'guide_trips'=>AllGuideTripResource::collection($this->guideTrips),
-            'visited_places'=> UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar'=> $this->getFirstMediaUrl('avatar','avatar_app'),
+            'tags' => $tags,
+            'posts' => UserPostResource::collection($this->posts),
+            'reviews' => ReviewResource::collection($this->reviews),
+            'guide_trips' => AllGuideTripResource::collection($this->guideTrips),
+            'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
+            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
         ];
     }
 }

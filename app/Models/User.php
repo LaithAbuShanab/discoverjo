@@ -23,9 +23,9 @@ use Spatie\Translatable\HasTranslations;
 use Illuminate\Support\Str;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-
-class User extends Authenticatable implements MustVerifyEmail, HasMedia,FilamentUser,HasName
+class User extends Authenticatable implements MustVerifyEmail, HasMedia, FilamentUser, HasName
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
@@ -96,6 +96,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia,Filament
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
     }
+
     public function registerMediaCollections(): void
     {
         // Avatar collection (Profile Image)
@@ -246,7 +247,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia,Filament
         return $this->hasOne(DeviceToken::class, 'user_id');
     }
 
-    public function DeviceTokenMany() : HasMany
+    public function DeviceTokenMany(): HasMany
     {
         return $this->hasMany(DeviceToken::class, 'user_id');
     }

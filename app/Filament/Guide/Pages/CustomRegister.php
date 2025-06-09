@@ -2,6 +2,7 @@
 
 namespace App\Filament\Guide\Pages;
 
+use App\Http\Responses\RegisterResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -240,8 +241,8 @@ class CustomRegister extends BaseRegister
             }
         }
 
-        Auth::guard('guide')->login($user);
+//        Auth::guard('guide')->login($user);
 
-        return app(RegistrationResponse::class);
+        return app(RegisterResponse::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\RegisterResponse;
 use App\Interfaces\Gateways\Api\User\AuthApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\CommentApiRepositoryInterface;
@@ -89,6 +90,7 @@ use App\Repositories\Api\User\EloquentUserProfileApiRepository;
 use App\Repositories\Api\User\EloquentVolunteeringApiRepository;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -157,6 +159,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(FavoriteApiRepositoryInterface::class, EloquentFavoriteApiRepository::class);
         $this->app->bind(ReviewApiRepositoryInterface::class, EloquentReviewApiRepository::class);
+
+        $this->app->bind(RegistrationResponseContract::class, RegisterResponse::class);
     }
 
     /**

@@ -31,7 +31,7 @@ class ProviderPanelProvider extends PanelProvider
             ])
             ->login(\App\Filament\Provider\Pages\CustomLogin::class)
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)
-            ->emailVerification()
+            ->brandName('Provider Panel')
             ->discoverResources(in: app_path('Filament/Provider/Resources'), for: 'App\\Filament\\Provider\\Resources')
             ->discoverPages(in: app_path('Filament/Provider/Pages'), for: 'App\\Filament\\Provider\\Pages')
             ->pages([

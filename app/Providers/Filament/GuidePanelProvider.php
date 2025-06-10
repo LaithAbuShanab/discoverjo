@@ -32,6 +32,8 @@ class GuidePanelProvider extends PanelProvider
             ])
             ->login(\App\Filament\Guide\Pages\CustomLogin::class)
             ->registration(\App\Filament\Guide\Pages\CustomRegister::class)
+            ->emailVerification()
+            ->passwordReset()
             ->brandName('Guide Panel')
             ->discoverResources(in: app_path('Filament/Guide/Resources'), for: 'App\\Filament\\Guide\\Resources')
             ->discoverPages(in: app_path('Filament/Guide/Pages'), for: 'App\\Filament\\Guide\\Pages')

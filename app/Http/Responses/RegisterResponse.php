@@ -2,6 +2,9 @@
 
 namespace App\Http\Responses;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
 
 
 class RegisterResponse implements RegistrationResponseContract
@@ -14,10 +17,15 @@ class RegisterResponse implements RegistrationResponseContract
      */
     public function toResponse($request)
     {
-        // return whatever you want as url
-        $url = '/guide/login';
+        // Determine URL based on request path
+        if ( Str::contains(url()->previous(), 'provider')) {
+            $url = '/provider/login';
+        } else {
+            $url = '/guide/login';
+        }
 
         return redirect()->intended($url);
     }
+
 
 }

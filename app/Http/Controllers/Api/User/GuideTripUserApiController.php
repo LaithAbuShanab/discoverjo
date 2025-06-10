@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Event\DayRequest;
 use App\Http\Requests\Api\User\GuideTrip\CreateGuideTripUserRequest;
+use App\Http\Requests\Api\User\GuideTrip\FilterGuideTripRequest;
 use App\Http\Requests\Api\User\GuideTrip\StoreSingleSubscriptionRequest;
 use App\Http\Requests\Api\User\GuideTrip\UpdateGuideTripUserRequest;
 use App\Http\Requests\Api\User\GuideTrip\UpdateSingleSubscriptionRequest;
@@ -256,6 +257,17 @@ class GuideTripUserApiController extends Controller
     {
         try {
             $volunteering = $this->guideTripUserApiUseCase->dateGuideTrip($request->validated());
+            return ApiResponse::sendResponse(200, __('app.api.guide-trip-of-specific-date-retrieved-successfully'), $volunteering);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
+        }
+    }
+
+    public function filterGuideTrip(FilterGuideTripRequest $request)
+    {
+        try {
+            $volunteering = $this->guideTripUserApiUseCase->filterGuideTrip($request->validated());
             return ApiResponse::sendResponse(200, __('app.api.guide-trip-of-specific-date-retrieved-successfully'), $volunteering);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

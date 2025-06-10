@@ -7,6 +7,8 @@ use App\Http\Resources\SubscriptionResource;
 use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
+use App\Models\Region;
+use App\Models\User;
 use App\Notifications\Users\guide\DeleteAllRequestNotification;
 use App\Notifications\Users\guide\DeleteRequestNotification;
 use App\Notifications\Users\guide\NewRequestNotification;
@@ -312,5 +314,39 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
             'events' => AllGuideTripResource::collection($eloquentGuideTrips),
             'pagination' => $pagination
         ];
+    }
+
+    public function filterGuideTrip($data)
+    {
+        $perPage = config('app.pagination_per_page');
+        $regionId =isset($data['region'])? Region::findBySlug($data['region'])?->id:null;
+        $guideId =isset($data['guide_slug'])? User::findBySlug($data['guide_slug'])?->id:null;
+
+        $query = GuideTrip::query();
+        if(!empty($regionId)){
+            $query = $query->where('region_id', $regionId);
+        }
+        if(!empty($guideId)){
+            $query= $query->where('guide_id', $guideId);
+        }
+
+        $trips = $query->paginate($perPage);
+        $tripsArray = $trips->toArray();
+
+        $pagination = [
+            'next_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['next_page_url'],
+            'total' => $tripsArray['total'],
+        ];
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'trips' => AllGuideTripResource::collection($trips),
+            'pagination' => $pagination
+        ];
+
+
+
+
     }
 }

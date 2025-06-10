@@ -15,5 +15,6 @@ interface GuideTripUserApiRepositoryInterface
     public function allSubscription($slug);
     public function search($query);
     public function dateGuideTrip($date);
+    public function filterGuideTrip($data);
 
 }

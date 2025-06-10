@@ -66,4 +66,8 @@ class GuideTripUserApiUseCase
     {
         return $this->guideTripUserApiRepository->dateGuideTrip($date);
     }
+    public function filterGuideTrip($data)
+    {
+        return $this->guideTripUserApiRepository->filterGuideTrip($data);
+    }
 }

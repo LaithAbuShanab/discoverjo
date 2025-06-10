@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentTranslatableFields\Filament\Plugins\FilamentTranslatableFieldsPlugin;
+use App\Filament\Provider\Pages\Auth\RequestPasswordReset;
 
 class ProviderPanelProvider extends PanelProvider
 {
@@ -32,7 +33,7 @@ class ProviderPanelProvider extends PanelProvider
             ->login(\App\Filament\Provider\Pages\CustomLogin::class)
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)
             ->emailVerification()
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class)
             ->brandName('Provider Panel')
             ->discoverResources(in: app_path('Filament/Provider/Resources'), for: 'App\\Filament\\Provider\\Resources')
             ->discoverPages(in: app_path('Filament/Provider/Pages'), for: 'App\\Filament\\Provider\\Pages')

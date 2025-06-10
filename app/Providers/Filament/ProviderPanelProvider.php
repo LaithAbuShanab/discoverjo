@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Provider\Pages\Auth\RequestEmailVerificationNotification;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -32,7 +33,7 @@ class ProviderPanelProvider extends PanelProvider
             ])
             ->login(\App\Filament\Provider\Pages\CustomLogin::class)
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)
-            ->emailVerification()
+            ->emailVerification(RequestEmailVerificationNotification::class)
             ->passwordReset(RequestPasswordReset::class)
             ->brandName('Provider Panel')
             ->discoverResources(in: app_path('Filament/Provider/Resources'), for: 'App\\Filament\\Provider\\Resources')

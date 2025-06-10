@@ -26,7 +26,7 @@ class FilterGuideTripRequest extends FormRequest
     {
         return [
             'region' => 'bail|nullable|string|exists:regions,slug',
-            'guide_slug'=>['bail','required','string','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserActiveRule()],
+            'guide_slug'=>['bail','nullable','string','exists:users,slug',new CheckIfTheIdIsGuideRule(),new CheckIfUserActiveRule()],
         ];
     }
 }

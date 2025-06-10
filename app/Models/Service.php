@@ -20,7 +20,7 @@ class Service extends Model implements HasMedia
                 return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
             })
             ->saveSlugsTo('slug')
-            ->doNotGenerateSlugsOnUpdate(); // This prevents slug regeneration on updates
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     public function region()
@@ -30,7 +30,7 @@ class Service extends Model implements HasMedia
 
     public function features()
     {
-        return $this->belongsToMany(Feature::class,'service_features');
+        return $this->belongsToMany(Feature::class, 'service_features');
     }
 
     public function registerMediaCollections(): void

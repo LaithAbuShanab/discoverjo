@@ -11,9 +11,6 @@ class ServiceBookingDay extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'day_of_week' => 'string',
-    ];
     public function serviceBooking()
     {
         return $this->belongsTo(ServiceBooking::class);

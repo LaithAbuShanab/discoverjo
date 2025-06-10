@@ -48,4 +48,9 @@ class Feature extends Model implements HasMedia
     {
         return $this->belongsToMany(Place::class);
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'service_features');
+    }
 }

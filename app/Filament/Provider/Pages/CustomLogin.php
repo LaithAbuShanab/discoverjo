@@ -60,11 +60,11 @@ class CustomLogin extends BaseLogin
                 'data.login' => 'Only provider users can access this panel.',
             ]);
         }
-        if(!$user->hasVerifiedEmail()){
-            throw ValidationException::withMessages([
-                'data.login' => 'you should verify your email address.',
-            ]);
-        }
+//        if(!$user->hasVerifiedEmail()){
+//            throw ValidationException::withMessages([
+//                'data.login' => 'you should verify your email address.',
+//            ]);
+//        }
 
         // Status checks
         if ($user->status == 3) {

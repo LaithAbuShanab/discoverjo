@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Outerweb\FilamentTranslatableFields\Filament\Plugins\FilamentTranslatableFieldsPlugin;
 
 class ProviderPanelProvider extends PanelProvider
 {
@@ -30,6 +31,7 @@ class ProviderPanelProvider extends PanelProvider
             ])
             ->login(\App\Filament\Provider\Pages\CustomLogin::class)
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)
+            ->emailVerification()
             ->discoverResources(in: app_path('Filament/Provider/Resources'), for: 'App\\Filament\\Provider\\Resources')
             ->discoverPages(in: app_path('Filament/Provider/Pages'), for: 'App\\Filament\\Provider\\Pages')
             ->pages([
@@ -37,6 +39,14 @@ class ProviderPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Provider/Widgets'), for: 'App\\Filament\\Provider\\Widgets')
             ->widgets([])
+            ->plugins([
+
+                FilamentTranslatableFieldsPlugin::make()
+                    ->supportedLocales([
+                        'en' => 'English',
+                        'ar' => 'العربية',
+                    ]),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

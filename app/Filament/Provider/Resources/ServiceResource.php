@@ -2,11 +2,11 @@
 
 namespace App\Filament\Provider\Resources;
 
+use App\Filament\Provider\Resources\ServiceResource\Pages;
+use App\Filament\Provider\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
-use App\Filament\Resources\ServiceResource\Pages;
-use Filament\Forms\Components\{Wizard, Wizard\Step, Grid, TextInput, Textarea, Select, Toggle, Repeater, CheckboxList, TimePicker};
 use Filament\Forms;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\{CheckboxList, Grid, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -14,8 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
-
 
 class ServiceResource extends Resource
 {
@@ -205,7 +203,7 @@ class ServiceResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->modifyQueryUsing(fn(Builder $query) => $query->where('provider_type','App\Models\User')->where('provider_id', auth()->id()));
+            ])->modifyQueryUsing(fn(Builder $query) => $query->where('provider_type', 'App\Models\User')->where('provider_id', auth()->id()));
     }
 
     public static function getRelations(): array
@@ -223,9 +221,4 @@ class ServiceResource extends Resource
             'edit' => Pages\EditService::route('/{record}/edit'),
         ];
     }
-//    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-//    {
-//        return parent::getEloquentQuery()->where('provider_type','App\Models\User')->where('provider_id', auth()->id());
-//    }
 }
-

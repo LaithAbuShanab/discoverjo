@@ -4,8 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Models\Service;
 use App\Filament\Resources\ServiceResource\Pages;
-use App\Filament\Resources\ServiceResource\RelationManagers;
-use Filament\Forms\Components\{Wizard, Wizard\Step, Grid, Section, TextInput, Textarea, Select, Toggle, Repeater, CheckboxList, TimePicker};
+use Filament\Forms\Components\{Wizard, Wizard\Step, Grid, TextInput, Textarea, Select, Toggle, Repeater, CheckboxList, TimePicker};
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
@@ -42,12 +41,12 @@ class ServiceResource extends Resource
                     Step::make('Service Details')
                         ->schema([
                             Grid::make(2)->schema([
-                                TextInput::make('name')->label('Name')->required()->placeholder('Please Enter Name')->translatable(),
-                                TextInput::make('address')->label('Address')->required()->placeholder('Please Enter Address')->translatable(),
+                                TextInput::make('name')->label('Name')->required()->placeholder('Please Enter Name')->placeholder('Please Enter Name')->translatable(),
+                                TextInput::make('address')->label('Address')->required()->placeholder('Please Enter Address')->placeholder('Please Enter Address')->translatable(),
                                 Textarea::make('description')->label('Description')->rows(5)->required()->placeholder('Please Enter Description')->translatable()->columnSpan(2),
                                 TextInput::make('url_google_map')->label('Google Map URL')->required()->placeholder('Enter Google Map URL')->url(),
-                                Select::make('categories')->label('Categories')->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->multiple()->searchable()->preload()->required(),
-                                Select::make('region_id')->label('Region')->relationship('region', 'name')->required(),
+                                Select::make('categories')->label('Categories')->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->placeholder('Please Select Category')->multiple()->searchable()->preload()->required(),
+                                Select::make('region_id')->label('Region')->relationship('region', 'name')->required()->placeholder('Please Select Region'),
                                 TextInput::make('price')->placeholder('Please Enter Price')->nullable()->numeric()->required(),
                                 Toggle::make('status')->label('Status')->required()->inline(false),
                             ])
@@ -108,38 +107,36 @@ class ServiceResource extends Resource
                         ->schema([
 
                             Repeater::make('requirements')
+                                ->defaultItems(0)
                                 ->label('Requirements Item')
                                 ->relationship('requirements')
                                 ->schema([
                                     Grid::make(1)->schema([
-                                        TextInput::make('item')->label('Item')->translatable(),
+                                        TextInput::make('item')->label('Item')->required()->translatable(),
                                     ]),
                                 ])
                                 ->columns(1),
 
                             Repeater::make('priceAges')
                                 ->label('Price Ages')
+                                ->defaultItems(0)
                                 ->relationship('priceAges')
                                 ->schema([
                                     Grid::make(3)->schema([
-                                        TextInput::make('min_age')->label('Min Age')->numeric()->minValue(0),
+                                        TextInput::make('min_age')->label('Min Age')->numeric()->minValue(0)->required(),
                                         TextInput::make('max_age')
                                             ->label('Max Age')
                                             ->numeric()
                                             ->minValue(0)
-                                            ->rule(function (\Filament\Forms\Get $get) {
-                                                $minAge = $get('min_age');
-                                                return fn($state): ?string =>
-                                                $state <= $minAge ? 'Max age must be greater than min age.' : null;
-                                            }),
-                                        TextInput::make('price')->label('Price')->numeric()->minValue(0)->step(0.1),
+                                            ->required()
+                                            ->minValue(fn(Forms\Get $get) => $get('min_age')),
+                                        TextInput::make('price')->label('Price')->numeric()->minValue(0)->step(0.1)->required(),
                                     ]),
                                 ])
                                 ->columns(1),
                         ]),
 
                     Step::make('Activities & Notes')
-                        ->description('List activities and optional notes.')
                         ->schema([
                             Repeater::make('activities')
                                 ->label('Activities')
@@ -151,16 +148,16 @@ class ServiceResource extends Resource
                                 ->required(),
 
                             Repeater::make('notes')
+                                ->defaultItems(0)
                                 ->label('Notes')
                                 ->relationship('notes')
                                 ->schema([
-                                    TextInput::make('note')->label('Note')->translatable(),
+                                    TextInput::make('note')->label('Note')->required()->translatable(),
                                 ])
                                 ->columns(1),
                         ]),
 
                     Step::make('Features & Media')
-                        ->description('Set features and upload images.')
                         ->schema([
                             CheckboxList::make('Features')
                                 ->relationship('features', 'name')
@@ -191,8 +188,7 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('id')->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
             ])
@@ -208,9 +204,6 @@ class ServiceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-        // ->modifyQueryUsing(function (Builder $query) {
-        //     $query->whereDoesntHave('topTenPlaces')->whereDoesntHave('popularPlaces');
-        // });
     }
 
     public static function getRelations(): array

@@ -500,6 +500,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 ->delete();
 
             $this->handleTripTypeNotifications($request, $trip);
+        } elseif ($request->trip_type == 2 && $request->filled('users')) {
+            $this->inviteNewUsersOnly($request, $trip);
         }
     }
 
@@ -717,6 +719,41 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 if (!empty($tokens)) {
                     sendNotification($tokens, $notificationData);
                 }
+            }
+        }
+    }
+
+    private function inviteNewUsersOnly($request, $trip)
+    {
+        $user = Auth::guard('api')->user();
+        $requestedSlugs = explode(',', $request->users);
+
+        $existingUserIds = $trip->usersTrip()->pluck('user_id')->toArray();
+
+        $newUsers = User::whereIn('slug', $requestedSlugs)
+            ->whereNotIn('id', $existingUserIds)
+            ->get();
+
+        foreach ($newUsers as $newUser) {
+            $receiverLanguage = $newUser->lang;
+            $notificationData = [
+                'title' => Lang::get('app.notifications.new-trip-invitation-title', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-trip-invitation-body', ['username' => $user->username], $receiverLanguage),
+                'icon'  => asset('assets/icon/trip.png'),
+                'sound' => 'default',
+            ];
+
+            UsersTrip::create([
+                'trip_id' => $trip->id,
+                'user_id' => $newUser->id,
+                'status' => '0',
+            ]);
+
+            Notification::send($newUser, new TripNewTripNotification($user, $trip));
+
+            $tokens = $newUser->DeviceTokenMany->pluck('token')->toArray();
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notificationData);
             }
         }
     }

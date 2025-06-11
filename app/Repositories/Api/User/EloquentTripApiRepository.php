@@ -657,7 +657,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         if ($request->trip_type == 1) {
             $followers = $user->followers()->get();
 
-            dd($followers);
             // Decode age range from trip
             $ageRange = json_decode($trip->age_range, true);
             $minAge = $ageRange['min'] ?? 0;
@@ -666,6 +665,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             foreach ($followers as $follower) {
                 // Skip if the trip is gender-specific and the follower doesn't match
                 if ($trip->sex != 2 && $follower->sex != $trip->sex) {
+                    dd(2);
                     continue;
                 }
 

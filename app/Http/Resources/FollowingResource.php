@@ -16,10 +16,7 @@ class FollowingResource extends JsonResource
     public function toArray(Request $request): array
     {
         $followingUser = $this->followingUser;
-        // Safely handle missing or inactive user
-        if (!$followingUser || $followingUser->status !== 1) {
-            return [];
-        }
+
 
         $fullName = trim("{$followingUser->first_name} {$followingUser->last_name}");
 

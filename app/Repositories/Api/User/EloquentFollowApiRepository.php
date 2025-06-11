@@ -129,43 +129,69 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
     {
         $perPage = config('app.pagination_per_page');
         $followingUser = User::findBySlug($user_slug);
-        $followers = Follow::where('following_id', $followingUser->id)->where('status', 1)->paginate($perPage);
+
+        // Get the paginated result first
+        $rawFollowers = Follow::where('following_id', $followingUser->id)
+            ->where('status', 1)
+            ->with('followerUser') // eager load to reduce queries
+            ->paginate($perPage);
+
         activityLog('view other users follows', $followingUser, 'the user view followers of this user ', 'view');
 
-        $followersArray = $followers->toArray();
+        // Filter followers with valid followerUser and status
+        $filteredFollowers = $rawFollowers->getCollection()->filter(function ($follow) {
+            return $follow->followerUser && $follow->followerUser->status === 1;
+        });
+
+        // Set the filtered collection back to paginator
+        $rawFollowers->setCollection($filteredFollowers);
+
         $pagination = [
-            'next_page_url' => $followersArray['next_page_url'],
-            'prev_page_url' => $followersArray['next_page_url'],
-            'total' => $followersArray['total'],
+            'next_page_url' => $rawFollowers->nextPageUrl(),
+            'prev_page_url' => $rawFollowers->previousPageUrl(),
+            'total' => $rawFollowers->total(),
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
-            'followers' => FollowerResource::collection($followers),
+            'followers' => FollowerResource::collection($rawFollowers),
             'pagination' => $pagination
         ];
     }
+
 
     public function followings($user_slug)
     {
         $perPage = config('app.pagination_per_page');
         $follower = User::findBySlug($user_slug);
-        $followings = Follow::where('follower_id', $follower->id)->where('status', 1)->paginate($perPage);
+
+        // Get paginated followings with eager loaded user
+        $rawFollowings = Follow::where('follower_id', $follower->id)
+            ->where('status', 1)
+            ->with('followingUser') // important to eager load
+            ->paginate($perPage);
+
         activityLog('view other users followings', $follower, 'the user view followings of this user ', 'view');
-        //        return FollowingResource::collection($followers);
-        $followingsArray = $followings->toArray();
+
+        // Filter out null or inactive following users
+        $filteredFollowings = $rawFollowings->getCollection()->filter(function ($follow) {
+            return $follow->followingUser && $follow->followingUser->status === 1;
+        });
+
+        // Replace the paginator collection with filtered results
+        $rawFollowings->setCollection($filteredFollowings);
+
         $pagination = [
-            'next_page_url' => $followingsArray['next_page_url'],
-            'prev_page_url' => $followingsArray['next_page_url'],
-            'total' => $followingsArray['total'],
+            'next_page_url' => $rawFollowings->nextPageUrl(),
+            'prev_page_url' => $rawFollowings->previousPageUrl(),
+            'total' => $rawFollowings->total(),
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
-            'followings' => FollowingResource::collection($followings),
+            'followings' => FollowingResource::collection($rawFollowings),
             'pagination' => $pagination
         ];
     }
+
     public function removeFollower($user_slug)
     {
         $user = Auth::guard('api')->user();

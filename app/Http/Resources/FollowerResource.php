@@ -19,10 +19,7 @@ class FollowerResource extends JsonResource
 
         $followerUser = $this->followerUser;
 
-        // Safely handle missing follower
-        if (!$followerUser || $followerUser->status !== 1) {
-            return [];
-        }
+
 
 
         return [

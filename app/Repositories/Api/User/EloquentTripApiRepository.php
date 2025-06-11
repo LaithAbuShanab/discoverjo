@@ -654,6 +654,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     private function handleTripTypeNotifications($request, $trip)
     {
         $user = Auth::guard('api')->user();
+        dd($request->trip_type);
         if ($request->trip_type == 1) {
             $followers = $user->followers()->get();
 
@@ -793,15 +794,12 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $currentUserId = Auth::guard('api')->id();
 
         $query->where(function ($q) use ($currentUserId) {
-            // إذا كانت الرحلة خاصة - نمررها دائمًا
             $q->orWhere('trip_type', 2);
 
-            // أو إذا كان المستخدم جزءًا من الرحلة
             $q->orWhereHas('usersTrip', function ($q2) use ($currentUserId) {
                 $q2->where('user_id', $currentUserId);
             });
 
-            // أو إذا كانت الرحلة عامة وعدد المقبولين أقل من السعة
             $q->orWhere(function ($q3) {
                 $q3->where('trip_type', '!=', 2)
                     ->whereRaw("(

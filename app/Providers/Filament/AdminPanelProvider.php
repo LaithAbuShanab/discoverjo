@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\EnforcePasswordReset;
+use App\Http\Middleware\RedirectIfNotFilamentAdmin;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -92,6 +93,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-m-user-circle')
             ])
             ->authMiddleware([
+                RedirectIfNotFilamentAdmin::class,
                 Authenticate::class,
                 EnforcePasswordReset::class
             ])

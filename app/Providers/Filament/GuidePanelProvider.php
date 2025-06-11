@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Guide\Pages\Auth\RequestEmailVerificationNotification;
 use App\Filament\Guide\Pages\Auth\RequestPasswordReset;
 use App\Filament\Guide\Pages\Dashboard;
+use App\Http\Middleware\RedirectIfNotFilamentAdmin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -66,6 +67,7 @@ class GuidePanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
+                RedirectIfNotFilamentAdmin::class,
                 Authenticate::class,
             ])
             ->authGuard('guide');

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Provider\Pages\Auth\RequestEmailVerificationNotification;
+use App\Http\Middleware\RedirectIfNotFilamentAdmin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -64,6 +65,7 @@ class ProviderPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
+                RedirectIfNotFilamentAdmin::class,
                 Authenticate::class,
             ])
             ->authGuard('provider');

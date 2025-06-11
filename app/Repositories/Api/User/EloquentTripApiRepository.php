@@ -665,7 +665,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             foreach ($followers as $follower) {
                 // Skip if the trip is gender-specific and the follower doesn't match
                 if ($trip->sex != 2 && $follower->sex != $trip->sex) {
-                    dd(2);
+                    dd($trip->sex, $follower->sex);
                     continue;
                 }
 

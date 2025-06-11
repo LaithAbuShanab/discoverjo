@@ -790,11 +790,14 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     private function applyCapacityCheck($query)
     {
-        $query->where(function ($q) {
+        $currentUserId = Auth::guard('api')->user()->id;
+
+        $query->where(function ($q) use ($currentUserId) {
             $q->where('trip_type', '!=', '2')
                 ->whereHas('usersTrip', fn($q) => $q->where('status', '1'), '!=', DB::raw('attendance_number'))
                 ->orWhere('trip_type', '2');
-        });
+        })
+            ->whereDoesntHave('usersTrip', fn($q) => $q->where('user_id', $currentUserId));
 
         return $query;
     }

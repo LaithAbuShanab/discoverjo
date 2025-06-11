@@ -93,15 +93,12 @@ class TripDetailsResource extends JsonResource
 
         if (Auth::guard('api')->check()) {
             $userId = Auth::guard('api')->user()?->id;
-            $invitation = null;
+            $data['invitation'] = null;
 
             if ($this->trip_type == 2) {
-                $invitation = $this->whereHas('usersTrip', function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
-                })->first();
+                $userTrip = $this->usersTrip()->where('user_id', $userId)->first();
+                $data['invitation'] = $userTrip?->status ?? null;
             }
-
-            $data['invitation'] = $invitation ?? null;
         }
 
 

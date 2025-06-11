@@ -11,6 +11,7 @@ use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
 use App\Models\Plan;
 use App\Models\Referral;
+use App\Models\Service;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\UsersTrip;
@@ -103,25 +104,45 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             if ($user->status == 0) {
                 $user->status = 1;
                 $user->save();
-                $userTrip = Trip::where('user_id', $user->id)->latest()->first();
-                if ($userTrip) {
-                    if ($userTrip->date_time > $now && $userTrip->status == 4) {
-                        $userTrip->status = 1;
-                        $userTrip->save();
-                        UsersTrip::where('trip_id', $userTrip->id)->where('status', 5)->update(['status' => 1]);
+                $userTrips = Trip::where('user_id', $user->id)->latest()->get();
+                if($userTrips){
+                    foreach ($userTrips as $userTrip) {
+                        if ($userTrip->date_time > $now && $userTrip->status == 4) {
+                            $userTrip->status = 1;
+                            $userTrip->save();
+                            UsersTrip::where('trip_id', $userTrip->id)->where('status', 5)->update(['status' => 1]);
+                        }
                     }
                 }
                 UsersTrip::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
-
-                $guideTrip = GuideTrip::where('guide_id', $user->id)->latest()->first();
-                if ($guideTrip) {
-                    if ($guideTrip->start_datetime > $now && $guideTrip->status == 4) {
-                        $guideTrip->status = 1;
-                        $guideTrip->save();
-                        GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 5)->update(['status' => 1]);
+                //check if the user has active trip while deactivation and still active after activation
+                $guideTrips = GuideTrip::where('guide_id', $user->id)->latest()->get();
+                if ($guideTrips) {
+                    foreach ($guideTrips as $guideTrip) {
+                        if ($guideTrip->start_datetime > $now && $guideTrip->status == 4) {
+                            $guideTrip->status = 1;
+                            $guideTrip->save();
+                            GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 5)->update(['status' => 1]);
+                        }
                     }
+
                 }
                 GuideTripUser::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
+
+                //check the services of the user while deactivation and after activation still in the time of active
+                $services = Service::where('provider_type','App\Models\User')->where('provider_id',$user->id)->latest()->get();
+                if ($services) {
+                    foreach ($services as $service) {
+                        if ($service->serviceBookings->available_end_date > $now && $service->status == 4) {
+                            $service->status = 1;
+                            $service->save();
+                            //update the user who booked the service to 1
+//                            ServiceReservation::where('service_id', $service->id)->where('status', 5)->update(['status' => 1]);
+                        }
+                    }
+                }
+                //update his booking
+//                ServiceReservation::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
             }
 
             //$user->tokens()->where('name', 'mobile')->delete();
@@ -189,6 +210,14 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             }
         }
 
+        $services  = Service::where('provider_type', 'App\Models\User')->where('provider_id', $id)->exists();
+        if ($services) {
+            $services = Service::where('provider_type', 'App\Models\User')->where('provider_id', $id)->get();
+            foreach ($services as $service) {
+                $service->delete();
+            }
+        }
+
         $media = Media::where('model_type', 'App\Models\User')->where('model_id', $id)->exists();
         if ($media) {
             $media = Media::where('model_type', 'App\Models\User')->where('model_id', $id)->get();
@@ -220,26 +249,45 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
         $user->save();
 
         // ======================= Deactivate User Trips =======================
-        $userTrip = Trip::where('user_id', $userId)->latest()->first();
-        if ($userTrip) {
-            if ($userTrip->date_time > $now && $userTrip->status == 1) {
-                $userTrip->status = 4;
-                $userTrip->save();
-                UsersTrip::where('trip_id', $userTrip->id)->where('status', 1)->update(['status' => 5]);
+        $userTrips = Trip::where('user_id', $userId)->latest()->get();
+
+        if ($userTrips) {
+            foreach ($userTrips as $userTrip) {
+                if ($userTrip->date_time > $now && $userTrip->status == 1) {
+                    $userTrip->status = 4;
+                    $userTrip->save();
+                    UsersTrip::where('trip_id', $userTrip->id)->where('status', 1)->update(['status' => 5]);
+                }
             }
         }
 
         UsersTrip::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
         // ===================== End Deactivate User Trips ======================
-        $guideTrip = GuideTrip::where('guide_id', $userId)->latest()->first();
-        if ($guideTrip) {
-            if ($guideTrip->start_datetime > $now && $guideTrip->status == 1) {
-                $guideTrip->status = 4;
-                $guideTrip->save();
-                GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 1)->update(['status' => 5]);
+        $guideTrips = GuideTrip::where('guide_id', $userId)->latest()->get();
+        if ($guideTrips) {
+            foreach ($guideTrips as $guideTrip) {
+                if ($guideTrip->start_datetime > $now && $guideTrip->status == 1) {
+                    $guideTrip->status = 4;
+                    $guideTrip->save();
+                    GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 1)->update(['status' => 5]);
+                }
             }
+
         }
         GuideTripUser::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
+        $services = Service::where('provider_type','App\Models\User')->where('provider_id',$user->id)->latest()->get();
+        if ($services) {
+            foreach ($services as $service) {
+                if ($service->serviceBookings->available_end_date > $now && $service->status == 1) {
+                    $service->status = 4;
+                    $service->save();
+                    //update the user who booked the service to 1
+//                   ServiceReservation::where('service_id', $service->id)->where('status', 1)->update(['status' => 5]);
+                }
+            }
+        }
+        //update his booking
+        //ServiceReservation::where('user_id', $user->id)->where('status', 1)->update(['status' => 5]);
     }
 
     private function trackUserLoginVisit($user): void

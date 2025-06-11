@@ -268,12 +268,16 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
 
     public function acceptedFollowing()
     {
-        return $this->following()->wherePivot('status', 1);
+        return $this->following()
+            ->wherePivot('status', 1)
+            ->where('users.status', 1);
     }
 
     public function acceptedFollowers()
     {
-        return $this->followers()->wherePivot('status', 1);
+        return $this->followers()
+            ->wherePivot('status', 1)
+            ->where('users.status', 1);
     }
 
     public function requestFollowers()

@@ -35,6 +35,7 @@ class AllGuideTripResource extends JsonResource
             'full_name' => $fullName,
             'guide_slug' => $this->guide->slug,
             'is_following' => isFollowing($this->guide->id),
+            'is_follow_me' => isFollower($this->guide->id),
             'guide_points' => $this->guide->getPoints(),
             'guide_streak' => $this->guide->getCurrentStreakCount($activity),
             'guide_rating' => $this->guide->guideRatings->avg('rating'),

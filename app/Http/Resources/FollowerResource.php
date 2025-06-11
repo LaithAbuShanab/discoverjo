@@ -31,6 +31,7 @@ class FollowerResource extends JsonResource
             'follower_image' => $followerUser->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'status' => $this->status,
             'is_following' =>isFollowing($followerUser->id),
+            'is_follow_me' => isFollower($followerUser->id),
         ];
     }
 

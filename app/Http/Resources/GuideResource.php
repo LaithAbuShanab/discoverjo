@@ -47,6 +47,7 @@ class GuideResource extends JsonResource
             'address' => $this->address,
             'is_guide' => $isGuide,
             'is_following' => isFollowing($this->id),
+            'is_follow_me' => isFollower($this->id),
             'guide_rating' => $this->guideRatings->avg('rating'),
             'status' => $this->status,
             'description' => $this->description,

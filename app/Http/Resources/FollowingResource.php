@@ -29,6 +29,7 @@ class FollowingResource extends JsonResource
             'following_image' => $followingUser->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'status' => $this->status,
             'is_following' =>isFollowing($followingUser->id),
+            'is_follow_me' => isFollower($followingUser->id),
         ];
     }
 

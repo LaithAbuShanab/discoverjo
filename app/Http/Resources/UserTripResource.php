@@ -27,6 +27,7 @@ class UserTripResource extends JsonResource
             'status' => $this->status,
             'image' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
 
             // 'points' => $this->user->getPoints(),
             // 'streak' => $this->user->getCurrentStreakCount($activity),

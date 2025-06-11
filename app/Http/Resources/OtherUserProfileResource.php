@@ -60,6 +60,7 @@ class OtherUserProfileResource extends JsonResource
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
             'is_following' =>isFollowing($this->id),
+            'is_follow_me' => isFollower($this->id),
             'tags' => $tags,
             'reviews' =>  ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),

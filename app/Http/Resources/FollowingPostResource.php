@@ -30,6 +30,7 @@ class FollowingPostResource extends JsonResource
             'user'=>$this->user->username,
             'full_name'=>$fullName,
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
             'user_image'=>$this->user->getMedia('avatar')->first()?->getUrl('avatar_app'),
             'images'=> $images,
 

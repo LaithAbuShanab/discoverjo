@@ -32,6 +32,7 @@ class ReplyResource extends JsonResource
             'full_name'=>$fullName,
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
             'created_at' => $this->created_at->diffForHumans(),
             'content' => $this->content,
             'reply_likes' => [

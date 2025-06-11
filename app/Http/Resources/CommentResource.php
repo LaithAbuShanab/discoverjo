@@ -34,6 +34,7 @@ class CommentResource extends JsonResource
             'user_slug' => $this->user->slug,
             'full_name'=>$fullName,
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
             'avatar' => $this->user->getFirstMediaUrl('avatar','avatar_app'),
             'created_at' => $this->created_at->diffForHumans(),
             'content' => $this->content,

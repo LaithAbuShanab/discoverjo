@@ -25,6 +25,7 @@ class LikeDislikeResource extends JsonResource
             'username' => $this->user->username,
             'full_name'=>$fullName,
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
 
         ];
     }

@@ -26,6 +26,7 @@ class TripResource extends JsonResource
             'creator_id'=>$this->user_id,
             'user' => new UserResource($this->user),
             'is_following' =>isFollowing($this->user_id),
+            'is_follow_me' => isFollower($this->user->id),
             'creator_slug'=>$this->user->slug,
             'conversation_id' => $this->conversation->id ?? null,
             'image' => $this->place->getFirstMediaUrl('main_place','main_place_app'),

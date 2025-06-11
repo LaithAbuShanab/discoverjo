@@ -58,6 +58,7 @@ class UserProfileResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'is_following' =>isFollowing($this->id),
+            'is_follow_me' => isFollower($this->id),
             'username' => $this->username,
             'email' => $this->email,
             'phone_number' => $this->phone_number,

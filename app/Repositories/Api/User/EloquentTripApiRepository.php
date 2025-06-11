@@ -790,25 +790,28 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     private function applyCapacityCheck($query)
     {
-        $currentUserId = Auth::guard('api')->user()->id;
+        $currentUserId = Auth::guard('api')->id();
 
-        $query->whereDoesntHave('usersTrip', function ($q) use ($currentUserId) {
-            $q->where('user_id', $currentUserId);
-        });
-
-        $query->where(function ($q) {
-            $q->where(function ($q2) {
-                $q2->where('trip_type', '!=', '2')
-                    ->whereHas('usersTrip', function ($q3) {
-                        $q3->where('status', '1');
-                    }, '!=', DB::raw('attendance_number'));
+        $query->where(function ($q) use ($currentUserId) {
+            // فقط الرحلات التي لا يشارك فيها المستخدم
+            $q->whereDoesntHave('usersTrip', function ($q2) use ($currentUserId) {
+                $q2->where('user_id', $currentUserId);
             })
-            ->orWhere('trip_type', '2');
+            ->where(function ($q3) {
+                // الرحلات العامة والتي لم تكتمل سعتها
+                $q3->where(function ($q4) {
+                    $q4->where('trip_type', '!=', '2')
+                        ->whereHas('usersTrip', function ($q5) {
+                            $q5->where('status', '1');
+                        }, '!=', DB::raw('attendance_number'));
+                })
+                // أو الرحلات الخاصة
+                ->orWhere('trip_type', '2');
+            });
         });
 
         return $query;
     }
-
 
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {

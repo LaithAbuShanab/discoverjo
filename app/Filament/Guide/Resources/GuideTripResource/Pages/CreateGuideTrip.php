@@ -9,6 +9,8 @@ use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+
 
 class CreateGuideTrip extends CreateRecord
 {
@@ -27,61 +29,125 @@ class CreateGuideTrip extends CreateRecord
         return $data;
     }
 
-    protected function afterCreate(): void
+    protected function handleRecordCreation(array $data): Model
     {
-        $trip = $this->record;
-        $state = $this->form->getState();
+        return DB::transaction(function () use ($data) {
+            $trip = static::getModel()::create($data);
+            $this->record = $trip; // Assign manually, since Filament usually does it
 
-        // Set translations (name, description)
-        $trip->setTranslations('name', $state['name']);
-        $trip->setTranslations('description', $state['description']);
-        $trip->save();
+            $state = $this->form->getState();
 
-        // Activities
-        if (!empty($state['activities'])) {
-            $trip->activities()->createMany($state['activities']);
-        }
+            // Translations
+            $trip->setTranslations('name', $state['name']);
+            $trip->setTranslations('description', $state['description']);
+            $trip->save();
 
-        // Assemblies
-        if (!empty($state['assemblies'])) {
-            $trip->assemblies()->createMany($state['assemblies']);
-        }
+            // Activities
+            if (!empty($state['activities'])) {
+                $trip->activities()->createMany($state['activities']);
+            }
 
-        // Price Includes
-        if (!empty($state['priceIncludes'])) {
-            $trip->priceIncludes()->createMany($state['priceIncludes']);
-        }
+            // Assemblies
+            if (!empty($state['assemblies'])) {
+                $trip->assemblies()->createMany($state['assemblies']);
+            }
 
-        // Price Ages
-        if (!empty($state['priceAges'])) {
-            $trip->priceAges()->createMany(array_map(fn ($item) => [
-                'min_age' => $item['min_age'],
-                'max_age' => $item['max_age'],
-                'price' => $item['price'],
-            ], $state['priceAges']));
-        }
+            // Price Includes
+            if (!empty($state['priceIncludes'])) {
+                $trip->priceIncludes()->createMany($state['priceIncludes']);
+            }
 
-        // Requirements
-        if (!empty($state['requirements'])) {
-            $trip->requirements()->createMany($state['requirements']);
-        }
+            // Price Ages
+            if (!empty($state['priceAges'])) {
+                $trip->priceAges()->createMany(array_map(fn ($item) => [
+                    'min_age' => $item['min_age'],
+                    'max_age' => $item['max_age'],
+                    'price' => $item['price'],
+                ], $state['priceAges']));
+            }
 
-        // Payment Methods
-        if (!empty($state['payment_method'])) {
-            $trip->paymentMethods()->createMany($state['payment_method']);
-        }
+            // Requirements
+            if (!empty($state['requirements'])) {
+                $trip->requirements()->createMany($state['requirements']);
+            }
 
-        // Trail (only if is_trail is true)
-        if (isset($this->data['is_trail'])&& $this->data['is_trail']) {
-            $trip->trail()->create([
-                'min_duration_in_minute' => $this->data['min_duration_in_minute'],
-                'max_duration_in_minute' => $this->data['max_duration_in_minute'],
-                'distance_in_meter' => $this->data['distance_in_meter'],
-                'difficulty' => $this->data['difficulty'],
-            ]);
-        }
+            // Payment Methods
+            if (!empty($state['payment_method'])) {
+                $trip->paymentMethods()->createMany($state['payment_method']);
+            }
 
-        // Media uploads handled automatically via SpatieMediaLibraryFileUpload
+            // Trail (if marked)
+            if (isset($this->data['is_trail']) && $this->data['is_trail']) {
+                $trip->trail()->create([
+                    'min_duration_in_minute' => $this->data['min_duration_in_minute'],
+                    'max_duration_in_minute' => $this->data['max_duration_in_minute'],
+                    'distance_in_meter' => $this->data['distance_in_meter'],
+                    'difficulty' => $this->data['difficulty'],
+                ]);
+            }
+
+            return $trip;
+        });
     }
+
+//    protected function afterCreate(): void
+//    {
+//        $trip = $this->record;
+//        $state = $this->form->getState();
+//
+//        DB::transaction(function () use ($trip, $state) {
+//            // Set translations (name, description)
+//            $trip->setTranslations('name', $state['name']);
+//            $trip->setTranslations('description', $state['description']);
+//            $trip->save();
+//
+//            // Activities
+//            if (!empty($state['activities'])) {
+//                $trip->activities()->createMany($state['activities']);
+//            }
+//
+//            // Assemblies
+//            if (!empty($state['assemblies'])) {
+//                $trip->assemblies()->createMany($state['assemblies']);
+//            }
+//
+//            // Price Includes
+//            if (!empty($state['priceIncludes'])) {
+//                $trip->priceIncludes()->createMany($state['priceIncludes']);
+//            }
+//
+//            // Price Ages
+//            if (!empty($state['priceAges'])) {
+//                $trip->priceAges()->createMany(array_map(fn ($item) => [
+//                    'min_age' => $item['min_age'],
+//                    'max_age' => $item['max_age'],
+//                    'price' => $item['price'],
+//                ], $state['priceAges']));
+//            }
+//
+//            // Requirements
+//            if (!empty($state['requirements'])) {
+//                $trip->requirements()->createMany($state['requirements']);
+//            }
+//
+//            // Payment Methods
+//            if (!empty($state['payment_method'])) {
+//                $trip->paymentMethods()->createMany($state['payment_method']);
+//            }
+//
+//            // Trail (only if is_trail is true)
+//            if (isset($this->data['is_trail'])&& $this->data['is_trail']) {
+//                $trip->trail()->create([
+//                    'min_duration_in_minute' => $this->data['min_duration_in_minute'],
+//                    'max_duration_in_minute' => $this->data['max_duration_in_minute'],
+//                    'distance_in_meter' => $this->data['distance_in_meter'],
+//                    'difficulty' => $this->data['difficulty'],
+//                ]);
+//            }
+//        });
+//
+//
+//        // Media uploads handled automatically via SpatieMediaLibraryFileUpload
+//    }
 
 }

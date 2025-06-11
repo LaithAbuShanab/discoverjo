@@ -91,7 +91,8 @@ class GuideTripResource extends Resource
                                     ->label('Main Price')
                                     ->required()
                                     ->numeric()
-                                     ->minValue(0),
+                                    ->minValue(0)
+                                    ->maxValue(999.99),
 
                                 Forms\Components\TextInput::make('max_attendance')
                                     ->required()
@@ -254,6 +255,8 @@ class GuideTripResource extends Resource
                                             ->label('Min Duration')
                                             ->numeric()
                                             ->nullable()
+                                            ->minValue(0)
+                                            ->maxValue(99999)
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {
                                                 $trail = $component->getRecord()?->trail;
@@ -266,6 +269,8 @@ class GuideTripResource extends Resource
                                         Forms\Components\TextInput::make('max_duration_in_minute')
                                             ->label('Max Duration')
                                             ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(99999)
                                             ->nullable()
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {
@@ -279,6 +284,8 @@ class GuideTripResource extends Resource
                                         Forms\Components\TextInput::make('distance_in_meter')
                                             ->label('Distance')
                                             ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(999999999999999999.99) // 18 digits before decimal, 2 after
                                             ->nullable()
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {

@@ -790,6 +790,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     private function applyCapacityCheck($query)
     {
+
         $query->where(function ($q) {
             $q->where('trip_type', '!=', '2')
                 ->whereHas('usersTrip', fn($q) => $q->where('status', '1'), '!=', DB::raw('attendance_number'))

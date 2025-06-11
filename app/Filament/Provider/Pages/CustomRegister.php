@@ -14,18 +14,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
-use Filament\Pages\Page;
+use Filament\Pages\Auth\Register as BaseRegister;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use Filament\Pages\Auth\Register as BaseRegister;
-use Illuminate\Support\Facades\Auth;
-
-
 
 class CustomRegister extends BaseRegister
 {
+
     public function getMaxWidth(): string
     {
         return '5xl';
@@ -67,7 +64,15 @@ class CustomRegister extends BaseRegister
                                     $this->getPasswordField(),
                                     $this->getPasswordConfirmationField(),
                                 ]),
-                        ])
+                        ])->submitAction(
+                            \Filament\Forms\Components\Actions\Action::make('signUp')
+                                ->label('Sign up')
+                                ->submit('register')
+                                ->color('primary')
+                                ->button()
+                                ->icon('heroicon-m-user-plus')
+                        )
+
                     ])
                     ->statePath('data')
                     ->columns(1)
@@ -201,9 +206,11 @@ class CustomRegister extends BaseRegister
             ->required();
     }
 
-    /**
-     * @return ?RegistrationResponse
-     */
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
     public function register(): ?RegistrationResponse
     {
         $data = $this->form->getState();
@@ -248,8 +255,6 @@ class CustomRegister extends BaseRegister
 
         $user->sendEmailVerificationNotification();
 
-//        Auth::guard('guide')->login($user);
-//        dd(Auth::guard()->name);
         return app(RegisterResponse::class);
     }
 }

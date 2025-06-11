@@ -6,7 +6,6 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Pages\Auth\Login as BaseLogin;
-use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 

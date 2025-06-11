@@ -1,11 +1,9 @@
 <?php
 
 namespace App\Http\Responses;
+
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-
-
+use Filament\Facades\Filament;
 
 class RegisterResponse implements RegistrationResponseContract
 {
@@ -17,15 +15,10 @@ class RegisterResponse implements RegistrationResponseContract
      */
     public function toResponse($request)
     {
-        // Determine URL based on request path
-        if ( Str::contains(url()->previous(), 'provider')) {
-            $url = '/provider/login';
-        } else {
-            $url = '/guide/login';
+        if (Filament::getCurrentPanel()->getId() === 'provider') {
+            return redirect()->route('filament.provider.auth.login');
         }
 
-        return redirect()->intended($url);
+        return redirect()->route('filament.guide.auth.login');
     }
-
-
 }

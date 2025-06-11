@@ -3,11 +3,9 @@
 namespace App\Filament\Guide\Pages;
 
 use App\Http\Responses\RegisterResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules;
+use App\Models\User;
+use App\Rules\CheckUserInBlackListRule;
+use App\Rules\MinAgeRule;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -17,9 +15,10 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Pages\Auth\Register as BaseRegister;
-use App\Models\User;
-use App\Rules\CheckUserInBlackListRule;
-use App\Rules\MinAgeRule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 
 class CustomRegister extends BaseRegister
 {
@@ -64,7 +63,14 @@ class CustomRegister extends BaseRegister
                                     $this->getPasswordField(),
                                     $this->getPasswordConfirmationField(),
                                 ]),
-                        ])
+                        ])->submitAction(
+                            \Filament\Forms\Components\Actions\Action::make('signUp')
+                                ->label('Sign up')
+                                ->submit('register')
+                                ->color('primary')
+                                ->button()
+                                ->icon('heroicon-m-user-plus')
+                        )
                     ])
                     ->statePath('data')
                     ->columns(1)
@@ -196,6 +202,11 @@ class CustomRegister extends BaseRegister
             ->required();
     }
 
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
     /**
      * @return ?RegistrationResponse
      */
@@ -242,8 +253,6 @@ class CustomRegister extends BaseRegister
         }
 
         $user->sendEmailVerificationNotification();
-
-//        Auth::guard('guide')->login($user);
 
         return app(RegisterResponse::class);
     }

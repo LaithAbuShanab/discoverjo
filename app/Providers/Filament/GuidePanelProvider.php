@@ -31,7 +31,12 @@ class GuidePanelProvider extends PanelProvider
             ->id('guide')
             ->path('guide')
             ->colors([
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Blue,
                 'primary' => Color::Amber,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
             ->login(\App\Filament\Guide\Pages\CustomLogin::class)
             ->registration(\App\Filament\Guide\Pages\CustomRegister::class)

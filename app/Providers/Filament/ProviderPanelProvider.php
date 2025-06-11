@@ -30,7 +30,12 @@ class ProviderPanelProvider extends PanelProvider
             ->id('provider')
             ->path('provider')
             ->colors([
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Blue,
                 'primary' => Color::Amber,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
             ->login(\App\Filament\Provider\Pages\CustomLogin::class)
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)

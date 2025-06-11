@@ -164,11 +164,12 @@ class CustomRegister extends BaseRegister
     protected function getImageField(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make('image')
-            ->label('Guide Image')
+            ->label('Provider Image')
             ->collection('avatar')
             ->disk('s3')
             ->openable()
-            ->conversion('avatar_app');
+            ->conversion('avatar_app')
+            ->required();
     }
 
     protected function getProfessionalFileField(): SpatieMediaLibraryFileUpload
@@ -178,7 +179,8 @@ class CustomRegister extends BaseRegister
             ->collection('file')
             ->disk('s3')
             ->openable()
-            ->conversion('file_preview');
+            ->conversion('file_preview')
+            ->required();
     }
 
     protected function getPasswordField(): TextInput

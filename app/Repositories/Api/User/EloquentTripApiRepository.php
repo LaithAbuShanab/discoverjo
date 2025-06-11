@@ -56,7 +56,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             ->whereHas('user', fn($q) => $q->where('status', '1'))
             ->where('status', '1')
             ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-            ->where(fn($q) => $this->applyCapacityCheck($q))
+            // ->where(fn($q) => $this->applyCapacityCheck($q))
             ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
         // Merge and sort

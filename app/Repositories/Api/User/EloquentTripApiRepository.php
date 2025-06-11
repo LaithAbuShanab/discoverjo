@@ -654,10 +654,10 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     private function handleTripTypeNotifications($request, $trip)
     {
         $user = Auth::guard('api')->user();
-        dd($request->trip_type);
         if ($request->trip_type == 1) {
             $followers = $user->followers()->get();
 
+            dd($followers);
             // Decode age range from trip
             $ageRange = json_decode($trip->age_range, true);
             $minAge = $ageRange['min'] ?? 0;

@@ -41,14 +41,59 @@ class ServiceResource extends Resource
                     Step::make('Service Details')
                         ->schema([
                             Grid::make(2)->schema([
-                                TextInput::make('name')->label('Name')->required()->placeholder('Please Enter Name')->placeholder('Please Enter Name')->translatable(),
-                                TextInput::make('address')->label('Address')->required()->placeholder('Please Enter Address')->placeholder('Please Enter Address')->translatable(),
-                                Textarea::make('description')->label('Description')->rows(5)->required()->placeholder('Please Enter Description')->translatable()->columnSpan(2),
-                                TextInput::make('url_google_map')->label('Google Map URL')->required()->placeholder('Enter Google Map URL')->url(),
-                                Select::make('categories')->label('Categories')->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->placeholder('Please Select Category')->multiple()->searchable()->preload()->required(),
-                                Select::make('region_id')->label('Region')->relationship('region', 'name')->required()->placeholder('Please Select Region'),
-                                TextInput::make('price')->placeholder('Please Enter Price')->nullable()->numeric()->required(),
-                                Toggle::make('status')->label('Status')->required()->inline(false),
+                                TextInput::make('name')
+                                    ->label('Name')
+                                    ->required()
+                                    ->placeholder('Please Enter Name')
+                                    ->translatable(),
+
+                                TextInput::make('address')
+                                    ->label('Address')
+                                    ->placeholder('Please Enter Address')
+                                    ->nullable() // Since it's nullable in DB
+                                    ->translatable(),
+
+                                Textarea::make('description')
+                                    ->label('Description')
+                                    ->rows(5)
+                                    ->required()
+                                    ->placeholder('Please Enter Description')
+                                    ->translatable()
+                                    ->columnSpan(2),
+
+                                TextInput::make('url_google_map')
+                                    ->label('Google Map URL')
+                                    ->placeholder('Enter Google Map URL')
+                                    ->nullable() // Nullable in DB
+                                    ->url(),
+
+                                Select::make('categories')
+                                    ->label('Categories')
+                                    ->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))
+                                    ->placeholder('Please Select Category')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(), // Ensure this is correctly related in pivot or morph table
+
+                                Select::make('region_id')
+                                    ->label('Region')
+                                    ->relationship('region', 'name')
+                                    ->required()
+                                    ->placeholder('Please Select Region'),
+
+                                TextInput::make('price')
+                                    ->label('Price')
+                                    ->placeholder('Please Enter Price')
+                                    ->required() // Not nullable in DB
+                                    ->numeric()
+                                    ->rule('between:0,999.99'), // Based on decimal(5,2)
+
+                                Toggle::make('status')
+                                    ->label('Status')
+                                    ->required()
+                                    ->inline(false),
+
                             ])
                         ]),
 
@@ -191,6 +236,9 @@ class ServiceResource extends Resource
                 Tables\Columns\TextColumn::make('id')->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('serviceBookings.available_start_date')->searchable()->label('start date')->sortable(),
+                Tables\Columns\TextColumn::make('serviceBookings.available_end_date')->searchable()->label('end date')->sortable(),
+//                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
             ])
             ->filters([
                 //

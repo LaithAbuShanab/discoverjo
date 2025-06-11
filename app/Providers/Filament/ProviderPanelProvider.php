@@ -35,6 +35,7 @@ class ProviderPanelProvider extends PanelProvider
             ->registration(\App\Filament\Provider\Pages\CustomRegister::class)
             ->emailVerification(RequestEmailVerificationNotification::class)
             ->passwordReset(RequestPasswordReset::class)
+            ->favicon(asset('assets/images/logo_eyes_yellow.png'))
             ->brandName('Provider Panel')
             ->discoverResources(in: app_path('Filament/Provider/Resources'), for: 'App\\Filament\\Provider\\Resources')
             ->discoverPages(in: app_path('Filament/Provider/Pages'), for: 'App\\Filament\\Provider\\Pages')

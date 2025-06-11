@@ -34,6 +34,8 @@ class GuidePanelProvider extends PanelProvider
             ->registration(\App\Filament\Guide\Pages\CustomRegister::class)
             ->emailVerification()
             ->passwordReset()
+            ->favicon(asset('assets/images/logo_eyes_yellow.png'))
+
             ->brandName('Guide Panel')
             ->discoverResources(in: app_path('Filament/Guide/Resources'), for: 'App\\Filament\\Guide\\Resources')
             ->discoverPages(in: app_path('Filament/Guide/Pages'), for: 'App\\Filament\\Guide\\Pages')

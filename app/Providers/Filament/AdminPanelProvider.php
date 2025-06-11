@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->brandName('Discover Jordan')
+            ->favicon(asset('assets/images/logo_eyes_yellow.png'))
             ->colors([
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,

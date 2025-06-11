@@ -665,21 +665,17 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             foreach ($followers as $follower) {
                 // Skip if the trip is gender-specific and the follower doesn't match
                 if ($trip->sex != 2 && $follower->sex != $trip->sex) {
-                    dd($trip->sex, $follower->sex);
                     continue;
                 }
 
                 // Calculate age
                 if (!$follower->birthday) {
-                    dd($follower->birthday);
                     continue;
                 }
 
                 $age = \Carbon\Carbon::parse($follower->birthday)->age;
-
                 // Skip if age not in range
                 if ($age < $minAge || $age > $maxAge) {
-                    dd($age, $minAge, $maxAge);
                     continue;
                 }
 

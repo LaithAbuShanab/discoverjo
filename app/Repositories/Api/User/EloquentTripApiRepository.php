@@ -792,23 +792,23 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $currentUserId = Auth::guard('api')->id();
 
-        // احسب عدد المقبولين في الرحلة
-        $query->withCount(['usersTrip as accepted_users_count' => function ($q) {
-            $q->where('status', 1);
-        }]);
-
-        // فلترة حسب السعة أو اشتراك المستخدم
         $query->where(function ($q) use ($currentUserId) {
-            $q->where(function ($q2) {
-                // الرحلات العامة فقط والتي ما زال فيها سعة
-                $q2->where('trip_type', '!=', 2)
-                    ->whereColumn('accepted_users_count', '<', 'attendance_number');
-            })
-            // أو الرحلات الخاصة
-            ->orWhere('trip_type', 2)
-            // أو الرحلات التي المستخدم مشترك فيها
-            ->orWhereHas('usersTrip', function ($q3) use ($currentUserId) {
-                $q3->where('user_id', $currentUserId);
+            // إذا كانت الرحلة خاصة - نمررها دائمًا
+            $q->orWhere('trip_type', 2);
+
+            // أو إذا كان المستخدم جزءًا من الرحلة
+            $q->orWhereHas('usersTrip', function ($q2) use ($currentUserId) {
+                $q2->where('user_id', $currentUserId);
+            });
+
+            // أو إذا كانت الرحلة عامة وعدد المقبولين أقل من السعة
+            $q->orWhere(function ($q3) {
+                $q3->where('trip_type', '!=', 2)
+                    ->whereRaw("(
+                        SELECT COUNT(*) FROM users_trips
+                        WHERE users_trips.trip_id = trips.id
+                        AND users_trips.status = 1
+                    ) < trips.attendance_number");
             });
         });
 

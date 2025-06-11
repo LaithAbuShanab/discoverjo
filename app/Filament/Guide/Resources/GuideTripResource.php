@@ -132,10 +132,12 @@ class GuideTripResource extends Resource
                                 ->schema([
                                     Forms\Components\TextInput::make('activity')
                                         ->label('Activity')
+                                        ->required()
                                         ->translatable(),
                                 ])
                                 ->columns(1)
                                 ->columnSpan(1)
+                                ->minItems(1)
                                 ->required(),
 //                                // Ensures it stays in one column
 
@@ -228,6 +230,7 @@ class GuideTripResource extends Resource
                                         ->schema([
                                             Forms\Components\TextInput::make('method')
                                                 ->label('item')
+                                                ->required()
                                                 ->translatable(),
                                         ]),
                                 ])
@@ -256,7 +259,7 @@ class GuideTripResource extends Resource
                                             ->numeric()
                                             ->nullable()
                                             ->minValue(0)
-                                            ->maxValue(99999)
+                                            ->maxValue(999)
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {
                                                 $trail = $component->getRecord()?->trail;
@@ -269,9 +272,9 @@ class GuideTripResource extends Resource
                                         Forms\Components\TextInput::make('max_duration_in_minute')
                                             ->label('Max Duration')
                                             ->numeric()
-                                            ->minValue(0)
-                                            ->maxValue(99999)
+                                            ->maxValue(999)
                                             ->nullable()
+                                            ->minValue(fn (callable $get) => $get('min_duration_in_minute'))
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {
                                                 $trail = $component->getRecord()?->trail;
@@ -285,7 +288,7 @@ class GuideTripResource extends Resource
                                             ->label('Distance')
                                             ->numeric()
                                             ->minValue(0)
-                                            ->maxValue(999999999999999999.99) // 18 digits before decimal, 2 after
+                                            ->maxValue(99999999.99) // 18 digits before decimal, 2 after
                                             ->nullable()
                                             ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
                                             ->afterStateHydrated(function ($component, $state) {

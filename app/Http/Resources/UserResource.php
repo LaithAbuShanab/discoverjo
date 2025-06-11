@@ -42,7 +42,7 @@ class UserResource extends JsonResource
                 'points' => $this->getPoints(),
                 'streak' => $this->getCurrentStreakCount($activity),
                 'is_following' =>isFollowing($this->id),
-                'is_follow_me' => isFollower($this->user->id),
+                'is_follow_me' => isFollower($this->id),
             ];
         }
     }

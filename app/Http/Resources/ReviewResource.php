@@ -41,6 +41,7 @@ class ReviewResource extends JsonResource
             'rating' => (int) $this->rating,
             'comment' => $this->comment,
             'is_following' =>isFollowing($this->user->id),
+            'is_follow_me' => isFollower($this->user->id),
             'review_type'=>$reviewableType,
             'review_type_slug'=>$reviewableSlug,
             'review_likes' => [

@@ -790,15 +790,31 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     private function applyCapacityCheck($query)
     {
+        $currentUserId = Auth::guard('api')->id();
 
-        $query->where(function ($q) {
-            $q->where('trip_type', '!=', '2')
-                ->whereHas('usersTrip', fn($q) => $q->where('status', '1'), '!=', DB::raw('attendance_number'))
-                ->orWhere('trip_type', '2');
+        // احسب عدد المقبولين في الرحلة
+        $query->withCount(['usersTrip as accepted_users_count' => function ($q) {
+            $q->where('status', 1);
+        }]);
+
+        // فلترة حسب السعة أو اشتراك المستخدم
+        $query->where(function ($q) use ($currentUserId) {
+            $q->where(function ($q2) {
+                // الرحلات العامة فقط والتي ما زال فيها سعة
+                $q2->where('trip_type', '!=', 2)
+                    ->whereColumn('accepted_users_count', '<', 'attendance_number');
+            })
+            // أو الرحلات الخاصة
+            ->orWhere('trip_type', 2)
+            // أو الرحلات التي المستخدم مشترك فيها
+            ->orWhereHas('usersTrip', function ($q3) use ($currentUserId) {
+                $q3->where('user_id', $currentUserId);
+            });
         });
 
         return $query;
     }
+
 
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {

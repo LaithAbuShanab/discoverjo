@@ -670,11 +670,16 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 }
 
                 // Calculate age
-                if (!$follower->birthday) continue;
+                if (!$follower->birthday) {
+                    dd($follower->birthday);
+                    continue;
+                }
+
                 $age = \Carbon\Carbon::parse($follower->birthday)->age;
 
                 // Skip if age not in range
                 if ($age < $minAge || $age > $maxAge) {
+                    dd($age, $minAge, $maxAge);
                     continue;
                 }
 

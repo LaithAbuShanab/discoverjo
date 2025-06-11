@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Guide\Pages\Auth\RequestEmailVerificationNotification;
+use App\Filament\Guide\Pages\Auth\RequestPasswordReset;
 use App\Filament\Guide\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -32,10 +34,9 @@ class GuidePanelProvider extends PanelProvider
             ])
             ->login(\App\Filament\Guide\Pages\CustomLogin::class)
             ->registration(\App\Filament\Guide\Pages\CustomRegister::class)
-            ->emailVerification()
-            ->passwordReset()
+//            ->emailVerification(RequestEmailVerificationNotification::class)
+//            ->passwordReset(RequestPasswordReset::class)
             ->favicon(asset('assets/images/logo_eyes_yellow.png'))
-
             ->brandName('Guide Panel')
             ->discoverResources(in: app_path('Filament/Guide/Resources'), for: 'App\\Filament\\Guide\\Resources')
             ->discoverPages(in: app_path('Filament/Guide/Pages'), for: 'App\\Filament\\Guide\\Pages')

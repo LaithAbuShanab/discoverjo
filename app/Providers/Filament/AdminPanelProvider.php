@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->passwordReset()
+//            ->passwordReset()
             ->brandName('Discover Jordan')
             ->favicon(asset('assets/images/logo_eyes_yellow.png'))
             ->colors([

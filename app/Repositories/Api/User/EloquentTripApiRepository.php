@@ -56,7 +56,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             ->whereHas('user', fn($q) => $q->where('status', '1'))
             ->where('status', '1')
             ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-            // ->where(fn($q) => $this->applyCapacityCheck($q))
+            ->where(fn($q) => $this->applyCapacityCheck($q))
             ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
         // Merge and sort
@@ -792,15 +792,23 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     {
         $currentUserId = Auth::guard('api')->user()->id;
 
-        $query->where(function ($q) use ($currentUserId) {
-            $q->where('trip_type', '!=', '2')
-                ->whereHas('usersTrip', fn($q) => $q->where('status', '1'), '!=', DB::raw('attendance_number'))
-                ->orWhere('trip_type', '2');
-        })
-            ->whereDoesntHave('usersTrip', fn($q) => $q->where('user_id', $currentUserId));
+        $query->whereDoesntHave('usersTrip', function ($q) use ($currentUserId) {
+            $q->where('user_id', $currentUserId);
+        });
+
+        $query->where(function ($q) {
+            $q->where(function ($q2) {
+                $q2->where('trip_type', '!=', '2')
+                    ->whereHas('usersTrip', function ($q3) {
+                        $q3->where('status', '1');
+                    }, '!=', DB::raw('attendance_number'));
+            })
+            ->orWhere('trip_type', '2');
+        });
 
         return $query;
     }
+
 
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {

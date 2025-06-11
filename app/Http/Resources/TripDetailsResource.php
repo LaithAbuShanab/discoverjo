@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Trip;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -37,6 +38,10 @@ class TripDetailsResource extends JsonResource
             2 => __('app.trip_type_2'),
             default => __('app.trip_type_0'),
         };
+
+
+
+
 
         $data = [
             'id' => $this->id,
@@ -85,6 +90,20 @@ class TripDetailsResource extends JsonResource
             $data['users_request'] = UserTripResource::collection($this->usersTrip()->where('status', 0)->get());
             $data['request_count'] = $this->usersTrip->where('status', '0')->count();
         }
+
+        if (Auth::guard('api')->check()) {
+            $userId = Auth::guard('api')->user()?->id;
+            $invitation = null;
+
+            if ($this->trip_type == 2) {
+                $invitation = $this->whereHas('usersTrip', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                })->first();
+            }
+
+            $data['invitation'] = $invitation?->status ?? null;
+        }
+
 
         return $data;
     }

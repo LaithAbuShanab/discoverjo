@@ -101,7 +101,7 @@ class TripDetailsResource extends JsonResource
                 })->first();
             }
 
-            $data['invitation'] = $invitation?->status ?? null;
+            $data['invitation'] = $invitation ?? null;
         }
 
 

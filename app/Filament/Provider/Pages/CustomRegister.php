@@ -220,7 +220,7 @@ class CustomRegister extends BaseRegister
             'last_name' => $data['last_name'],
             'username' => $data['username'],
             'birthday' => $data['birthday'],
-            'gender' => $data['gender'],
+            'sex' => $data['sex'],
             'email' => $data['email'],
             'phone_number' => $data['phone_number'],
             'description' => $data['description'],

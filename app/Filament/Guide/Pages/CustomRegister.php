@@ -115,7 +115,7 @@ class CustomRegister extends BaseRegister
 
     protected function getGenderField(): Select
     {
-        return Select::make('gender')
+        return Select::make('sex')
             ->options([
                 1 => 'Male',
                 2 => 'Female',

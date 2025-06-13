@@ -7,6 +7,7 @@ use App\Http\Resources\AllGuideTripResource;
 use App\Http\Resources\AllServiceCategoriesResource;
 use App\Http\Resources\AllServicesResource;
 use App\Http\Resources\AllServiceSubCategoriesResource;
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\GuideResource;
 use App\Http\Resources\GuideTripResource;
 use App\Http\Resources\GuideTripUpdateDetailResource;
@@ -28,6 +29,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
 use App\Notifications\Users\guide\AcceptCancelNotification;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -80,5 +82,69 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         ];
     }
 
+    public function allSubcategories($data)
+    {
+        $subcategories = ServiceCategory::whereIn('slug', $data)->with('children')->get();
+        $allChildren = $subcategories->pluck('children')->flatten();
+        $stringData = implode(", ", $data);
+        activityLog('view specific services categories ',$subcategories->first(), 'the user view these categories','view',[
+            'categories'     => $stringData,
+        ]);
+        return AllServiceSubCategoriesResource::collection($allChildren);
+    }
+
+    public function search($query)
+    {
+        $categories = ServiceCategory::where(function ($queryBuilder) use ($query) {
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
+        })->whereNull('parent_id')->get();
+
+        if($query){
+            activityLog('search for service category ',$categories->first(), $query,'search',);
+        }
+        return AllServiceCategoriesResource::collection($categories);
+    }
+
+    public function dateServices($date)
+    {
+        $perPage = config('app.pagination_per_page');
+
+        $services = Service::whereHas('serviceBookings', function ($query) use ($date) {
+                $query->whereDate('available_start_date', '<=', $date)
+                    ->whereDate('available_end_date', '>=', $date);
+            })
+            ->whereHas('provider', function ($query) {
+                $query->where('status', 1);
+            })
+            ->with('serviceBookings') // optional: eager load bookings if needed
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage); // you can replace this with any other valid field
+
+
+        $servicesArray = $services->toArray();
+
+        $pagination = [
+            'next_page_url' => $servicesArray['next_page_url'],
+            'prev_page_url' => $servicesArray['next_page_url'],
+            'total' => $servicesArray['total'],
+        ];
+
+        activityLog('view service in specific date',$services->first(),'The user viewed service in specific date '.$date['date'],'view');
+
+        // Pass user coordinates to the PlaceResource collection
+        return [
+            'events' => AllServicesResource::collection($services),
+            'pagination' => $pagination
+        ];
+
+    }
+
+    public function singleService($slug)
+    {
+        $service = Service::findBySlug($slug);
+        return $service;
+
+    }
 
 }

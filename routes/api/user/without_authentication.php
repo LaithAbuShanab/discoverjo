@@ -120,7 +120,11 @@ Route::get('guide-trips/filter', [GuideTripUserApiController::class, 'filterGuid
 Route::get('all/services', [ServiceApiController::class, 'index']);
 Route::get('all/service/categories', [ServiceCategoryApiController::class, 'index'])->name('service.categories');
 Route::get('list/service/subcategories', [ServiceCategoryApiController::class, 'subcategoriesOfCategories']);
-Route::get('services/category/{category_slug}', [ServiceCategoryApiController::class, 'categoryServices'])->name('category.places');
+Route::get('services/category/{category_slug}', [ServiceCategoryApiController::class, 'categoryServices']);
+Route::get('service/categories/search', [ServiceCategoryApiController::class, 'search']);
+Route::get('service/date', [ServiceCategoryApiController::class, 'dateServices']);
+Route::get('service/show/{service_slug}', [ServiceCategoryApiController::class, 'singleService']);
+
 require __DIR__ . '/auth_user.php';
 
 Route::fallback(function () {

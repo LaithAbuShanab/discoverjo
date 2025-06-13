@@ -33,16 +33,22 @@ Route::get('/test-email', function () {
 
 Route::get('/privacy-policy', function () {
     $legalDocuments = LegalDocument::with('terms')->get();
-
     $groupedDocuments = $legalDocuments->groupBy('type');
 
     $formattedData = [];
     foreach ($groupedDocuments as $type => $documents) {
         $typeName = $type == 1 ? 'Privacy And Policy' : 'Terms Of Service';
-        $formattedData[$typeName] = LegalResource::collection($documents);
+        $formattedData[] = [
+            $typeName => LegalResource::collection($documents)
+        ];
     }
 
-    return view('privacy', ['data' => $formattedData]);
+    $lastLegalDate = LegalDocument::latest('updated_at')->first()?->updated_at?->toDateString();
+
+    return view('privacy', [
+        'last_updated' => $lastLegalDate,
+        'data' => $formattedData
+    ]);
 });
 
 

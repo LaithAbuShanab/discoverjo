@@ -5,11 +5,13 @@ namespace App\Filament\Guide\Resources\GuideTripResource\Pages;
 use App\Filament\Guide\Resources\GuideTripResource;
 use App\Http\Requests\Api\User\GuideTrip\CreateGuideTripRequest;
 use App\Models\GuideTrip;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use LevelUp\Experience\Models\Activity;
 
 
 class CreateGuideTrip extends CreateRecord
@@ -48,6 +50,11 @@ class CreateGuideTrip extends CreateRecord
                     'difficulty' => $data['difficulty'],
                 ]);
             }
+
+            $user= User::find(auth()->id());
+            $user->addPoints(10);
+            $activity = Activity::find(1);
+            $user->recordStreak($activity);
 
             return $trip;
         });

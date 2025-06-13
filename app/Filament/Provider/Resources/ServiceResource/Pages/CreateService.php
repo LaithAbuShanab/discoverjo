@@ -5,8 +5,10 @@ namespace App\Filament\Provider\Resources\ServiceResource\Pages;
 use App\Filament\Provider\Resources\ServiceResource;
 use App\Models\ServiceBooking;
 use App\Models\ServiceBookingDay;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use LevelUp\Experience\Models\Activity;
 
 class CreateService extends CreateRecord
 {
@@ -76,5 +78,10 @@ class CreateService extends CreateRecord
                 'closing_time' => $day['closing_time'],
             ]);
         }
+
+        $user= User::find(auth()->id());
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
     }
 }

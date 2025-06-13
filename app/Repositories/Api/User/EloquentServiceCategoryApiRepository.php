@@ -106,6 +106,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         return AllServiceCategoriesResource::collection($categories);
     }
 
+    //transfer to service controller
     public function dateServices($date)
     {
         $perPage = config('app.pagination_per_page');

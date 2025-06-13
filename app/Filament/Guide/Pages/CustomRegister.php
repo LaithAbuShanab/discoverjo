@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use LevelUp\Experience\Models\Activity;
 
 class CustomRegister extends BaseRegister
 {
@@ -252,6 +253,9 @@ class CustomRegister extends BaseRegister
             }
         }
 
+        $user->addPoints(10);
+        $activity = Activity::find(1);
+        $user->recordStreak($activity);
         $user->sendEmailVerificationNotification();
 
         return app(RegisterResponse::class);

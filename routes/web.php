@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Resources\LegalResource;
+use App\Models\LegalDocument;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,6 +29,20 @@ Route::get('/test-email', function () {
             ->subject('Test Email');
     });
     return 'Email Sent!';
+});
+
+Route::get('/privacy-policy', function () {
+    $legalDocuments = LegalDocument::with('terms')->get();
+
+    $groupedDocuments = $legalDocuments->groupBy('type');
+
+    $formattedData = [];
+    foreach ($groupedDocuments as $type => $documents) {
+        $typeName = $type == 1 ? 'Privacy And Policy' : 'Terms Of Service';
+        $formattedData[$typeName] = LegalResource::collection($documents);
+    }
+
+    return view('privacy', ['data' => $formattedData]);
 });
 
 

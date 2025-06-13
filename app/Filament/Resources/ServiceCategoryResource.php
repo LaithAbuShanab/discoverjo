@@ -73,6 +73,7 @@ class ServiceCategoryResource extends Resource
                                     ->collection('service_main_category')
                                     ->disk('media')
                                     ->openable()
+                                    ->required()
                                     ->conversion('service_main_category_app')
 
                             ]),

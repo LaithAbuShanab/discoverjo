@@ -81,4 +81,10 @@ class Service extends Model implements HasMedia
     {
         return $this->hasManyThrough(ServiceBookingDay::class, ServiceBooking::class, 'service_id', 'service_booking_id');
     }
+
+    public function provider()
+    {
+        return $this->morphTo();
+    }
+
 }

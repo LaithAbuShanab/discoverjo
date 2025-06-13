@@ -25,6 +25,8 @@ use App\Interfaces\Gateways\Api\User\RegionsApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\RegisterGuideApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ReplyApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ReviewApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\ServiceCategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SliderApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SubCategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SuggestionPlaceApiRepositoryInterface;
@@ -81,6 +83,8 @@ use App\Repositories\Api\User\EloquentRegionsApiRepository;
 use App\Repositories\Api\User\EloquentRegisterGuideApiRepository;
 use App\Repositories\Api\User\EloquentReplyApiRepository;
 use App\Repositories\Api\User\EloquentReviewApiRepository;
+use App\Repositories\Api\User\EloquentServiceApiRepository;
+use App\Repositories\Api\User\EloquentServiceCategoryApiRepository;
 use App\Repositories\Api\User\EloquentSliderApiRepository;
 use App\Repositories\Api\User\EloquentSubCategoryApiRepository;
 use App\Repositories\Api\User\EloquentSuggestionPlaceApiRepository;
@@ -159,7 +163,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(FavoriteApiRepositoryInterface::class, EloquentFavoriteApiRepository::class);
         $this->app->bind(ReviewApiRepositoryInterface::class, EloquentReviewApiRepository::class);
-
+        $this->app->bind(ServiceApiRepositoryInterface::class, EloquentServiceApiRepository::class);
+        $this->app->bind(ServiceCategoryApiRepositoryInterface::class, EloquentServiceCategoryApiRepository::class);
         $this->app->bind(RegistrationResponseContract::class, RegisterResponse::class);
     }
 

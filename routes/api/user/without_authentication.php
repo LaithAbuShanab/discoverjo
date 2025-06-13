@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\User\GuideTripUserApiController;
 use App\Http\Controllers\Api\User\GuideTripApiController;
 use App\Http\Controllers\Api\User\RegionsApiController;
 use App\Http\Controllers\Api\User\RegisterGuide\RegisterGuideApiController;
+use App\Http\Controllers\Api\User\ServiceApiController;
+use App\Http\Controllers\Api\User\ServiceCategoryApiController;
 
 // GET ALL CATEGORIES
 Route::get('all-categories', [CategoryApiController::class, 'index'])->name('categories'); // DONE ✅
@@ -113,6 +115,12 @@ Route::get('date/guide-trips', [GuideTripUserApiController::class, 'dateGuideTri
 Route::get('date/trips', [TripApiController::class, 'dateTrips']); // DONE ✅
 
 Route::get('guide-trips/filter', [GuideTripUserApiController::class, 'filterGuideTrip']);
+
+//Services section
+Route::get('all/services', [ServiceApiController::class, 'index']);
+Route::get('all/service/categories', [ServiceCategoryApiController::class, 'index'])->name('service.categories');
+Route::get('list/service/subcategories', [ServiceCategoryApiController::class, 'subcategoriesOfCategories']);
+Route::get('services/category/{category_slug}', [ServiceCategoryApiController::class, 'categoryServices'])->name('category.places');
 require __DIR__ . '/auth_user.php';
 
 Route::fallback(function () {

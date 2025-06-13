@@ -29,8 +29,12 @@ class EloquentLegalDocumentApiRepository implements LegalDocumentApiRepositoryIn
             ];
         }
         activityLog('legal Document',$legalDocuments->first(), 'the user view privacy and policy','view');
+        $lastLegalDate = LegalDocument::latest('updated_at')->first()?->updated_at?->toDateString();
 
-        return $formattedData;
+        return[
+            'last_updated' => $lastLegalDate,
+            'data' => $formattedData,
+        ];
     }
 
 

@@ -16,7 +16,7 @@ class CustomLogin extends BaseLogin
     {
         // Rename the field to a generic 'login' that accepts email or username
         return \Filament\Forms\Components\TextInput::make('login')
-            ->label('Email or Username')
+            ->label(__('panel.guide.username-email'))
             ->required()
             ->autocomplete('username');
     }
@@ -57,20 +57,20 @@ class CustomLogin extends BaseLogin
         // Check if user is a guide
         if ($user->type !== 2) {
             throw ValidationException::withMessages([
-                'data.login' => 'Only guide users can access this panel.',
+                'data.login' => __('panel.guide.only-guide-can-access'),
             ]);
         }
 
         // Status checks
         if ($user->status == 3) {
             throw ValidationException::withMessages([
-                'data.login' => 'Your account is blocked',
+                'data.login' => __('panel.guide.your-account-is-blocked'),
             ]);
         }
 
         if ($user->status == 4) {
             throw ValidationException::withMessages([
-                'data.login' => 'Your account is waiting for admin approval.',
+                'data.login' => __('panel.guide.your-account-is-suspended'),
             ]);
         }
 

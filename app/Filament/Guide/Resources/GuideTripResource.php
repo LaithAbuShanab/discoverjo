@@ -3,23 +3,14 @@
 namespace App\Filament\Guide\Resources;
 
 use App\Filament\Guide\Resources\GuideTripResource\Pages;
-use App\Filament\Guide\Resources\GuideTripResource\RelationManagers;
 use App\Filament\Guide\Resources\GuideTripResource\RelationManagers\GuideTripUsersRelationManager;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Resources\Concerns\Translatable;
+use Filament\Forms\Components\{DateTimePicker, Grid, Repeater, ToggleButtons, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
+use Filament\Forms\Get;
 use App\Models\GuideTrip;
-use Filament\Forms;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GuideTripResource extends Resource
 {
@@ -29,322 +20,279 @@ class GuideTripResource extends Resource
 
     protected static ?string $navigationGroup = 'Guide Trips';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('panel.guide.trips');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('panel.guide.trips');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('guide_id', auth()->id())->count();
     }
 
-
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //trip name and description
-                Section::make('General information')
-                    ->schema([
-                        Grid::make(1)
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Trip Name')
+                Wizard::make([
+                    Step::make(__('panel.guide.general-and-schedule'))
+                        ->schema([
+                            Grid::make(1)->schema([
+                                TextInput::make('name')
+                                    ->label(__('panel.guide.trip-name'))
+                                    ->placeholder(__('panel.guide.enter-trip-name'))
                                     ->required()
-                                    ->translatable(),
-                            ])
-                            ->columnSpanFull(),
-                        Grid::make(1)
-                            ->schema([
-                                Forms\Components\Textarea::make('description')
-                                    ->label('Trip Description')
-                                    ->required()
-                                    ->translatable(),
+                                    ->translatable()
+                                    ->columnSpanFull(),
 
-                            ])
-                            ->columnSpanFull(),
-                    ]),
-                // 🔹 Trip Schedule
-                Section::make('Schedule')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                Forms\Components\DateTimePicker::make('start_datetime')
+                                Textarea::make('description')
+                                    ->label(__('panel.guide.trip-description'))
+                                    ->placeholder(__('panel.guide.enter-trip-description'))
+                                    ->rows(4)
+                                    ->required()
+                                    ->translatable()
+                                    ->columnSpanFull(),
+                            ]),
+                            Grid::make(2)->schema([
+                                DateTimePicker::make('start_datetime')
+                                    ->label(__('panel.guide.start-date'))
                                     ->required()
                                     ->minDate(now())
-                                    ->reactive() // Make it reactive so changes can trigger updates
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        // Ensure end_datetime is not before start_datetime
-                                        $set('end_datetime', null);
-                                    }),
-                                Forms\Components\DateTimePicker::make('end_datetime')
+                                    ->reactive()
+                                    ->afterStateUpdated(fn($state, callable $set) => $set('end_datetime', null)),
+
+                                DateTimePicker::make('end_datetime')
+                                    ->label(__('panel.guide.end-date'))
                                     ->required()
-                                    ->minDate(fn (callable $get) => $get('start_datetime')) // Ensure it starts after start_datetime
+                                    ->minDate(fn(callable $get) => $get('start_datetime'))
                                     ->rules(['after:start_datetime']),
                             ]),
-                    ])
-                    ->columnSpanFull(),
 
-                // 🔹 Pricing & Attendance
-                Section::make('Pricing & Capacity')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('main_price')
-                                    ->label('Main Price')
+                            Grid::make(2)->schema([
+                                SpatieMediaLibraryFileUpload::make('main_image')
+                                    ->label(__('panel.guide.main-image'))
+                                    ->collection('main_image')
+                                    ->required()
+                                    ->columnSpanFull(),
+
+                                SpatieMediaLibraryFileUpload::make('guide_trip_gallery')
+                                    ->label(__('panel.guide.guide-trip-gallery'))
+                                    ->collection('guide_trip_gallery')
+                                    ->multiple()
+                                    ->required()
+                                    ->columnSpanFull()
+                                    ->panelLayout('grid'),
+                            ]),
+                        ]),
+
+                    Step::make(__('panel.guide.pricing-and-capacity'))
+                        ->schema([
+                            Grid::make(2)->schema([
+                                TextInput::make('main_price')
+                                    ->label(__('panel.guide.main-price'))
+                                    ->placeholder(__('panel.guide.enter-main-price'))
                                     ->required()
                                     ->numeric()
                                     ->minValue(0)
                                     ->maxValue(999.99),
 
-                                Forms\Components\TextInput::make('max_attendance')
+                                TextInput::make('max_attendance')
+                                    ->label(__('panel.guide.max-attendance'))
+                                    ->placeholder(__('panel.guide.enter-max-attendance'))
                                     ->required()
-                                    ->label('Max Attendees')
                                     ->numeric()
                                     ->minValue(1),
 
-                      ]),
-                    ])
-                    ->columnSpanFull(),
+                                Select::make('region_id')
+                                    ->label(__('panel.guide.region'))
+                                    ->placeholder(__('panel.guide.select-region'))
+                                    ->relationship('region', 'name')
+                                    ->required(),
 
-
-                Section::make('Region & status')
-                    ->schema([
-                        Grid::make(1)->schema([
-                            Select::make('region_id')->label('Region')->relationship('region', 'name')->required(),
-                            // 🔹 Status Selection
-                            Section::make('Trip Status')
-                                ->schema([
-                                    Forms\Components\Toggle::make('status')->required()->inline(false),
-                                ])
-                                ->columnSpanFull(),
+                                Toggle::make('status')
+                                    ->label(__('panel.guide.status'))
+                                    ->required()
+                                    ->inline(false),
+                            ]),
                         ]),
-                    ])
-                    ->collapsible()
-                    ->columns(1),
 
-                // 🔹 Trip Activities & Assemblies (Side by Side)
-                Section::make('Trip Details')
-                    ->schema([
-                        Grid::make(1) // 🔹 Ensures two columns layout for Repeaters
+                    Step::make(__('panel.guide.trip-details'))
                         ->schema([
-                            // 🔹 Trip Activities
                             Repeater::make('activities')
-                                ->label('Activities')
+                                ->label(__('panel.guide.activities'))
                                 ->relationship('activities')
                                 ->schema([
-                                    Forms\Components\TextInput::make('activity')
-                                        ->label('Activity')
+                                    TextInput::make('activity')
+                                        ->label(__('panel.guide.activity'))
+                                        ->placeholder(__('panel.guide.enter-activity'))
                                         ->required()
                                         ->translatable(),
                                 ])
                                 ->columns(1)
-                                ->columnSpan(1)
                                 ->minItems(1)
                                 ->required(),
-//                                // Ensures it stays in one column
 
-                            // 🔹 Trip Assemblies
                             Repeater::make('assemblies')
-                                ->label('Assemblies')
+                                ->label(__('panel.guide.assemblies'))
                                 ->relationship('assemblies')
                                 ->schema([
-                                    Grid::make(2)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('place')
-                                                ->label('Place')
-                                                ->required()
-                                                ->translatable(),
+                                    Grid::make(2)->schema([
+                                        TextInput::make('place')
+                                            ->label(__('panel.guide.place'))
+                                            ->placeholder(__('panel.guide.enter-place'))
+                                            ->required()
+                                            ->translatable(),
 
-
-                                            Forms\Components\TimePicker::make('time')
-                                                ->label('Time')
-                                                ->required(),
-                                        ]),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1), // Ensures it stays in one column
-                            // 🔹 Trip Price & Age
-                            Repeater::make('priceAges')
-                                ->label('Price Ages')
-                                ->relationship('priceAges')
-                                ->schema([
-                                    Grid::make(3)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('min_age')
-                                                ->label('Min Age')
-                                                ->numeric()
-                                                ->minValue(0),
-
-                                            Forms\Components\TextInput::make('max_age')
-                                                ->label('Max Age')
-                                                ->numeric()
-                                                ->minValue(0)
-                                                ->rule(function (\Filament\Forms\Get $get) {
-                                                    $minAge = $get('min_age');
-                                                    return fn ($state): ?string =>
-                                                    $state <= $minAge ? 'Max age must be greater than min age.' : null;
-                                                }),
-
-                                            Forms\Components\TextInput::make('price')
-                                                ->label('Price')
-                                                ->numeric()
-                                                ->minValue(0)
-                                                ->step(0.1),
-                                        ]),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1), // Ensures it stays in one column
-                            // 🔹 Trip Price Included
-                            Repeater::make('priceIncludes')
-                                ->label('Price Includes')
-                                ->relationship('priceIncludes')
-                                ->schema([
-                                    Grid::make(1)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('include')
-                                                ->label('Include')
-                                                ->required()
-                                                ->translatable(),
-                                        ]),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1), // Ensures it stays in one column
-                            // 🔹 Trip Requirements
-                            Repeater::make('requirements')
-                                ->label('Requirements')
-                                ->relationship('requirements')
-                                ->schema([
-                                    Grid::make(1)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('item')
-                                                ->label('item')
-                                                ->translatable(),
-                                        ]),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1), // Ensures it stays in one column
-
-                            Repeater::make('payment_method')
-                                ->label('Pyment Method')
-                                ->relationship('paymentMethods')
-                                ->schema([
-                                    Grid::make(1)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('method')
-                                                ->label('item')
-                                                ->required()
-                                                ->translatable(),
-                                        ]),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1), // Ensures it stays in one column
-                            // 🔹 Trip Trail
-
-                            Forms\Components\Toggle::make('is_trail')
-                                ->label('Has Trail?')
-                                ->live()
-                                ->afterStateHydrated(function (Forms\Components\Toggle $component, $state) {
-                                    $record = $component->getRecord();
-
-                                    if ($record && $record->trail) {
-                                        $component->state(true);
-                                    } else {
-                                        $component->state(false);
-                                    }
-                                }),
-
-                            Section::make('Trail Details')
-                                ->schema([
-                                    Grid::make(4)->schema([
-                                        Forms\Components\TextInput::make('min_duration_in_minute')
-                                            ->label('Min Duration')
-                                            ->numeric()
-                                            ->nullable()
-                                            ->minValue(0)
-                                            ->maxValue(999)
-                                            ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
-                                            ->afterStateHydrated(function ($component, $state) {
-                                                $trail = $component->getRecord()?->trail;
-
-                                                if ($trail) {
-                                                    $component->state($trail->min_duration_in_minute);
-                                                }
-                                            }),
-
-                                        Forms\Components\TextInput::make('max_duration_in_minute')
-                                            ->label('Max Duration')
-                                            ->numeric()
-                                            ->maxValue(999)
-                                            ->nullable()
-                                            ->minValue(fn (callable $get) => $get('min_duration_in_minute'))
-                                            ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
-                                            ->afterStateHydrated(function ($component, $state) {
-                                                $trail = $component->getRecord()?->trail;
-
-                                                if ($trail) {
-                                                    $component->state($trail->max_duration_in_minute);
-                                                }
-                                            }),
-
-                                        Forms\Components\TextInput::make('distance_in_meter')
-                                            ->label('Distance')
-                                            ->numeric()
-                                            ->minValue(0)
-                                            ->maxValue(99999999.99) // 18 digits before decimal, 2 after
-                                            ->nullable()
-                                            ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
-                                            ->afterStateHydrated(function ($component, $state) {
-                                                $trail = $component->getRecord()?->trail;
-
-                                                if ($trail) {
-                                                    $component->state($trail->distance_in_meter);
-                                                }
-                                            }),
-
-                                        Forms\Components\Select::make('difficulty')
-                                            ->label('Difficulty')
-                                            ->options([
-                                                0 => 'Easy',
-                                                1 => 'Moderate',
-                                                2 => 'Hard',
-                                                3 => 'Very Hard',
-                                            ])
-                                            ->nullable()
-                                            ->required(fn (\Filament\Forms\Get $get) => $get('is_trail'))
-                                            ->afterStateHydrated(function ($component, $state) {
-                                                $trail = $component->getRecord()?->trail;
-
-                                                if ($trail) {
-                                                    $component->state($trail->difficulty);
-                                                }
-                                            }),
+                                        TimePicker::make('time')
+                                            ->label(__('panel.guide.time'))
+                                            ->required(),
                                     ]),
                                 ])
-                                ->visible(fn (\Filament\Forms\Get $get) => $get('is_trail'))
+                                ->columns(1),
 
+                            Repeater::make('priceAges')
+                                ->label(__('panel.guide.price-ages'))
+                                ->relationship('priceAges')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextInput::make('min_age')
+                                            ->label(__('panel.guide.min-age'))
+                                            ->placeholder(__('panel.guide.enter-min-age'))
+                                            ->numeric()
+                                            ->minValue(0),
 
+                                        TextInput::make('max_age')
+                                            ->label(__('panel.guide.max-age'))
+                                            ->placeholder(__('panel.guide.enter-max-age'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->rule(function (Get $get) {
+                                                $minAge = $get('min_age');
+                                                return fn($state): ?string => $state <= $minAge ? 'Max age must be greater than min age.' : null;
+                                            }),
+
+                                        TextInput::make('price')
+                                            ->label(__('panel.guide.price'))
+                                            ->placeholder(__('panel.guide.enter-price'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->step(0.1),
+                                    ]),
+                                ])
+                                ->columns(1),
+
+                            Repeater::make('priceIncludes')
+                                ->label(__('panel.guide.price-includes'))
+                                ->relationship('priceIncludes')
+                                ->schema([
+                                    TextInput::make('include')
+                                        ->label(__('panel.guide.include'))
+                                        ->placeholder(__('panel.guide.enter-include'))
+                                        ->required()
+                                        ->translatable(),
+                                ])
+                                ->columns(1),
+
+                            Repeater::make('requirements')
+                                ->label(__('panel.guide.requirements'))
+                                ->relationship('requirements')
+                                ->schema([
+                                    TextInput::make('item')
+                                        ->label(__('panel.guide.item'))
+                                        ->placeholder(__('panel.guide.enter-item'))
+                                        ->translatable(),
+                                ])
+                                ->columns(1),
+
+                            Repeater::make('payment_method')
+                                ->label(__('panel.guide.payment-method'))
+                                ->relationship('paymentMethods')
+                                ->schema([
+                                    TextInput::make('method')
+                                        ->label(__('panel.guide.method'))
+                                        ->placeholder(__('panel.guide.enter-method'))
+                                        ->required()
+                                        ->translatable(),
+                                ])
+                                ->columns(1),
                         ]),
-                    ])
+
+                    Step::make(__('panel.guide.trail'))
+                        ->schema([
+                            Toggle::make('is_trail')
+                                ->label(__('panel.guide.is-trail'))
+                                ->live()
+                                ->afterStateHydrated(function (Toggle $component, $state) {
+                                    $record = $component->getRecord();
+                                    $component->state((bool) $record?->trail);
+                                }),
+
+                            Grid::make(4)->schema([
+                                TextInput::make('min_duration_in_minute')
+                                    ->label(__('panel.guide.min-duration'))
+                                    ->placeholder(__('panel.guide.enter-min-duration'))
+                                    ->numeric()
+                                    ->nullable()
+                                    ->minValue(0)
+                                    ->maxValue(999)
+                                    ->required(fn(Get $get) => $get('is_trail'))
+                                    ->afterStateHydrated(function ($component) {
+                                        $trail = $component->getRecord()?->trail;
+                                        if ($trail) $component->state($trail->min_duration_in_minute);
+                                    }),
+
+                                TextInput::make('max_duration_in_minute')
+                                    ->label(__('panel.guide.max-duration'))
+                                    ->placeholder(__('panel.guide.enter-max-duration'))
+                                    ->numeric()
+                                    ->nullable()
+                                    ->minValue(fn(Get $get) => $get('min_duration_in_minute'))
+                                    ->maxValue(999)
+                                    ->required(fn(Get $get) => $get('is_trail'))
+                                    ->afterStateHydrated(function ($component) {
+                                        $trail = $component->getRecord()?->trail;
+                                        if ($trail) $component->state($trail->max_duration_in_minute);
+                                    }),
+
+                                TextInput::make('distance_in_meter')
+                                    ->label(__('panel.guide.distance'))
+                                    ->placeholder(__('panel.guide.enter-distance'))
+                                    ->numeric()
+                                    ->nullable()
+                                    ->minValue(0)
+                                    ->maxValue(99999999.99)
+                                    ->required(fn(Get $get) => $get('is_trail'))
+                                    ->afterStateHydrated(function ($component) {
+                                        $trail = $component->getRecord()?->trail;
+                                        if ($trail) $component->state($trail->distance_in_meter);
+                                    }),
+
+                                ToggleButtons::make('difficulty')
+                                    ->label(__('panel.guide.difficulty'))
+                                    ->inline()
+                                    ->options([
+                                        0 => __('panel.guide.easy'),
+                                        1 => __('panel.guide.moderate'),
+                                        2 => __('panel.guide.hard'),
+                                        3 => __('panel.guide.very-hard'),
+                                    ])
+                                    ->required(fn(Get $get) => $get('is_trail'))
+                                    ->afterStateHydrated(function ($component) {
+                                        $trail = $component->getRecord()?->trail;
+                                        if ($trail) $component->state($trail->difficulty);
+                                    })
+                                    ->columnSpan('full'),
+                            ])
+                                ->visible(fn(Get $get) => $get('is_trail')),
+                        ]),
+
+                ])
                     ->columnSpanFull(),
-                Section::make('Media Uploads')
-                    ->description('Upload main and gallery images.')
-                    ->schema([
-                        Grid::make(1)->schema([
-                            SpatieMediaLibraryFileUpload::make('main_image')
-                                ->label('Main Image')
-                                ->collection('main_image')
-                                ->required()
-                                ->columnSpanFull(),
-
-                            SpatieMediaLibraryFileUpload::make('guide_trip_gallery')
-                                ->label('Gallery Images')
-                                ->collection('guide_trip_gallery')
-                                ->multiple()
-                                ->required()
-                                ->columnSpanFull()
-                                ->panelLayout('grid'),
-                        ]),
-                    ])
-                    ->collapsible()
-                    ->columns(1),
             ]);
     }
 
@@ -352,29 +300,35 @@ class GuideTripResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('guide.username')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('slug')
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('panel.guide.trip-name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_datetime')
+                    ->label(__('panel.guide.start-date'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_datetime')
+                    ->label(__('panel.guide.end-date'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('main_price')
+                    ->label(__('panel.guide.main-price'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('max_attendance')
+                    ->label(__('panel.guide.max-attendance'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\BooleanColumn::make('status')
+                    ->label(__('panel.guide.status'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('panel.guide.created-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('panel.guide.updated-at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -406,7 +360,6 @@ class GuideTripResource extends Resource
         return [
             'index' => Pages\ListGuideTrips::route('/'),
             'create' => Pages\CreateGuideTrip::route('/create'),
-//            'view' => Pages\ViewGuideTrip::route('/{record}'),
             'edit' => Pages\EditGuideTrip::route('/{record}/edit'),
         ];
     }

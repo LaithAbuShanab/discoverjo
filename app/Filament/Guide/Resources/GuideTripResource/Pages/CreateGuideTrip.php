@@ -18,6 +18,11 @@ class CreateGuideTrip extends CreateRecord
 {
     protected static string $resource = GuideTripResource::class;
 
+    public function getTitle(): string
+    {
+        return __('panel.guide.create');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['guide_id'] = auth()->id();
@@ -31,9 +36,6 @@ class CreateGuideTrip extends CreateRecord
         return $data;
     }
 
-
-
-
     protected function handleRecordCreation(array $data): Model
     {
         return DB::transaction(function () use ($data) {
@@ -41,24 +43,22 @@ class CreateGuideTrip extends CreateRecord
             $trip = static::getModel()::create($data);
             $this->record = $trip;
 
-            // Create the Trail only if `is_trail` is true
-            if (!empty($data['is_trail'])) {
+            if ($this->data['is_trail']) {
                 $trip->trail()->create([
-                    'min_duration_in_minute' => $data['min_duration_in_minute'],
-                    'max_duration_in_minute' => $data['max_duration_in_minute'],
-                    'distance_in_meter' => $data['distance_in_meter'],
-                    'difficulty' => $data['difficulty'],
+                    'min_duration_in_minute' => $this->data['min_duration_in_minute'],
+                    'max_duration_in_minute' => $this->data['max_duration_in_minute'],
+                    'distance_in_meter' => $this->data['distance_in_meter'],
+                    'difficulty' => $this->data['difficulty'],
                 ]);
             }
 
-            $user= User::find(auth()->id());
+            $user = User::find(auth()->id());
             $user->addPoints(10);
             $activity = Activity::find(1);
+
             $user->recordStreak($activity);
 
             return $trip;
         });
     }
-
-
 }

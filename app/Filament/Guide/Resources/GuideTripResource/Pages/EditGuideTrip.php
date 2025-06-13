@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class EditGuideTrip extends EditRecord
 {
@@ -18,6 +19,12 @@ class EditGuideTrip extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public function getTitle(): string
+    {
+        return __('panel.guide.edit');
+    }
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         unset(
@@ -30,25 +37,35 @@ class EditGuideTrip extends EditRecord
 
         return $data;
     }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         return DB::transaction(function () use ($record, $data) {
-            // Update the Trip
             $record->update($data);
 
-            // Update or delete the Trail
-            if (!empty($data['is_trail'])) {
-                $record->trail()->updateOrCreate([], [
-                    'min_duration_in_minute' => $data['min_duration_in_minute'],
-                    'max_duration_in_minute' => $data['max_duration_in_minute'],
-                    'distance_in_meter' => $data['distance_in_meter'],
-                    'difficulty' => $data['difficulty'],
+            if ($this->data['is_trail']) {
+                $data = Arr::only($this->data ?? [], [
+                    'min_duration_in_minute',
+                    'max_duration_in_minute',
+                    'distance_in_meter',
+                    'difficulty',
                 ]);
+
+                if (filled($data)) {
+                    $record->trail()->updateOrCreate([], $data);
+                } else {
+                    $record->trail?->delete();
+                }
             } else {
-                $record->trail()->delete();
+                $record->trail?->delete();
             }
 
             return $record;
         });
+    }
+
+    protected function afterFill(): void
+    {
+        $this->data['is_trail'] = $this->record->trail ? true : false;
     }
 }

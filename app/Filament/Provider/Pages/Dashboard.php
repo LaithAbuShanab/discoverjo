@@ -36,7 +36,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             Action::make('resetFilters')
-                ->label(__('Reset Filters'))
+                ->label(__('panel.provider.reset-filters'))
                 ->color('danger')
                 ->outlined()
                 ->action(fn() => $this->resetFilters()),

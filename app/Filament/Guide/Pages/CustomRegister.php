@@ -36,7 +36,7 @@ class CustomRegister extends BaseRegister
                     ->model(User::class)
                     ->schema([
                         Wizard::make([
-                            Step::make('Personal Information')
+                            Step::make(__('panel.guide.personal-information'))
                                 ->schema([
                                     $this->getFirstNameField(),
                                     $this->getLastNameField(),
@@ -45,13 +45,13 @@ class CustomRegister extends BaseRegister
                                     $this->getGenderField(),
                                 ]),
 
-                            Step::make('Contact Information')
+                            Step::make(__('panel.guide.contact-information'))
                                 ->schema([
                                     $this->getEmailField(),
                                     $this->getPhoneNumberField(),
                                 ]),
 
-                            Step::make('Profile Details')
+                            Step::make(__('panel.guide.profile-details'))
                                 ->schema([
                                     $this->getDescriptionField(),
                                     $this->getTagsField(),
@@ -59,7 +59,7 @@ class CustomRegister extends BaseRegister
                                     $this->getProfessionalFileField(),
                                 ]),
 
-                            Step::make('Security')
+                            Step::make(__('panel.guide.security'))
                                 ->schema([
                                     $this->getPasswordField(),
                                     $this->getPasswordConfirmationField(),
@@ -82,14 +82,16 @@ class CustomRegister extends BaseRegister
     protected function getFirstNameField(): TextInput
     {
         return TextInput::make('first_name')
-            ->placeholder('Please Enter First Name')
+            ->label(__('panel.guide.first-name'))
+            ->placeholder(__('panel.guide.enter-first-name'))
             ->required();
     }
 
     protected function getLastNameField(): TextInput
     {
         return TextInput::make('last_name')
-            ->placeholder('Please Enter Last Name')
+            ->label(__('panel.guide.last-name'))
+            ->placeholder(__('panel.guide.enter-last-name'))
             ->required();
     }
 
@@ -102,7 +104,8 @@ class CustomRegister extends BaseRegister
             ->alphaDash()
             ->rule('regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/')
             ->rule('not_regex:/\s/')
-            ->placeholder('Please Enter Username')
+            ->label(__('panel.guide.username'))
+            ->placeholder(__('panel.guide.enter-username'))
             ->required()
             ->unique(User::class, 'username');
     }
@@ -111,64 +114,69 @@ class CustomRegister extends BaseRegister
     {
         return DatePicker::make('birthday')
             ->required()
+            ->label(__('panel.guide.birthday'))
             ->rule(new MinAgeRule());
     }
 
     protected function getGenderField(): Select
     {
         return Select::make('sex')
+            ->label(__('panel.guide.gender'))
             ->options([
                 1 => 'Male',
                 2 => 'Female',
             ])
             ->required()
             ->searchable()
-            ->placeholder('Please Select Gender')
+            ->placeholder(__('panel.guide.select-gender'))
             ->rule(Rule::in([1, 2]));
     }
 
     protected function getEmailField(): TextInput
     {
         return TextInput::make('email')
+            ->label(__('panel.guide.email'))
+            ->placeholder(__('panel.guide.enter-email'))
             ->email()
             ->maxLength(255)
             ->required()
             ->unique(User::class, 'email')
-            ->placeholder('Please Enter Email')
             ->rule(new CheckUserInBlackListRule());
     }
 
     protected function getPhoneNumberField(): TextInput
     {
         return TextInput::make('phone_number')
-            ->placeholder('Please Enter Phone Number')
+            ->label(__('panel.guide.phone-number'))
+            ->placeholder(__('panel.guide.enter-phone-number'))
             ->required();
     }
 
     protected function getDescriptionField(): Textarea
     {
         return Textarea::make('description')
-            ->placeholder('Please Enter Description')
+            ->label(__('panel.guide.description'))
+            ->placeholder(__('panel.guide.enter-description'))
             ->required();
     }
 
     protected function getTagsField(): Select
     {
         return Select::make('tags')
-            ->label('Tags')
+            ->label(__('panel.guide.tags'))
             ->relationship('tags', 'name')
             ->multiple()
             ->searchable()
             ->preload()
             ->required()
-            ->placeholder('Please select tags')
+            ->placeholder(__('panel.guide.select-tags'))
             ->minItems(3);
     }
 
     protected function getImageField(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make('image')
-            ->label('Guide Image')
+            ->label(__('panel.guide.avatar'))
             ->collection('avatar')
             ->disk('s3')
             ->openable()
@@ -178,7 +186,7 @@ class CustomRegister extends BaseRegister
     protected function getProfessionalFileField(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make('professional_file')
-            ->label('Professional File')
+            ->label(__('panel.guide.professional-file'))
             ->collection('file')
             ->disk('s3')
             ->openable()
@@ -191,7 +199,8 @@ class CustomRegister extends BaseRegister
             ->password()
             ->required()
             ->confirmed()
-            ->placeholder('Please Enter Password')
+            ->label(__('panel.guide.password'))
+            ->placeholder(__('panel.guide.enter-password'))
             ->rule(Rules\Password::defaults());
     }
 
@@ -199,7 +208,8 @@ class CustomRegister extends BaseRegister
     {
         return TextInput::make('password_confirmation')
             ->password()
-            ->placeholder('Please Enter Password Confirmation')
+            ->label(__('panel.guide.password-confirmation'))
+            ->placeholder(__('panel.guide.enter-password-confirmation'))
             ->required();
     }
 

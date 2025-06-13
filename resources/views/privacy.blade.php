@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Legal Documents - Rehletna-jo</title>
+    <title>Legal Documents discover jordan </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { font-family: Arial, sans-serif; padding: 30px; line-height: 1.6; }
@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-<h1>Legal Information</h1>
+<h1>Privacy Policy</h1>
 
 @foreach ($data as $section => $documents)
     <h2>{{ $section }}</h2>

@@ -36,7 +36,7 @@ class CustomRegister extends BaseRegister
                     ->model(User::class)
                     ->schema([
                         Wizard::make([
-                            Step::make('Personal Information')
+                            Step::make(__('panel.provider.personal-information'))
                                 ->schema([
                                     $this->getFirstNameField(),
                                     $this->getLastNameField(),
@@ -45,13 +45,13 @@ class CustomRegister extends BaseRegister
                                     $this->getGenderField(),
                                 ]),
 
-                            Step::make('Contact Information')
+                            Step::make(__('panel.provider.contact-information'))
                                 ->schema([
                                     $this->getEmailField(),
                                     $this->getPhoneNumberField(),
                                 ]),
 
-                            Step::make('Profile Details')
+                            Step::make(__('panel.provider.profile-details'))
                                 ->schema([
                                     $this->getDescriptionField(),
                                     $this->getTagsField(),
@@ -59,14 +59,14 @@ class CustomRegister extends BaseRegister
                                     $this->getProfessionalFileField(),
                                 ]),
 
-                            Step::make('Security')
+                            Step::make(__('panel.provider.security'))
                                 ->schema([
                                     $this->getPasswordField(),
                                     $this->getPasswordConfirmationField(),
                                 ]),
                         ])->submitAction(
                             \Filament\Forms\Components\Actions\Action::make('signUp')
-                                ->label('Sign up')
+                                ->label(__('panel.provider.register'))
                                 ->submit('register')
                                 ->color('primary')
                                 ->button()
@@ -83,14 +83,17 @@ class CustomRegister extends BaseRegister
     protected function getFirstNameField(): TextInput
     {
         return TextInput::make('first_name')
-            ->placeholder('Please Enter First Name')
+            ->label(__('panel.provider.first-name'))
+            ->placeholder(__('panel.provider.enter-first-name'))
             ->required();
     }
+
 
     protected function getLastNameField(): TextInput
     {
         return TextInput::make('last_name')
-            ->placeholder('Please Enter Last Name')
+            ->label(__('panel.provider.last-name'))
+            ->placeholder(__('panel.provider.enter-last-name'))
             ->required();
     }
 
@@ -103,7 +106,8 @@ class CustomRegister extends BaseRegister
             ->alphaDash()
             ->rule('regex:/^[a-zA-Z][a-zA-Z0-9_-]*$/')
             ->rule('not_regex:/\s/')
-            ->placeholder('Please Enter Username')
+            ->label(__('panel.provider.username'))
+            ->placeholder(__('panel.provider.enter-username'))
             ->required()
             ->unique(User::class, 'username');
     }
@@ -111,6 +115,7 @@ class CustomRegister extends BaseRegister
     protected function getBirthdayField(): DatePicker
     {
         return DatePicker::make('birthday')
+            ->label(__('panel.provider.birthday'))
             ->required()
             ->rule(new MinAgeRule());
     }
@@ -118,58 +123,62 @@ class CustomRegister extends BaseRegister
     protected function getGenderField(): Select
     {
         return Select::make('sex')
+            ->label(__('panel.provider.gender'))
             ->options([
-                1 => 'Male',
-                2 => 'Female',
+                1 => __('app.male'),
+                2 => __('app.female'),
             ])
             ->required()
             ->searchable()
-            ->placeholder('Please Select Gender')
+            ->placeholder(__('panel.provider.select-gender'))
             ->rule(Rule::in([1, 2]));
     }
 
     protected function getEmailField(): TextInput
     {
         return TextInput::make('email')
+            ->label(__('panel.provider.email'))
             ->email()
             ->maxLength(255)
             ->required()
             ->unique(User::class, 'email')
-            ->placeholder('Please Enter Email')
+            ->placeholder(__('panel.provider.enter-email'))
             ->rule(new CheckUserInBlackListRule());
     }
 
     protected function getPhoneNumberField(): TextInput
     {
         return TextInput::make('phone_number')
-            ->placeholder('Please Enter Phone Number')
+            ->label(__('panel.provider.phone-number'))
+            ->placeholder(__('panel.provider.enter-phone-number'))
             ->required();
     }
 
     protected function getDescriptionField(): Textarea
     {
         return Textarea::make('description')
-            ->placeholder('Please Enter Description')
+            ->label(__('panel.provider.description'))
+            ->placeholder(__('panel.provider.enter-description'))
             ->required();
     }
 
     protected function getTagsField(): Select
     {
         return Select::make('tags')
-            ->label('Tags')
+            ->label(__('panel.provider.tags'))
             ->relationship('tags', 'name')
             ->multiple()
             ->searchable()
             ->preload()
             ->required()
-            ->placeholder('Please select tags')
+            ->placeholder(__('panel.provider.select-tags'))
             ->minItems(3);
     }
 
     protected function getImageField(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make('image')
-            ->label('Provider Image')
+            ->label(__('panel.provider.avatar'))
             ->collection('avatar')
             ->disk('s3')
             ->openable()
@@ -180,7 +189,7 @@ class CustomRegister extends BaseRegister
     protected function getProfessionalFileField(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make('professional_file')
-            ->label('Professional File')
+            ->label(__('panel.provider.professional-file'))
             ->collection('file')
             ->disk('s3')
             ->openable()
@@ -191,18 +200,20 @@ class CustomRegister extends BaseRegister
     protected function getPasswordField(): TextInput
     {
         return TextInput::make('password')
+            ->label(__('panel.provider.password'))
             ->password()
             ->required()
             ->confirmed()
-            ->placeholder('Please Enter Password')
+            ->placeholder(__('panel.provider.enter-password'))
             ->rule(Rules\Password::defaults());
     }
 
     protected function getPasswordConfirmationField(): TextInput
     {
         return TextInput::make('password_confirmation')
+            ->label(__('panel.provider.password-confirmation'))
             ->password()
-            ->placeholder('Please Enter Password Confirmation')
+            ->placeholder(__('panel.provider.enter-password-confirmation'))
             ->required();
     }
 

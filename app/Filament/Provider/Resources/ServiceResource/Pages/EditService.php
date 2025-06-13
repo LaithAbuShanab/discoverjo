@@ -10,8 +10,15 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditService extends EditRecord
 {
-    protected static string $resource = ServiceResource::class;
     public ?array $serviceBookingData = null;
+
+    protected static string $resource = ServiceResource::class;
+
+    public function getTitle(): string
+    {
+        return __('panel.provider.edit');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

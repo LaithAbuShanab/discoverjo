@@ -21,11 +21,21 @@ class ServiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bars-4';
 
-    protected static ?string $navigationGroup = 'Services sections';
+    protected static ?string $navigationGroup = 'Services Section';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('panel.provider.services');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('panel.provider.services');
+    }
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('provider_type','App\Models\User')->where('provider_id', auth()->id())->count();
+        return static::getModel()::where('provider_type', 'App\Models\User')->where('provider_id', auth()->id())->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
@@ -38,141 +48,146 @@ class ServiceResource extends Resource
         return $form
             ->schema([
                 Wizard::make([
-                    Step::make('Service Details')
+                    Step::make(__('panel.provider.basic-info'))
                         ->schema([
                             Grid::make(2)->schema([
-                                TextInput::make('name')->label('Name')->required()->placeholder('Please Enter Name')->placeholder('Please Enter Name')->translatable(),
-                                TextInput::make('address')->label('Address')->required()->placeholder('Please Enter Address')->placeholder('Please Enter Address')->translatable(),
-                                Textarea::make('description')->label('Description')->rows(5)->required()->placeholder('Please Enter Description')->translatable()->columnSpan(2),
-                                TextInput::make('url_google_map')->label('Google Map URL')->required()->placeholder('Enter Google Map URL')->url(),
-                                Select::make('categories')->label('Categories')->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->placeholder('Please Select Category')->multiple()->searchable()->preload()->required(),
-                                Select::make('region_id')->label('Region')->relationship('region', 'name')->required()->placeholder('Please Select Region'),
-                                TextInput::make('price')->placeholder('Please Enter Price')->nullable()->numeric()->required(),
-                                Toggle::make('status')->label('Status')->required()->inline(false),
+                                TextInput::make('name')->label(__('panel.provider.name'))->required()->placeholder(__('panel.provider.enter-name'))->translatable(),
+                                TextInput::make('address')->label(__('panel.provider.address'))->required()->placeholder(__('panel.provider.enter-address'))->translatable(),
+                                Textarea::make('description')->label(__('panel.provider.description'))->rows(5)->required()->placeholder(__('panel.provider.enter-description'))->translatable()->columnSpan(2),
+                                TextInput::make('url_google_map')->label(__('panel.provider.google-map-url'))->required()->placeholder(__('panel.provider.enter-google-map-url'))->url(),
+                                Select::make('categories')->label(__('panel.provider.categories'))->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->placeholder(__('panel.provider.select-category'))->multiple()->searchable()->preload()->required(),
+                                Select::make('region_id')->label(__('panel.provider.region'))->relationship('region', 'name')->required()->placeholder(__('panel.provider.select-region')),
+                                TextInput::make('price')->label(__('panel.provider.price'))->placeholder(__('panel.provider.enter-price'))->nullable()->numeric()->required(),
+                                Toggle::make('status')->label(__('panel.provider.status'))->required()->inline(false),
                             ])
                         ]),
 
-                    Step::make('Available Services')
+                    Step::make(__('panel.provider.available-services'))
                         ->schema([
                             Repeater::make('serviceBookings')
-                                ->label('Available Services')
+                                ->label(__('panel.provider.available-services'))
                                 ->relationship('serviceBookings')
                                 ->schema([
                                     Grid::make(3)->schema([
-                                        Forms\Components\DatePicker::make('available_start_date')->label('Available Start Date')
+                                        Forms\Components\DatePicker::make('available_start_date')
+                                            ->label(__('panel.provider.available-start-date'))
                                             ->required()
                                             ->rule('after_or_equal:today'),
 
-                                        Forms\Components\DatePicker::make('available_end_date')->label('Available End Date')
+                                        Forms\Components\DatePicker::make('available_end_date')
+                                            ->label(__('panel.provider.available-end-date'))
                                             ->required()
                                             ->minDate(fn(Get $get) => $get('available_start_date'))
                                             ->rule('after_or_equal:available_start_date'),
 
-                                        TextInput::make('session_duration')->label('Session Duration (minutes)')->numeric()->required(),
-                                        TextInput::make('session_capacity')->label('Session Capacity')->numeric()->minValue(1)->required(),
+                                        TextInput::make('session_duration')
+                                            ->label(__('panel.provider.session-duration'))
+                                            ->placeholder(__('panel.provider.enter-session-duration'))
+                                            ->numeric()->required(),
+                                        TextInput::make('session_capacity')
+                                            ->label(__('panel.provider.session-capacity'))
+                                            ->placeholder(__('panel.provider.enter-session-capacity'))
+                                            ->numeric()->minValue(1)->required(),
                                     ]),
 
                                     Repeater::make('serviceBookingDays')
                                         ->relationship('serviceBookingDays')
-                                        ->label('Opening Hours')
+                                        ->label(__('panel.provider.service-booking-days'))
                                         ->schema([
                                             Select::make('day_of_week')
-                                                ->label('Day(s) of Week')
+                                                ->label(__('panel.provider.day-of-week'))
+                                                ->placeholder(__('panel.provider.select-day-of-week'))
                                                 ->options([
-                                                    'Monday' => 'Monday',
-                                                    'Tuesday' => 'Tuesday',
-                                                    'Wednesday' => 'Wednesday',
-                                                    'Thursday' => 'Thursday',
-                                                    'Friday' => 'Friday',
-                                                    'Saturday' => 'Saturday',
-                                                    'Sunday' => 'Sunday',
+                                                    'Monday' => __('panel.provider.monday'),
+                                                    'Tuesday' => __('panel.provider.tuesday'),
+                                                    'Wednesday' => __('panel.provider.wednesday'),
+                                                    'Thursday' => __('panel.provider.thursday'),
+                                                    'Friday' => __('panel.provider.friday'),
+                                                    'Saturday' => __('panel.provider.saturday'),
+                                                    'Sunday' => __('panel.provider.sunday'),
                                                 ])
                                                 ->multiple()
                                                 ->required()
                                                 ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                                            TimePicker::make('opening_time')->label('Opening Time')->required(),
-                                            TimePicker::make('closing_time')->label('Closing Time')->required(),
+                                            TimePicker::make('opening_time')->label(__('panel.provider.opening-time'))->required(),
+                                            TimePicker::make('closing_time')->label(__('panel.provider.closing-time'))->required(),
                                         ])
-                                        ->addActionLabel('Add Opening Hours')
+                                        ->addActionLabel(__('panel.provider.add-service-booking-day'))
                                         ->required(),
                                 ])
                                 ->columns(1)
                                 ->columnSpan(1)
-                                ->addActionLabel('Add Service Booking')
+                                ->addActionLabel(__('panel.provider.add-service-booking'))
                                 ->addable(false),
                         ]),
 
-                    Step::make('Requirements & Pricing')
+                    Step::make(__('panel.provider.price-info-and-requirements'))
                         ->schema([
 
                             Repeater::make('requirements')
                                 ->defaultItems(0)
-                                ->label('Requirements Item')
+                                ->label(__('panel.provider.requirements'))
                                 ->relationship('requirements')
                                 ->schema([
                                     Grid::make(1)->schema([
-                                        TextInput::make('item')->label('Item')->required()->translatable(),
+                                        TextInput::make('item')->label(__('panel.provider.item'))->placeholder(__('panel.provider.enter-item'))->required()->translatable(),
                                     ]),
                                 ])
                                 ->columns(1),
 
                             Repeater::make('priceAges')
-                                ->label('Price Ages')
+                                ->label(__('panel.provider.price-ages'))
                                 ->defaultItems(0)
                                 ->relationship('priceAges')
                                 ->schema([
                                     Grid::make(3)->schema([
-                                        TextInput::make('min_age')->label('Min Age')->numeric()->minValue(0)->required(),
-                                        TextInput::make('max_age')
-                                            ->label('Max Age')
-                                            ->numeric()
-                                            ->minValue(0)
-                                            ->required()
-                                            ->minValue(fn(Forms\Get $get) => $get('min_age')),
-                                        TextInput::make('price')->label('Price')->numeric()->minValue(0)->step(0.1)->required(),
+                                        TextInput::make('min_age')->label(__('panel.provider.min-age'))->placeholder(__('panel.provider.enter-min-age'))->numeric()->minValue(0)->required(),
+                                        TextInput::make('max_age')->label(__('panel.provider.max-age'))->placeholder(__('panel.provider.enter-max-age'))->numeric()->minValue(0)->required()->minValue(fn(Forms\Get $get) => $get('min_age')),
+                                        TextInput::make('price')->label(__('panel.provider.price'))->placeholder(__('panel.provider.enter-price'))->numeric()->minValue(0)->step(0.1)->required(),
                                     ]),
                                 ])
                                 ->columns(1),
                         ]),
 
-                    Step::make('Activities & Notes')
+                    Step::make(__('panel.provider.activities-and-notes'))
                         ->schema([
                             Repeater::make('activities')
-                                ->label('Activities')
+                                ->label(__('panel.provider.activities'))
                                 ->relationship('activities')
                                 ->schema([
-                                    TextInput::make('activity')->label('Activity')->required()->translatable(),
+                                    TextInput::make('activity')->label(__('panel.provider.activity'))->placeholder(__('panel.provider.enter-activity'))->required()->translatable(),
                                 ])
                                 ->columns(1)
                                 ->required(),
 
                             Repeater::make('notes')
                                 ->defaultItems(0)
-                                ->label('Notes')
+                                ->label(__('panel.provider.notes'))
                                 ->relationship('notes')
                                 ->schema([
-                                    TextInput::make('note')->label('Note')->required()->translatable(),
+                                    TextInput::make('note')->label(__('panel.provider.note'))->placeholder(__('panel.provider.enter-note'))->required()->translatable(),
                                 ])
                                 ->columns(1),
                         ]),
 
-                    Step::make('Features & Media')
+                    Step::make(__('panel.provider.media-and-features'))
                         ->schema([
                             CheckboxList::make('Features')
+                                ->label(__('panel.provider.features'))
                                 ->relationship('features', 'name')
                                 ->columns(4)
                                 ->columnSpanFull()
                                 ->required(),
 
                             SpatieMediaLibraryFileUpload::make('main_service')
-                                ->label('Main Image')
+                                ->label(__('panel.provider.main-image'))
                                 ->collection('main_service')
                                 ->required()
                                 ->columnSpanFull(),
 
                             SpatieMediaLibraryFileUpload::make('service_gallery')
-                                ->label('Gallery Images')
+                                ->label(__('panel.provider.service-gallery'))
                                 ->collection('service_gallery')
                                 ->multiple()
                                 ->required()
@@ -188,9 +203,9 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable(),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('id')->label(__('panel.provider.id'))->searchable(),
+                Tables\Columns\TextColumn::make('name')->label(__('panel.provider.name'))->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('region.name')->label(__('panel.provider.region'))->searchable()->sortable(),
             ])
             ->filters([
                 //

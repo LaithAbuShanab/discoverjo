@@ -34,33 +34,6 @@ use App\Interfaces\Gateways\Api\User\TopTenPlaceApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\TripApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\UserProfileApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\VolunteeringApiRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\AdminRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\CategoryRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\ContactUsRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\EventRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\FeatureRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\GuideRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\LegalDocumentRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\NotificationRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\OrganizerRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\PermissionRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\PlaceRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\PlanRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\PopularPlaceRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\PostRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\QuestionChainRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\QuestionRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\RegionRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\RoleRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\SliderRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\SubCategoryRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\SuggestionPlaceRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\TagRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\TopTenPlaceRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\TripRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\UserRepositoryInterface;
-use App\Interfaces\Gateways\Web\Admin\VolunteeringRepositoryInterface;
-use App\Interfaces\Gateways\Web\Setting\LanguageRepositoryInterface;
 use App\Repositories\Api\User\EloquentAuthApiRepository;
 use App\Repositories\Api\User\EloquentCategoryApiRepository;
 use App\Repositories\Api\User\EloquentCommentApiRepository;
@@ -95,6 +68,7 @@ use App\Repositories\Api\User\EloquentVolunteeringApiRepository;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
+use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -186,5 +160,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\App\Models\Comment::class, \App\Policies\CommentPolicy::class);
         Gate::policy(\App\Models\LegalDocument::class, \App\Policies\LegalDocumentPolicy::class);
         Gate::policy(\App\Models\guideTrip::class, \App\Policies\GuideTripPolicy::class);
+
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+            $switch->locales(['ar', 'en'])->visible(outsidePanels: true);
+        });
     }
 }

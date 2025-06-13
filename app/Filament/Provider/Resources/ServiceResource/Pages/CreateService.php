@@ -11,7 +11,13 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateService extends CreateRecord
 {
     public $serviceBookingData;
+
     protected static string $resource = ServiceResource::class;
+
+    public function getTitle(): string
+    {
+        return __('panel.provider.create');
+    }
 
     public function mutateFormDataBeforeCreate(array $data): array
     {

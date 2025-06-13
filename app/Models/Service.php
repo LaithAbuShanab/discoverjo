@@ -13,11 +13,12 @@ class Service extends Model implements HasMedia
 
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function () {
-                return app()->getLocale() === 'en' ? $this->getTranslation('name', 'en') : $this->slug;
+                return $this->getTranslation('name', 'en') ?? 'default-service';
             })
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
@@ -86,5 +87,4 @@ class Service extends Model implements HasMedia
     {
         return $this->morphTo();
     }
-
 }

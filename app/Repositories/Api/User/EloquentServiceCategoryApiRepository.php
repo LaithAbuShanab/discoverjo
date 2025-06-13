@@ -12,6 +12,7 @@ use App\Http\Resources\GuideResource;
 use App\Http\Resources\GuideTripResource;
 use App\Http\Resources\GuideTripUpdateDetailResource;
 use App\Http\Resources\GuideTripUserResource;
+use App\Http\Resources\SingleServiceResource;
 use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ServiceCategoryApiRepositoryInterface;
@@ -144,7 +145,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
     public function singleService($slug)
     {
         $service = Service::findBySlug($slug);
-        return $service;
+        return new SingleServiceResource($service);
 
     }
 

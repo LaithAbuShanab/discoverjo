@@ -13,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
+use Filament\Forms\Components\RichEditor;
 
 
 class LegalDocumentResource extends Resource
@@ -69,7 +70,7 @@ class LegalDocumentResource extends Resource
                 Section::make('Content Details')
                     ->description('Provide the full content of the document.')
                     ->schema([
-                        Textarea::make('content')
+                        RichEditor::make('content')
                             ->label('Document Content')
                             ->required()
                             ->placeholder('Enter the document content here')

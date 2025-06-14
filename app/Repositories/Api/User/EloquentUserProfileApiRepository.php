@@ -289,7 +289,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         adminNotification(
             'New Report',
             'A new report has been create by ' . Auth::guard('api')->user()->username,
-            ['action' => 'view_report', 'action_label' => 'View Report', 'action_url' => route('filament.admin.resources.warnings.view', $warning)]
+            ['action' => 'view_report', 'action_label' => 'View Report', 'action_url' => route('filament.admin.resources.warnings.index', $warning)]
         );
     }
 }

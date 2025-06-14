@@ -26,10 +26,18 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $tokens = $followingUser->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $followingUser->lang;
         $notificationData = [
-            'title' => Lang::get('app.notifications.new-following-request', [], $receiverLanguage),
-            'body'  => Lang::get('app.notifications.new-user-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-            'icon'  => asset('assets/icon/new.png'),
-            'sound' => 'default',
+            'notification' => [
+                'title' => Lang::get('app.notifications.new-following-request', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.new-user-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                'sound' => 'default'
+            ],
+            "data" => [
+                'type'      => 'list_followers',
+                'slug'      => $followingUser->slug,
+                'user_id'   => $followingUser->id,
+                'user_s_id' => Auth::guard('api')->user()->id
+            ]
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user(), $followingUser));
         sendNotification($tokens, $notificationData);
@@ -86,10 +94,17 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $tokens = $followerUser->DeviceTokenMany->pluck('token')->toArray();
         $receiverLanguage = $followerUser->lang;
         $notificationData = [
-            'title' => Lang::get('app.notifications.accept-your-following-request', [], $receiverLanguage),
-            'body'  => Lang::get('app.notifications.the-following-accept-your-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-            'icon' => asset('assets/icon/speaker.png'),
-            'sound' => 'default',
+            'notification' => [
+                'title' => Lang::get('app.notifications.accept-your-following-request', [], $receiverLanguage),
+                'body'  => Lang::get('app.notifications.the-following-accept-your-following-request', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                'sound' => 'default'
+            ],
+            "data" => [
+                'type'    => 'follow_profile',
+                'slug'    => Auth::guard('api')->user()->slug,
+                'user_id' => Auth::guard('api')->user()->id
+            ]
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
         sendNotification($tokens, $notificationData);
@@ -123,8 +138,6 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         return FollowerResource::collection($followers);
     }
 
-
-
     public function followers($user_slug)
     {
         $perPage = config('app.pagination_per_page');
@@ -157,7 +170,6 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             'pagination' => $pagination
         ];
     }
-
 
     public function followings($user_slug)
     {

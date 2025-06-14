@@ -91,54 +91,30 @@ function dateTime($dateTime)
 
 function sendNotification($deviceTokens, $data)
 {
-    // Load Firebase credentials
     $factory = (new Factory)->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')));
     $messaging = $factory->createMessaging();
 
-    // Build the notification
-    if (isset($data['notification'])) {
-        $notification = FirebaseNotification::create($data['notification']['title'], $data['notification']['body']);
-        $dataPayload = $data['data'] ?? [];
-        $dataPayload['icon'] = asset('assets/images/logo_eyes_yellow.jpeg');
-        $dataPayload['sound'] =  'default';
-    } else {
-        $notification = FirebaseNotification::create($data['title'], $data['body']);
-        $dataPayload = [];
-    }
+    $notification = FirebaseNotification::create(
+        $data['notification']['title'],
+        $data['notification']['body']
+    );
 
-    // Build the message
+    $dataPayload = $data['data'] ?? [];
+    $dataPayload['icon'] = $data['notification']['image'] ?? asset('default-icon.png');
+    $dataPayload['sound'] = $data['notification']['sound'] ?? 'default';
+
     $message = CloudMessage::new()
         ->withNotification($notification)
         ->withData($dataPayload);
 
-    // Send the message
     if (is_array($deviceTokens)) {
-        $response = $messaging->sendMulticast($message, $deviceTokens);
-    } else {
-        $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));
+        return $messaging->sendMulticast($message, $deviceTokens);
     }
+
+    $response = $messaging->send($message->withChangedTarget('token', $deviceTokens));
 
     return $response;
 }
-
-
-//function activityLog($logName, $model, $description, $event, $extraProps = [])
-//{
-//    $activity = activity($logName)
-//        ->causedBy(Auth::guard('api')->check() ? Auth::guard('api')->user() : null)
-//        ->withProperties(array_merge([
-//            'ip' => request()->ip(),
-//            'user_agent' => request()->header('User-Agent'),
-//        ], $extraProps));
-//
-//    $activity->event($event);
-//
-//    if ($model) {
-//        $activity->performedOn($model);
-//    }
-//
-//    $activity->log($description);
-//}
 
 function activityLog($logName, $model, $description, $event, $extraProps = [])
 {
@@ -164,7 +140,6 @@ function activityLog($logName, $model, $description, $event, $extraProps = [])
 
     $activity->log($description);
 }
-
 
 function adminNotification($title = null, $body = null, $options = [])
 {
@@ -255,7 +230,7 @@ function getAddressFromCoordinates(float $lat, float $lng, string $language): st
     $user = Auth::guard('api')->user();
     if ($user->latitude && $user->longitude) {
         if (isWithinRadius($user->latitude, $user->longitude, $lat, $lng)) {
-            return "{$user->getTranslation('address', $language)}";
+            return "{$user->getTranslation('address',$language)}";
         }
     }
     // Validate input coordinates
@@ -314,20 +289,20 @@ function getAddressFromCoordinates(float $lat, float $lng, string $language): st
     }
 }
 
-
-
-function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radiusMeters = 500): bool {
+function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radiusMeters = 500): bool
+{
     $earthRadius = 6371000; // meters
     $dLat = deg2rad($lat2 - $lat1);
     $dLon = deg2rad($lon2 - $lon1);
-    $a = sin($dLat/2) * sin($dLat/2) +
+    $a = sin($dLat / 2) * sin($dLat / 2) +
         cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-        sin($dLon/2) * sin($dLon/2);
-    $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        sin($dLon / 2) * sin($dLon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
     $distance = $earthRadius * $c;
 
     return $distance <= $radiusMeters;
 }
+
 function getWeatherNow($latitude, $longitude)
 {
     $jordanTime = Carbon::now('Asia/Riyadh');
@@ -375,12 +350,11 @@ function isFollowing($targetId)
         ->where('users.id', $targetId)
         ->first();
 
-    if($followed){
+    if ($followed) {
         return $followed->pivot->status;
-    }else{
+    } else {
         return false;
     }
-
 }
 
 function isFollower($targetId)
@@ -403,19 +377,48 @@ function isFollower($targetId)
         ->where('users.id', $targetId)
         ->first();
 
-    if($followed){
+    if ($followed) {
         return $followed->pivot->status;
-    }else{
+    } else {
         return false;
     }
-
 }
 
 function sanitizeQuery($query)
 {
     $symbols = [
-        "'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=',
-        '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'
+        "'",
+        '"',
+        '$',
+        '%',
+        '&',
+        '!',
+        '@',
+        '#',
+        '^',
+        '*',
+        '(',
+        ')',
+        '-',
+        '_',
+        '+',
+        '=',
+        '{',
+        '}',
+        '[',
+        ']',
+        ':',
+        ';',
+        '<',
+        '>',
+        ',',
+        '.',
+        '?',
+        '/',
+        '\\',
+        '|',
+        '`',
+        '~'
     ];
 
     // Replace symbols with space
@@ -424,7 +427,7 @@ function sanitizeQuery($query)
     return trim($query);
 }
 
-function cleanQuery( $query)
+function cleanQuery($query)
 {
 
     $dangerousWords = [
@@ -477,14 +480,43 @@ function cleanQuery( $query)
         'delete',
         'alter',
         // special characters
-        "'", '"', '$', '%', '&', '!', '@', '#', '^', '*', '(', ')', '-', '_', '+', '=',
-        '{', '}', '[', ']', ':', ';', '<', '>', ',', '.', '?', '/', '\\', '|', '`', '~'
+        "'",
+        '"',
+        '$',
+        '%',
+        '&',
+        '!',
+        '@',
+        '#',
+        '^',
+        '*',
+        '(',
+        ')',
+        '-',
+        '_',
+        '+',
+        '=',
+        '{',
+        '}',
+        '[',
+        ']',
+        ':',
+        ';',
+        '<',
+        '>',
+        ',',
+        '.',
+        '?',
+        '/',
+        '\\',
+        '|',
+        '`',
+        '~'
     ];
 
-    if($query != null){
-        return str_ireplace($dangerousWords,'', $query);
-    }else{
+    if ($query != null) {
+        return str_ireplace($dangerousWords, '', $query);
+    } else {
         return $query;
     }
-
 }

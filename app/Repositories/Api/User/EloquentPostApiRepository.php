@@ -12,13 +12,13 @@ use App\Notifications\Users\post\NewPostFollowersNotification;
 use App\Notifications\Users\post\NewPostLikeNotification;
 use App\Pipelines\ContentFilters\ContentFilter;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use LevelUp\Experience\Models\Activity;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Support\Facades\DB;
 
 class EloquentPostApiRepository implements PostApiRepositoryInterface
 {
@@ -99,13 +99,21 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 $tokens = $follower->DeviceTokenMany->pluck('token')->toArray();
                 $receiverLanguage = $follower->lang;
                 $notificationData = [
-                    'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
-                    'body'  => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                    'icon'  => asset('assets/icon/new.png'),
-                    'sound' => 'default',
+                    'notification' => [
+                        'title' => Lang::get('app.notifications.new-post-title', [], $receiverLanguage),
+                        'body'  => Lang::get('app.notifications.new-post-body', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
+                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                        'sound' => 'default'
+                    ],
+                    'data' => [
+                        'type'      => 'single_post',
+                        'slug'      => null,
+                        'post_id'   => $eloquentPost->id
+                    ]
                 ];
 
-                sendNotification($tokens, $notificationData);
+                if (!empty($tokens))
+                    sendNotification($tokens, $notificationData);
             }
 
             $user = Auth::guard('api')->user();
@@ -227,20 +235,38 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                     if ($authUser->id != $post->user_id) {
                         if ($status === '1') {
                             Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
-                            sendNotification($tokens, [
-                                'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
-                                'icon'  => asset('assets/icon/speaker.png'),
-                                'sound' => 'default',
-                            ]);
+                            if (!empty($tokens))
+                                sendNotification($tokens, [
+                                    'notification' => [
+                                        'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                                        'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
+                                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                        'sound' => 'default'
+                                    ],
+                                    'data' => [
+                                        'type'    => 'single_post',
+                                        'slug'    => null,
+                                        'post_id' => $post->id,
+                                        'user_id' => $authUser->id ?? null
+                                    ]
+                                ]);
                         } else {
                             Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
-                            sendNotification($tokens, [
-                                'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
-                                'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
-                                'icon'  => asset('assets/icon/speaker.png'),
-                                'sound' => 'default',
-                            ]);
+                            if (!empty($tokens))
+                                sendNotification($tokens, [
+                                    'notification' => [
+                                        'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                                        'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
+                                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                        'sound' => 'default'
+                                    ],
+                                    'data'  => [
+                                        'type'    => 'single_post',
+                                        'slug'    => null,
+                                        'post_id' => $post->id,
+                                        'user_id' => $authUser->id ?? null
+                                    ]
+                                ]);
                         }
                     }
                 } else {
@@ -256,20 +282,38 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
                 if ($authUser->id != $post->user_id) {
                     if ($status === '1') {
                         Notification::send($userPost, new NewPostLikeNotification($authUser, $post->id));
-                        sendNotification($tokens, [
-                            'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
-                            'icon'  => asset('assets/icon/speaker.png'),
-                            'sound' => 'default',
-                        ]);
+                        if (!empty($tokens))
+                            sendNotification($tokens, [
+                                'notification' => [
+                                    'title' => Lang::get('app.notifications.new-post-like-title', [], $receiverLanguage),
+                                    'body'  => Lang::get('app.notifications.new-post-like-body', ['username' => $authUser->username], $receiverLanguage),
+                                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                    'sound' => 'default'
+                                ],
+                                'data' => [
+                                    'type'    => 'single_post',
+                                    'slug'    => null,
+                                    'post_id' => $post->id,
+                                    'user_id' => $authUser->id ?? null
+                                ]
+                            ]);
                     } else {
                         Notification::send($userPost, new NewPostDisLikeNotification($authUser, $post->id));
-                        sendNotification($tokens, [
-                            'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
-                            'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
-                            'icon'  => asset('assets/icon/speaker.png'),
-                            'sound' => 'default',
-                        ]);
+                        if (!empty($tokens))
+                            sendNotification($tokens, [
+                                'notification' => [
+                                    'title' => Lang::get('app.notifications.new-post-dislike-title', [], $receiverLanguage),
+                                    'body'  => Lang::get('app.notifications.new-post-dislike-body', ['username' => $authUser->username], $receiverLanguage),
+                                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                    'sound' => 'default'
+                                ],
+                                'data'  => [
+                                    'type'    => 'single_post',
+                                    'slug'    => null,
+                                    'post_id' => $post->id,
+                                    'user_id' => $authUser->id ?? null
+                                ]
+                            ]);
                     }
                 }
 

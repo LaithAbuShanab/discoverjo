@@ -157,13 +157,14 @@ class Notification extends Page implements HasForms
                             $notificationData = [
                                 'title' => $title[$receiverLanguage],
                                 'body' => $body[$receiverLanguage],
-                                'icon' => asset('assets/icon/new.png'),
+                                'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
                                 'sound' => 'default',
                             ];
 
                             // Collect all tokens for this user
                             $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
-                            sendNotification($tokens, $notificationData);
+                            if (!empty($tokens))
+                                sendNotification($tokens, $notificationData);
                         }
                     }
 

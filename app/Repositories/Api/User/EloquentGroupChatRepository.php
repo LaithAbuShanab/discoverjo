@@ -78,7 +78,7 @@ class EloquentGroupChatRepository implements GroupChatRepositoryInterface
                     'notification' => [
                         'title' => Lang::get('app.notifications.new-message', [], $receiverLanguage),
                         'body'  => Lang::get('app.notifications.new-user-message', ['username' => Auth::guard('api')->user()->username], $receiverLanguage),
-                        'icon'  => asset('assets/icon/new.png'),
+                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
                         'sound' => 'default',
                     ],
                     'data' => [

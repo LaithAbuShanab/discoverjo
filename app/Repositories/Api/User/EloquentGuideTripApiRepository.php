@@ -95,7 +95,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         return new GuideTripUpdateDetailResource($guideTrip);
     }
 
-    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage,$paymentMethods)
+    public function storeGuideTrip($mainData, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail, $mainImage, $paymentMethods)
     {
         DB::beginTransaction();
         try {
@@ -120,7 +120,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     ->toMediaCollection('main_image');
             }
 
-            if($paymentMethods !== null){
+            if ($paymentMethods !== null) {
                 foreach ($paymentMethods as $paymentMethod) {
                     $paymentMethodTranslate = ['en' => $paymentMethod->en, 'ar' => $paymentMethod->ar];
                     $guideTripPayment = new GuideTripPaymentMethod();
@@ -210,7 +210,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
         }
     }
 
-    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail,$mainImage,$paymentMethods)
+    public function updateGuideTrip($mainData, $slug, $gallery, $activities, $priceInclude, $priceAge, $assembly, $requiredItem, $trail, $mainImage, $paymentMethods)
     {
         DB::beginTransaction();
         try {
@@ -246,7 +246,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             }
 
 
-            if($paymentMethods !== null){
+            if ($paymentMethods !== null) {
                 GuideTripPaymentMethod::where('guide_trip_id', $guideTrip->id)->delete();
                 foreach ($paymentMethods as $paymentMethod) {
                     $paymentMethodTranslate = ['en' => $paymentMethod->en, 'ar' => $paymentMethod->ar];
@@ -288,7 +288,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     $createPriceAge->price = $singlePrice->cost;
                     $createPriceAge->save();
                 }
-            }else{
+            } else {
                 GuideTripPriceAge::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
@@ -313,7 +313,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                     $createRequiredItem->save();
                     $createRequiredItem->item = $createRequiredItem->setTranslations('item', $requiredItemTranslate);
                 }
-            }else{
+            } else {
                 GuideTripRequirement::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
@@ -326,7 +326,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
                 $tripTrail->distance_in_meter = $trail->distance_in_meter;
                 $tripTrail->difficulty = $trail->difficulty;
                 $tripTrail->save();
-            }else{
+            } else {
                 GuideTripTrail::where('guide_trip_id', $guideTrip->id)->delete();
             }
 
@@ -395,29 +395,38 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             // Send push notification
             if ($status == 1) {
                 $notification = [
-                    'title' => Lang::get('app.notifications.accepted-guide-trip-title', ['username' => $fullName], $receiverLanguage),
-                    'body'  => Lang::get('app.notifications.accepted-guide-trip-body', [
-                        'username'  => $fullName,
-                        'trip_name' => $trip->name
-                    ], $receiverLanguage),
-                    'icon'  => asset('assets/icon/trip.png'),
-                    'sound' => 'default',
+                    'notification' => [
+                        'title' => Lang::get('app.notifications.accepted-guide-trip-title', ['username' => $fullName], $receiverLanguage),
+                        'body'  => Lang::get('app.notifications.accepted-guide-trip-body', ['username'  => $fullName, 'trip_name' => $trip->name], $receiverLanguage),
+                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                        'sound' => 'default'
+                    ],
+                    'data'  => [
+                        'type'    => 'guide_trip',
+                        'slug'    => $trip->slug,
+                        'trip_id' => $trip->id,
+                    ]
                 ];
             } else {
                 $notification = [
-                    'title' => Lang::get('app.notifications.declined-guide-trip-title', ['username' => $fullName], $receiverLanguage),
-                    'body'  => Lang::get('app.notifications.declined-guide-trip-body', [
-                        'username'  => $fullName,
-                        'trip_name' => $trip->name
-                    ], $receiverLanguage),
-                    'icon'  => asset('assets/icon/trip.png'),
-                    'sound' => 'default',
+                    'notification' => [
+                        'title' => Lang::get('app.notifications.declined-guide-trip-title', ['username' => $fullName], $receiverLanguage),
+                        'body'  => Lang::get('app.notifications.declined-guide-trip-body', ['username'  => $fullName, 'trip_name' => $trip->name], $receiverLanguage),
+                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                        'sound' => 'default'
+                    ],
+                    'data'  => [
+                        'type'    => 'guide_trip',
+                        'slug'    => $trip->slug,
+                        'trip_id' => $trip->id,
+                    ]
                 ];
             }
 
             if (!empty($tokens)) {
                 sendNotification($tokens, $notification);
             }
+
             $user = Auth::guard('api')->user();
             $user->addPoints(10);
             $activity = Activity::find(1);

@@ -15,6 +15,7 @@ use App\Models\Category;
 use App\Models\Place;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Warning;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -265,5 +266,24 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $user = Auth::guard('api')->user();
         $notification = $user->notifications()->where('id', $id)->first();
         $notification->delete();
+    }
+    public function warning($data)
+    {
+        $gallery= $data['images'];
+        $user = User::findBySlug($data['user_slug']);
+        $userId = $user->id;
+        $warning = new Warning();
+        $warning->reporter_id = Auth::guard('api')->user()?->id;
+        $warning->reported_id = $userId;
+        $warning->reason = $data['reason'];
+        $warning->save();
+
+        if ($gallery !== null) {
+            foreach ($gallery as $image) {
+                $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
+                $filename = Str::random(10) . '_' . time() . '.' . $extension;
+                $warning->addMedia($image)->usingFileName($filename)->toMediaCollection('warning_app');
+            }
+        }
     }
 }

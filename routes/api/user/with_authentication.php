@@ -211,5 +211,7 @@ Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAcc
 Route::get('current/user/posts', [PostApiController::class, 'currentUserPosts']); // DONE ✅
 Route::get('other/user/posts/{slug}', [PostApiController::class, 'otherUserPosts']); // DONE ✅
 
+Route::post('/report/user',[UserProfileController::class, 'report']);
+
 
 Broadcast::routes();

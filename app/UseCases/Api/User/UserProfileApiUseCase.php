@@ -90,4 +90,9 @@ class UserProfileApiUseCase
     {
         return $this->userProfileRepository->deleteNotifications($id);
     }
+
+    public function warning($data)
+    {
+        return $this->userProfileRepository->warning($data);
+    }
 }

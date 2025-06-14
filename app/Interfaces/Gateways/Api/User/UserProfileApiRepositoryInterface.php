@@ -18,4 +18,5 @@ interface UserProfileApiRepositoryInterface
     public function readNotification($id);
     public function unreadNotifications();
     public function deleteNotifications($id);
+    public function warning($data);
 }

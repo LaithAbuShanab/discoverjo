@@ -6,7 +6,9 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Profile\SetLocationApiRequest;
 use App\Http\Requests\Api\User\Profile\UpdateProfileApiRequest;
+use App\Http\Requests\Api\User\Warning\WarningRequest;
 use App\Http\Requests\PlacesOfCurrentLocationRequest;
+use App\Models\Warning;
 use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfNotificationBelongToUserRule;
 use App\Rules\CheckIfUserActiveRule;
@@ -219,6 +221,17 @@ class UserProfileController extends Controller
         try {
             $notifications = $this->userProfileApiUseCase->deleteNotifications($validator->validated()['id']);
             return ApiResponse::sendResponse(200,  __('app.api.notification-deleted-successfully'), $notifications);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function report(WarningRequest $request)
+    {
+        try {
+            $report = $this->userProfileApiUseCase->warning($request->validated());
+            return ApiResponse::sendResponse(200,  __('app.api.report-created-successfully'), $report);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

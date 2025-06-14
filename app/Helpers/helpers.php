@@ -202,7 +202,7 @@ function handleWarning(object $record): void
     $receiverLanguage = in_array($user->lang, ['en', 'ar']) ? $user->lang : 'en';
 
     if ($totalWarnings === 4) {
-        $user->status = 0;
+        $user->status = 3;
         $user->save();
 
         // Insert into blocked_users table
@@ -223,7 +223,7 @@ function handleWarning(object $record): void
             sendNotification($tokens, $notificationData);
         }
     } elseif ($totalWarnings >= 3) {
-        $user->status = 0;
+        $user->status = 3;
         $user->save();
 
         FacadesNotification::send($user, new NewWarningUserNotification('blocked'));

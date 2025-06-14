@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Warning;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\DB;
 
 class EditWarning extends EditRecord
 {
@@ -24,8 +25,18 @@ class EditWarning extends EditRecord
         $warning = $this->record;
         $userId = $warning->reported_id;
         $recordsCount = Warning::where('reported_id',$userId)->where('status',1)->count();
-        if ($recordsCount == 3) {
-            $user = User::find($userId);
+        $user = User::find($userId);
+        if ($recordsCount == 4) {
+            $user->status = 3;
+            $user->save();
+            DB::table('blocked_users')->insert([
+                'email' => $user->email,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        if($recordsCount == 4){
             $user->status = 3;
             $user->save();
         }

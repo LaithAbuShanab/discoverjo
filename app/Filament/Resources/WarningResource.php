@@ -6,12 +6,16 @@ use App\Filament\Resources\WarningResource\Pages;
 use App\Filament\Resources\WarningResource\RelationManagers;
 use App\Models\Warning;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\BadgeColumn;
+
 
 class WarningResource extends Resource
 {
@@ -23,18 +27,33 @@ class WarningResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('reporter_id')
+                Forms\Components\Select::make('reporter_id')
+                    ->relationship('reporter', 'username')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('reported_id')
+                    ->disabled(),
+                Forms\Components\Select::make('reported_id')
+                    ->relationship('reported', 'username')
                     ->required()
-                    ->numeric(),
+                    ->disabled(),
                 Forms\Components\Textarea::make('reason')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
+                    ->columnSpanFull()
+                    ->disabled(),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        0 => 'Pending',
+                        1 => 'Reviewed',
+                        2 => 'Dismissed',
+                    ])
+                    ->default(0)
                     ->required()
-                    ->numeric()
-                    ->default(0),
+                    ->label('Status'),
+                Grid::make(2)->schema([
+                    SpatieMediaLibraryFileUpload::make('warning_app')
+                        ->collection('warning_app')
+                        ->multiple()
+                        ->columnSpanFull()
+                        ->panelLayout('grid'),
+                ]),
             ]);
     }
 
@@ -42,15 +61,27 @@ class WarningResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('reporter_id')
+                Tables\Columns\TextColumn::make('reporter.username')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('reported_id')
+                Tables\Columns\TextColumn::make('reported.username')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('status')
+                    ->formatStateUsing(fn($state) => match ($state) {
+                        0 => 'Pending',
+                        1 => 'Reviewed',
+                        2 => 'Dismissed',
+                        default => 'Unknown',
+                    })
+                    ->badge()
+                    ->color(fn($state) => match ($state) {
+                        0 => 'gray',
+                        1 => 'success',
+                        2 => 'danger',
+                        default => 'secondary',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -84,7 +115,7 @@ class WarningResource extends Resource
     {
         return [
             'index' => Pages\ListWarnings::route('/'),
-            'create' => Pages\CreateWarning::route('/create'),
+//            'create' => Pages\CreateWarning::route('/create'),
             'edit' => Pages\EditWarning::route('/{record}/edit'),
             'view'=>Pages\ViewWarning::route('/{record}/view'),
         ];

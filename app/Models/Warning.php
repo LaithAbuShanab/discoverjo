@@ -21,4 +21,14 @@ class Warning extends Model implements HasMedia
                 $this->addMediaConversion('warning_app')->format('webp')->nonQueued();
             });
     }
+
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reporter_id');
+    }
+
+    public function reported()
+    {
+        return $this->belongsTo(User::class, 'reported_id');
+    }
 }

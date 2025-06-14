@@ -226,6 +226,10 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return $this->morphedByMany(Volunteering::class, 'reviewable')->withTimestamps();
     }
+    public function reviewService()
+    {
+        return $this->morphedByMany(Service::class, 'reviewable')->withTimestamps();
+    }
 
     public function likeReview()
     {

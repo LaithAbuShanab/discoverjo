@@ -285,5 +285,11 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
                 $warning->addMedia($image)->usingFileName($filename)->toMediaCollection('warning_app');
             }
         }
+
+        adminNotification(
+            'New Report',
+            'A new report has been create by ' . Auth::guard('api')->user()->username,
+            ['action' => 'view_report', 'action_label' => 'View Report', 'action_url' => route('filament.admin.resources.warnings.view', $warning)]
+        );
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\SlugOptions;
@@ -86,5 +87,9 @@ class Service extends Model implements HasMedia
     public function provider()
     {
         return $this->morphTo();
+    }
+    public function reviews(): MorphMany
+    {
+        return $this->morphMany(Reviewable::class, 'reviewable')->latest();
     }
 }

@@ -24,7 +24,7 @@ class CheckIfNotExistsInFavoratblesRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service'];
 
         if (!in_array($this->data['type'], $acceptableType)) {
             return;

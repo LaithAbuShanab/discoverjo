@@ -31,7 +31,7 @@ class FavoriteApiController extends Controller
                 'slug' => $slug
             ],
             [
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'])],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service'])],
                 'slug' => ['bail', 'required', new CheckIfExistsInFavoratblesRule(), new CheckIfUserTypeActiveRule()],
             ],
             [
@@ -63,7 +63,7 @@ class FavoriteApiController extends Controller
                 'slug' => $slug
             ],
             [
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip'])],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service'])],
                 'slug' => [
                     'required',
                     new CheckIfNotExistsInFavoratblesRule()

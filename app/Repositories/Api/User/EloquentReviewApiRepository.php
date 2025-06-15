@@ -65,7 +65,7 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 ->latest('created_at') // Make sure this column exists
                 ->value('id');
 
-            if (in_array($data['type'], ['trip', 'guideTrip'])) {
+            if (in_array($data['type'], ['trip', 'guideTrip','service'])) {
                 $userPost = $reviewItem->user;
 
                 if ($userPost->id !== $user->id) {

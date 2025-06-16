@@ -103,7 +103,6 @@ function sendNotification($deviceTokens, $data)
     $dataPayload['icon'] = $data['notification']['image'] ?? asset('default-icon.png');
     $dataPayload['sound'] = $data['notification']['sound'] ?? 'default';
 
-    dd($dataPayload);
     $message = CloudMessage::new()
         ->withNotification($notification)
         ->withData($dataPayload);

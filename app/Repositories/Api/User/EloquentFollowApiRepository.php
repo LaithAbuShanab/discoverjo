@@ -40,7 +40,10 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             ]
         ];
         Notification::send($followingUser, new NewFollowRequestNotification(Auth::guard('api')->user(), $followingUser));
-        sendNotification($tokens, $notificationData);
+
+        if (!empty($tokens)) {
+            sendNotification($tokens, $notificationData);
+        }
 
         //add points and streak
         $user = Auth::guard('api')->user();
@@ -107,7 +110,10 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
             ]
         ];
         Notification::send($followerUser, new AcceptFollowRequestNotification(Auth::guard('api')->user()));
-        sendNotification($tokens, $notificationData);
+
+        if (!empty($tokens)) {
+            sendNotification($tokens, $notificationData);
+        }
 
         $user = Auth::guard('api')->user();
         $user->addPoints(10);

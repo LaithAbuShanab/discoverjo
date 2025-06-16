@@ -89,7 +89,10 @@ class EloquentGroupChatRepository implements GroupChatRepositoryInterface
                         'message_id'      => $eloquentMessage->id
                     ]
                 ];
-                sendNotification($tokens, $notificationData);
+
+                if(!empty($tokens)) {
+                    sendNotification($tokens, $notificationData);
+                }
             }
 
             Broadcast(new GroupMessageEvent($data))->toOthers();

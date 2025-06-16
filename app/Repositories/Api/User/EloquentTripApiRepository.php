@@ -479,7 +479,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     ],
                 ];
 
-                sendNotification($tokens, $notificationData);
+                if (!empty($tokens))
+                    sendNotification($tokens, $notificationData);
             }
         }
     }

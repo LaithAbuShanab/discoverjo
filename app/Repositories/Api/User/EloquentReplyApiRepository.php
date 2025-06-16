@@ -132,7 +132,9 @@ class EloquentReplyApiRepository implements ReplyApiRepositoryInterface
             }
         }
         if (!empty($notificationData)) {
-            sendNotification($tokens, $notificationData);
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notificationData);
+            }
         }
     }
 }

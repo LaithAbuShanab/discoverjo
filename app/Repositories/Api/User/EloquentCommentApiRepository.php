@@ -59,7 +59,10 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                             'comment_id' => $comment->id,
                         ]
                     ];
-                    sendNotification($tokens, $notificationData);
+
+                    if (!empty($tokens)) {
+                        sendNotification($tokens, $notificationData);
+                    }
                 }
             } else {
                 $parentComment = Comment::find($data['parent_id']);
@@ -84,7 +87,10 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
                             'comment_id' => $comment->id,
                         ]
                     ];
-                    sendNotification($tokens, $notificationData);
+
+                    if (!empty($tokens)) {
+                        sendNotification($tokens, $notificationData);
+                    }
                 }
             }
 
@@ -266,7 +272,9 @@ class EloquentCommentApiRepository implements CommentApiRepositoryInterface
             }
 
             if (!empty($notificationData) && $comment->user_id != $authUser->id) {
-                sendNotification($tokens, $notificationData);
+                if (!empty($tokens)) {
+                    sendNotification($tokens, $notificationData);
+                }
             }
 
             ActivityLog('comment', $comment, 'the user ' . $data['status'] . ' the comment', $data['status']);

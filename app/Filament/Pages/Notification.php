@@ -18,6 +18,7 @@ use Filament\Pages\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Support\Facades\Notification as FacadesNotification;
 use Illuminate\Validation\ValidationException;
+use App\Jobs\SendUserNotificationJob;
 
 class Notification extends Page implements HasForms
 {
@@ -85,7 +86,7 @@ class Notification extends Page implements HasForms
                                         CheckboxList::make('selectedUsers')
                                             ->label('')
                                             ->options(
-                                                User::where('type', '==', 1)
+                                                User::where('type', 1)
                                                     ->pluck('username', 'id')
                                                     ->toArray()
                                             )
@@ -97,7 +98,7 @@ class Notification extends Page implements HasForms
                                         CheckboxList::make('selectedGuideUsers')
                                             ->label('')
                                             ->options(
-                                                User::where('type', 1)
+                                                User::where('type', 2)
                                                     ->pluck('username', 'id')
                                                     ->toArray()
                                             )
@@ -125,14 +126,14 @@ class Notification extends Page implements HasForms
                 ->action(function (): void {
                     $this->validate();
 
-                    $title_en = $this->titleName['en'];
-                    $title_ar = $this->titleName['ar'];
-                    $body_en = $this->body['en'];
-                    $body_ar = $this->body['ar'];
-
-                    $title = ['en' => $title_en, 'ar' => $title_ar];
-                    $body = ['en' => $body_en, 'ar' => $body_ar];
-
+                    $title = [
+                        'en' => $this->titleName['en'],
+                        'ar' => $this->titleName['ar'],
+                    ];
+                    $body = [
+                        'en' => $this->body['en'],
+                        'ar' => $this->body['ar'],
+                    ];
 
                     $users = $this->selectedUsers ?? [];
                     $guideUsers = $this->selectedGuideUsers ?? [];
@@ -145,41 +146,21 @@ class Notification extends Page implements HasForms
                     }
 
                     $userIds = array_unique(array_merge($users, $guideUsers));
-                    $userModels = User::whereIn('id', $userIds)->get();
 
-                    // Send via Laravel Notifications
-                    FacadesNotification::send($userModels, new SendNotificationFromAdmin($title, $body));
-
-                    // Send via Firebase if tokens exist
-                    foreach ($userModels as $user) {
-                        if ($user->DeviceTokenMany && $user->DeviceTokenMany->isNotEmpty()) {
-                            $receiverLanguage = $user->lang;
-                            $notificationData = [
-                                'title' => $title[$receiverLanguage],
-                                'body' => $body[$receiverLanguage],
-                                'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
-                                'sound' => 'default',
-                            ];
-
-                            // Collect all tokens for this user
-                            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
-                            if (!empty($tokens))
-                                sendNotification($tokens, $notificationData);
-                        }
-                    }
-
+                    // ✅ Dispatch job to queue
+                    SendUserNotificationJob::dispatch($title, $body, $userIds);
 
                     FilamentNotification::make()
                         ->success()
-                        ->title('Notification Sent')
-                        ->body('Your notification has been delivered successfully.')
+                        ->title('Notification Queued')
+                        ->body('Your notification has been queued for background delivery.')
                         ->send();
 
                     $this->titleName = null;
                     $this->body = null;
                     $this->selectedUsers = [];
                     $this->selectedGuideUsers = [];
-                }),
+                })
         ];
     }
 }

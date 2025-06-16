@@ -15,6 +15,7 @@ class SingleServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $bookingDate =$this->serviceBookings?->first();
         $categories = $this->categories->map(function ($category) {
             return $category->parent ? [
                 'name' => $category->parent->name,
@@ -50,12 +51,22 @@ class SingleServiceResource extends JsonResource
                 'url' => $image->getUrl(),
             ];
         }
+        $filteredReviews = $this->reviews->filter(function ($review) {
+            return $review->user->status == 1;
+        });
 
+        $days=[];
+        foreach ($bookingDate->serviceBookingDays as $day) {
+            $days[] = $day->day_of_week;
+        }
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
             "name"=>$this->name,
             "description"=>$this->description,
+            'available_start_date'=>$bookingDate->available_start_date,
+            'available_end_date'=>$bookingDate->available_end_date,
+            'work_days'=>$days,
             'region'=>new RegionResource($this->region),
             'google_map_url' => $this->url_google_map,
             'category' => $categories,
@@ -67,10 +78,10 @@ class SingleServiceResource extends JsonResource
             'gallery'=>$gallery,
             'notes'=>$notes,
             'provider'=>new ProviderResource($this->provider),
-//            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrips->contains('id', $this->id) : false,
-//            'reviews' => ReviewResource::collection($filteredReviews),
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
+            'reviews' => ReviewResource::collection($filteredReviews),
 //            'is_joined' => $joined,
-//            'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->guide_id,
+            'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,
         ];
     }
 }

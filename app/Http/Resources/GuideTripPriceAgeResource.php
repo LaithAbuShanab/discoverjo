@@ -15,6 +15,7 @@ class GuideTripPriceAgeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id'=>$this->id,
             'min_age'=>$this->min_age,
             'max_age'=>$this->max_age,
             'price'=>$this->price,

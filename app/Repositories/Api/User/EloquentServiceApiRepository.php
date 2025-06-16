@@ -2,34 +2,15 @@
 
 namespace App\Repositories\Api\User;
 
-use App\Http\Resources\AllGuideTripResource;
+
 use App\Http\Resources\AllServicesResource;
-use App\Http\Resources\GuideResource;
-use App\Http\Resources\GuideTripResource;
-use App\Http\Resources\GuideTripUpdateDetailResource;
-use App\Http\Resources\GuideTripUserResource;
-use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
+use App\Http\Resources\UserSingleServiceReservationResource;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
-use App\Models\GuideTrip;
-use App\Models\GuideTripActivity;
-use App\Models\GuideTripAssembly;
-use App\Models\GuideTripPaymentMethod;
-use App\Models\GuideTripPriceAge;
-use App\Models\GuideTripPriceInclude;
-use App\Models\GuideTripRequirement;
-use App\Models\GuideTripTrail;
-use App\Models\GuideTripUser;
 use App\Models\Service;
-use App\Models\User;
-use App\Notifications\Users\guide\AcceptCancelNotification;
+use App\Models\ServiceReservation;
+use App\Models\ServiceReservationDetail;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
-use LevelUp\Experience\Models\Activity;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class EloquentServiceApiRepository implements ServiceApiRepositoryInterface

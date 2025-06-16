@@ -14,6 +14,8 @@ class Service extends Model implements HasMedia
 
     public $translatable = ['name', 'description', 'address'];
     public $guarded = [];
+    public $timestamps = true;
+
 
     public function getSlugOptions(): SlugOptions
     {
@@ -91,5 +93,10 @@ class Service extends Model implements HasMedia
     public function reviews(): MorphMany
     {
         return $this->morphMany(Reviewable::class, 'reviewable')->latest();
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(ServiceReservation::class);
     }
 }

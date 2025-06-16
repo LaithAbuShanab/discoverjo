@@ -8,6 +8,7 @@ use App\Http\Resources\FeaturesResource;
 use App\Http\Resources\GuideFavoriteResource;
 use App\Http\Resources\PlaceResource;
 use App\Http\Resources\PlanResource;
+use App\Http\Resources\ServiceFavoriteResource;
 use App\Http\Resources\TripResource;
 use App\Http\Resources\UserFavoriteResource;
 use App\Http\Resources\UserFavoriteSearchResource;
@@ -286,6 +287,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
                 (stripos($plan->name['ar'], $searchTerm) !== false ||
                     stripos($plan->name['en'], $searchTerm) !== false));
 
+        $serviceFav = $this->favoriteServices->filter(fn($service) => $service->provider->status == 1);
         return [
             'places'       => $placeFav,
             'trip'         => TripResource::collection($tripFav),
@@ -302,6 +304,7 @@ class EloquentFavoriteApiRepository implements FavoriteApiRepositoryInterface
             'plan'         => PlanResource::collection($planFav),
             'post'         => $postFav,
             'guide_trip'   => GuideFavoriteResource::collection($guideTripFav),
+            'serviceFav'   => ServiceFavoriteResource::collection($serviceFav),
         ];
     }
 

@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\User\GuideRatingController;
 use App\Http\Controllers\Api\User\GroupChatController;
 use App\Http\Controllers\Api\User\FavoriteApiController;
 use App\Http\Controllers\Api\User\ReviewApiController;
+use App\Http\Controllers\Api\User\ServiceApiController;
+use App\Http\Controllers\ReservationApiController;
 
 Route::middleware(['firstLogin'])->group(function () {
 
@@ -196,6 +198,24 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('/start', [GameApiController::class, 'start']); // DONE ✅
         Route::post('/next-question', [GameApiController::class, 'next']); // DONE ✅
         Route::post('/finish', [GameApiController::class, 'finish']); // DONE ✅
+    });
+
+    Route::group(['prefix' => 'service'], function () {
+        //api of user
+        Route::get('/reservation/{service_slug}/date/{date}', [ReservationApiController::class, 'reservationDate']);
+        Route::post('/make/reservation', [ReservationApiController::class, 'serviceReservation']);
+        Route::put('/reservation/{id}/update', [ReservationApiController::class, 'updateReservation']);
+        Route::Delete('/reservation/{id}/delete', [ReservationApiController::class, 'deleteReservation']);
+        Route::get('/reservations/{service_slug}', [ReservationApiController::class, 'UserServiceReservations']);
+        Route::get('all/reservations', [ReservationApiController::class, 'allReservations']);
+
+        //api for provider
+        //1- change status
+        Route::put('/reservation/{id}/status/{status}', [ReservationApiController::class, 'changeStatusReservation']);
+        //2- list of pending request pagination
+        Route::get('provider/request/reservations/list/{service_slug}', [ReservationApiController::class, 'providerRequestReservations']);
+        //3- list of reservation accepted pagination
+        Route::get('provider/approved/reservations/list/{service_slug}', [ReservationApiController::class, 'approvedRequestReservations']);
     });
 });
 

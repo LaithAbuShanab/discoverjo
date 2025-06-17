@@ -43,8 +43,6 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
         //retrieve active event
         $query = Event::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now);
         $eloquentEvents = Event::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
-        //update the event where it inactive
-        Event::where('status', '1')->whereNotIn('id', $eloquentEvents->pluck('id'))->update(['status' => '0']);
 
         $eventsArray = $eloquentEvents->toArray();
         $pagination = [

@@ -53,8 +53,6 @@ class EloquentVolunteeringApiRepository implements VolunteeringApiRepositoryInte
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
         $eloquentVolunteerings = Volunteering::orderBy('start_datetime')->where('status', '1')->where('end_datetime', '>=', $now)->paginate($perPage);
-        //edit the status should has cron job
-        Volunteering::where('status', '1')->whereNotIn('id', $eloquentVolunteerings->pluck('id'))->update(['status' => '0']);
         $volunteeringArray = $eloquentVolunteerings->toArray();
 
         $pagination = [

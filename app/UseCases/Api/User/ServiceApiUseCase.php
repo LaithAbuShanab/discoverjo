@@ -2,10 +2,7 @@
 
 namespace App\UseCases\Api\User;
 
-use App\Interfaces\Gateways\Api\User\GuideTripApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
-use App\Models\Region;
-use Illuminate\Support\Facades\Auth;
 
 class ServiceApiUseCase
 {
@@ -15,8 +12,6 @@ class ServiceApiUseCase
     {
         $this->serviceApiRepository = $serviceApiRepository;
     }
-
-
 
     public function allServices()
     {

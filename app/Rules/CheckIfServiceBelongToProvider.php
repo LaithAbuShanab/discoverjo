@@ -19,7 +19,7 @@ class CheckIfServiceBelongToProvider implements ValidationRule
         $user = Auth::guard('api')->user();
         $service = Service::findBySlug($value);
         if (!$service) return;
-        if($service->provider_id != $user->id){
+        if ($service->provider_id != $user->id) {
             $fail(__('validation.api.this-service-is-not-belong-to-you'));
         }
     }

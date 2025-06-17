@@ -37,7 +37,7 @@ class CheckIfDateAcceptableForService implements ValidationRule, DataAwareRule
 
 
         if ($dateValue->lt($start) || $dateValue->gt($end)) {
-            $fail(__('validation.invalid_date_range', [
+            $fail(__('validation.api.invalid_date_range', [
                 'start' => $start->toDateString(),
                 'end' => $end->toDateString(),
             ]));
@@ -51,10 +51,9 @@ class CheckIfDateAcceptableForService implements ValidationRule, DataAwareRule
             ->exists();
 
         if (!$isAvailableOnDay) {
-            $fail(__('validation.day_not_available', [
-                'day' => $dayOfWeek,
+            $fail(__('validation.api.day_not_available', [
+                'day' => __('validation.api.' . $dayOfWeek),
             ]));
         }
-
     }
 }

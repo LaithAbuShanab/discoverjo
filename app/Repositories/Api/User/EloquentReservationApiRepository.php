@@ -42,6 +42,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $duration = $booking->session_duration;
         $capacity = $booking->session_capacity;
 
+        // dd($startTime, $endTime, $duration, $capacity);
         $slots = [];
 
         while ($startTime->copy()->addMinutes($duration)->lte($endTime)) {

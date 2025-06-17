@@ -32,8 +32,8 @@ class BookingDateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'service_slug' => ['bail','required', 'string', 'exists:services,slug',new CheckIfServiceActiveRuel()],
-            'date' => ['bail','required', 'date_format:Y-m-d', 'after_or_equal:today',new CheckIfDateAcceptableForService()],
+            'service_slug' => ['bail', 'required', 'string', 'exists:services,slug', new CheckIfServiceActiveRuel()],
+            'date' => ['bail', 'required', 'date_format:Y-m-d', 'after_or_equal:today', new CheckIfDateAcceptableForService()],
         ];
     }
 }

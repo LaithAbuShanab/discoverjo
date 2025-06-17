@@ -73,13 +73,11 @@ class CheckIfHasInjectionBasedTimeRule implements ValidationRule
             'search'
         ];
 
-        // ✅ Step 3: Normalize the input for comparison
         $lowerValue = strtolower(trim((string) $value));
 
-        // ✅ Step 4: Check if any dangerous word exists in the input
         foreach ($dangerousWords as $word) {
             if (str_contains($lowerValue, $word)) {
-                $fail("invalid input");
+                $fail(__('validation.api.injection_based_time'));
                 return;
             }
         }

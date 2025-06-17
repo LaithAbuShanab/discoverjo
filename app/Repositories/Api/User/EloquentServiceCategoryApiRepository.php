@@ -3,7 +3,6 @@
 namespace App\Repositories\Api\User;
 
 use App\Http\Resources\AllCategoriesResource;
-use App\Http\Resources\AllGuideTripResource;
 use App\Http\Resources\AllServiceCategoriesResource;
 use App\Http\Resources\AllServicesResource;
 use App\Http\Resources\AllServiceSubCategoriesResource;

@@ -106,7 +106,7 @@ Route::middleware(['firstLogin'])->group(function () {
         //delete all subscriptions
         Route::delete('/delete/{guide_trip_slug}', [GuideTripUserApiController::class, 'delete']); // DONE ✅
         //update all subscriptions should review it
-//        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']); // DONE ✅
+        //        Route::put('/update/{guide_trip_slug}', [GuideTripUserApiController::class, 'update']); // DONE ✅
         //get single subscription
         Route::get('/single/subscription/{subscription_id}', [GuideTripUserApiController::class, 'singleSubscription']);
 
@@ -117,7 +117,6 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/store/single/subscription/{guide_trip_slug}', [GuideTripUserApiController::class, 'storeSingleSubscription']);
         //delete single subscription
         Route::delete('/single/subscription/delete/{subscription_id}', [GuideTripUserApiController::class, 'deleteSingleSubscription']);
-
     });
 
     // ALL ROUTES FOR GUIDE RATING
@@ -199,22 +198,23 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::post('/finish', [GameApiController::class, 'finish']); // DONE ✅
     });
 
+    // ALL ROUTES FOR RESERVATION
     Route::group(['prefix' => 'service'], function () {
-        //api of user
-        Route::get('/reservation/{service_slug}/date/{date}', [ReservationApiController::class, 'reservationDate']);
-        Route::post('/make/reservation', [ReservationApiController::class, 'serviceReservation']);
-        Route::put('/reservation/{id}/update', [ReservationApiController::class, 'updateReservation']);
-        Route::Delete('/reservation/{id}/delete', [ReservationApiController::class, 'deleteReservation']);
-        Route::get('/reservations/{service_slug}', [ReservationApiController::class, 'UserServiceReservations']);
-        Route::get('all/reservations', [ReservationApiController::class, 'allReservations']);
+        // API OF USER
+        Route::get('/reservation/{service_slug}/date/{date}', [ReservationApiController::class, 'reservationDate']); // DONE ✅
+        Route::post('/make/reservation', [ReservationApiController::class, 'serviceReservation']); // DONE ✅
+        Route::put('/reservation/{id}/update', [ReservationApiController::class, 'updateReservation']); // DONE ✅
+        Route::Delete('/reservation/{id}/delete', [ReservationApiController::class, 'deleteReservation']); // DONE ✅
+        Route::get('/reservations/{service_slug}', [ReservationApiController::class, 'UserServiceReservations']); // DONE ✅
+        Route::get('all/reservations', [ReservationApiController::class, 'allReservations']); // DONE ✅
 
-        //api for provider
+        // API OF PROVIDER
         //1- change status
-        Route::put('/reservation/{id}/status/{status}', [ReservationApiController::class, 'changeStatusReservation']);
+        Route::put('/reservation/{id}/status/{status}', [ReservationApiController::class, 'changeStatusReservation']); // DONE ✅
         //2- list of pending request pagination
-        Route::get('provider/request/reservations/list/{service_slug}', [ReservationApiController::class, 'providerRequestReservations']);
+        Route::get('provider/request/reservations/list/{service_slug}', [ReservationApiController::class, 'providerRequestReservations']); // DONE ✅
         //3- list of reservation accepted pagination
-        Route::get('provider/approved/reservations/list/{service_slug}', [ReservationApiController::class, 'approvedRequestReservations']);
+        Route::get('provider/approved/reservations/list/{service_slug}', [ReservationApiController::class, 'approvedRequestReservations']); // DONE ✅
     });
 });
 
@@ -230,7 +230,7 @@ Route::put('user/deactivate-account', [AuthUserController::class, 'deactivateAcc
 Route::get('current/user/posts', [PostApiController::class, 'currentUserPosts']); // DONE ✅
 Route::get('other/user/posts/{slug}', [PostApiController::class, 'otherUserPosts']); // DONE ✅
 
-Route::post('/report/user',[UserProfileController::class, 'report']);
+Route::post('/report/user', [UserProfileController::class, 'report']);
 
 
 Broadcast::routes();

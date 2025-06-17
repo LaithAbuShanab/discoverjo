@@ -172,6 +172,7 @@ return [
     'attributes' => [
 
         // المعلومات الأساسية
+        'id'                                        => 'المعرف',
         'name'                                      => 'الاسم',
         'name-en'                                   => 'الاسم بالإنجليزية',
         'name-ar'                                   => 'الاسم بالعربية',
@@ -185,6 +186,7 @@ return [
         'first_name'                                => 'الاسم الاول',
         'last_name'                                 => 'اسم العائلة',
         'age'                                       => 'العمر',
+        'status'                                    => 'الحالة',
 
         // التواصل والعنوان
         'phone-number'                              => 'رقم الهاتف',
@@ -282,6 +284,14 @@ return [
 
         // أولوية العرض
         'priority'                                  => 'الأولوية',
+
+        // الخدمات
+        'service_slug'                              => 'الخدمة',
+        'contact_info'                              => 'معلومات الاتصال',
+        'reservations'                              => 'قائمة الحجوزات',
+        'reservations.*.reservation_detail'         => 'تفاصيل الحجز',
+        'reservations.*.quantity'                   => 'عدد الأشخاص',
+        'reservations.*.price_age_id'               => 'فئة السعر حسب العمر',
 
         'query'                                     => 'البحث',
     ],
@@ -737,5 +747,37 @@ return [
         'longitude-required'                                        => 'حقل خط الطول مطلوب.',
         'longitude-numeric'                                         => 'يجب أن يكون خط الطول رقمًا.',
 
+        // Service Validation
+        'day_not_available'                                         => 'اليوم المحدد (:day) غير متاح.',
+        'duplicate_exact_slot_booking'                              => 'يوجد حجز بالفعل في :date عند الساعة :time.',
+        'Friday'                                                    => 'الجمعة',
+        'invalid_date_range'                                        => 'يجب ان يكون التاريخ بين :start و :end.',
+        'invalid_date_range_for_service'                            => 'تاريخ غير صالح.',
+        'invalid_price_age'                                         => 'معرف الفئة العمرية للسعر (:id) غير صالح.',
+        'invalid_quantity'                                          => 'الكمية يجب ان تكون رقمًا صحيحًا.',
+        'invalid_service_slug'                                      => 'اسم الخدمة غير صالح.',
+        'invalid_slot_start_time'                                   => 'يجب ان يكون الساعة :duration دقائق ويبدأ بين :start و :end.',
+        'Monday'                                                    => 'الاثنين',
+        'Saturday'                                                  => 'السبت',
+        'service-id-does-not-exists'                                => 'الخدمة المحددة غير موجودة.',
+        'service-id-required'                                       => 'معرف الخدمة مطلوب.',
+        'service_not_available'                                     => 'الخدمة غير متاحة.',
+        'slot_overbooked'                                           => 'تم حجز هذه الفترة بالكامل. الحد الأقصى هو :capacity، ولم يتبق سوى :remaining أماكن.',
+        'Sunday'                                                    => 'الاحد',
+        'this-service-not-longer-active'                            => 'الخدمة غير متاحة.',
+        'Thursday'                                                  => 'الخميس',
+        'Tuesday'                                                   => 'الثلاثاء',
+        'user_reservation_conflict'                                 => 'لديك بالفعل حجز لخدمة :service في هذا الوقت.',
+        'Wednesday'                                                 => 'الاربعاء',
+        'reservation-id-required'                                   => 'معرف الحجز مطلوب.',
+        'reservation-id-does-not-exists'                            => 'الحجز المحدد غير موجود.',
+        'reservation-not-belong-to-current-user'                    => 'الحجز المحدد لا يخص المستخدم الحالي.',
+        'something_went_wrong'                                      => 'حدث خطأ ما.',
+        'reservation-id-invalid'                                    => 'معرف الحجز غير صالح.',
+        'the-provider-not-longer-active'                            => 'المزود غير متاح.',
+        'this-service-not-belong-to-you'                            => 'هذه الخدمة لا تخصك.',
+        'this-service-is-not-belong-to-you'                         => 'هذه الخدمة لا تخصك.',
+
+        'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],
 ];

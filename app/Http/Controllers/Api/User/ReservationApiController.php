@@ -26,10 +26,9 @@ class ReservationApiController extends Controller
         $this->reservationApiUseCase = $reservationApiUseCase;
     }
 
-
     public function reservationDate(BookingDateRequest $request)
     {
-        $data =$request->validated();
+        $data = $request->validated();
         try {
             $services = $this->reservationApiUseCase->reservationDate($data);
             return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
@@ -49,10 +48,9 @@ class ReservationApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function UserServiceReservations(Request $request,$service_slug)
+    public function UserServiceReservations(Request $request, $service_slug)
     {
         $validator = Validator::make(['service_slug' => $service_slug], [
             'service_slug' => ['required', 'exists:services,slug', new CheckIfServiceActiveRuel(), new CheckIfProviderActiveRule()],
@@ -88,7 +86,7 @@ class ReservationApiController extends Controller
     public function deleteReservation($id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['bail','required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser() ],
+            'id' => ['bail', 'required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser()],
         ], [
             'id.required' => __('validation.api.reservation-id-required'),
             'id.exists' => __('validation.api.reservation-id-does-not-exists'),
@@ -106,14 +104,12 @@ class ReservationApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-
-    public function updateReservation(UpdateReservationRequest $request,$id)
+    public function updateReservation(UpdateReservationRequest $request, $id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['bail','required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser() ],
+            'id' => ['bail', 'required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser()],
         ], [
             'id.required' => __('validation.api.reservation-id-required'),
             'id.exists' => __('validation.api.reservation-id-does-not-exists'),
@@ -128,19 +124,18 @@ class ReservationApiController extends Controller
 
         try {
             $services = $this->reservationApiUseCase->updateReservation($data);
-            return ApiResponse::sendResponse(200, __('app.api.reservation-deleted-successfully'), $services);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-updated-successfully'), $services);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function changeStatusReservation($id,$status)
+    public function changeStatusReservation($id, $status)
     {
-        $validator = Validator::make(['id' => $id,'status' => $status], [
-            'id' => ['bail','required', 'exists:service_reservations,id',new CheckIfReservationBelongToProvider()],
-            'status'=> ['bail', 'required', Rule::in(['confirmed', 'cancelled'])],
+        $validator = Validator::make(['id' => $id, 'status' => $status], [
+            'id' => ['bail', 'required', 'exists:service_reservations,id', new CheckIfReservationBelongToProvider()],
+            'status' => ['bail', 'required', Rule::in(['confirmed', 'cancelled'])],
         ], [
             'id.required' => __('validation.api.reservation-id-required'),
             'id.exists' => __('validation.api.reservation-id-does-not-exists'),
@@ -154,18 +149,17 @@ class ReservationApiController extends Controller
 
         try {
             $services = $this->reservationApiUseCase->changeStatusReservation($data);
-            return ApiResponse::sendResponse(200, __('app.api.reservation-deleted-successfully'), $services);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-status-updated-successfully'), $services);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function providerRequestReservations(Request $request,$service_slug)
+    public function providerRequestReservations(Request $request, $service_slug)
     {
         $validator = Validator::make(['service_slug' => $service_slug], [
-            'service_slug' => ['required', 'exists:services,slug',new CheckIfServiceBelongToProvider()],
+            'service_slug' => ['required', 'exists:services,slug', new CheckIfServiceBelongToProvider()],
         ], [
             'service_slug.required' => __('validation.api.service-id-required'),
             'service_slug.exists' => __('validation.api.service-id-does-not-exists'),
@@ -177,18 +171,17 @@ class ReservationApiController extends Controller
         }
         try {
             $services = $this->reservationApiUseCase->providerRequestReservations($validator->validated()['service_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.reservations-retrieved-successfully'), $services);
+            return ApiResponse::sendResponse(200, __('app.api.reservations-request-retrieved-successfully'), $services);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 
-    public function approvedRequestReservations(Request $request,$service_slug)
+    public function approvedRequestReservations(Request $request, $service_slug)
     {
         $validator = Validator::make(['service_slug' => $service_slug], [
-            'service_slug' => ['required', 'exists:services,slug',new CheckIfServiceBelongToProvider()],
+            'service_slug' => ['required', 'exists:services,slug', new CheckIfServiceBelongToProvider()],
         ], [
             'service_slug.required' => __('validation.api.service-id-required'),
             'service_slug.exists' => __('validation.api.service-id-does-not-exists'),
@@ -200,11 +193,10 @@ class ReservationApiController extends Controller
         }
         try {
             $services = $this->reservationApiUseCase->approvedRequestReservations($validator->validated()['service_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.reservations-retrieved-successfully'), $services);
+            return ApiResponse::sendResponse(200, __('app.api.reservations-approved-successfully'), $services);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
-
     }
 }

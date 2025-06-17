@@ -18,8 +18,8 @@ class CheckIfReservationIdBelongToUser implements ValidationRule
     {
         $user = Auth::guard('api')->user();
         $reservationId = $value;
-        $reservation = ServiceReservation::where("id", $reservationId)->where('user_id',$user->id)->exists();
-        if(!$reservation){
+        $reservation = ServiceReservation::where("id", $reservationId)->where('user_id', $user->id)->exists();
+        if (!$reservation) {
             $fail(__('validation.reservation-not-belong-to-current-user'));
         }
     }

@@ -18,16 +18,15 @@ class CheckIfReservationBelongToProvider implements ValidationRule
     {
         $user = Auth::guard('api')->user();
         $reservation = ServiceReservation::find($value);
-        if(!$reservation)return;
+        if (!$reservation) return;
 
-        $providerId = $reservation?->service?->provider?->id ;
-        if($providerId != $user->id){
+        $providerId = $reservation?->service?->provider?->id;
+        if ($providerId != $user->id) {
             $fail(__('validation.api.this-service-not-belong-to-you'));
         }
 
-        if($reservation->user->status != 1)
-        {
-            $fail(__('this-user-not-longer-active'));
+        if ($reservation->user->status != 1) {
+            $fail(__('validation.api.this-user-not-longer-active'));
         }
     }
 }

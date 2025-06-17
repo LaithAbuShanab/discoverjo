@@ -19,9 +19,9 @@ use App\Http\Controllers\Api\User\SliderApiController;
 use App\Http\Controllers\Api\User\GuideTripUserApiController;
 use App\Http\Controllers\Api\User\GuideTripApiController;
 use App\Http\Controllers\Api\User\RegionsApiController;
-use App\Http\Controllers\Api\User\RegisterGuide\RegisterGuideApiController;
 use App\Http\Controllers\Api\User\ServiceApiController;
 use App\Http\Controllers\Api\User\ServiceCategoryApiController;
+use App\Http\Controllers\Api\User\RegisterGuide\RegisterGuideApiController;
 
 // GET ALL CATEGORIES
 Route::get('all-categories', [CategoryApiController::class, 'index'])->name('categories'); // DONE ✅
@@ -117,13 +117,13 @@ Route::get('date/trips', [TripApiController::class, 'dateTrips']); // DONE ✅
 Route::get('guide-trips/filter', [GuideTripUserApiController::class, 'filterGuideTrip']);
 
 //Services section
-Route::get('all/services', [ServiceApiController::class, 'index']);
-Route::get('all/service/categories', [ServiceCategoryApiController::class, 'index'])->name('service.categories');
-Route::get('list/service/subcategories', [ServiceCategoryApiController::class, 'subcategoriesOfCategories']);
-Route::get('services/category/{category_slug}', [ServiceCategoryApiController::class, 'categoryServices']);
-Route::get('service/categories/search', [ServiceCategoryApiController::class, 'search']);
-Route::get('service/date', [ServiceCategoryApiController::class, 'dateServices']);
-Route::get('service/show/{service_slug}', [ServiceCategoryApiController::class, 'singleService']);
+Route::get('all/service/categories', [ServiceCategoryApiController::class, 'index'])->name('service.categories'); // DONE ✅
+Route::get('services/category/{category_slug}', [ServiceCategoryApiController::class, 'categoryServices']); // DONE ✅
+Route::get('list/service/subcategories', [ServiceCategoryApiController::class, 'subcategoriesOfCategories']); // DONE ✅
+Route::get('service/categories/search', [ServiceCategoryApiController::class, 'search']); // DONE ✅
+Route::get('all/services', [ServiceApiController::class, 'index']); // DONE ✅
+Route::get('service/date', [ServiceCategoryApiController::class, 'dateServices']); // DONE ✅
+Route::get('service/show/{service_slug}', [ServiceCategoryApiController::class, 'singleService']); // DONE ✅
 
 require __DIR__ . '/auth_user.php';
 

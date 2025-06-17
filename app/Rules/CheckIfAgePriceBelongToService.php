@@ -22,20 +22,20 @@ class CheckIfAgePriceBelongToService implements ValidationRule, DataAwareRule
         $serviceSlug = $this->data['service_slug'] ?? null;
 
         if (!$serviceSlug || !$value) {
-            return; // Let other rules handle missing data
+            return;
         }
 
         $service = Service::with('priceAges')->where('slug', $serviceSlug)->first();
 
         if (!$service) {
-            $fail(__('validation.invalid_service_slug'));
+            $fail(__('validation.api.invalid_service_slug'));
             return;
         }
 
         $exists = $service->priceAges->contains('id', $value);
 
         if (!$exists) {
-            $fail(__('validation.invalid_price_age', ['id' => $value]));
+            $fail(__('validation.api.invalid_price_age', ['id' => $value]));
         }
     }
 }

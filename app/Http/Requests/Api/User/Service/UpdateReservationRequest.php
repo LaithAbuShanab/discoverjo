@@ -25,7 +25,7 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => ['bail','required', 'date', 'date_format:Y-m-d',new CheckIfValidDateReservationUpdateRule()],
+            'date' => ['bail', 'required', 'date', 'date_format:Y-m-d', new CheckIfValidDateReservationUpdateRule()],
             'start_time' => ['required', 'date_format:H:i'],
             'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
             'reservations' => ['required', 'array', 'min:1'],

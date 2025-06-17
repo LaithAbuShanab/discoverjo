@@ -317,5 +317,18 @@ return [
         'your-profile-updated-successfully'                            => 'تم تعديل ملفك الشخصي بنجاح',
         'all-tags-retrieved-successfully'                              => 'تم استرجاع الاوسمة بنجاح',
         'your-location-set-successfully'                               => 'تم تحديد موقعك بنجاح',
+
+        // Service Api
+        'services-retrieved-successfully'                              => 'تم استرجاع الخدمات بنجاح',
+        'service-subcategories-retrieved-successfully'                 => 'تم استرجاع الفئات الفرعية للخدمة بنجاح',
+        'services-of-specific-date-retrieved-successfully'             => 'تم استرجاع الخدمات للتاريخ المحدد بنجاح',
+        'sessions-retrieved-successfully'                              => 'تم استرجاع الجلسات بنجاح',
+        'reservation-created-successfully'                             => 'تم انشاء الحجز بنجاح',
+        'reservation-updated-successfully'                             => 'تم تعديل الحجز بنجاح',
+        'reservation-deleted-successfully'                             => 'تم حذف الحجز بنجاح',
+        'reservations-retrieved-successfully'                          => 'تم استرجاع الحجوزات بنجاح',
+        'reservation-status-updated-successfully'                      => 'تم تعديل حالة الحجز بنجاح',
+        'reservations-request-retrieved-successfully'                  => 'تم استرجاع طلبات الحجوزات بنجاح',
+        'reservations-approved-successfully'                           => 'تم قبول الحجوزات بنجاح',
     ],
 ];

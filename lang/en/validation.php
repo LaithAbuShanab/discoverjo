@@ -172,6 +172,7 @@ return [
     'attributes' => [
 
         // Basic Info
+        'id'                                        => 'ID',
         'name'                                      => 'Name',
         'name-en'                                   => 'English Name',
         'name-ar'                                   => 'Arabic Name',
@@ -185,6 +186,7 @@ return [
         'first_name'                                => 'First Name',
         'last_name'                                 => 'Last Name',
         'age'                                       => 'Age',
+        'status'                                    => 'Status',
 
         // Contact & Address
         'phone-number'                              => 'Phone Number',
@@ -283,7 +285,15 @@ return [
         // Priority
         'priority'                                  => 'Priority',
 
-        'query'                                     => 'Query',
+        // Service
+        'service_slug'                              => 'Service',
+        'contact_info'                              => 'Contact Info',
+        'reservations'                              => 'Reservations',
+        'reservations.*.reservation_detail'         => 'Reservation Detail',
+        'reservations.*.quantity'                   => 'Quantity',
+        'reservations.*.price_age_id'               => 'Price Age',
+
+        'query'                                     => 'Search',
     ],
 
     'api' => [
@@ -738,5 +748,38 @@ return [
         'latitude-numeric'                                         => 'The latitude must be a number.',
         'longitude-required'                                       => 'Longitude Is Required',
         'longitude-numeric'                                        => 'The longitude must be a number.',
+
+        // Service Validation
+        'day_not_available'                                        => 'The selected day (:day) is not available.',
+        'duplicate_exact_slot_booking'                             => 'A booking already exists for :date at :time.',
+        'Friday'                                                   => 'Friday',
+        'invalid_date_range'                                       => 'The date must be between :start and :end.',
+        'invalid_date_range_for_service'                           => 'Invalid date range for.',
+        'invalid_price_age'                                        => 'The selected price age ID (:id) is invalid.',
+        'invalid_quantity'                                         => 'The quantity must be a positive number.',
+        'invalid_service_slug'                                     => 'Invalid service slug.',
+        'invalid_slot_start_time'                                  => 'The slot must be :duration minutes and start between :start and :end.',
+        'Monday'                                                   => 'Monday',
+        'Saturday'                                                 => 'Saturday',
+        'service-id-does-not-exists'                               => 'The selected service does not exist.',
+        'service-id-required'                                      => 'The service id is required.',
+        'service_not_available'                                    => 'The service is not available.',
+        'slot_overbooked'                                          => 'This slot is overbooked. Maximum capacity is :capacity, only :remaining spots remaining.',
+        'Sunday'                                                   => 'Sunday',
+        'this-service-not-longer-active'                           => 'The service is not longer active.',
+        'Thursday'                                                 => 'Thursday',
+        'Tuesday'                                                  => 'Tuesday',
+        'user_reservation_conflict'                                => 'You already have a reservation for the :service service at this time.',
+        'Wednesday'                                                => 'Wednesday',
+        'reservation-id-required'                                  => 'The reservation id is required.',
+        'reservation-id-does-not-exists'                           => 'The selected reservation does not exist.',
+        'reservation-not-belong-to-current-user'                   => 'The selected reservation does not belong to the current user.',
+        'something_went_wrong'                                     => 'Something went wrong.',
+        'reservation-id-invalid'                                   => 'Invalid reservation ID.',
+        'the-provider-not-longer-active'                           => 'The provider is not longer active.',
+        'this-service-not-belong-to-you'                           => 'This service does not belong to you.',
+        'this-service-is-not-belong-to-you'                        => 'This service is not belong to you.',
+
+        'injection_based_time'                                     => 'Invalid value.',
     ]
 ];

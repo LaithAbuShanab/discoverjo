@@ -25,7 +25,7 @@ class ServiceReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'service_slug' => ['bail','required', 'string', 'exists:services,slug', new CheckIfValidReservationRule()],
+            'service_slug' => ['bail', 'required', 'string', 'exists:services,slug', new CheckIfValidReservationRule()],
             'date' => ['required', 'date', 'date_format:Y-m-d'],
             'start_time' => ['required', 'date_format:H:i'],
             'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
@@ -41,7 +41,5 @@ class ServiceReservationRequest extends FormRequest
 
             ],
         ];
-
-
     }
 }

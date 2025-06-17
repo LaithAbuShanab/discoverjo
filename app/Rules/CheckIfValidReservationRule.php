@@ -37,15 +37,15 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
 
         $requestedQty = collect($reservations)->sum(fn($r) => (int) ($r['quantity'] ?? 0));
         if ($requestedQty < 1) {
-            $fail(__('validation.invalid_quantity'));
+            $fail(__('validation.api.invalid_quantity'));
             return;
         }
 
         $service = Service::findBySlug($serviceSlug);
         if (!$service) return;
 
-        if($service->status != 1 ){
-            $fail(__('validation.service_not_available'));
+        if ($service->status != 1) {
+            $fail(__('validation.api.service_not_available'));
         }
 
         $booking = $service->serviceBookings()
@@ -54,7 +54,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
             ->first();
 
         if (!$booking) {
-            $fail(__('validation.invalid_date_range'));
+            $fail(__('validation.api.invalid_date_range_for_service'));
             return;
         }
 
@@ -64,7 +64,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
             ->where('start_time', $startTime)
             ->exists()
         ) {
-            $fail(__('validation.duplicate_exact_slot_booking', [
+            $fail(__('validation.api.duplicate_exact_slot_booking', [
                 'time' => $startTime,
                 'date' => $date,
             ]));
@@ -77,7 +77,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
             ->first();
 
         if (!$bookingDay) {
-            $fail(__('validation.day_not_available', ['day' => $dayOfWeek]));
+            $fail(__('validation.api.day_not_available', ['day' => __('validation.api.' . $dayOfWeek)]));
             return;
         }
 
@@ -89,7 +89,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
         $capacity = $booking->session_capacity;
 
         if (!$this->isValidSlot($slotStart, $slotEnd, $requestedTime, $duration)) {
-            $fail(__('validation.invalid_slot_start_time', [
+            $fail(__('validation.api.invalid_slot_start_time', [
                 'duration' => $duration,
                 'start' => $slotStart->format('H:i'),
                 'end' => $slotEnd->format('H:i'),
@@ -102,7 +102,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
 
         $query = $service->reservations()
             ->where('user_id', $user->id)
-            ->whereNot('status',2)
+            ->whereNot('status', 2)
             ->where('date', $date)
             ->where(function ($query) use ($reservedStart, $reservedEnd, $duration) {
                 $query->whereTime('start_time', '<', $reservedEnd->format('H:i'))
@@ -111,14 +111,14 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
                         $reservedStart->format('H:i')
                     ]);
             });
-        $hasConflict= $query->exists();
+        $hasConflict = $query->exists();
 
         $conflictingReservation = $query->with('service')->first();
 
         //add the name of the service
 
         if ($hasConflict && $conflictingReservation) {
-            $fail(__('validation.user_reservation_conflict', [
+            $fail(__('validation.api.user_reservation_conflict', [
                 'service' => $conflictingReservation->service->name
             ]));
             return;
@@ -127,7 +127,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
         // ✅ Fix: calculate total existing quantity for this slot using the reservation_details table
         $reservationIds = $service->reservations()
             ->where('date', $date)
-            ->whereNot('status',2)
+            ->whereNot('status', 2)
             ->where('start_time', $startTime)
             ->pluck('id');
 
@@ -136,7 +136,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
             ->sum('quantity');
 
         if ($capacity && ($existingQty + $requestedQty > $capacity)) {
-            $fail(__('validation.slot_overbooked', [
+            $fail(__('validation.api.slot_overbooked', [
                 'capacity' => $capacity,
                 'remaining' => max($capacity - $existingQty, 0),
             ]));
@@ -156,4 +156,3 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
         return false;
     }
 }
-

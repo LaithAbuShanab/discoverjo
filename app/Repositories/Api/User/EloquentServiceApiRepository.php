@@ -2,16 +2,9 @@
 
 namespace App\Repositories\Api\User;
 
-
 use App\Http\Resources\AllServicesResource;
-use App\Http\Resources\UserSingleServiceReservationResource;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
 use App\Models\Service;
-use App\Models\ServiceReservation;
-use App\Models\ServiceReservationDetail;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-
 
 class EloquentServiceApiRepository implements ServiceApiRepositoryInterface
 {
@@ -46,6 +39,4 @@ class EloquentServiceApiRepository implements ServiceApiRepositoryInterface
             'pagination' => $pagination
         ];
     }
-
-
 }

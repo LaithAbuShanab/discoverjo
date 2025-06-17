@@ -317,5 +317,18 @@ return [
         'your-profile-updated-successfully'                            => 'Your profile updated successfully',
         'all-tags-retrieved-successfully'                              => 'All tags retrieved successfully',
         'your-location-set-successfully'                               => 'Your location sat successfully',
+
+        // Service Api
+        'services-retrieved-successfully'                              => 'Services retrieved successfully',
+        'service-subcategories-retrieved-successfully'                 => 'Service subcategories retrieved successfully',
+        'services-of-specific-date-retrieved-successfully'             => 'Services of specific date retrieved successfully',
+        'sessions-retrieved-successfully'                              => 'Sessions retrieved successfully',
+        'reservation-created-successfully'                             => 'Reservation created successfully',
+        'reservation-updated-successfully'                             => 'Reservation updated successfully',
+        'reservation-deleted-successfully'                             => 'Reservation deleted successfully',
+        'reservations-retrieved-successfully'                          => 'Reservations retrieved successfully',
+        'reservation-status-updated-successfully'                      => 'Reservation status updated successfully',
+        'reservations-request-retrieved-successfully'                  => 'Reservations request retrieved successfully',
+        'reservations-approved-successfully'                           => 'Reservations approved successfully',
     ],
 ];

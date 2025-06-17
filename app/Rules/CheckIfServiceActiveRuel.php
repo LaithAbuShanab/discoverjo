@@ -17,8 +17,8 @@ class CheckIfServiceActiveRuel implements ValidationRule
     {
         $service = Service::findBySlug($value);
         if (!$service) return;
-        if($service->status != 1) {
-            $fail(__('this-service-not-longer-active'));
+        if ($service->status != 1) {
+            $fail(__('validation.api.this-service-not-longer-active'));
         };
     }
 }

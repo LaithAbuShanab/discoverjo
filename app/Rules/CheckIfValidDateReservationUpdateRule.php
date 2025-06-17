@@ -93,6 +93,7 @@ class CheckIfValidDateReservationUpdateRule implements ValidationRule, DataAware
         $conflictQuery = $service->reservations()
             ->where('user_id', $user->id)
             ->where('id', '<>', $reservation->id)
+            ->whereNot('status',2)
             ->where('date', $date)
             ->where(function ($query) use ($reservedStart, $reservedEnd, $duration) {
                 $query->whereTime('start_time', '<', $reservedEnd->format('H:i'))
@@ -113,6 +114,7 @@ class CheckIfValidDateReservationUpdateRule implements ValidationRule, DataAware
         // ✅ Capacity check (excluding the current reservation’s quantity)
         $reservationIds = $service->reservations()
             ->where('date', $date)
+            ->whereNot('status',2)
             ->where('start_time', $startTime)
             ->where('id', '<>', $reservation->id) // exclude current
             ->pluck('id');

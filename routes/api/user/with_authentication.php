@@ -1,26 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\Api\User\AuthUser\AuthUserController;
-use App\Http\Controllers\Api\User\UserProfileController;
-use App\Http\Controllers\Api\User\PlaceApiController;
-use App\Http\Controllers\Api\User\TripApiController;
-use App\Http\Controllers\Api\User\EventApiController;
-use App\Http\Controllers\Api\User\VolunteeringApiController;
-use App\Http\Controllers\Api\User\PlanApiController;
-use App\Http\Controllers\Api\User\PostApiController;
-use App\Http\Controllers\Api\User\FollowApiController;
 use App\Http\Controllers\Api\User\CommentApiController;
+use App\Http\Controllers\Api\User\EventApiController;
+use App\Http\Controllers\Api\User\FavoriteApiController;
+use App\Http\Controllers\Api\User\FollowApiController;
 use App\Http\Controllers\Api\User\GameApiController;
+use App\Http\Controllers\Api\User\GroupChatController;
+use App\Http\Controllers\Api\User\GuideRatingController;
 use App\Http\Controllers\Api\User\GuideTripApiController;
 use App\Http\Controllers\Api\User\GuideTripUserApiController;
-use App\Http\Controllers\Api\User\GuideRatingController;
-use App\Http\Controllers\Api\User\GroupChatController;
-use App\Http\Controllers\Api\User\FavoriteApiController;
+use App\Http\Controllers\Api\User\PlaceApiController;
+use App\Http\Controllers\Api\User\PlanApiController;
+use App\Http\Controllers\Api\User\PostApiController;
+use App\Http\Controllers\Api\User\ReservationApiController;
 use App\Http\Controllers\Api\User\ReviewApiController;
-use App\Http\Controllers\Api\User\ServiceApiController;
-use App\Http\Controllers\ReservationApiController;
+use App\Http\Controllers\Api\User\TripApiController;
+use App\Http\Controllers\Api\User\UserProfileController;
+use App\Http\Controllers\Api\User\VolunteeringApiController;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['firstLogin'])->group(function () {
 

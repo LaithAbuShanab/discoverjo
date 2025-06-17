@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\User;
 
 use App\Helpers\ApiResponse;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Service\BookingDateRequest;
 use App\Http\Requests\Api\User\Service\ServiceReservationRequest;
 use App\Http\Requests\Api\User\Service\UpdateReservationRequest;
 use App\Rules\CheckIfProviderActiveRule;
+use App\Rules\CheckIfReservationBelongToProvider;
 use App\Rules\CheckIfReservationIdBelongToUser;
 use App\Rules\CheckIfServiceActiveRuel;
-use App\Rules\CheckIfReservationBelongToProvider;
 use App\Rules\CheckIfServiceBelongToProvider;
 use App\UseCases\Api\User\ReservationApiUseCase;
-use App\UseCases\Api\User\ServiceApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;

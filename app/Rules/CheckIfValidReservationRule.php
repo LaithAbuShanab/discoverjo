@@ -98,6 +98,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
 
         $query = $service->reservations()
             ->where('user_id', $user->id)
+            ->whereNot('status',2)
             ->where('date', $date)
             ->where(function ($query) use ($reservedStart, $reservedEnd, $duration) {
                 $query->whereTime('start_time', '<', $reservedEnd->format('H:i'))
@@ -122,6 +123,7 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
         // ✅ Fix: calculate total existing quantity for this slot using the reservation_details table
         $reservationIds = $service->reservations()
             ->where('date', $date)
+            ->whereNot('status',2)
             ->where('start_time', $startTime)
             ->pluck('id');
 

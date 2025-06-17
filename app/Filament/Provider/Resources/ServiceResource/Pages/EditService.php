@@ -205,4 +205,17 @@ class EditService extends EditRecord
             ]);
         }
     }
+
+    protected function afterSave(): void
+    {
+        $currentStatus = $this->record->status;
+
+        // If service was active and is now inactive
+        if ($currentStatus === false) {
+            $this->record->reservations()
+                ->where('status', '!=', 2) // Only update non-cancelled reservations
+                ->update(['status' => 2]); // Set to cancelled
+        }
+    }
+
 }

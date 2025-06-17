@@ -43,7 +43,7 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             ->orderBy('start_datetime')
             ->paginate($perPage);
 
-        GuideTrip::where('status', '1')->where('start_datetime', '<', $now)->update(['status' => '0']);
+//        GuideTrip::where('status', '1')->where('start_datetime', '<', $now)->update(['status' => '0']);
 
         $tripsArray = $guidesTrips->toArray();
 

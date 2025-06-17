@@ -101,7 +101,7 @@ class ReservationsRelationManager extends RelationManager
     }
 
 
-        public function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('date')
@@ -114,14 +114,14 @@ class ReservationsRelationManager extends RelationManager
                 TextColumn::make('total_price')->money('JOD'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('panel.guide.status'))
-                    ->formatStateUsing(fn ($state) => match ($state) {
+                    ->formatStateUsing(fn($state) => match ($state) {
                         0 => 'pending',
                         1 => 'confirmed',
                         2 => 'cancelled',
                         default => __('panel.status.unknown'),
                     })
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         0 => 'gray',
                         1 => 'success',
                         2 => 'danger',
@@ -131,17 +131,9 @@ class ReservationsRelationManager extends RelationManager
             ->filters([
                 //
             ])
-            ->headerActions([
-//                Tables\Actions\CreateAction::make(),
-            ])
+            ->headerActions([])
             ->actions([
                 Tables\Actions\EditAction::make(),
-//                Tables\Actions\DeleteAction::make(),
             ]);
-//            ->bulkActions([
-//                Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DeleteBulkAction::make(),
-//                ]),
-//            ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Filament\Guide\Resources\GuideTripResource\RelationManagers\GuideTripUse
 use Filament\Forms\Components\{DateTimePicker, Grid, Repeater, ToggleButtons, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
 use Filament\Forms\Get;
 use App\Models\GuideTrip;
+use Carbon\Carbon;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -42,7 +43,7 @@ class GuideTripResource extends Resource
                 Wizard::make([
                     Step::make(__('panel.guide.general-and-schedule'))
                         ->schema([
-                            Grid::make(1)->schema([
+                            Grid::make(['default' => 1])->schema([
                                 TextInput::make('name')
                                     ->label(__('panel.guide.trip-name'))
                                     ->placeholder(__('panel.guide.enter-trip-name'))
@@ -58,22 +59,29 @@ class GuideTripResource extends Resource
                                     ->translatable()
                                     ->columnSpanFull(),
                             ]),
-                            Grid::make(2)->schema([
+
+                            Grid::make(['default' => 1, 'md' => 2])->schema([
                                 DateTimePicker::make('start_datetime')
                                     ->label(__('panel.guide.start-date'))
                                     ->required()
-                                    ->minDate(now())
                                     ->reactive()
-                                    ->afterStateUpdated(fn($state, callable $set) => $set('end_datetime', null)),
+                                    ->afterStateUpdated(fn($state, callable $set) => $set('end_datetime', null))
+                                    ->rules(function ($component) {
+                                        $record = $component->getRecord();
+                                        if ($record) {
+                                            return [];
+                                        }
+                                        $now = Carbon::now()->format('Y-m-d H:i:s');
+                                        return ["after_or_equal:$now"];
+                                    }),
 
                                 DateTimePicker::make('end_datetime')
                                     ->label(__('panel.guide.end-date'))
                                     ->required()
-                                    ->minDate(fn(callable $get) => $get('start_datetime'))
+                                    ->reactive()
                                     ->rules(['after:start_datetime']),
                             ]),
-
-                            Grid::make(2)->schema([
+                            Grid::make(['default' => 1, 'md' => 2])->schema([
                                 SpatieMediaLibraryFileUpload::make('main_image')
                                     ->label(__('panel.guide.main-image'))
                                     ->collection('main_image')
@@ -92,7 +100,7 @@ class GuideTripResource extends Resource
 
                     Step::make(__('panel.guide.pricing-and-capacity'))
                         ->schema([
-                            Grid::make(2)->schema([
+                            Grid::make(['default' => 1, 'md' => 2])->schema([
                                 TextInput::make('main_price')
                                     ->label(__('panel.guide.main-price'))
                                     ->placeholder(__('panel.guide.enter-main-price'))
@@ -141,7 +149,7 @@ class GuideTripResource extends Resource
                                 ->label(__('panel.guide.assemblies'))
                                 ->relationship('assemblies')
                                 ->schema([
-                                    Grid::make(2)->schema([
+                                    Grid::make(['default' => 1, 'md' => 2])->schema([
                                         TextInput::make('place')
                                             ->label(__('panel.guide.place'))
                                             ->placeholder(__('panel.guide.enter-place'))
@@ -159,7 +167,7 @@ class GuideTripResource extends Resource
                                 ->label(__('panel.guide.price-ages'))
                                 ->relationship('priceAges')
                                 ->schema([
-                                    Grid::make(3)->schema([
+                                    Grid::make(['default' => 1, 'md' => 3])->schema([
                                         TextInput::make('min_age')
                                             ->label(__('panel.guide.min-age'))
                                             ->placeholder(__('panel.guide.enter-min-age'))
@@ -232,7 +240,7 @@ class GuideTripResource extends Resource
                                     $component->state((bool) $record?->trail);
                                 }),
 
-                            Grid::make(4)->schema([
+                            Grid::make(['default' => 1, 'md' => 2, 'lg' => 4])->schema([
                                 TextInput::make('min_duration_in_minute')
                                     ->label(__('panel.guide.min-duration'))
                                     ->placeholder(__('panel.guide.enter-min-duration'))
@@ -286,11 +294,10 @@ class GuideTripResource extends Resource
                                         $trail = $component->getRecord()?->trail;
                                         if ($trail) $component->state($trail->difficulty);
                                     })
-                                    ->columnSpan('full'),
+                                    ->columnSpanFull(),
                             ])
                                 ->visible(fn(Get $get) => $get('is_trail')),
                         ]),
-
                 ])
                     ->columnSpanFull(),
             ]);

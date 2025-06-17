@@ -69,6 +69,7 @@ class EditGuideTrip extends EditRecord
         $this->data['is_trail'] = $this->record->trail ? true : false;
     }
 
+
     protected function afterSave(): void
     {
         $currentStatus = $this->record->status;
@@ -79,5 +80,10 @@ class EditGuideTrip extends EditRecord
                 ->where('status', '!=', 2) // Only update non-cancelled reservations
                 ->update(['status' => 2]); // Set to cancelled
         }
+    }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+
     }
 }

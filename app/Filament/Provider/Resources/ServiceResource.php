@@ -50,15 +50,65 @@ class ServiceResource extends Resource
                 Wizard::make([
                     Step::make(__('panel.provider.basic-info'))
                         ->schema([
-                            Grid::make(2)->schema([
-                                TextInput::make('name')->label(__('panel.provider.name'))->required()->placeholder(__('panel.provider.enter-name'))->translatable(),
-                                TextInput::make('address')->label(__('panel.provider.address'))->required()->placeholder(__('panel.provider.enter-address'))->translatable(),
-                                Textarea::make('description')->label(__('panel.provider.description'))->rows(5)->required()->placeholder(__('panel.provider.enter-description'))->translatable()->columnSpan(2),
-                                TextInput::make('url_google_map')->label(__('panel.provider.google-map-url'))->required()->placeholder(__('panel.provider.enter-google-map-url'))->url(),
-                                Select::make('categories')->label(__('panel.provider.categories'))->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))->placeholder(__('panel.provider.select-category'))->multiple()->searchable()->preload()->required(),
-                                Select::make('region_id')->label(__('panel.provider.region'))->relationship('region', 'name')->required()->placeholder(__('panel.provider.select-region')),
-                                TextInput::make('price')->label(__('panel.provider.price'))->placeholder(__('panel.provider.enter-price'))->nullable()->numeric()->required(),
-                                Toggle::make('status')->label(__('panel.provider.status'))->required()->inline(false),
+                            Grid::make([
+                                'default' => 1,
+                                'md' => 2,
+                            ])->schema([
+                                TextInput::make('name')
+                                    ->label(__('panel.provider.name'))
+                                    ->required()
+                                    ->placeholder(__('panel.provider.enter-name'))
+                                    ->translatable(),
+
+                                TextInput::make('address')
+                                    ->label(__('panel.provider.address'))
+                                    ->required()
+                                    ->placeholder(__('panel.provider.enter-address'))
+                                    ->translatable(),
+
+                                Textarea::make('description')
+                                    ->label(__('panel.provider.description'))
+                                    ->rows(5)
+                                    ->required()
+                                    ->placeholder(__('panel.provider.enter-description'))
+                                    ->translatable()
+                                    ->columnSpan([
+                                        'default' => 1,
+                                        'md' => 2,
+                                    ]),
+
+                                TextInput::make('url_google_map')
+                                    ->label(__('panel.provider.google-map-url'))
+                                    ->required()
+                                    ->placeholder(__('panel.provider.enter-google-map-url'))
+                                    ->url(),
+
+                                Select::make('categories')
+                                    ->label(__('panel.provider.categories'))
+                                    ->relationship('categories', 'name', fn($query) => $query->whereNotNull('parent_id'))
+                                    ->placeholder(__('panel.provider.select-category'))
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+
+                                Select::make('region_id')
+                                    ->label(__('panel.provider.region'))
+                                    ->relationship('region', 'name')
+                                    ->required()
+                                    ->placeholder(__('panel.provider.select-region')),
+
+                                TextInput::make('price')
+                                    ->label(__('panel.provider.price'))
+                                    ->placeholder(__('panel.provider.enter-price'))
+                                    ->nullable()
+                                    ->numeric()
+                                    ->required(),
+
+                                Toggle::make('status')
+                                    ->label(__('panel.provider.status'))
+                                    ->required()
+                                    ->inline(false),
                             ])
                         ]),
 
@@ -68,7 +118,10 @@ class ServiceResource extends Resource
                                 ->label(__('panel.provider.available-services'))
                                 ->relationship('serviceBookings')
                                 ->schema([
-                                    Grid::make(3)->schema([
+                                    Grid::make([
+                                        'default' => 1,
+                                        'md' => 3,
+                                    ])->schema([
                                         Forms\Components\DatePicker::make('available_start_date')
                                             ->label(__('panel.provider.available-start-date'))
                                             ->required()
@@ -83,11 +136,15 @@ class ServiceResource extends Resource
                                         TextInput::make('session_duration')
                                             ->label(__('panel.provider.session-duration'))
                                             ->placeholder(__('panel.provider.enter-session-duration'))
-                                            ->numeric()->required(),
+                                            ->numeric()
+                                            ->required(),
+
                                         TextInput::make('session_capacity')
                                             ->label(__('panel.provider.session-capacity'))
                                             ->placeholder(__('panel.provider.enter-session-capacity'))
-                                            ->numeric()->minValue(1)->required(),
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->required(),
                                     ]),
 
                                     Repeater::make('serviceBookingDays')
@@ -124,14 +181,17 @@ class ServiceResource extends Resource
 
                     Step::make(__('panel.provider.price-info-and-requirements'))
                         ->schema([
-
                             Repeater::make('requirements')
                                 ->defaultItems(0)
                                 ->label(__('panel.provider.requirements'))
                                 ->relationship('requirements')
                                 ->schema([
                                     Grid::make(1)->schema([
-                                        TextInput::make('item')->label(__('panel.provider.item'))->placeholder(__('panel.provider.enter-item'))->required()->translatable(),
+                                        TextInput::make('item')
+                                            ->label(__('panel.provider.item'))
+                                            ->placeholder(__('panel.provider.enter-item'))
+                                            ->required()
+                                            ->translatable(),
                                     ]),
                                 ])
                                 ->columns(1),
@@ -141,10 +201,32 @@ class ServiceResource extends Resource
                                 ->defaultItems(0)
                                 ->relationship('priceAges')
                                 ->schema([
-                                    Grid::make(3)->schema([
-                                        TextInput::make('min_age')->label(__('panel.provider.min-age'))->placeholder(__('panel.provider.enter-min-age'))->numeric()->minValue(0)->required(),
-                                        TextInput::make('max_age')->label(__('panel.provider.max-age'))->placeholder(__('panel.provider.enter-max-age'))->numeric()->minValue(0)->required()->minValue(fn(Forms\Get $get) => $get('min_age')),
-                                        TextInput::make('price')->label(__('panel.provider.price'))->placeholder(__('panel.provider.enter-price'))->numeric()->minValue(0)->step(0.1)->required(),
+                                    Grid::make([
+                                        'default' => 1,
+                                        'md' => 3,
+                                    ])->schema([
+                                        TextInput::make('min_age')
+                                            ->label(__('panel.provider.min-age'))
+                                            ->placeholder(__('panel.provider.enter-min-age'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->required(),
+
+                                        TextInput::make('max_age')
+                                            ->label(__('panel.provider.max-age'))
+                                            ->placeholder(__('panel.provider.enter-max-age'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->required()
+                                            ->minValue(fn(Forms\Get $get) => $get('min_age')),
+
+                                        TextInput::make('price')
+                                            ->label(__('panel.provider.price'))
+                                            ->placeholder(__('panel.provider.enter-price'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->step(0.1)
+                                            ->required(),
                                     ]),
                                 ])
                                 ->columns(1),
@@ -156,7 +238,11 @@ class ServiceResource extends Resource
                                 ->label(__('panel.provider.activities'))
                                 ->relationship('activities')
                                 ->schema([
-                                    TextInput::make('activity')->label(__('panel.provider.activity'))->placeholder(__('panel.provider.enter-activity'))->required()->translatable(),
+                                    TextInput::make('activity')
+                                        ->label(__('panel.provider.activity'))
+                                        ->placeholder(__('panel.provider.enter-activity'))
+                                        ->required()
+                                        ->translatable(),
                                 ])
                                 ->columns(1)
                                 ->required(),
@@ -166,7 +252,11 @@ class ServiceResource extends Resource
                                 ->label(__('panel.provider.notes'))
                                 ->relationship('notes')
                                 ->schema([
-                                    TextInput::make('note')->label(__('panel.provider.note'))->placeholder(__('panel.provider.enter-note'))->required()->translatable(),
+                                    TextInput::make('note')
+                                        ->label(__('panel.provider.note'))
+                                        ->placeholder(__('panel.provider.enter-note'))
+                                        ->required()
+                                        ->translatable(),
                                 ])
                                 ->columns(1),
                         ]),
@@ -176,7 +266,11 @@ class ServiceResource extends Resource
                             CheckboxList::make('Features')
                                 ->label(__('panel.provider.features'))
                                 ->relationship('features', 'name')
-                                ->columns(4)
+                                ->columns([
+                                    'default' => 1,
+                                    'md' => 2,
+                                    'lg' => 4,
+                                ])
                                 ->columnSpanFull()
                                 ->required(),
 
@@ -198,6 +292,7 @@ class ServiceResource extends Resource
             ])
             ->columns(1);
     }
+
 
     public static function table(Table $table): Table
     {

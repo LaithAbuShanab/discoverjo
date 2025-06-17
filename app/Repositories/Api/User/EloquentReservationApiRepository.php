@@ -52,8 +52,8 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
             $reservedQuantity = ServiceReservationDetail::whereHas('reservation', function ($query) use ($service, $date, $slotStart) {
                 $query->where('service_id', $service->id)
                     ->where('date', $date)
-                    ->where('start_time', $slotStart);
-//                    ->where('status', 1); // Optional: only confirmed reservations
+                    ->where('start_time', $slotStart)
+                    ->whereNot('status', 2); // Optional: only confirmed reservations
             })->sum('quantity');
 
 

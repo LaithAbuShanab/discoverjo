@@ -68,4 +68,16 @@ class EditGuideTrip extends EditRecord
     {
         $this->data['is_trail'] = $this->record->trail ? true : false;
     }
+
+    protected function afterSave(): void
+    {
+        $currentStatus = $this->record->status;
+
+        // If service was active and is now inactive
+        if ($currentStatus === false) {
+            $this->record->guideTripUsers()
+                ->where('status', '!=', 2) // Only update non-cancelled reservations
+                ->update(['status' => 2]); // Set to cancelled
+        }
+    }
 }

@@ -44,6 +44,10 @@ class CheckIfValidReservationRule implements ValidationRule, DataAwareRule
         $service = Service::findBySlug($serviceSlug);
         if (!$service) return;
 
+        if($service->status != 1 ){
+            $fail(__('validation.service_not_available'));
+        }
+
         $booking = $service->serviceBookings()
             ->where('available_start_date', '<=', $date)
             ->where('available_end_date', '>=', $date)

@@ -37,12 +37,16 @@ class CheckIfValidDateReservationUpdateRule implements ValidationRule, DataAware
 
         $reservation = ServiceReservation::with('service')->find($reservationId);
 
+
         if (!$reservation || $reservation->user_id !== $user->id) {
             $fail(__('validation.api.reservation-id-invalid'));
             return;
         }
 
-        $service = $reservation->service;
+        $service = $reservation?->service;
+        if($service->status != 1 ){
+            $fail(__('validation.service_not_available'));
+        }
 
         $requestedQty = collect($reservations)->sum(fn($r) => (int) ($r['quantity'] ?? 0));
         if ($requestedQty < 1) {

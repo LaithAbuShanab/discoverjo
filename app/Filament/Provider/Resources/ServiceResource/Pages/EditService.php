@@ -16,7 +16,6 @@ class EditService extends EditRecord
 
     protected static string $resource = ServiceResource::class;
 
-//    protected array $serviceBookingData = [];
     public function getTitle(): string
     {
         return __('panel.provider.edit');
@@ -55,8 +54,6 @@ class EditService extends EditRecord
             $this->data['serviceBookings'][$key]['serviceBookingDays'] = $formattedOpeningHours;
         }
     }
-
-
 
     protected function beforeSave(): void
     {
@@ -218,4 +215,8 @@ class EditService extends EditRecord
         }
     }
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }

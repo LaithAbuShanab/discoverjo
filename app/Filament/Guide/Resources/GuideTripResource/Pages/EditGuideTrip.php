@@ -68,4 +68,9 @@ class EditGuideTrip extends EditRecord
     {
         $this->data['is_trail'] = $this->record->trail ? true : false;
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }

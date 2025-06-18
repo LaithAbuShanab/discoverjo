@@ -3,17 +3,18 @@
 namespace App\Repositories\Api\User;
 
 
-use App\Http\Resources\AllServicesResource;
-use App\Http\Resources\GroupedReservationResource;
 use App\Http\Resources\UserSingleServiceReservationResource;
 use App\Interfaces\Gateways\Api\User\ReservationApiRepositoryInterface;
-use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
 use App\Models\Service;
 use App\Models\ServiceReservation;
 use App\Models\ServiceReservationDetail;
+use App\Notifications\Users\Service\ChangeStatusReservationNotification;
+use App\Notifications\Users\Service\ServiceReservationCreated;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 
 class EloquentReservationApiRepository implements ReservationApiRepositoryInterface
 {
@@ -74,73 +75,107 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         return $slots;
     }
 
-
     public function serviceReservation($data)
     {
-        $service = Service::with('priceAges')->where('slug', $data['service_slug'])->firstOrFail();
-        $userId = auth('api')->id();
+        return DB::transaction(function () use ($data) {
+            $service = Service::with('priceAges')->where('slug', $data['service_slug'])->firstOrFail();
+            $userId = auth('api')->id();
 
-        $totalPrice = 0;
-        $detailsData = [];
+            $totalPrice = 0;
+            $detailsData = [];
 
-        foreach ($data['reservations'] as $entry) {
-            $type = $entry['reservation_detail']; // 1 = adult, 2 = child
-            $quantity = $entry['quantity'];
-            $priceAgeId = $entry['price_age_id'] ?? null;
+            foreach ($data['reservations'] as $entry) {
+                $type = $entry['reservation_detail']; // 1 = adult, 2 = child
+                $quantity = $entry['quantity'];
+                $priceAgeId = $entry['price_age_id'] ?? null;
 
-            // Determine unit price
-            if ($type === 2 && $priceAgeId) {
-                $priceAge = $service->priceAges->firstWhere('id', $priceAgeId);
-                $unitPrice = $priceAge?->price ?? 0;
-            } else {
-                $unitPrice = $service->price;
+                // Determine unit price
+                if ($type === 2 && $priceAgeId) {
+                    $priceAge = $service->priceAges->firstWhere('id', $priceAgeId);
+                    $unitPrice = $priceAge?->price ?? 0;
+                } else {
+                    $unitPrice = $service->price;
+                }
+
+                $subtotal = $unitPrice * $quantity;
+                $totalPrice += $subtotal;
+
+                $detailsData[] = [
+                    'reservation_detail' => $type,
+                    'quantity' => $quantity,
+                    'price_age_id' => $priceAgeId,
+                    'price_per_unit' => $unitPrice,
+                    'subtotal' => $subtotal,
+                ];
             }
 
-            $subtotal = $unitPrice * $quantity;
-            $totalPrice += $subtotal;
+            // Create the main reservation
+            $reservation = $service->reservations()->create([
+                'user_id' => $userId,
+                'date' => $data['date'],
+                'start_time' => $data['start_time'],
+                'contact_info' => $data['contact_info'],
+                'status' => 0,
+                'total_price' => $totalPrice,
+            ]);
 
-            $detailsData[] = [
-                'reservation_detail' => $type,
-                'quantity' => $quantity,
-                'price_age_id' => $priceAgeId,
-                'price_per_unit' => $unitPrice,
-                'subtotal' => $subtotal,
+            // Attach details
+            foreach ($detailsData as $detail) {
+                $reservation->details()->create($detail);
+            }
+
+            // Optionally notify provider
+            $provider = $service->provider;
+            Notification::send($provider, new ServiceReservationCreated($reservation));
+
+            $providerLang = $provider->lang;
+            $notificationData = [
+                'notification' => [
+                    'title' => Lang::get('app.notifications.new-service-reservation-title', [], $providerLang),
+                    'body'  => Lang::get('app.notifications.new-service-reservation-body', [
+                        'username'        => $reservation->user->username,
+                        'reservation_id'  => $reservation->id,
+                    ], $providerLang),
+                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                    'sound' => 'default'
+                ],
+                'data' => [
+                    'type'           => 'service_reservation',
+                    'slug'           => $service->slug,
+                    'service_id'     => $service->id,
+                    'reservation_id' => $reservation->id
+                ]
             ];
-        }
 
-        // Create the main reservation
-        $reservation = $service->reservations()->create([
-            'user_id' => $userId,
-            'date' => $data['date'],
-            'start_time' => $data['start_time'],
-            'contact_info' => $data['contact_info'],
-            'status' => 0,
-            'total_price' => $totalPrice,
-        ]);
+            $tokens = $provider->DeviceTokenMany->pluck('token')->toArray();
 
-        // Attach details
-        foreach ($detailsData as $detail) {
-            $reservation->details()->create($detail);
-        }
+            if (!empty($tokens))
+                sendNotification($tokens, $notificationData);
 
-        return $reservation;
+
+            return $reservation;
+        });
     }
-
 
     public function UserServiceReservations($data)
     {
         $service  = Service::findBySlug($data['service_slug']);
         $user = Auth::guard('api')->user();
-        $reservations = ServiceReservation::where('service_id', $service->id)->where('user_id',$user->id)->get();
+        $reservations = ServiceReservation::where('service_id', $service->id)->where('user_id', $user->id)->get();
         return UserSingleServiceReservationResource::collection($reservations);
     }
 
     public function allReservations()
     {
         $perPage = config('app.pagination_per_page');
+        $reservations = ServiceReservation::where('service_id', $service->id)
+            ->where('user_id', $user->id)
+            ->get();
+
+        // Return a collection of user reservations as a resource
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
         $user = Auth::guard('api')->user();
-        $reservations = ServiceReservation::where('user_id',$user->id)->paginate($perPage);
+        $reservations = ServiceReservation::where('user_id', $user->id)->paginate($perPage);
         $reservationsArray = $reservations->toArray();
 
         $pagination = [
@@ -159,7 +194,6 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
     public function deleteReservation($id)
     {
         ServiceReservation::find($id)->delete();
-
     }
 
     public function updateReservation($data)
@@ -219,16 +253,54 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
     public function changeStatusReservation($data)
     {
-        $statusMap = [
-            'confirmed' => 1,
-            'cancelled' => 2,
-        ];
-        $reservationId = $data['id'];
-        $statusLabel = $data['status'];
-        $reservation = ServiceReservation::findOrFail($reservationId);
-        $reservation->status = $statusMap[$statusLabel];
-        $reservation->save();
-        return $reservation;
+        return DB::transaction(function () use ($data) {
+            $statusMap = [
+                'confirmed' => 1,
+                'cancelled' => 2,
+            ];
+
+            $reservationId = $data['id'];
+            $statusLabel = $data['status'];
+
+            $reservation = ServiceReservation::findOrFail($reservationId);
+            $reservation->status = $statusMap[$statusLabel];
+            $reservation->save();
+
+            $user = $reservation->user;
+            Notification::send($user, new ChangeStatusReservationNotification($reservation));
+
+            $userLang = $user->lang;
+            $service = $reservation->service;
+
+            $notificationData = [
+                'notification' => [
+                    'title' => Lang::get('app.notifications.reservation-status-updated-title', [], $userLang),
+                    'body'  => Lang::get('app.notifications.reservation-status-updated-body', [
+                        'reservation_id' => $reservation->id,
+                        'status'         => $statusLabel === 'confirmed'
+                            ? Lang::get('app.notifications.status-confirmed', [], $userLang)
+                            : Lang::get('app.notifications.status-cancelled', [], $userLang),
+                    ], $userLang),
+                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                    'sound' => 'default',
+                ],
+                'data' => [
+                    'type'           => 'service_reservation',
+                    'slug'           => $service->slug,
+                    'service_id'     => $service->id,
+                    'reservation_id' => $reservation->id,
+                    'new_status'     => $statusLabel,
+                ],
+            ];
+
+            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notificationData);
+            }
+
+            // Return reservation OR send this notificationData via FCM if needed
+            return $reservation;
+        });
     }
 
     public function providerRequestReservations($slug)
@@ -236,7 +308,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
         $service = Service::findBySlug($slug);
-        $requests = ServiceReservation::where('service_id', $service->id)->where('status',0)->paginate($perPage);
+        $requests = ServiceReservation::where('service_id', $service->id)->where('status', 0)->paginate($perPage);
 
         $reservationsArray = $requests->toArray();
 
@@ -258,7 +330,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
         $service = Service::findBySlug($slug);
-        $requests = ServiceReservation::where('service_id', $service->id)->where('status',1)->paginate($perPage);
+        $requests = ServiceReservation::where('service_id', $service->id)->where('status', 1)->paginate($perPage);
 
         $reservationsArray = $requests->toArray();
 
@@ -274,5 +346,4 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
             'pagination' => $pagination
         ];
     }
-
 }

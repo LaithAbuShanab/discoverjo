@@ -779,6 +779,8 @@ return [
         'the-provider-not-longer-active'                           => 'The provider is not longer active.',
         'this-service-not-belong-to-you'                           => 'This service does not belong to you.',
         'this-service-is-not-belong-to-you'                        => 'This service is not belong to you.',
+        'you_have_not_reservation_for_this_service'                => 'You cannot rate this service if you have not previously booked it.',
+        'you_cannot_make_review_for_upcoming_service'              => 'You can only rate this service if you have completed your first reservation.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

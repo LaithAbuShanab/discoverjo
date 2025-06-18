@@ -298,7 +298,6 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label(__('panel.provider.id'))->searchable(),
                 Tables\Columns\TextColumn::make('name')->label(__('panel.provider.name'))->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('region.name')->label(__('panel.provider.region'))->searchable()->sortable(),
             ])

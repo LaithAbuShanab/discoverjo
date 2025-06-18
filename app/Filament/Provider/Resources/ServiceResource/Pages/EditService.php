@@ -77,7 +77,6 @@ class EditService extends EditRecord
 
                         $validDays[] = $dayOfWeek;
 
-                        // ✅ Gather for recreation
                         $bookingDays[] = [
                             'day_of_week' => $dayOfWeek,
                             'opening_time' => $openingTime,
@@ -88,7 +87,7 @@ class EditService extends EditRecord
 
                 // 🔍 Check for reservations outside new date range
                 $outsideReservations = $record->reservations()
-                    ->where('status', '!=', 2)
+                    ->whereIn('status', [0, 1])
                     ->where(function ($query) use ($startDate, $endDate) {
                         $query->whereDate('date', '<', $startDate)
                             ->orWhereDate('date', '>', $endDate);
@@ -97,8 +96,8 @@ class EditService extends EditRecord
 
                 if ($outsideReservations) {
                     Notification::make()
-                        ->title('Cannot Update Service')
-                        ->body('There are active reservations outside the new booking dates. Cancel or reschedule them first.')
+                        ->title(__('panel.provider.cannot-update-service'))
+                        ->body(__('panel.provider.reservations-outside-date-range'))
                         ->danger()
                         ->persistent()
                         ->send();
@@ -108,7 +107,7 @@ class EditService extends EditRecord
 
                 // 🔍 Check for time and capacity conflicts
                 $reservations = $record->reservations()
-                    ->where('status', '!=', 2)
+                    ->whereIn('status', [0, 1])
                     ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
                     ->get();
 
@@ -116,11 +115,13 @@ class EditService extends EditRecord
                     $resDate = Carbon::parse($reservation->date);
                     $resDay = $resDate->format('l');
 
-                    // ❌ Check day-of-week no longer valid
                     if (!in_array($resDay, $validDays)) {
                         Notification::make()
-                            ->title('Day Conflict')
-                            ->body("Reservation on {$resDay} ({$reservation->date}) is no longer served in the new booking schedule.")
+                            ->title(__('panel.provider.day-conflict'))
+                            ->body(__('panel.provider.reservation-day-conflict', [
+                                'day' => __("panel.provider.$resDay"),
+                                'date' => $reservation->date,
+                            ]))
                             ->danger()
                             ->persistent()
                             ->send();
@@ -141,8 +142,11 @@ class EditService extends EditRecord
 
                     if ($resStart->lt($open) || $resEnd->gt($close)) {
                         Notification::make()
-                            ->title('Time Slot Conflict')
-                            ->body("Reservation at {$reservation->start_time} on {$reservation->date} is outside the new available time range.")
+                            ->title(__('panel.provider.time-conflict'))
+                            ->body(__('panel.provider.reservation-time-conflict', [
+                                'time' => $reservation->start_time,
+                                'date' => $reservation->date,
+                            ]))
                             ->danger()
                             ->persistent()
                             ->send();
@@ -153,9 +157,13 @@ class EditService extends EditRecord
                     $qty = $reservation->details()->sum('quantity');
                     if ($qty > $newCapacity) {
                         Notification::make()
-                            ->title('Capacity Conflict')
-                            ->body("Reservation on {$reservation->date} at {$reservation->start_time} exceeds new capacity ({$qty}/{$newCapacity}).")
-                            ->danger()
+                            ->title(__('panel.provider.capacity-conflict'))
+                            ->body(__('panel.provider.reservation-capacity-conflict', [
+                                'date' => $reservation->date,
+                                'time' => $reservation->start_time,
+                                'qty' => $qty,
+                                'capacity' => $newCapacity,
+                            ]))->danger()
                             ->persistent()
                             ->send();
 
@@ -163,7 +171,6 @@ class EditService extends EditRecord
                     }
                 }
 
-                // ✅ Store booking info for actual save
                 $this->serviceBookingData = [
                     'available_start_date' => $startDate,
                     'available_end_date' => $endDate,
@@ -172,7 +179,7 @@ class EditService extends EditRecord
                     'service_booking_days' => $bookingDays,
                 ];
 
-                break; // only process first booking window
+                break;
             }
         }
 
@@ -182,7 +189,6 @@ class EditService extends EditRecord
             return;
         }
 
-        // 🧹 Remove old bookings and recreate
         $record->serviceBookings()->delete();
 
         $booking = ServiceBooking::create([

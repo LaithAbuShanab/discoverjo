@@ -126,7 +126,16 @@ return [
         'delete-request-title'                                         => 'تم إلغاء الطلب من رحلتك',
         'delete-request-body'                                          => 'قام المستخدم :guide_user بإلغاء طلبه للانضمام إلى رحلتك :trip.',
         'delete-user-requests-title'                                   => 'إلغاء جميع طلبات المستخدم من الرحلة',
-        'delete-user-requests-body'                                   => 'قام المستخدم :username بإلغاء جميع طلباته من الرحلة :trip.',
+        'delete-user-requests-body'                                    => 'قام المستخدم :username بإلغاء جميع طلباته من الرحلة :trip.',
+
+        // الخدمات
+        'new-user-review-in-service'                                   => 'قام المستخدم :username بكتابة مراجعة حول خدمتك',
+        'new-service-reservation-title'                                => 'تم استلام حجز جديد',
+        'new-service-reservation-body'                                 => 'قام المستخدم :username بإنشاء حجز جديد (رقم #:reservation_id).',
+        'reservation-status-updated-title'                             => 'تم تحديث حالة الحجز',
+        'reservation-status-updated-body'                              => 'تم :status لطلب الحجز رقم #:reservation_id.',
+        'status-confirmed'                                             => 'تأكيد الحجز',
+        'status-cancelled'                                             => 'إلغاء الحجز',
     ],
 
     "api" => [

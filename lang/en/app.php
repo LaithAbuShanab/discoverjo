@@ -127,6 +127,15 @@ return [
         'delete-request-body'                                          => ':guide_user has canceled their request to join your trip :trip.',
         'delete-user-requests-title'                                   => 'User Canceled All Their Requests from the Trip',
         'delete-user-requests-body'                                    => 'User :username has canceled all their requests from the trip :trip.',
+
+        // Service
+        'new-user-review-in-service'                                   => 'User :username wrote a review about your service',
+        'new-service-reservation-title'                                => 'New Reservation Received',
+        'new-service-reservation-body'                                 => 'User :username has submitted a new reservation (ID: #:reservation_id).',
+        'reservation-status-updated-title'                             => 'Reservation Status Updated',
+        'reservation-status-updated-body'                              => 'Your reservation (ID: #:reservation_id) has been :status.',
+        'status-confirmed'                                             => 'confirmed',
+        'status-cancelled'                                             => 'cancelled',
     ],
 
     "api" => [

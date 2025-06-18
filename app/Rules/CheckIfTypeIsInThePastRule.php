@@ -2,8 +2,10 @@
 
 namespace App\Rules;
 
+use App\Models\ServiceReservation;
 use App\Models\Trip;
 use App\Models\UsersTrip;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -26,7 +28,7 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $now = now()->setTimezone('Asia/Riyadh');
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip', 'service'];
 
         if (!in_array($this->data['type'], $acceptableType)) {
             return;
@@ -62,6 +64,28 @@ class CheckIfTypeIsInThePastRule implements ValidationRule, DataAwareRule
             $now = now()->setTimezone('Asia/Riyadh');
             if ($trip?->date_time > $now) {
                 $fail(__('validation.api.you_cant_make_review_for_upcoming_trip'));
+                return;
+            }
+        } elseif ($this->data['type'] === 'service') {
+            $service = $modelClass::findBySlug($value);
+
+            $authUserId = Auth::guard('api')->id();
+
+            $reservation = ServiceReservation::where('service_id', $service->id)
+                ->where('user_id', $authUserId)
+                ->first();
+
+            if (!$reservation) {
+                $fail(__('validation.api.you_have_not_reservation_for_this_service'));
+                return;
+            }
+
+            $now = now()->setTimezone('Asia/Riyadh');
+
+            $reservationDateTime = Carbon::parse("{$reservation->date} {$reservation->start_time}", 'Asia/Riyadh');
+
+            if ($reservationDateTime->greaterThan($now)) {
+                $fail(__('validation.api.you_cannot_make_review_for_upcoming_service'));
                 return;
             }
         } else {

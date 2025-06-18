@@ -20,6 +20,15 @@ class LoginApiUserRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if (!isset($this->device_token)) {
+            $this->merge([
+                'device_token' => null,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,6 +36,7 @@ class LoginApiUserRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'usernameOrEmail' => ['required', 'string', 'max:255'],
             'password' => ['required',  Rules\Password::defaults()],

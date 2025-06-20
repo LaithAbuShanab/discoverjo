@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Service;
-use Filament\Forms\Components\{CheckboxList, Grid, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
+use Filament\Forms\Components\{CheckboxList, Grid, Hidden, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
 use Filament\Forms\Get;
 use Filament\Tables\Actions\ActionGroup;
 use Closure;
@@ -80,9 +80,8 @@ class PropertyResource extends Resource
                 ->visible(function (Get $get) use ($periodType) {
                     $periods = $get('../../periods') ?? [];
 
-                    return collect($periods)->contains(fn ($p) => (int) $p['type'] === $periodType);
+                    return collect($periods)->contains(fn($p) => (int) $p['type'] === $periodType);
                 });
-//                ->dehydrated(false);
         };
 
         return $form
@@ -157,6 +156,7 @@ class PropertyResource extends Resource
                                 ->relationship('availabilities')
                                 ->label(__('panel.provider.availabilities'))
                                 ->schema([
+                                    Hidden::make('id'),
                                     Grid::make(['default' => 1, 'md' => 3])->schema([
                                         Select::make('type')
                                             ->required()
@@ -172,7 +172,7 @@ class PropertyResource extends Resource
                                         Forms\Components\DatePicker::make('availability_end_date')
                                             ->label(__('panel.provider.available-end-date'))
                                             ->required()
-                                            ->minDate(fn (Get $get) => $get('availability_start_date'))
+                                            ->minDate(fn(Get $get) => $get('availability_start_date'))
                                             ->rule('after_or_equal:availability_start_date'),
                                     ]),
 
@@ -207,7 +207,7 @@ class PropertyResource extends Resource
                     Step::make(__('panel.provider.media-and-amenities'))
                         ->schema([
                             CheckboxList::make('amenities') // ← lowercase to match the Eloquent relationship method name
-                            ->label(__('panel.provider.features'))
+                                ->label(__('panel.provider.features'))
                                 ->relationship('amenities', 'name')
                                 ->columns([
                                     'default' => 1,
@@ -308,6 +308,4 @@ class PropertyResource extends Resource
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
     }
-
-
 }

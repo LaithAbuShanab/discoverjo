@@ -50,7 +50,16 @@ class PropertyResource extends Resource
         $periodRepeaterFor = function (int $periodType, string $labelKey) {
             return \Filament\Forms\Components\Repeater::make("availabilityDays_{$periodType}")
                 ->label(__("panel.provider.availability-for") . ' ' . __("panel.provider.{$labelKey}"))
-                ->default([])
+                ->default([[
+                    'day_of_week' => [],
+                    'price' => null,
+                ]])
+                ->disableItemDeletion(function (Get $get) use ($periodType) {
+                    $items = $get('availabilityDays_' . $periodType) ?? [];
+
+                    return count($items) <= 1;
+                })
+                ->minItems(1)
                 ->schema([
                     \Filament\Forms\Components\Hidden::make('property_period_id')
                         ->default($periodType),
@@ -79,8 +88,7 @@ class PropertyResource extends Resource
                 ])
                 ->visible(function (Get $get) use ($periodType) {
                     $periods = $get('../../periods') ?? [];
-
-                    return collect($periods)->contains(fn($p) => (int) $p['type'] === $periodType);
+                    return collect($periods)->values()->contains(fn($p) => (int) $p['type'] === $periodType);
                 });
         };
 
@@ -129,6 +137,13 @@ class PropertyResource extends Resource
                             Repeater::make('periods')
                                 ->relationship('periods')
                                 ->label(__('panel.provider.property-periods'))
+                                ->minItems(1)
+                                ->maxItems(3)
+                                ->disableItemDeletion(function (Get $get) {
+                                    $items = $get('periods') ?? [];
+
+                                    return count($items) <= 1;
+                                })
                                 ->schema([
                                     Select::make('type')
                                         ->required()
@@ -155,6 +170,11 @@ class PropertyResource extends Resource
                             Repeater::make('availabilities')
                                 ->relationship('availabilities')
                                 ->label(__('panel.provider.availabilities'))
+                                ->disableItemDeletion(function (Get $get) {
+                                    $items = $get('availabilities') ?? [];
+
+                                    return count($items) <= 1;
+                                })
                                 ->schema([
                                     Hidden::make('id'),
                                     Grid::make(['default' => 1, 'md' => 3])->schema([
@@ -168,12 +188,16 @@ class PropertyResource extends Resource
                                         Forms\Components\DatePicker::make('availability_start_date')
                                             ->label(__('panel.provider.available-start-date'))
                                             ->required()
-                                            ->rule('after_or_equal:today'),
+                                            ->rule('after_or_equal:today')
+                                            ->native(false)
+                                            ->displayFormat('d/m/Y'),
                                         Forms\Components\DatePicker::make('availability_end_date')
                                             ->label(__('panel.provider.available-end-date'))
                                             ->required()
                                             ->minDate(fn(Get $get) => $get('availability_start_date'))
-                                            ->rule('after_or_equal:availability_start_date'),
+                                            ->rule('after_or_equal:availability_start_date')
+                                            ->native(false)
+                                            ->displayFormat('d/m/Y'),
                                     ]),
 
 

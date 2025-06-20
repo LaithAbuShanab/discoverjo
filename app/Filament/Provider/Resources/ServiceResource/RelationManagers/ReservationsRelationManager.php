@@ -2,12 +2,18 @@
 
 namespace App\Filament\Provider\Resources\ServiceResource\RelationManagers;
 
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Users\Service\ChangeStatusReservationNotification;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Lang;
 
 class ReservationsRelationManager extends RelationManager
 {
@@ -177,7 +183,58 @@ class ReservationsRelationManager extends RelationManager
             ])
             ->headerActions([])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->using(function (Model $record, array $data): Model {
+                        $newStatus = (int) $data['status'];
+
+                        if ($newStatus !== $record->status && in_array($newStatus, [1, 2])) {
+                            $user = User::find($record->user_id);
+                            $service = $record->service;
+
+                            $record->status = $newStatus;
+                            $record->save();
+
+                            DatabaseNotification::where('type', 'App\Notifications\Users\Service\ChangeStatusReservationNotification')
+                                ->whereJsonContains('data->options->reservation_id', $record->id)
+                                ->where('notifiable_id', $user->id)
+                                ->delete();
+
+                            $userLang = $user->lang;
+
+                            $statusLabel = $newStatus === 1
+                                ? Lang::get('app.notifications.status-confirmed', [], $userLang)
+                                : Lang::get('app.notifications.status-cancelled', [], $userLang);
+
+                            $notificationData = [
+                                'notification' => [
+                                    'title' => Lang::get('app.notifications.reservation-status-updated-title', [], $userLang),
+                                    'body'  => Lang::get('app.notifications.reservation-status-updated-body', [
+                                        'reservation_id' => $record->id,
+                                        'status'         => $statusLabel,
+                                    ], $userLang),
+                                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                    'sound' => 'default',
+                                ],
+                                'data' => [
+                                    'type'           => 'service_reservation',
+                                    'slug'           => $service->slug,
+                                    'service_id'     => $service->id,
+                                    'reservation_id' => $record->id,
+                                    'new_status'     => $newStatus === 1 ? 'confirmed' : 'cancelled',
+                                ],
+                            ];
+
+                            $tokens = $user->DeviceTokenMany->pluck('token')->toArray();
+                            if (!empty($tokens)) {
+                                sendNotification($tokens, $notificationData);
+                            }
+
+                            Notification::send($user, new ChangeStatusReservationNotification($record));
+                        }
+
+                        return $record;
+                    })
+                    ->successNotificationTitle(__('panel.provider.status-updated'))
             ]);
     }
 }

@@ -71,6 +71,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Filament\Notifications\Notification;
+use Filament\Facades\Filament;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -166,6 +168,12 @@ class AppServiceProvider extends ServiceProvider
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch->locales(['ar', 'en'])->visible(outsidePanels: true);
+        });
+
+        Notification::configureUsing(function (Notification $notification): void {
+            if(Filament::getCurrentPanel()->getId() == 'provider') {
+                $notification->view('filament.notifications.provider-notification');
+            }
         });
     }
 }

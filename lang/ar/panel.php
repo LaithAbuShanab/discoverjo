@@ -130,7 +130,19 @@ return [
         "time-conflict"                   => "تعارض في الوقت",
         "reservation-time-conflict"       => "الحجز في الساعة :time بتاريخ :date خارج نطاق الوقت المتاح الجديد.",
         "capacity_conflict"               => "تعارض في السعة",
-        "reservation_capacity_conflict"   => "الحجز بتاريخ :date الساعة :time يتجاوز السعة الجديدة (:qty من :capacity)."
+        "reservation_capacity_conflict"   => "الحجز بتاريخ :date الساعة :time يتجاوز السعة الجديدة (:qty من :capacity).",
+        'new-service-reservation-title'   => 'تم استلام حجز جديد',
+        'new-service-reservation-body'    => 'قام المستخدم :username بإرسال حجز جديد (رقم التعريف: #:reservation_id).',
+        'view-reservation'                => 'عرض الحجز',
+        'Saved'                           => 'محفوظ',
+        'service-updated-title'           => 'تم تحديث الخدمة',
+        'service-updated-body'            => 'تم تحديث الخدمة. يرجى التحقق من التفاصيل أدناه:',
+        'service-created-title'           => 'تم انشاء الخدمة',
+        'service-created-body'            => 'تم انشاء الخدمة. يرجى التحقق من التفاصيل:',
+        'status-updated'                  => 'تم تحديث حالة الخدمة',
+        'service'                         => 'الخدمة',
+        'inactive'                        => 'غير نشط',
+        'active'                          => 'نشط',
     ],
 
     'guide' => [

@@ -152,6 +152,24 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
             if (!empty($tokens))
                 sendNotification($tokens, $notificationData);
 
+            // Notify an admin about the new user registration
+            ProviderNotification(
+                'new-service-reservation-title',
+                'new-service-reservation-body',
+                [
+                    'action' => 'View',
+                    'action_label' => 'view-reservation',
+                    'action_url' => route('filament.provider.resources.services.edit', $service),
+                    'icon' => 'heroicon-o-bell-alert',
+                    'color' => 'primary',
+                    'view_data' => [
+                        'reservation_id' => $reservation->id,
+                        'reservation_username' => $reservation->user->username,
+                        'api' => true
+                    ]
+                ],
+                $provider
+            );
 
             return $reservation;
         });

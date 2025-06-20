@@ -130,7 +130,18 @@ return [
         "time-conflict"                   => "Time Slot Conflict",
         "reservation-time-conflict"       => "Reservation at :time on :date is outside the new available time range.",
         "capacity_conflict"               => "Capacity Conflict",
-        "reservation_capacity_conflict"   => "Reservation on :date at :time exceeds new capacity (:qty/:capacity)."
+        "reservation_capacity_conflict"   => "Reservation on :date at :time exceeds new capacity (:qty/:capacity).",
+        'new-service-reservation-title'   => 'New Reservation Received',
+        'new-service-reservation-body'    => 'User :username has submitted a new reservation (ID: #:reservation_id).',
+        'view-reservation'                => 'View Reservation',
+        'service-updated-title'           => 'Service Updated',
+        'service-updated-body'            => 'The service has been updated. Please check the details below:',
+        'service-created-title'           => 'Service Created',
+        'service-created-body'            => 'New service has been created. Please check the details below:',
+        'status-updated'                  => 'Status Updated',
+        'service'                         => 'Service',
+        'inactive'                        => 'Inactive',
+        'active'                          => 'Active',
     ],
 
     'guide' => [

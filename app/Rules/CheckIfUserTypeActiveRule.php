@@ -25,7 +25,7 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service'];
         $type = $this->data['type'];
         if (!in_array($type, $acceptableType)) {
             return;

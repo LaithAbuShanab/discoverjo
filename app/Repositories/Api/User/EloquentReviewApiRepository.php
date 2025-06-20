@@ -65,8 +65,9 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 ->latest('created_at') // Make sure this column exists
                 ->value('id');
 
-            if (in_array($data['type'], ['trip', 'guideTrip','service'])) {
-                $userPost = $reviewItem->user;
+            if (in_array($data['type'], ['trip', 'guideTrip', 'service'])) {
+
+                $userPost = $data['type'] == 'service' ? $reviewItem->provider : $reviewItem->user;
 
                 if ($userPost->id !== $user->id) {
                     $tokens = $userPost->DeviceTokenMany->pluck('token')->toArray();
@@ -152,8 +153,23 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $modelClass = 'App\Models\\' . ucfirst($data['type']);
         $reviewItem = $modelClass::findBySlug($data['slug']);
-        Reviewable::where('user_id', $user?->id)->where('reviewable_type', $modelClass)->where('reviewable_id', $reviewItem?->id)->delete();
 
+        // Get review ID before deleting
+        $reviewId = $reviewItem->reviews()->where('user_id', $user->id)->value('id');
+
+        // Delete the review
+        Reviewable::where('user_id', $user->id)
+            ->where('reviewable_type', $modelClass)
+            ->where('reviewable_id', $reviewItem->id)
+            ->delete();
+
+        // Delete the notification
+        if ($reviewId) {
+            DatabaseNotification::where('type', 'App\Notifications\Users\review\NewReviewNotification')
+                ->whereJsonContains('data->options->review_id', $reviewId)
+                ->where('notifiable_id', $reviewItem->provider_id)
+                ->delete();
+        }
         activityLog('review', $reviewItem, 'the user delete review', 'delete');
         $user->deductPoints(10);
     }

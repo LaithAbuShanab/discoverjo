@@ -777,6 +777,8 @@ return [
         'the-provider-not-longer-active'                            => 'المزود غير متاح.',
         'this-service-not-belong-to-you'                            => 'هذه الخدمة لا تخصك.',
         'this-service-is-not-belong-to-you'                         => 'هذه الخدمة لا تخصك.',
+        'you_have_not_reservation_for_this_service'                 => 'لا يمكنك تقييم هذه الخدمة إذا لم تقم بحجزها مسبقًا.',
+        'you_cannot_make_review_for_upcoming_service'               => 'لا يمكنك تقييم هذه الخدمة إلا إذا قمت بإكمال حجزك الأول.',
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class ServiceResource extends Resource
 {
@@ -31,6 +32,11 @@ class ServiceResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return __('panel.provider.services');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('panel.provider.service');
     }
 
     public static function getNavigationBadge(): ?string
@@ -125,7 +131,15 @@ class ServiceResource extends Resource
                                         Forms\Components\DatePicker::make('available_start_date')
                                             ->label(__('panel.provider.available-start-date'))
                                             ->required()
-                                            ->rule('after_or_equal:today'),
+                                            ->afterStateUpdated(fn($state, callable $set) => $set('end_datetime', null))
+                                            ->rules(function ($component) {
+                                                $record = $component->getRecord();
+                                                if ($record) {
+                                                    return [];
+                                                }
+                                                $now = Carbon::now()->format('Y-m-d H:i:s');
+                                                return ["after_or_equal:$now"];
+                                            }),
 
                                         Forms\Components\DatePicker::make('available_end_date')
                                             ->label(__('panel.provider.available-end-date'))
@@ -293,14 +307,53 @@ class ServiceResource extends Resource
             ->columns(1);
     }
 
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label(__('panel.provider.id'))->searchable(),
                 Tables\Columns\TextColumn::make('name')->label(__('panel.provider.name'))->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('region.name')->label(__('panel.provider.region'))->searchable()->sortable(),
+                Tables\Columns\TagsColumn::make('categories.name')
+                    ->label(__('panel.provider.categories'))
+                    ->badge()
+                    ->getStateUsing(fn ($record) => $record->categories->pluck('name')->toArray()) // get translated names
+                    ->color(function (string $state, $record): string {
+                        $category = $record->categories->firstWhere('name', $state);
+
+                        // Use ID or slug as a stable reference for color
+                        $reference = $category?->slug ?? $category?->id ?? $state;
+
+                        $colors = ['primary', 'success', 'warning', 'danger', 'info', 'gray'];
+                        $hash = md5($reference);
+                        $index = hexdec(substr($hash, 0, 6)) % count($colors);
+                        return $colors[$index];
+                    }),
+                Tables\Columns\TextColumn::make('price')->label(__('panel.provider.price'))->money('JOD'),
+                Tables\Columns\TextColumn::make('serviceBookings.available_start_date')
+                    ->label(__('panel.provider.start-date'))
+                    ->sortable()
+                    ->formatStateUsing(function ($state) {
+                        return Carbon::parse($state)->format('d/m/Y');
+                    }),
+
+                Tables\Columns\TextColumn::make('serviceBookings.available_end_date')
+                    ->label(__('panel.provider.end-date'))
+                    ->sortable()
+                    ->formatStateUsing(function ($state) {
+                        return Carbon::parse($state)->format('d/m/Y');
+                    }),
+                Tables\Columns\TextColumn::make('status')
+                    ->label(__('panel.provider.status'))
+                    ->formatStateUsing(fn($state) => match ($state) {
+                        0 => __('panel.provider.inactive'),
+                        1 => __('panel.provider.active'),
+                        default => __('panel.provider.unknown'),
+                    })
+                    ->badge()
+                    ->color(fn($state) => match ($state) {
+                        0 => 'danger',
+                        1 => 'success',
+                        default => 'secondary',
+                    }),
             ])
             ->filters([
                 //

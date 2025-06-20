@@ -68,6 +68,7 @@ class ProviderPanelProvider extends PanelProvider
                 RedirectIfNotFilamentAdmin::class,
                 Authenticate::class,
             ])
-            ->authGuard('provider');
+            ->authGuard('provider')
+            ->databaseNotifications();
     }
 }

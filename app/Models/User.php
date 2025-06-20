@@ -130,12 +130,10 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
             });
     }
 
-
     public function plans()
     {
         return $this->morphMany('App\Models\Plan', 'creator');
     }
-
 
     public function sendEmailVerificationNotification()
     {
@@ -389,5 +387,10 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     public function favoriteServices()
     {
         return $this->morphedByMany(Service::class, 'favorable')->withTimestamps();
+    }
+
+    public function services()
+    {
+        return $this->morphMany(Service::class, 'provider');
     }
 }

@@ -158,6 +158,30 @@ function adminNotification($title = null, $body = null, $options = [])
     }
 }
 
+function ProviderNotification($title = null, $body = null, $options = [], $user = null)
+{
+    $recipient = $user;
+    if ($recipient) {
+        Notification::make()
+            ->title($title)
+            ->success()
+            ->body($body)
+            ->actions([
+                Action::make($options['action'])
+                    ->label($options['action_label'])
+                    ->url($options['action_url']),
+            ])
+            ->icon($options['icon'])
+            ->color($options['color'])
+            ->viewData([
+                'reservation_id' => $options['view_data']['reservation_id'] ?? null,
+                'reservation_username' => $options['view_data']['reservation_username'] ?? null,
+                'api' => $options['view_data']['api'] ?? null,
+            ])
+            ->sendToDatabase($recipient);
+    }
+}
+
 function handleWarning(object $record): void
 {
     $latestCount = DeleteCounter::where('user_id', $record->user_id)

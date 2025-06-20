@@ -50,6 +50,7 @@ class PropertyResource extends Resource
         $periodRepeaterFor = function (int $periodType, string $labelKey) {
             return \Filament\Forms\Components\Repeater::make("availabilityDays_{$periodType}")
                 ->label(__("panel.provider.availability-for") . ' ' . __("panel.provider.{$labelKey}"))
+                ->default([])
                 ->schema([
                     \Filament\Forms\Components\Hidden::make('property_period_id')
                         ->default($periodType),
@@ -81,6 +82,7 @@ class PropertyResource extends Resource
 
                     return collect($periods)->contains(fn ($p) => (int) $p['type'] === $periodType);
                 });
+//                ->dehydrated(false);
         };
 
         return $form

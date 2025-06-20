@@ -115,10 +115,10 @@ class CreateProperty extends CreateRecord
                     if (empty($entry['day_of_week']) || $entry['price'] === null) continue;
 
                     foreach ($entry['day_of_week'] as $day) {
-                        $period = PropertyPeriod::where('type', $periodType)->first();
+
                         $this->availabilityDaysToSave[] = [
+                            'type' => $entry['property_period_id'],
                             'availability_uuid' => $uuid,
-                            'property_period_id' => $period->id, // Will be remapped in afterCreate()
                             'day_of_week' => $day,
                             'price' => $entry['price'],
                         ];
@@ -154,7 +154,10 @@ class CreateProperty extends CreateRecord
             // Create related availability days
             foreach ($this->availabilityDaysToSave as $availabilityDay) {
                 if ($availabilityDay['availability_uuid'] === $uuid) {
+                    $period = PropertyPeriod::where('type', $availabilityDay['type'])->where('property_id',$this->record->id)->first();
                     unset($availabilityDay['availability_uuid']);
+                    unset($availabilityDay['type']);
+                    $availabilityDay['property_period_id']=$period->id;
                     $availability->availabilityDays()->create($availabilityDay);
                 }
             }

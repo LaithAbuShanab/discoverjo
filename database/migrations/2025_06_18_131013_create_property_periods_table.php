@@ -18,6 +18,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();
+            $table->unique(['type', 'property_id'], 'unique_property_type');
         });
     }
 

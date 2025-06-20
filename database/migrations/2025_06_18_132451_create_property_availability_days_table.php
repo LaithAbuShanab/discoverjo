@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('day_of_week', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
             $table->decimal('price',10,2);
             $table->timestamps();
+            $table->unique(['property_availability_id', 'property_period_id','day_of_week'], 'unique_availability_day');
         });
     }
 

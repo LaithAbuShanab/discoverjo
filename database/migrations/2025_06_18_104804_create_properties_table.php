@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('region_id')->references('id')->on('regions')->cascadeOnUpdate();
-            $table->foreign('host_id')->references('id')->on('users')->cascadeOnUpdate();;
+            $table->foreign('host_id')->references('id')->on('users')->cascadeOnUpdate();
         });
 
         // Add generated columns using raw SQL

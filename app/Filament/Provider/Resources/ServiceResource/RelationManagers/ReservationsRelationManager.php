@@ -72,7 +72,8 @@ class ReservationsRelationManager extends RelationManager
                                         1 => 'info',
                                         2 => 'danger',
                                         3 => 'success',
-                                    ]),
+                                    ])
+                                    ->disableOptionWhen(fn (string $value): bool => in_array((int) $value, [0, 3]))
                             ]),
 
                         Forms\Components\Grid::make(2)

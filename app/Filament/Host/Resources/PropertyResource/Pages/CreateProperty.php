@@ -4,21 +4,15 @@ namespace App\Filament\Host\Resources\PropertyResource\Pages;
 
 use App\Filament\Host\Resources\PropertyResource;
 use App\Models\Property;
-use App\Models\PropertyPeriod;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-
-
-
 
 class CreateProperty extends CreateRecord
 {
     protected static string $resource = PropertyResource::class;
     protected array $availabilityDaysToSave = [];
     protected array $availability = [];
-
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -27,7 +21,6 @@ class CreateProperty extends CreateRecord
         $evening = collect($periods)->firstWhere('type', 2);
         $overnight = collect($periods)->firstWhere('type', 3);
 
-        // Morning vs Evening Overlap Check
         if ($morning && $evening) {
             $mStart = strtotime($morning['start_time']);
             $mEnd = strtotime($morning['end_time']);
@@ -36,7 +29,7 @@ class CreateProperty extends CreateRecord
 
             if ($mStart < $eEnd && $eStart < $mEnd) {
                 throw ValidationException::withMessages([
-                    'periods' => __('Morning and evening periods must not overlap.'),
+                    'periods' => __('panel.host.morning-evening-overlap-error'),
                 ]);
             }
         }
@@ -46,13 +39,11 @@ class CreateProperty extends CreateRecord
         $availabilities = $this->data['availabilities'] ?? [];
         $availabilitiesList = [];
 
-        // Flatten to indexed list and track UUIDs
         foreach ($availabilities as $uuid => $availability) {
             $availability['uuid'] = $uuid;
             $availabilitiesList[] = $availability;
         }
 
-        // First one is the parent
         $parent = array_shift($availabilitiesList);
         $parentStart = $parent['availability_start_date'];
         $parentEnd = $parent['availability_end_date'];
@@ -61,10 +52,8 @@ class CreateProperty extends CreateRecord
             'type' => $parent['type'],
             'availability_start_date' => $parentStart,
             'availability_end_date' => $parentEnd,
-            // No parent_id for the parent
         ];
 
-        // Validate and store children
         $childRanges = [];
 
         foreach ($availabilitiesList as $child) {
@@ -72,11 +61,10 @@ class CreateProperty extends CreateRecord
             $childStart = $child['availability_start_date'];
             $childEnd = $child['availability_end_date'];
 
-            // ✅ Check child is within parent range
             if ($childStart < $parentStart || $childEnd > $parentEnd) {
                 Notification::make()
-                    ->title(__('Cannot Create Availability'))
-                    ->body(__('Child availability must be within the parent availability date range.'))
+                    ->title(__('panel.host.service-create-error-title'))
+                    ->body(__('panel.host.service-out-of-range-error'))
                     ->danger()
                     ->persistent()
                     ->send();
@@ -88,8 +76,8 @@ class CreateProperty extends CreateRecord
             foreach ($childRanges as [$start, $end, $conflictUuid]) {
                 if ($childStart <= $end && $childEnd >= $start) {
                     Notification::make()
-                        ->title(__('Cannot Create Availability'))
-                        ->body(__('Child availability overlaps with another child availability.'))
+                        ->title(__('panel.host.service-create-error-title'))
+                        ->body(__('panel.host.service-overlap-error'))
                         ->danger()
                         ->persistent()
                         ->send();
@@ -104,7 +92,7 @@ class CreateProperty extends CreateRecord
                 'type' => $child['type'],
                 'availability_start_date' => $childStart,
                 'availability_end_date' => $childEnd,
-                'parent_id' => 'PENDING', // Will be replaced later in afterCreate()
+                'parent_id' => 'PENDING',
             ];
         }
 
@@ -136,7 +124,7 @@ class CreateProperty extends CreateRecord
         return $data;
     }
 
-    protected function beforeCreate():void
+    protected function beforeCreate(): void
     {
 
         $exists = Property::where(function ($query) {
@@ -147,19 +135,17 @@ class CreateProperty extends CreateRecord
                 ->orWhere('address->en', $this->data['name']['en']);
         })->exists();
 
-        if($exists){
+        if ($exists) {
             Notification::make()
-                ->title(__('Cannot Create Property'))
-                ->body(__('there is a property already exists with the same name and address.'))
+                ->title(__('panel.host.property-exists-title'))
+                ->body(__('panel.host.property-exists-body'))
                 ->danger()
                 ->persistent()
                 ->send();
 
             $this->halt();
         }
-
     }
-
 
     protected function afterCreate(): void
     {
@@ -184,7 +170,7 @@ class CreateProperty extends CreateRecord
                     $period = $this->record->periods->where('type', $availabilityDay['type'])->first();
                     unset($availabilityDay['availability_uuid']);
                     unset($availabilityDay['type']);
-                    $availabilityDay['property_period_id']=$period?->id;
+                    $availabilityDay['property_period_id'] = $period?->id;
                     $availability->availabilityDays()->create($availabilityDay);
                 }
             }
@@ -193,9 +179,6 @@ class CreateProperty extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
     }
-
-
-
 }

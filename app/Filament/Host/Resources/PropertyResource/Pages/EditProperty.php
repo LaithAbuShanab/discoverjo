@@ -9,7 +9,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class EditProperty extends EditRecord
 {
@@ -75,20 +74,21 @@ class EditProperty extends EditRecord
                     ->orWhere('name_ar', $this->data['name']['ar']);
             })->orWhere(function ($query) {
                 $query->where('id', '!=', $this->record->id) // also exclude here for OR group
-                ->where('address->ar', $this->data['name']['ar'])
+                    ->where('address->ar', $this->data['name']['ar'])
                     ->orWhere('address->en', $this->data['name']['en']);
             })->exists();
 
         if ($exists) {
             Notification::make()
-                ->title(__('Cannot Update Property'))
-                ->body(__('There is already a property with the same name or address.'))
+                ->title(__('panel.host.property-update-error-title'))
+                ->body(__('panel.host.property-update-error-body'))
                 ->danger()
                 ->persistent()
                 ->send();
 
             $this->halt();
         }
+
 
         $data = $this->data;
         $data['host_id'] = auth()->id();

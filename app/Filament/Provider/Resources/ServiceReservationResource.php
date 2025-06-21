@@ -3,7 +3,6 @@
 namespace App\Filament\Provider\Resources;
 
 use App\Filament\Provider\Resources\ServiceReservationResource\Pages;
-use Filament\Forms\Components\{CheckboxList, DatePicker, Grid, Repeater, Section, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
 use App\Models\ServiceReservation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -92,8 +91,9 @@ class ServiceReservationResource extends Resource
                                         1 => 'info',
                                         2 => 'danger',
                                         3 => 'success',
-                                    ]),
-                            ]),
+                                    ])
+                                    ->disableOptionWhen(fn (string $value): bool => in_array((int) $value, [0, 3]))
+                                ]),
 
                         Forms\Components\Grid::make(2)
                             ->schema([

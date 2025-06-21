@@ -24,6 +24,8 @@ class ServiceResource extends Resource
 
     protected static ?string $navigationGroup = 'Services Section';
 
+    protected static ?int $navigationSort = 1;
+
     public static function getNavigationLabel(): string
     {
         return __('panel.provider.services');

@@ -159,7 +159,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
                 [
                     'action' => 'View',
                     'action_label' => 'view-reservation',
-                    'action_url' => route('filament.provider.resources.services.edit', $service),
+                    'action_url' => route('filament.provider.resources.service-reservations.view', $reservation),
                     'icon' => 'heroicon-o-bell-alert',
                     'color' => 'primary',
                     'view_data' => [

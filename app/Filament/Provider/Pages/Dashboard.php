@@ -25,8 +25,7 @@ class Dashboard extends BaseDashboard
                             ->maxDate(fn(Get $get) => $get('endDate') ?: now()),
                         DatePicker::make('endDate')
                             ->label(__('panel.provider.end-date'))
-                            ->minDate(fn(Get $get) => $get('startDate') ?: now())
-                            ->maxDate(now()),
+                            ->minDate(fn(Get $get) => $get('startDate') ?: now()),
                     ])
                     ->columns(2),
             ]);

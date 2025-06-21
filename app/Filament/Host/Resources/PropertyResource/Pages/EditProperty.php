@@ -3,6 +3,7 @@
 namespace App\Filament\Host\Resources\PropertyResource\Pages;
 
 use App\Filament\Host\Resources\PropertyResource;
+use App\Models\Property;
 use App\Models\PropertyPeriod;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -68,6 +69,27 @@ class EditProperty extends EditRecord
 
     protected function beforeSave()
     {
+        $exists = Property::where('id', '!=', $this->record->id)
+            ->where(function ($query) {
+                $query->where('name_en', $this->data['name']['en'])
+                    ->orWhere('name_ar', $this->data['name']['ar']);
+            })->orWhere(function ($query) {
+                $query->where('id', '!=', $this->record->id) // also exclude here for OR group
+                ->where('address->ar', $this->data['name']['ar'])
+                    ->orWhere('address->en', $this->data['name']['en']);
+            })->exists();
+
+        if ($exists) {
+            Notification::make()
+                ->title(__('Cannot Update Property'))
+                ->body(__('There is already a property with the same name or address.'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->halt();
+        }
+
         $data = $this->data;
         $data['host_id'] = auth()->id();
 
@@ -171,5 +193,10 @@ class EditProperty extends EditRecord
                 ]);
             }
         }
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
     }
 }

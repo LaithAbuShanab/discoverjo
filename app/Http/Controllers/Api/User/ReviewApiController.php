@@ -33,7 +33,7 @@ class ReviewApiController extends Controller
             ],
             [
 
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service'])],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service','property'])],
                 'slug' => ['bail', 'required', new CheckIfTypeAndSlugRule(), new CheckIfUserTypeActiveRule()],
             ],
             [
@@ -63,7 +63,7 @@ class ReviewApiController extends Controller
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service','property'])],
             'slug' => ['bail', 'required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(), new CheckIfUserTypeActiveRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
@@ -92,7 +92,7 @@ class ReviewApiController extends Controller
             'rating' => $request->rating,
             'comment' => $request->comment
         ], [
-            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service','property'])],
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfNotExistsInReviewsRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
@@ -118,7 +118,7 @@ class ReviewApiController extends Controller
             'type' => $type,
             'slug' => $slug,
         ], [
-            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service'])],
+            'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip','service','property'])],
             'slug' => ['required', new CheckIfTypeAndSlugRule(), new CheckIfNotExistsInReviewsRule()],
         ]);
 

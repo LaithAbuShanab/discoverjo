@@ -393,4 +393,14 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return $this->morphMany(Service::class, 'provider');
     }
+
+    public function reviewProperty()
+    {
+        return $this->morphedByMany(Property::class, 'reviewable')->withTimestamps();
+    }
+
+    public function favoritePropertys()
+    {
+        return $this->morphedByMany(Property::class, 'favorable')->withTimestamps();
+    }
 }

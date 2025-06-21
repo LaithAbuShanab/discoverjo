@@ -15,8 +15,8 @@ class EloquentServiceApiRepository implements ServiceApiRepositoryInterface
 
         $services = Service::where('status', 1)
             ->whereHas('serviceBookings', function ($query) use ($now) {
-                $query->whereDate('available_start_date', '<=', $now)
-                    ->whereDate('available_end_date', '>=', $now);
+                $query->whereDate('available_end_date', '>=', $now);
+
             })
             ->whereHas('provider', function ($query) {
                 $query->where('status', 1);

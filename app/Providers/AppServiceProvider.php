@@ -21,6 +21,7 @@ use App\Interfaces\Gateways\Api\User\PlaceApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\PlanApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\PopularPlaceApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\PostApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\PropertyApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\RegionsApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\RegisterGuideApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ReplyApiRepositoryInterface;
@@ -53,6 +54,7 @@ use App\Repositories\Api\User\EloquentPlaceApiRepository;
 use App\Repositories\Api\User\EloquentPlanApiRepository;
 use App\Repositories\Api\User\EloquentPopularPlaceApiRepository;
 use App\Repositories\Api\User\EloquentPostApiRepository;
+use App\Repositories\Api\User\EloquentPropertyApiRepository;
 use App\Repositories\Api\User\EloquentRegionsApiRepository;
 use App\Repositories\Api\User\EloquentRegisterGuideApiRepository;
 use App\Repositories\Api\User\EloquentReplyApiRepository;
@@ -145,6 +147,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ServiceCategoryApiRepositoryInterface::class, EloquentServiceCategoryApiRepository::class);
         $this->app->bind(RegistrationResponseContract::class, RegisterResponse::class);
         $this->app->bind(ReservationApiRepositoryInterface::class, EloquentReservationApiRepository::class);
+        $this->app->bind(PropertyApiRepositoryInterface::class, EloquentPropertyApiRepository::class);
     }
 
     /**

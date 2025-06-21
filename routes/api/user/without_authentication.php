@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\User\RegionsApiController;
 use App\Http\Controllers\Api\User\ServiceApiController;
 use App\Http\Controllers\Api\User\ServiceCategoryApiController;
 use App\Http\Controllers\Api\User\RegisterGuide\RegisterGuideApiController;
+use App\Http\Controllers\Api\User\PropertyApiController;
 
 // GET ALL CATEGORIES
 Route::get('all-categories', [CategoryApiController::class, 'index'])->name('categories'); // DONE ✅
@@ -124,6 +125,9 @@ Route::get('service/categories/search', [ServiceCategoryApiController::class, 's
 Route::get('all/services', [ServiceApiController::class, 'index']); // DONE ✅
 Route::get('service/date', [ServiceCategoryApiController::class, 'dateServices']); // DONE ✅
 Route::get('service/show/{service_slug}', [ServiceCategoryApiController::class, 'singleService']); // DONE ✅
+
+Route::get('all/properties',[PropertyApiController::class,'getAllChalets']);
+Route::get('property/show/{property_slug}', [PropertyApiController::class, 'singleProperty']);
 
 require __DIR__ . '/auth_user.php';
 

@@ -26,7 +26,7 @@ class CheckIfNotExistsInReviewsRule implements ValidationRule, DataAwareRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $userId = Auth::guard('api')->user()->id;
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip','service'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'guideTrip','service','property'];
 
         if (!in_array($this->data['type'], $acceptableType)) {
             return;

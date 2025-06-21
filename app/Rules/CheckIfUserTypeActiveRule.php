@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use App\Models\GuideTrip;
+use App\Models\Property;
 use App\Models\Service;
 use App\Models\Trip;
 use Closure;
@@ -25,7 +26,7 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service','property'];
         $type = $this->data['type'];
         if (!in_array($type, $acceptableType)) {
             return;
@@ -57,6 +58,16 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
             $ownerStatus = $service->provider?->status;
             if (!$ownerStatus) {
                 $fail(__('validation.api.the-user-owner-this-service-not-longer-active'));
+                return;
+            }
+        }
+
+        if ($type =='property') {
+            $property = Property::findBySlug($value);
+            if (!$property) return;
+            $ownerStatus = $property->host?->status;
+            if (!$ownerStatus) {
+                $fail(__('validation.api.the-user-owner-this-property-not-longer-active'));
                 return;
             }
         }

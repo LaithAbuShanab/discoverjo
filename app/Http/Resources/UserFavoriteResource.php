@@ -59,6 +59,8 @@ class UserFavoriteResource extends JsonResource
 
         $serviceFav = $this->favoriteServices->filter(fn($service) => $service->provider->status == 1);
 
+        $propertyFav = $this->favoritePropertys->filter(fn($property) => $property->host->status == 1);
+
         $planFav = $this->favoritePlans->filter(function ($plan) {
             if ($plan->creator_type === 'App\\Models\\User') {
                 return $plan->creator && $plan->creator->status == 1;
@@ -83,6 +85,7 @@ class UserFavoriteResource extends JsonResource
             'post'         => $postFav,
             'guide_trip'   => GuideFavoriteResource::collection($guideTripFav),
             'serviceFav'   => ServiceFavoriteResource::collection($serviceFav),
+            'propertyFav'  =>PropertyFavResource::collection($propertyFav),
         ];
     }
 }

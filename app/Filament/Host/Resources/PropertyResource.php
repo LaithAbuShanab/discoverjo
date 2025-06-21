@@ -5,25 +5,15 @@ namespace App\Filament\Host\Resources;
 use App\Filament\Host\Resources\PropertyResource\Pages;
 use App\Filament\Host\Resources\PropertyResource\RelationManagers;
 use App\Models\Property;
-use App\Models\PropertyAvailability;
-use App\Models\PropertyAvailabilityDay;
-use App\Models\PropertyPeriod;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Service;
-use Filament\Forms\Components\{CheckboxList, Grid, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
+use Filament\Forms\Components\{CheckboxList, Grid, Hidden, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
 use Filament\Forms\Get;
-use Filament\Tables\Actions\ActionGroup;
-use Closure;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
-
-
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 
 class PropertyResource extends Resource
@@ -50,7 +40,16 @@ class PropertyResource extends Resource
         $periodRepeaterFor = function (int $periodType, string $labelKey) {
             return \Filament\Forms\Components\Repeater::make("availabilityDays_{$periodType}")
                 ->label(__("panel.provider.availability-for") . ' ' . __("panel.provider.{$labelKey}"))
-                ->default([])
+                ->default([[
+                    'day_of_week' => [],
+                    'price' => null,
+                ]])
+                ->disableItemDeletion(function (Get $get) use ($periodType) {
+                    $items = $get('availabilityDays_' . $periodType) ?? [];
+
+                    return count($items) <= 1;
+                })
+                ->minItems(1)
                 ->schema([
                     \Filament\Forms\Components\Hidden::make('property_period_id')
                         ->default($periodType),
@@ -79,10 +78,8 @@ class PropertyResource extends Resource
                 ])
                 ->visible(function (Get $get) use ($periodType) {
                     $periods = $get('../../periods') ?? [];
-
-                    return collect($periods)->contains(fn ($p) => (int) $p['type'] === $periodType);
+                    return collect($periods)->values()->contains(fn($p) => (int) $p['type'] === $periodType);
                 });
-//                ->dehydrated(false);
         };
 
         return $form
@@ -105,7 +102,7 @@ class PropertyResource extends Resource
                                 ->required()
                                 ->placeholder(__('panel.host.select-region')),
 
-                            TextInput::make('address')->maxLength(255),
+                            TextInput::make('address')->maxLength(255)->translatable(),
 
                             TextInput::make('google_map_url')
                                 ->label(__('panel.host.google-map-url'))
@@ -130,6 +127,13 @@ class PropertyResource extends Resource
                             Repeater::make('periods')
                                 ->relationship('periods')
                                 ->label(__('panel.provider.property-periods'))
+                                ->minItems(1)
+                                ->maxItems(3)
+                                ->disableItemDeletion(function (Get $get) {
+                                    $items = $get('periods') ?? [];
+
+                                    return count($items) <= 1;
+                                })
                                 ->schema([
                                     Select::make('type')
                                         ->required()
@@ -156,7 +160,13 @@ class PropertyResource extends Resource
                             Repeater::make('availabilities')
                                 ->relationship('availabilities')
                                 ->label(__('panel.provider.availabilities'))
+                                ->disableItemDeletion(function (Get $get) {
+                                    $items = $get('availabilities') ?? [];
+
+                                    return count($items) <= 1;
+                                })
                                 ->schema([
+                                    Hidden::make('id'),
                                     Grid::make(['default' => 1, 'md' => 3])->schema([
                                         Select::make('type')
                                             ->required()
@@ -168,12 +178,17 @@ class PropertyResource extends Resource
                                         Forms\Components\DatePicker::make('availability_start_date')
                                             ->label(__('panel.provider.available-start-date'))
                                             ->required()
-                                            ->rule('after_or_equal:today'),
+                                            ->rule('after_or_equal:today')
+                                            ->native(false)
+                                            ->minDate(Carbon::today()->toDateString())
+                                            ->displayFormat('d/m/Y'),
                                         Forms\Components\DatePicker::make('availability_end_date')
                                             ->label(__('panel.provider.available-end-date'))
                                             ->required()
-                                            ->minDate(fn (Get $get) => $get('availability_start_date'))
-                                            ->rule('after_or_equal:availability_start_date'),
+                                            ->minDate(fn(Get $get) => $get('availability_start_date'))
+                                            ->rule('after_or_equal:availability_start_date')
+                                            ->native(false)
+                                            ->displayFormat('d/m/Y'),
                                     ]),
 
 
@@ -207,7 +222,7 @@ class PropertyResource extends Resource
                     Step::make(__('panel.provider.media-and-amenities'))
                         ->schema([
                             CheckboxList::make('amenities') // ← lowercase to match the Eloquent relationship method name
-                            ->label(__('panel.provider.features'))
+                                ->label(__('panel.provider.amenities'))
                                 ->relationship('amenities', 'name')
                                 ->columns([
                                     'default' => 1,
@@ -242,30 +257,17 @@ class PropertyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('slug')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('region_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('host_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('region.name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('address')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('max_guests')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('bedrooms')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('bathrooms')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('beds')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->numeric()
+                Tables\Columns\ToggleColumn::make('status')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -275,22 +277,19 @@ class PropertyResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('name_en')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name_ar')
-                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->modifyQueryUsing(fn(Builder $query) => $query->where('host_id', auth()->id()));
     }
 
     public static function getRelations(): array
@@ -308,6 +307,4 @@ class PropertyResource extends Resource
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
     }
-
-
 }

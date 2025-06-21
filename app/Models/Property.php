@@ -18,7 +18,7 @@ class Property extends Model implements HasMedia
     use HasFactory, InteractsWithMedia, HasTranslations, HasSlug, LogsActivity;
     protected $guarded = [];
 
-    public $translatable = ['name', 'description'];
+    public $translatable = ['name', 'description','address'];
     protected static $logAttributes = ['slug', 'name', 'description','status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'Property';
@@ -26,6 +26,7 @@ class Property extends Model implements HasMedia
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
+        'address' => 'json',
     ];
     public function getDescriptionForEvent(string $eventName): string
     {

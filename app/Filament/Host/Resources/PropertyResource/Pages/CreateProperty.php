@@ -3,10 +3,13 @@
 namespace App\Filament\Host\Resources\PropertyResource\Pages;
 
 use App\Filament\Host\Resources\PropertyResource;
+use App\Models\Property;
 use App\Models\PropertyPeriod;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -15,6 +18,7 @@ class CreateProperty extends CreateRecord
     protected static string $resource = PropertyResource::class;
     protected array $availabilityDaysToSave = [];
     protected array $availability = [];
+
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -132,6 +136,30 @@ class CreateProperty extends CreateRecord
         return $data;
     }
 
+    protected function beforeCreate():void
+    {
+
+        $exists = Property::where(function ($query) {
+            $query->where('name_en', $this->data['name']['en'])
+                ->orWhere('name_ar', $this->data['name']['ar']);
+        })->orWhere(function ($query) {
+            $query->where('address->ar', $this->data['name']['ar'])
+                ->orWhere('address->en', $this->data['name']['en']);
+        })->exists();
+
+        if($exists){
+            Notification::make()
+                ->title(__('Cannot Create Property'))
+                ->body(__('there is a property already exists with the same name and address.'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->halt();
+        }
+
+    }
+
 
     protected function afterCreate(): void
     {
@@ -142,7 +170,6 @@ class CreateProperty extends CreateRecord
             if ($parentAvailabilityId) {
                 $availabilityData['parent_id'] = $parentAvailabilityId;
             }
-
             // Create the availability
             $availability = $this->record->availabilities()->create($availabilityData);
 
@@ -154,14 +181,19 @@ class CreateProperty extends CreateRecord
             // Create related availability days
             foreach ($this->availabilityDaysToSave as $availabilityDay) {
                 if ($availabilityDay['availability_uuid'] === $uuid) {
-                    $period = PropertyPeriod::where('type', $availabilityDay['type'])->where('property_id',$this->record->id)->first();
+                    $period = $this->record->periods->where('type', $availabilityDay['type'])->first();
                     unset($availabilityDay['availability_uuid']);
                     unset($availabilityDay['type']);
-                    $availabilityDay['property_period_id']=$period->id;
+                    $availabilityDay['property_period_id']=$period?->id;
                     $availability->availabilityDays()->create($availabilityDay);
                 }
             }
         }
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class SingleChaletResource extends JsonResource
 {
@@ -27,6 +28,9 @@ class SingleChaletResource extends JsonResource
         foreach ($this->getMedia('property_gallery') as $image) {
             $gallery[] = $image->getUrl('property_gallery_app');
         }
+        $filteredReviews = $this->reviews->filter(function ($review) {
+            return $review->user->status == 1;
+        });
         return [
             'id' => $this->id,
             'name' => $this->name, // Assuming it's a JSON column (multilingual)
@@ -47,7 +51,10 @@ class SingleChaletResource extends JsonResource
             'periods'=> PeriodsResource::collection($this->periods),
             'availabilities'=> AvailabilitiesResource::collection($this->availabilities),
             'notes'=>$notes,
-            'amenities' => $this->groupAmenitiesByParent()
+            'amenities' => $this->groupAmenitiesByParent(),
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
+            'reviews' => ReviewResource::collection($filteredReviews),
+            'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->host_id,
         ];
     }
 

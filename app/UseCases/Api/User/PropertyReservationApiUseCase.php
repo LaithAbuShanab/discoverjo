@@ -20,6 +20,11 @@ class PropertyReservationApiUseCase
         return $this->propertyReservationApiRepository->checkAvailable($data);
     }
 
+    public function checkAvailableMonth($data)
+    {
+        return $this->propertyReservationApiRepository->checkAvailableMonth($data);
+    }
+
 
 
 }

@@ -544,3 +544,13 @@ function cleanQuery($query)
         return $query;
     }
 }
+
+ function resolvePeriodType($type)
+{
+    return match ($type) {
+        'morning' => 1,
+        'evening' => 2,
+        'day' => 3,
+        default => throw new \InvalidArgumentException("Invalid period type"),
+    };
+}

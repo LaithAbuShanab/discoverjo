@@ -222,6 +222,7 @@ Route::middleware(['firstLogin'])->group(function () {
     //first widget for reservation
     Route::get('property/check/available/{property_slug}/{period_type}',[PropertyReservationApiController::class, 'checkAvailable']);
     //check availability for custom month and year
+    Route::get('property/available/{property_slug}/{period_type}/{month}/{year}',[PropertyReservationApiController::class, 'checkAvailableMonth']);
 });
 
 // ALL ROUTES FOR PROFILE

@@ -186,12 +186,6 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
     public function allReservations()
     {
         $perPage = config('app.pagination_per_page');
-        $reservations = ServiceReservation::where('service_id', $service->id)
-            ->where('user_id', $user->id)
-            ->get();
-
-        // Return a collection of user reservations as a resource
-        $now = now()->setTimezone('Asia/Riyadh')->toDateTimeString();
         $user = Auth::guard('api')->user();
         $reservations = ServiceReservation::where('user_id', $user->id)->paginate($perPage);
         $reservationsArray = $reservations->toArray();

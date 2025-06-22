@@ -2,29 +2,27 @@
 
 namespace App\Rules;
 
+namespace App\Rules;
+
 use App\Models\Property;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule,  DataAwareRule
+class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, DataAwareRule
 {
-    protected $data;
+    protected array $data = [];
 
-    public function setData($data)
+    public function setData($data): static
     {
         $this->data = $data;
         return $this;
     }
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $slug = $this->data['property_slug'] ?? null;
-        $periodType = $this->data['period_type'] ?? null; // e.g., morning, evening, overnight
+        $periodType = $this->data['period_type'] ?? null;
         $month = $this->data['month'] ?? null;
         $year = $this->data['year'] ?? null;
 
@@ -41,8 +39,8 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule,  Dat
         }
 
         $periodMap = [
-            'morning' => 1,
-            'evening' => 2,
+            'morning'   => 1,
+            'evening'   => 2,
             'overnight' => 3,
         ];
 
@@ -53,28 +51,55 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule,  Dat
             return;
         }
 
-        // Check if property has this period type
-        $hasPeriod = $property->periods->contains('type', $mappedType);
-
-        if (! $hasPeriod) {
+        if (! $property->periods->contains('type', $mappedType)) {
             $fail(__('This property does not support the selected period.'));
             return;
         }
 
-        // OPTIONAL: Check if the month/year is available
-        $startDate = now()->setYear($year)->setMonth($month)->startOfMonth()->toDateString();
-        $endDate = now()->setYear($year)->setMonth($month)->endOfMonth()->toDateString();
+        $monthName = strtolower($month);
+        $monthMap = [
+            'january' => 1,
+            'february' => 2,
+            'march' => 3,
+            'april' => 4,
+            'may' => 5,
+            'june' => 6,
+            'july' => 7,
+            'august' => 8,
+            'september' => 9,
+            'october' => 10,
+            'november' => 11,
+            'december' => 12,
+        ];
 
+        if (!isset($monthMap[$monthName])) {
+            $fail(__('Invalid month name.'));
+            return;
+        }
+
+        $month = $monthMap[$monthName]; // Now it's an integer
+        $year = (int) $year;
+
+        // Build date range
+        try {
+            $startDate = now()->setDate($year, $month, 1)->startOfMonth()->toDateString();
+            $endDate = now()->setDate($year, $month, 1)->endOfMonth()->toDateString();
+        } catch (\Exception $e) {
+            $fail(__('Invalid month or year.'));
+            return;
+        }
+
+        // Check availability
         $hasAvailability = $property->availabilities()
-            ->where('type', $mappedType)
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('availability_start_date', [$startDate, $endDate])
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('availability_start_date', [$startDate, $endDate])
                     ->orWhereBetween('availability_end_date', [$startDate, $endDate])
-                    ->orWhere(function ($query) use ($startDate, $endDate) {
-                        $query->where('availability_start_date', '<=', $startDate)
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('availability_start_date', '<=', $startDate)
                             ->where('availability_end_date', '>=', $endDate);
                     });
             })
+            ->whereHas('availabilityDays.period', fn($q) => $q->where('type', $mappedType))
             ->exists();
 
         if (! $hasAvailability) {

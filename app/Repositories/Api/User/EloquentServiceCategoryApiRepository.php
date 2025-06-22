@@ -131,6 +131,8 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
             })
             ->paginate($perPage);
 
+        $parent = $subcategory?->parent;
+
         $servicesArray = $services->toArray();
         $parameterNext = $servicesArray['next_page_url'] ;
         $parameterPrevious = $servicesArray['prev_page_url'];
@@ -144,6 +146,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         activityLog('service subcategory',$subcategory, 'the user view this service subcategory ','view');
 
         return [
+            'parent'=>AllCategoriesResource::collection($parent),
             'subcategory' => new AllCategoriesResource($subcategory),
             'services' => AllServicesResource::collection($services),
             'pagination' => $pagination

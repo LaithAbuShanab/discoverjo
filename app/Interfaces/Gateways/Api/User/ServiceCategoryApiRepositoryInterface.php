@@ -10,5 +10,6 @@ interface ServiceCategoryApiRepositoryInterface
     public function search($query);
     public function dateServices($date);
     public function singleService($slug);
+    public function servicesBySubcategory($slug);
 
 }

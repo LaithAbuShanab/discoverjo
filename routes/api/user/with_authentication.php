@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\User\UserProfileController;
 use App\Http\Controllers\Api\User\VolunteeringApiController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\User\PropertyReservationApiController;
 
 Route::middleware(['firstLogin'])->group(function () {
 
@@ -215,7 +216,12 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('provider/request/reservations/list/{service_slug}', [ReservationApiController::class, 'providerRequestReservations']); // DONE ✅
         //3- list of reservation accepted pagination
         Route::get('provider/approved/reservations/list/{service_slug}', [ReservationApiController::class, 'approvedRequestReservations']); // DONE ✅
+
     });
+
+    //first widget for reservation
+    Route::get('property/check/available/{property_slug}/{period_type}',[PropertyReservationApiController::class, 'checkAvailable']);
+    //check availability for custom month and year
 });
 
 // ALL ROUTES FOR PROFILE

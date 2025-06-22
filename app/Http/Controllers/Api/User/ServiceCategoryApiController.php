@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Event\DayRequest;
 use App\Http\Requests\Api\User\Service\SubcategoriesOfServiceCategoriesRequest;
+use App\Rules\ChecIfServiceSubCategoryIsChildRule;
 use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfProviderActiveRule;
 use App\Rules\CheckIfServiceCategoryIsParentRule;
@@ -124,5 +125,31 @@ class ServiceCategoryApiController extends Controller
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
+    }
+
+    public function servicesBySubcategory(Request $request,$subcategory_slug)
+    {
+
+        $validator = Validator::make(['subcategory_slug' => $subcategory_slug], [
+            'subcategory_slug' => ['bail', 'required', 'exists:service_categories,slug', new ChecIfServiceSubCategoryIsChildRule()],
+        ], [
+            'subcategory_slug.exists' => __('validation.api.the-selected-category-id-does-not-exists'),
+            'subcategory_slug.required' => __('validation.api.the-category-id-required'),
+        ]);
+
+
+        $data = $validator->validated();
+
+        if ($validator->fails()) {
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST, $validator->errors()->messages()['category_slug']);
+        }
+        try {
+            $allPlaces = $this->serviceCategoryApiUseCase->servicesBySubcategory($data['subcategory_slug']);
+            return ApiResponse::sendResponse(200,  __('app.api.service-subcategories-retrieved-successfully'), $allPlaces);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+
     }
 }

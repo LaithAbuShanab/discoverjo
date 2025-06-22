@@ -45,4 +45,9 @@ class ServiceCategoryApiUseCase
         return $this->serviceCategoryApiRepository->singleService($slug);
     }
 
+    public function servicesBySubcategory($slug)
+    {
+        return $this->serviceCategoryApiRepository->servicesBySubcategory($slug);
+    }
+
 }

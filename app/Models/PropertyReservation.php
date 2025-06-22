@@ -8,7 +8,7 @@ class PropertyReservation extends Model
 {
     protected $guarded = [];
 
-    protected $table = 'service_reservations';
+    protected $table = 'property_reservations';
 
     public $timestamps = true;
 

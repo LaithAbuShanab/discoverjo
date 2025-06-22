@@ -73,7 +73,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         })->whereNull('parent_id')->get();
 
         if($query){
-            activityLog('search for service category ',$categories->first(), $query,'search',);
+            activityLog('search for service category ',$categories->first(), $query,'search');
         }
         return AllServiceCategoriesResource::collection($categories);
     }
@@ -117,6 +117,38 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
     {
         $service = Service::findBySlug($slug);
         return new SingleServiceResource($service);
+
+    }
+
+    public function servicesBySubcategory($slug)
+    {
+        $perPage = config('app.pagination_per_page');
+        $subcategory = ServiceCategory::findBySlug($slug);
+
+        $services = Service::where('status', 1)
+            ->whereHas('categories', function ($query) use ($subcategory) {
+                $query->where('service_category_id', $subcategory->id);
+            })
+            ->paginate($perPage);
+
+        $servicesArray = $services->toArray();
+        $parameterNext = $servicesArray['next_page_url'] ;
+        $parameterPrevious = $servicesArray['prev_page_url'];
+
+
+        $pagination = [
+            'next_page_url' => $parameterNext,
+            'prev_page_url' => $parameterPrevious,
+            'total' => $servicesArray['total'],
+        ];
+        activityLog('service subcategory',$subcategory, 'the user view this service subcategory ','view');
+
+        return [
+            'subcategory' => new AllCategoriesResource($subcategory),
+            'services' => AllServicesResource::collection($services),
+            'pagination' => $pagination
+        ];
+
 
     }
 

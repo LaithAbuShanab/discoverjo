@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class AllChaletsResource extends JsonResource
 {
@@ -29,6 +30,7 @@ class AllChaletsResource extends JsonResource
             'beds' => $this->beds,
             'status' => $this->status,
             'main_image'=> $this->getFirstMediaUrl('main_property_image','main_property_image_app'),
+            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
         ];
     }
 }

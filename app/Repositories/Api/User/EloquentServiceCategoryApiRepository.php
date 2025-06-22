@@ -146,8 +146,8 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         activityLog('service subcategory',$subcategory, 'the user view this service subcategory ','view');
 
         return [
-            'parent'=> new AllCategoriesResource($parent),
-            'subcategory' => new AllCategoriesResource($subcategory),
+            'parent'=> new AllServiceCategoriesResource($parent),
+            'subcategory' => new AllServiceSubCategoriesResource($subcategory),
             'services' => AllServicesResource::collection($services),
             'pagination' => $pagination
         ];

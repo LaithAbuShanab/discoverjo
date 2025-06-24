@@ -223,6 +223,26 @@ Route::middleware(['firstLogin'])->group(function () {
     Route::get('property/check/available/{property_slug}/{period_type}',[PropertyReservationApiController::class, 'checkAvailable']);
     //check availability for custom month and year
     Route::get('property/available/{property_slug}/{period_type}/{month}/{year}',[PropertyReservationApiController::class, 'checkAvailableMonth']);
+    //check reservation price
+    Route::get('property/check/price',[PropertyReservationApiController::class, 'checkPrice']);
+    //make reservation of property
+    Route::post('property/make/reservation',[PropertyReservationApiController::class, 'makeReservation']);
+    //update reservation of property
+    Route::put('property/reservation/{id}/update', [PropertyReservationApiController::class, 'updateReservation']);
+    //delete property
+    Route::Delete('property/reservation/{id}/delete', [PropertyReservationApiController::class, 'deleteReservation']); // DONE ✅
+    //all Reservation for specific property
+    Route::get('property/reservations/{property_slug}',[PropertyReservationApiController::class, 'allPropertyReservations']);
+    //all Reservations
+    Route::get('property/all/reservations',[PropertyReservationApiController::class, 'allReservations']);
+
+    // API OF HOst
+    //1- change status
+    Route::put('property/reservation/{id}/status/{status}', [PropertyReservationApiController::class, 'changeStatusReservation']); // DONE ✅
+    //2- list of pending request pagination
+    Route::get('property/host/request/reservations/list/{property_slug}', [PropertyReservationApiController::class, 'RequestReservations']); // DONE ✅
+    //3- list of reservation accepted pagination
+    Route::get('property/host/approved/reservations/list/{property_slug}', [PropertyReservationApiController::class, 'approvedRequestReservations']); // DONE ✅
 });
 
 // ALL ROUTES FOR PROFILE

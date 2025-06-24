@@ -24,6 +24,7 @@ class PropertyReservation extends Model
 
     public function period()
     {
-        return $this->belongsTo(PropertyPeriod::class);
+        return $this->belongsTo(PropertyPeriod::class, 'property_period_id');
     }
+
 }

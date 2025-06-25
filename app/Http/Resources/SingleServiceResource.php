@@ -59,6 +59,11 @@ class SingleServiceResource extends JsonResource
         foreach ($bookingDate->serviceBookingDays as $day) {
             $days[] = $day->day_of_week;
         }
+        $features = $this->features->map(function ($feature) {
+            return [
+                'name' => $feature->name,
+            ];
+        });
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -77,6 +82,7 @@ class SingleServiceResource extends JsonResource
             "activities"=>$activities,
             'gallery'=>$gallery,
             'notes'=>$notes,
+            'features' => $features,
             'provider'=>new ProviderResource($this->provider),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
             'reviews' => ReviewResource::collection($filteredReviews),

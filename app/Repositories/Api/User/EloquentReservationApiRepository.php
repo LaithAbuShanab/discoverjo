@@ -180,7 +180,10 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $service  = Service::findBySlug($data['service_slug']);
         $user = Auth::guard('api')->user();
         $reservations = ServiceReservation::where('service_id', $service->id)->where('user_id', $user->id)->get();
-        return UserSingleServiceReservationResource::collection($reservations);
+        return [
+            "count"=> count($reservations),
+            "reservations"=>UserSingleServiceReservationResource::collection($reservations)
+        ];
     }
 
     public function allReservations()
@@ -198,6 +201,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
+            'count'=>  ServiceReservation::where('user_id', $user->id)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($reservations),
             'pagination' => $pagination
         ];
@@ -332,6 +336,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
+            'count'=>ServiceReservation::where('service_id', $service->id)->where('status', 0)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($requests),
             'pagination' => $pagination
         ];
@@ -354,6 +359,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
+            'count'=>ServiceReservation::where('service_id', $service->id)->where('status', 1)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($requests),
             'pagination' => $pagination
         ];

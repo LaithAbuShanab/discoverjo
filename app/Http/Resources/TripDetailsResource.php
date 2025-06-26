@@ -39,7 +39,12 @@ class TripDetailsResource extends JsonResource
             default => __('app.trip_type_0'),
         };
 
-
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
 
 
 
@@ -58,7 +63,6 @@ class TripDetailsResource extends JsonResource
             'address' => $this->place->address,
             'region' => $this->place->region->name,
             'place_gallery' => $gallery,
-
             'description' => $this->description,
             'tags' => $this->tags->map(function ($tag) {
                 return [
@@ -80,6 +84,8 @@ class TripDetailsResource extends JsonResource
             'attendances' => UserResource::collection($this->usersTrip->where('status', '1')->pluck('user')),
             'status' => $this->status,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
         ];
 
         if ($this->date_time < $now) {

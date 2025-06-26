@@ -46,6 +46,12 @@ class GuideTripResource extends JsonResource
         $filteredReviews = $this->reviews->filter(function ($review) {
             return $review->user->status == 1;
         });
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
 
         $joined = Auth::guard('api')->check()
             ? Auth::guard('api')->user()->guideTripUsers->contains('guide_trip_id', $this->id)
@@ -89,6 +95,8 @@ class GuideTripResource extends JsonResource
 //            "join_request"=>GuideTripUserResource::collection($this->guideTripUsers),
             'gallery'=>$gallery,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrips->contains('id', $this->id) : false,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
             'is_joined' => $joined,
 

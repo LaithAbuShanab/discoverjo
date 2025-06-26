@@ -55,6 +55,13 @@ class SingleServiceResource extends JsonResource
             return $review->user->status == 1;
         });
 
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
+
         $days=[];
         foreach ($bookingDate->serviceBookingDays as $day) {
             $days[] = $day->day_of_week;
@@ -85,6 +92,8 @@ class SingleServiceResource extends JsonResource
             'features' => $features,
             'provider'=>new ProviderResource($this->provider),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
 //            'is_joined' => $joined,
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,

@@ -36,6 +36,12 @@ class SingleEventResource extends JsonResource
         $startDatetime = dateTime($this->start_datetime);
         $endDateTime =  dateTime($this->end_datetime);
 
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -51,6 +57,8 @@ class SingleEventResource extends JsonResource
             'status' => intval($this->status),
             'link' => $this->link,
             'price' => $this->price,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'attendance_number' => $this->attendance_number,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->eventInterestables->contains('id', $this->id) : false,

@@ -31,6 +31,13 @@ class SingleChaletResource extends JsonResource
         $filteredReviews = $this->reviews->filter(function ($review) {
             return $review->user->status == 1;
         });
+
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
         return [
             'id' => $this->id,
             'name' => $this->name, // Assuming it's a JSON column (multilingual)
@@ -53,6 +60,8 @@ class SingleChaletResource extends JsonResource
             'notes'=>$notes,
             'amenities' => $this->groupAmenitiesByParent(),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->host_id,
         ];

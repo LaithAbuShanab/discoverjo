@@ -16,8 +16,10 @@ class PlaceResource extends JsonResource
     public function toArray($request)
     {
         $total_ratings = 0;
+        $total_user_total= 0;
         if ($this->total_user_rating > 0 || $this->reviews->count() > 0) {
             $total_ratings = (($this->total_user_rating * $this->rating) + ($this->reviews->count() * $this->reviews->avg('rating'))) / ($this->total_user_rating + $this->reviews->count());
+            $total_user_total = $this->total_user_rating  + $this->reviews->count();
         }
 
         return [
@@ -27,9 +29,10 @@ class PlaceResource extends JsonResource
             'image' => $this->getFirstMediaUrl('main_place','main_place_app'),
             'region' => $this->region->name,
             'address' => $this->address,
-            'rating' => $this->rating,
             'distance' => $this->distance,
             'total_ratings' => $total_ratings,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id', $this->id) : false,
             'visited' => Auth::guard('api')->user() ? Auth::guard('api')->user()->visitedPlace->contains('id', $this->id) : false,
         ];

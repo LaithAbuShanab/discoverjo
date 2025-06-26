@@ -36,6 +36,13 @@ class SingleVolunteeringResource extends JsonResource
         $startDatetime = dateTime($this->start_datetime);
         $endDateTime =  dateTime($this->end_datetime);
 
+        $total_ratings = 0;
+        $total_user_total= 0;
+        if ( $this->reviews->count() > 0) {
+            $total_ratings =  $filteredReviews->avg('rating');
+            $total_user_total = $filteredReviews->count();
+        }
+
         $data = [
             'id' => $this->id,
             'slug'=>$this->slug,
@@ -51,6 +58,8 @@ class SingleVolunteeringResource extends JsonResource
             'status' => intval($this->status),
             'link' => $this->link,
             'hours_worked' => $this->hours_worked,
+            'rating' =>$total_ratings,
+            'total_user_rating' => $total_user_total,
             'organizers' => $organizers,
             'interested_users' => UserResource::collection($this->interestedUsers),
             'attendance_number' => $this->attendance_number,

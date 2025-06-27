@@ -41,7 +41,7 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
         $periodMap = [
             'morning'   => 1,
             'evening'   => 2,
-            'overnight' => 3,
+            'day' => 3,
         ];
 
         $mappedType = $periodMap[$periodType] ?? null;

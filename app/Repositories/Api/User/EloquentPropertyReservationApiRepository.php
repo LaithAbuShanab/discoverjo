@@ -355,6 +355,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             'user_id' => $user->id,
             'property_id' => $property->id,
             'property_period_id' => $period->id,
+            'contact_info'=>$data['contact_info'],
             'check_in' => $checkIn->toDateString(),
             'check_out' => $checkOut->toDateString(),
             'total_price' => round($totalPrice, 2),
@@ -440,6 +441,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             'property_period_id' => $period->id,
             'check_in' => $checkIn->toDateString(),
             'check_out' => $checkOut->toDateString(),
+            'contact_info'=>$data['contact_info'],
             'total_price' => round($totalPrice, 2),
             'status' => 0, // still pending
         ]);

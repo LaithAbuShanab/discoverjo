@@ -30,6 +30,7 @@ class MakeReservationRequest extends FormRequest
             'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyRule()],
             'check_in' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:check_out',new CheckIfDateExistsInPropertyAndAvailableRule()],
             'check_out' => ['required', 'date', 'after_or_equal:check_in'],
+            'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
         ];
     }
 }

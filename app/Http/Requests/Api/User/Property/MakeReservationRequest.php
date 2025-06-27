@@ -28,8 +28,8 @@ class MakeReservationRequest extends FormRequest
         return [
             'property_slug'=>['required','string','exists:properties,slug',new CheckIfPropertyActiveRule()],
             'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyRule()],
-            'check_in'=>['required',new CheckIfDateExistsInPropertyAndAvailableRule()],
-            'check_out'=>['required'],
+            'check_in' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:check_out',new CheckIfDateExistsInPropertyAndAvailableRule()],
+            'check_out' => ['required', 'date', 'after_or_equal:check_in'],
         ];
     }
 }

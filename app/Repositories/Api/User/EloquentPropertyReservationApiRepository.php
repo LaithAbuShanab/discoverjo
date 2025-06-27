@@ -42,8 +42,10 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
         $start = \Carbon\Carbon::parse($firstAvailability->availability_start_date)->startOfMonth();
         $end = (clone $start)->addMonthNoOverflow()->endOfMonth();
 
+        // Handle conflict logic
         $conflictTypes = match ($periodType) {
-            1, 2 => [3, $periodType],
+            1, 2 => [3, $periodType],  // morning/evening => also conflict with day
+            3     => [1, 2, 3],        // day => conflict with all types
             default => [$periodType],
         };
 
@@ -55,10 +57,10 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             return response()->json(['message' => 'This period is not supported for this property.'], 422);
         }
 
-        // Exclude reservations with status = 2 (cancelled)
+        // Exclude cancelled (status = 2) reservations
         $reservations = \App\Models\PropertyReservation::where('property_id', $property->id)
             ->whereIn('property_period_id', $periodIds)
-            ->where('status', '!=', 2) // 👈 ignore cancelled
+            ->where('status', '!=', 2)
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('check_in', [$start, $end])
                     ->orWhereBetween('check_out', [$start, $end])
@@ -83,6 +85,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
                     'reserved' => $isReserved,
                 ];
             }
+
             $cursor->addDay();
         }
 
@@ -92,6 +95,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             'days' => $days,
         ];
     }
+
 
 
 
@@ -113,7 +117,8 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             ->with(['availabilities.availabilityDays.period', 'periods'])
             ->firstOrFail();
 
-        $conflictTypes = in_array($requestedType, [1, 2]) ? [$requestedType, 3] : [$requestedType];
+        // 🟡 Conflict logic: if "day", conflict with both "morning" and "evening" too
+        $conflictTypes = in_array($requestedType, [1, 2]) ? [$requestedType, 3] : [1, 2, 3];
 
         $periodIds = $property->periods
             ->whereIn('type', $conflictTypes)
@@ -123,7 +128,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             return response()->json(['message' => 'This period is not supported for this property.'], 422);
         }
 
-        // Find first availability for the *requested* period type only (not conflicting ones)
+        // ✅ Only fetch availability matching the *requested* type (not all conflict types)
         $firstAvailable = $property->availabilities
             ->filter(function ($availability) use ($requestedType) {
                 return $availability->availabilityDays->contains(fn($day) => $day->period->type === $requestedType);
@@ -139,12 +144,12 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             ? \Carbon\Carbon::parse($firstAvailable->availability_start_date)->startOfDay()
             : now()->startOfDay();
 
-        $end = (clone $start)->addDays(29); // Show 30 days from start
+        $end = (clone $start)->addDays(29); // Show 30 days
 
-        // Only include reservations that are NOT cancelled
+        // 👇 Exclude cancelled (status = 2)
         $reservations = \App\Models\PropertyReservation::where('property_id', $property->id)
             ->whereIn('property_period_id', $periodIds)
-            ->where('status', '!=', 2) // 👈 ignore cancelled
+            ->where('status', '!=', 2)
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('check_in', [$start, $end])
                     ->orWhereBetween('check_out', [$start, $end])
@@ -175,6 +180,7 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             'days' => $days,
         ];
     }
+
 
 
     protected function convertMonthNameToInt(string $month): ?int

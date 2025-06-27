@@ -36,8 +36,8 @@ class UpdateReservationRequest extends FormRequest
     {
         return [
             'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyEditRule()],
-            'check_in'=>['required',new CheckIfDateExistsInPropertyAndAvailableEditRule()],
-            'check_out'=>['required'],
+            'check_in' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:check_out',new CheckIfDateExistsInPropertyAndAvailableEditRule()],
+            'check_out' => ['required', 'date', 'after_or_equal:check_in'],
         ];
     }
 }

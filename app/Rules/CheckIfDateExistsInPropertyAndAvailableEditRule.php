@@ -58,7 +58,12 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
             return;
         }
 
-        $conflictingTypes = in_array($requestedType, [1, 2]) ? [$requestedType, 3] : [$requestedType];
+        // Define conflicting types based on requested period
+        $conflictingTypes = match ($requestedType) {
+            1, 2 => [$requestedType, 3], // Morning/evening conflict with day
+            3 => [1, 2, 3],              // Day conflicts with all
+            default => [$requestedType],
+        };
 
         $start = \Carbon\Carbon::parse($this->data['check_in'])->startOfDay();
         $end = \Carbon\Carbon::parse($this->data['check_out'])->startOfDay();
@@ -69,6 +74,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
         while ($cursor->lte($end)) {
             $dayName = $cursor->format('l');
 
+            // ✅ Check availability on this day
             $isAvailable = $property->availabilities->contains(function ($availability) use ($cursor, $conflictingTypes, $dayName) {
                 return $cursor->between($availability->availability_start_date, $availability->availability_end_date)
                     && $availability->availabilityDays->contains(function ($day) use ($conflictingTypes, $dayName) {
@@ -82,22 +88,24 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
                 return;
             }
 
+            // ✅ Check for conflicting reservation
             $isReserved = PropertyReservation::where('property_id', $property->id)
+                ->where('status', '!=', 2) // Skip cancelled
+                ->where('id', '!=', $reservation->id) // Exclude the current reservation
                 ->whereIn('property_period_id', $periodIds)
-                ->where('status', '!=', 2) // ❗ Exclude cancelled
-                ->where('id', '!=', $reservation->id) // exclude this reservation
                 ->where('check_in', '<=', $cursor)
                 ->where('check_out', '>=', $cursor)
                 ->exists();
 
             if ($isReserved) {
-                $fail(__('Date :date is already reserved.', ['date' => $cursor->toDateString()]));
+                $fail(__('Date :date is already reserved for a conflicting period.', ['date' => $cursor->toDateString()]));
                 return;
             }
 
             $cursor->addDay();
         }
     }
+
 
 
 }

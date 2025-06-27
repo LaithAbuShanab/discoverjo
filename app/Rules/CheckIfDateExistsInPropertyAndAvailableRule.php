@@ -22,7 +22,12 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (empty($this->data['property_slug']) || empty($this->data['period_type']) || empty($this->data['check_in']) || empty($this->data['check_out'])) {
+        if (
+            empty($this->data['property_slug']) ||
+            empty($this->data['period_type']) ||
+            empty($this->data['check_in']) ||
+            empty($this->data['check_out'])
+        ) {
             $fail(__('Missing required data.'));
             return;
         }
@@ -32,6 +37,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             ->first();
 
         if (!$property) {
+            $fail(__('Property not found.'));
             return;
         }
 
@@ -48,18 +54,26 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             return;
         }
 
-        $conflictingTypes = in_array($requestedType, [1, 2]) ? [$requestedType, 3] : [$requestedType];
+        // If booking day => conflict with morning & evening
+        // If booking morning/evening => also conflict with full day
+        $conflictingTypes = match ($requestedType) {
+            1, 2 => [$requestedType, 3],
+            3    => [1, 2, 3],
+            default => [$requestedType],
+        };
 
         $start = Carbon::parse($this->data['check_in'])->startOfDay();
         $end = Carbon::parse($this->data['check_out'])->startOfDay();
 
-        $periodIds = $property->periods->whereIn('type', $conflictingTypes)->pluck('id');
+        $periodIds = $property->periods
+            ->whereIn('type', $conflictingTypes)
+            ->pluck('id');
 
         $cursor = $start->copy();
         while ($cursor->lte($end)) {
             $dayName = $cursor->format('l');
 
-            // Check availability
+            // ✅ Check availability
             $isAvailable = $property->availabilities->contains(function ($availability) use ($cursor, $conflictingTypes, $dayName) {
                 return $cursor->between($availability->availability_start_date, $availability->availability_end_date)
                     && $availability->availabilityDays->contains(function ($day) use ($conflictingTypes, $dayName) {
@@ -73,22 +87,23 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
                 return;
             }
 
-            // Check reservation
+            // ✅ Check conflicting reservations (excluding cancelled)
             $isReserved = PropertyReservation::where('property_id', $property->id)
-                ->where('status', '!=', 2) // ❗ Exclude cancelled
+                ->where('status', '!=', 2) // Skip cancelled
                 ->whereIn('property_period_id', $periodIds)
                 ->where('check_in', '<=', $cursor)
                 ->where('check_out', '>=', $cursor)
                 ->exists();
 
             if ($isReserved) {
-                $fail(__('Date :date is already reserved.', ['date' => $cursor->toDateString()]));
+                $fail(__('Date :date is already reserved for a conflicting period.', ['date' => $cursor->toDateString()]));
                 return;
             }
 
             $cursor->addDay();
         }
     }
+
 
 }
 

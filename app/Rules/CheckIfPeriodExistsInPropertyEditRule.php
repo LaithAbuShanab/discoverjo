@@ -39,12 +39,12 @@ class CheckIfPeriodExistsInPropertyEditRule implements ValidationRule,  DataAwar
         $periodType = strtolower($value);
 
         if (!isset($types[$periodType])) {
-            $fail(__("Invalid period type."));
+            $fail(__("validation.api.invalid_period_type"));
         }
 
         $type = $types[$periodType];
         if (! $property->periods()->where('type', $type)->exists()) {
-            $fail("The selected period type is not available for this property.");
+            $fail("validation.api.invalid_period_type");
         }
     }
 }

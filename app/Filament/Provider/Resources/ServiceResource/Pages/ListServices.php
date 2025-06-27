@@ -29,7 +29,7 @@ class ListServices extends ListRecords
                 ->badge(
                     \App\Models\Service::whereHas('serviceBookings', function (Builder $query) {
                         $query->where('available_end_date', '>=', now());
-                    })->count()
+                    })->where('provider_type', 'App\Models\User')->where('provider_id', auth()->id())->count()
                 )
                 ->badgeColor('success')
                 ->modifyQueryUsing(function (Builder $query) {
@@ -43,7 +43,7 @@ class ListServices extends ListRecords
                 ->badge(
                     \App\Models\Service::whereDoesntHave('serviceBookings', function (Builder $query) {
                         $query->where('available_end_date', '>=', now());
-                    })->count()
+                    })->where('provider_type', 'App\Models\User')->where('provider_id', auth()->id())->count()
                 )
                 ->badgeColor('danger')
                 ->modifyQueryUsing(

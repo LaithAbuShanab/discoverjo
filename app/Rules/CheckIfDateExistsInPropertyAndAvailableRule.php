@@ -28,7 +28,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             empty($this->data['check_in']) ||
             empty($this->data['check_out'])
         ) {
-            $fail(__('Missing required data.'));
+            $fail(__('validation.api.missing_parameters'));
             return;
         }
 
@@ -37,7 +37,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             ->first();
 
         if (!$property) {
-            $fail(__('Property not found.'));
+            $fail(__('validation.api.property_not_found'));
             return;
         }
 
@@ -50,7 +50,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
         $requestedType = $periodMap[$this->data['period_type']] ?? null;
 
         if (!$requestedType) {
-            $fail(__('Invalid period type.'));
+            $fail(__('validation.api.invalid_period_type'));
             return;
         }
 
@@ -83,7 +83,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             });
 
             if (!$isAvailable) {
-                $fail(__('Date :date is not available for the selected period.', ['date' => $cursor->toDateString()]));
+                $fail(__('validation.api.date_not_available', ['date' => $cursor->toDateString()]));
                 return;
             }
 
@@ -96,14 +96,11 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
                 ->exists();
 
             if ($isReserved) {
-                $fail(__('Date :date is already reserved for a conflicting period.', ['date' => $cursor->toDateString()]));
+                $fail(__('validation.api.date_conflict_reserved', ['date' => $cursor->toDateString()]));
                 return;
             }
 
             $cursor->addDay();
         }
     }
-
-
 }
-

@@ -2,10 +2,8 @@
 
 namespace App\Rules;
 
-use App\Http\Controllers\Api\User\PropertyReservationApiController;
 use App\Models\Property;
 use Closure;
-use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class CheckIfPropertyActiveRule implements ValidationRule
@@ -19,8 +17,8 @@ class CheckIfPropertyActiveRule implements ValidationRule
     {
         $property = Property::findBySlug($value);
         if (!$property) return;
-        if ($property->status != 1){
-            $fail(__('this-property-is-inactive'));
+        if ($property->status != 1) {
+            $fail(__('validation.api.this-property-is-inactive'));
         }
     }
 }

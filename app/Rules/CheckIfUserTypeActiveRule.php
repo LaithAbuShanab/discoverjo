@@ -26,7 +26,7 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service','property'];
+        $acceptableType = ['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service', 'property'];
         $type = $this->data['type'];
         if (!in_array($type, $acceptableType)) {
             return;
@@ -62,7 +62,7 @@ class CheckIfUserTypeActiveRule implements ValidationRule, DataAwareRule
             }
         }
 
-        if ($type =='property') {
+        if ($type == 'property') {
             $property = Property::findBySlug($value);
             if (!$property) return;
             $ownerStatus = $property->host?->status;

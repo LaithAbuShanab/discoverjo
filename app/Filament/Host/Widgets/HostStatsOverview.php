@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Filament\Provider\Widgets;
+namespace App\Filament\Host\Widgets;
 
-use App\Models\Service;
-use App\Models\ServiceReservation;
+use App\Models\Property;
+use App\Models\PropertyReservation;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class BookingStatusStats extends BaseWidget
+class HostStatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
     protected static ?int $sort = 1;
 
     /**
-     * Define stats overview cards.
+     * Return statistics cards for the host dashboard.
      *
      * @return Stat[]
      */
@@ -31,13 +31,14 @@ class BookingStatusStats extends BaseWidget
             ? Carbon::parse($this->filters['endDate'])
             : now();
 
-        $serviceIds = Service::query()
-            ->where('provider_type', 'App\\Models\\User')
-            ->where('provider_id', Auth::guard('provider')->user()->id)
+        // Get all properties owned by the host
+        $propertyIds = Property::query()
+            ->where('host_id', Auth::guard('host')->id())
             ->pluck('id');
 
-        $query = ServiceReservation::query()
-            ->whereIn('service_id', $serviceIds);
+        // Base reservation query filtered by property ownership
+        $query = PropertyReservation::query()
+            ->whereIn('property_id', $propertyIds);
 
         if ($startDate) {
             $query->whereBetween('created_at', [
@@ -46,6 +47,7 @@ class BookingStatusStats extends BaseWidget
             ]);
         }
 
+        // Status counts
         $pendingCount = (clone $query)->where('status', 0)->count();
         $confirmedCount = (clone $query)->where('status', 1)->count();
         $cancelledCount = (clone $query)->where('status', 2)->count();
@@ -53,31 +55,31 @@ class BookingStatusStats extends BaseWidget
 
         return [
             Stat::make('Pending', $pendingCount)
-                ->label(__('panel.provider.pending'))
-                ->description(__('panel.provider.pending-reservations'))
+                ->label(__('panel.host.pending'))
+                ->description(__('panel.host.pending-reservations'))
                 ->descriptionIcon('heroicon-o-clock')
-                ->chart([20, 25, 18, 22, 30, 24, 28])
+                ->chart([2, 4, 3, 5, 6, 4, 5])
                 ->color('warning'),
 
             Stat::make('Confirmed', $confirmedCount)
-                ->label(__('panel.provider.confirmed'))
-                ->description(__('panel.provider.confirmed-reservations'))
+                ->label(__('panel.host.confirmed'))
+                ->description(__('panel.host.confirmed-reservations'))
                 ->descriptionIcon('heroicon-o-check-circle')
-                ->chart([20, 25, 18, 22, 30, 24, 28])
+                ->chart([5, 6, 7, 6, 8, 7, 9])
                 ->color('info'),
 
             Stat::make('Cancelled', $cancelledCount)
-                ->label(__('panel.provider.cancelled'))
-                ->description(__('panel.provider.cancelled-reservations'))
+                ->label(__('panel.host.cancelled'))
+                ->description(__('panel.host.cancelled-reservations'))
                 ->descriptionIcon('heroicon-o-x-circle')
-                ->chart([20, 25, 18, 22, 30, 24, 28])
+                ->chart([1, 2, 1, 3, 2, 2, 1])
                 ->color('danger'),
 
             Stat::make('Completed', $completedCount)
-                ->label(__('panel.provider.completed'))
-                ->description(__('panel.provider.completed-reservations'))
+                ->label(__('panel.host.completed'))
+                ->description(__('panel.host.completed-reservations'))
                 ->descriptionIcon('heroicon-o-check-badge')
-                ->chart([20, 25, 18, 22, 30, 24, 28])
+                ->chart([3, 5, 6, 7, 8, 8, 9])
                 ->color('success'),
         ];
     }

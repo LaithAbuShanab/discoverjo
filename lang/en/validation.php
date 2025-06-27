@@ -293,6 +293,15 @@ return [
         'reservations.*.quantity'                   => 'Quantity',
         'reservations.*.price_age_id'               => 'Price Age',
 
+        // Host
+        'property_slug'                             => 'Property',
+        'period_type'                               => 'Period Type',
+        'month'                                     => 'Month',
+        'year'                                      => 'Year',
+        'check_in'                                  => 'Check In',
+        'check_out'                                 => 'Check Out',
+        'contact_info'                              => 'Contact Info',
+
         'query'                                     => 'Search',
     ],
 
@@ -781,6 +790,28 @@ return [
         'this-service-is-not-belong-to-you'                        => 'This service is not belong to you.',
         'you_have_not_reservation_for_this_service'                => 'You cannot rate this service if you have not previously booked it.',
         'you_cannot_make_review_for_upcoming_service'              => 'You can only rate this service if you have completed your first reservation.',
+
+        // Host Validation
+        'the-selected-property-id-does-not-exists'                 => 'The selected property does not exist.',
+        'the-property-id-required'                                 => 'The property id is required.',
+        'the-host-not-longer-active'                               => 'The host is not longer active.',
+        'you_have_not_reservation_for_this_property'               => 'You cannot rate this property if you have not previously booked it.',
+        'you_cannot_make_review_for_upcoming_property'             => 'You can only rate this property if you have completed your first reservation.',
+        'the-user-owner-this-property-not-longer-active'           => 'The owner of this property is not longer active.',
+        'this-property-is-inactive'                                => 'This property is inactive.',
+        'invalid_period_type'                                      => 'Invalid period type.',
+        'this_period_type_is_not_available_for_this_property'      => 'This period type is not available for this property.',
+        'missing_parameters'                                       => 'Missing parameters.',
+        'property_not_found'                                       => 'Property not found.',
+        'invalid_month'                                            => 'Invalid month.',
+        'invalid_year'                                             => 'Invalid year.',
+        'this_period_is_not_available_for_this_property'           => 'This period is not available for this property.',
+        'date_not_available'                                       => 'Date :date is not available for the selected period.',
+        'date_conflict_reserved'                                   => 'Date :date is already reserved for a conflicting period.',
+        'reservation-not-found'                                    => 'Reservation not found.',
+        'this-reservation-not-belong-to-user'                      => 'This reservation does not belong to you.',
+        'this-reservation-not-belong-to-host'                      => 'This reservation does not belong to the host.',
+        'this-property-not-belong-to-host'                         => 'This property does not belong to the host.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule ,DataAwareRule
+class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule, DataAwareRule
 {
     protected $data;
 
@@ -31,7 +31,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
             empty($this->data['check_out']) ||
             empty($this->data['reservation_id'])
         ) {
-            $fail(__('Missing required data.'));
+            $fail(__('validation.api.missing_parameters'));
             return;
         }
 
@@ -39,7 +39,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
             ->find($this->data['reservation_id']);
 
         if (! $reservation || ! $reservation->property) {
-            $fail(__('Reservation or associated property not found.'));
+            $fail(__('validation.api.reservation-not-found'));
             return;
         }
 
@@ -54,7 +54,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
         $requestedType = $periodMap[$this->data['period_type']] ?? null;
 
         if (! $requestedType) {
-            $fail(__('Invalid period type.'));
+            $fail(__('validation.api.invalid_period_type'));
             return;
         }
 
@@ -84,7 +84,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
             });
 
             if (! $isAvailable) {
-                $fail(__('Date :date is not available for the selected period.', ['date' => $cursor->toDateString()]));
+                $fail(__('validation.api.date_not_available', ['date' => $cursor->toDateString()]));
                 return;
             }
 
@@ -98,14 +98,11 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule 
                 ->exists();
 
             if ($isReserved) {
-                $fail(__('Date :date is already reserved for a conflicting period.', ['date' => $cursor->toDateString()]));
+                $fail(__('validation.api.date_conflict_reserved', ['date' => $cursor->toDateString()]));
                 return;
             }
 
             $cursor->addDay();
         }
     }
-
-
-
 }

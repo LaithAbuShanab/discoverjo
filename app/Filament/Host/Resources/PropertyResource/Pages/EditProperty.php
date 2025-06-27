@@ -9,6 +9,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class EditProperty extends EditRecord
 {
@@ -73,9 +74,11 @@ class EditProperty extends EditRecord
                 $query->where('name_en', $this->data['name']['en'])
                     ->orWhere('name_ar', $this->data['name']['ar']);
             })->orWhere(function ($query) {
-                $query->where('id', '!=', $this->record->id) // also exclude here for OR group
-                    ->where('address->ar', $this->data['name']['ar'])
-                    ->orWhere('address->en', $this->data['name']['en']);
+                $query->where('id', '!=', $this->record->id)
+                    ->where(function ($q) {
+                        $q->where('address->ar', $this->data['name']['ar'])
+                            ->orWhere('address->en', $this->data['name']['en']);
+                    });
             })->exists();
 
         if ($exists) {
@@ -89,7 +92,6 @@ class EditProperty extends EditRecord
             $this->halt();
         }
 
-
         $data = $this->data;
         $data['host_id'] = auth()->id();
 
@@ -98,32 +100,96 @@ class EditProperty extends EditRecord
         $this->availability = [];
         $this->availabilityDaysToSave = [];
 
-        foreach ($availabilities as $availability) {
-            // استخدم id إذا موجود، أو أنشئ id مؤقت
-            $id = $availability['id'] ?? null;
-            if (!$id) {
-                $id = 'temp_' . Str::uuid()->toString();
+        $availabilitiesList = [];
+
+        foreach ($availabilities as $a) {
+            $uuid = $a['id'] ?? ('temp_' . (string) Str::uuid());
+            $a['uuid'] = $uuid;
+            $availabilitiesList[] = $a;
+        }
+
+        $parent = array_shift($availabilitiesList);
+        $parentStart = $parent['availability_start_date'];
+        $parentEnd = $parent['availability_end_date'];
+
+        $this->availability[$parent['uuid']] = [
+            'type' => $parent['type'],
+            'availability_start_date' => $parentStart,
+            'availability_end_date' => $parentEnd,
+        ];
+
+        $childRanges = [];
+
+        foreach ($availabilitiesList as $child) {
+            $uuid = $child['uuid'];
+            $childStart = $child['availability_start_date'];
+            $childEnd = $child['availability_end_date'];
+
+            if ($childStart < $parentStart || $childEnd > $parentEnd) {
+                Notification::make()
+                    ->title(__('panel.host.service-create-error-title'))
+                    ->body(__('panel.host.service-out-of-range-error'))
+                    ->danger()
+                    ->persistent()
+                    ->send();
+
+                $this->halt();
             }
 
-            // حفظ بيانات availability
-            $this->availability[$id] = [
-                'type' => $availability['type'],
-                'availability_start_date' => $availability['availability_start_date'],
-                'availability_end_date' => $availability['availability_end_date'],
+            foreach ($childRanges as [$start, $end]) {
+                if ($childStart <= $end && $childEnd >= $start) {
+                    Notification::make()
+                        ->title(__('panel.host.service-create-error-title'))
+                        ->body(__('panel.host.service-overlap-error'))
+                        ->danger()
+                        ->persistent()
+                        ->send();
+
+                    $this->halt();
+                }
+            }
+
+            $childRanges[] = [$childStart, $childEnd];
+
+            $this->availability[$uuid] = [
+                'type' => $child['type'],
+                'availability_start_date' => $childStart,
+                'availability_end_date' => $childEnd,
+                'parent_id' => 'PENDING',
             ];
+        }
+
+        $periods = $data['periods'] ?? [];
+
+        $morning = collect($periods)->firstWhere('type', 1);
+        $evening = collect($periods)->firstWhere('type', 2);
+
+        if ($morning && $evening) {
+            $mStart = strtotime($morning['start_time']);
+            $mEnd = strtotime($morning['end_time']);
+            $eStart = strtotime($evening['start_time']);
+            $eEnd = strtotime($evening['end_time']);
+
+            if ($mStart < $eEnd && $eStart < $mEnd) {
+                throw ValidationException::withMessages([
+                    'periods' => __('panel.host.morning-evening-overlap-error'),
+                ]);
+            }
+        }
+
+        foreach ($availabilities as $availability) {
+            $uuid = $availability['id'] ?? ('temp_' . (string) Str::uuid());
 
             foreach ([1, 2, 3] as $periodType) {
                 $key = "availabilityDays_{$periodType}";
                 $entries = $availability[$key] ?? [];
 
-                // Group by property_period_id + price
                 $grouped = [];
 
                 foreach ($entries as $entry) {
                     if (empty($entry['day_of_week']) || $entry['price'] === null) continue;
 
                     $groupKey = $entry['property_period_id'] . '|' . $entry['price'];
-
                     $grouped[$groupKey]['property_period_id'] = $entry['property_period_id'];
                     $grouped[$groupKey]['price'] = $entry['price'];
                     $grouped[$groupKey]['day_of_week'] = array_merge(
@@ -136,8 +202,8 @@ class EditProperty extends EditRecord
                     $group['day_of_week'] = array_values(array_unique($group['day_of_week']));
 
                     $this->availabilityDaysToSave[] = [
-                        'availability_id' => $id,
-                        'type' => $periodType, // سيتم تحويله لـ id في afterSave
+                        'availability_id' => $uuid,
+                        'type' => $periodType,
                         'price' => $group['price'],
                         'day_of_week' => $group['day_of_week'],
                     ];

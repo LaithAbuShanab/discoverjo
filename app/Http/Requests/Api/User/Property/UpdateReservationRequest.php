@@ -35,9 +35,9 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyEditRule()],
-            'check_in' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:check_out',new CheckIfDateExistsInPropertyAndAvailableEditRule()],
-            'check_out' => ['required', 'date', 'after_or_equal:check_in'],
+            'period_type' => ['bail', 'required', 'string', Rule::in(['morning', 'evening', 'day']), new CheckIfPeriodExistsInPropertyEditRule()],
+            'check_in' => ['bail', 'required', 'date', 'after_or_equal:today', 'before_or_equal:check_out', new CheckIfDateExistsInPropertyAndAvailableEditRule()],
+            'check_out' => ['bail', 'required', 'date', 'after_or_equal:check_in'],
             'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
         ];
     }

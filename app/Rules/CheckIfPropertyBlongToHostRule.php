@@ -19,8 +19,8 @@ class CheckIfPropertyBlongToHostRule implements ValidationRule
         $user = Auth::guard('api')->user();
         $property = Property::findBySlug($value);
         if (!$property) return;
-        if($property->host_id != $user->id){
-            $fail('this-property-not-belong-to-host');
+        if ($property->host_id != $user->id) {
+            $fail('validation.api.this-property-not-belong-to-host');
         }
     }
 }

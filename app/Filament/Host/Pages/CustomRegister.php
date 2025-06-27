@@ -123,8 +123,8 @@ class CustomRegister extends BaseRegister
         return Select::make('sex')
             ->label(__('panel.host.gender'))
             ->options([
-                1 => 'Male',
-                2 => 'Female',
+                1 => __('panel.host.male'),
+                2 => __('panel.host.female'),
             ])
             ->required()
             ->searchable()

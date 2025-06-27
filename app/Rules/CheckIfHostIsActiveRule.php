@@ -5,7 +5,6 @@ namespace App\Rules;
 use App\Models\Property;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use PhpParser\Node\Stmt\TraitUseAdaptation\Precedence;
 
 class CheckIfHostIsActiveRule implements ValidationRule
 {

@@ -136,6 +136,11 @@ return [
         'reservation-status-updated-body'                              => 'تم :status لطلب الحجز رقم #:reservation_id.',
         'status-confirmed'                                             => 'تأكيد الحجز',
         'status-cancelled'                                             => 'إلغاء الحجز',
+
+        // المزارع
+        'new-user-review-in-property'                                  => 'قام المستخدم :username بكتابة مراجعة حول مزرعتك',
+        'new-property-reservation-title'                               => 'تم استلام حجز جديد',
+        'new-property-reservation-body'                                => 'قام المستخدم :username بإنشاء حجز جديد (رقم #:reservation_id).',
     ],
 
     "api" => [
@@ -339,5 +344,16 @@ return [
         'reservation-status-updated-successfully'                      => 'تم تعديل حالة الحجز بنجاح',
         'reservations-request-retrieved-successfully'                  => 'تم استرجاع طلبات الحجوزات بنجاح',
         'reservations-approved-successfully'                           => 'تم قبول الحجوزات بنجاح',
+
+        // Host Api
+        'chalets-retrieved-successfully'                               => 'تم استرجاع المزارعه بنجاح',
+        'property-retrieved-by-id-successfully'                        => 'تم استرجاع المزارعه بنجاح',
+        'available-dates-retrieved-successfully'                       => 'تم استرجاع التواريخ المتاحة بنجاح',
+        'price-retrieved-successfully'                                 => 'تم استرجاع السعر بنجاح',
+        'reservation-created-successfully'                             => 'تم انشاء الحجز بنجاح',
+        'reservation-updated-successfully'                             => 'تم تعديل الحجز بنجاح',
+        'reservation-deleted-successfully'                             => 'تم حذف الحجز بنجاح',
+        'all-property-reservations-retrieved-successfully'             => 'تم استرجاع جميع حجوزات المزارعه بنجاح',
+        'all-reservation-retrieved-successfully'                       => 'تم استرجاع جميع الحجوزات بنجاح',
     ],
 ];

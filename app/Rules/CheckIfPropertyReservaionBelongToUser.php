@@ -19,7 +19,7 @@ class CheckIfPropertyReservaionBelongToUser implements ValidationRule
         $user = Auth::guard('api')->user();
         $reservation = PropertyReservation::where('id',$value)->where('user_id',$user->id)->exists();
         if (!$reservation) {
-            $fail(__('this-reservation-not-belong-to-user'));
+            $fail(__('validation.api.this-reservation-not-belong-to-user'));
         };
     }
 }

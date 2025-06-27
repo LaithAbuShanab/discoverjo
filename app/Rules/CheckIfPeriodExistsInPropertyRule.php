@@ -33,14 +33,14 @@ class CheckIfPeriodExistsInPropertyRule implements ValidationRule,  DataAwareRul
         $periodType = strtolower($value);
 
         if (!isset($types[$periodType])) {
-             $fail(__("Invalid period type."));
+            $fail(__("validation.api.invalid_period_type"));
         }
 
         $type = $types[$periodType];
         $property = Property::findBySlug($this->data['property_slug']);
-        if(!$property) return;
+        if (!$property) return;
         if (! $property->periods()->where('type', $type)->exists()) {
-             $fail("The selected period type is not available for this property.");
+            $fail("validation.api.this_period_type_is_not_available_for_this_property");
         }
     }
 }

@@ -27,14 +27,14 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
         $year = $this->data['year'] ?? null;
 
         if (! $slug || ! $periodType || ! $month || ! $year) {
-            $fail(__('Some required data is missing.'));
+            $fail(__('validation.api.missing_parameters'));
             return;
         }
 
         $property = Property::where('slug', $slug)->with('periods')->first();
 
         if (! $property) {
-            $fail(__('Property not found.'));
+            $fail(__('validation.api.property_not_found'));
             return;
         }
 
@@ -47,12 +47,12 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
         $mappedType = $periodMap[$periodType] ?? null;
 
         if (! $mappedType) {
-            $fail(__('Invalid period type.'));
+            $fail(__('validation.api.invalid_period_type'));
             return;
         }
 
         if (! $property->periods->contains('type', $mappedType)) {
-            $fail(__('This property does not support the selected period.'));
+            $fail(__('validation.api.this_period_type_is_not_available_for_this_property'));
             return;
         }
 
@@ -73,7 +73,7 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
         ];
 
         if (!isset($monthMap[$monthName])) {
-            $fail(__('Invalid month name.'));
+            $fail(__('validation.api.invalid_month'));
             return;
         }
 
@@ -85,7 +85,7 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
             $startDate = now()->setDate($year, $month, 1)->startOfMonth()->toDateString();
             $endDate = now()->setDate($year, $month, 1)->endOfMonth()->toDateString();
         } catch (\Exception $e) {
-            $fail(__('Invalid month or year.'));
+            $fail(__('validation.api.invalid_year'));
             return;
         }
 
@@ -103,7 +103,7 @@ class CheckIfPeriodMonthYearExistsInPropertyRule implements ValidationRule, Data
             ->exists();
 
         if (! $hasAvailability) {
-            $fail(__('This period is not available for the selected month and year.'));
+            $fail(__('validation.api.this_period_is_not_available_for_this_property'));
         }
     }
 }

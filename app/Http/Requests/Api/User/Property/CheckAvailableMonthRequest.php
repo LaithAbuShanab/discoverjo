@@ -35,10 +35,10 @@ class CheckAvailableMonthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'property_slug'=>['required','string','exists:properties,slug',new CheckIfPropertyActiveRule()],
-            'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyRule()],
-            'month'=>['required',new CheckIfPeriodMonthYearExistsInPropertyRule()],
-            'year'=>['required'],
+            'property_slug' => ['bail', 'required', 'string', 'exists:properties,slug', new CheckIfPropertyActiveRule()],
+            'period_type' => ['bail', 'required', 'string', Rule::in(['morning', 'evening', 'day']), new CheckIfPeriodExistsInPropertyRule()],
+            'month' => ['bail', 'required', new CheckIfPeriodMonthYearExistsInPropertyRule()],
+            'year' => ['required'],
         ];
     }
 }

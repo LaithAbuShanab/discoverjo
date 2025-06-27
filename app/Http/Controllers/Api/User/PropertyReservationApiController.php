@@ -11,7 +11,6 @@ use App\Http\Requests\Api\User\Property\MakeReservationRequest;
 use App\Rules\CheckIfPropertyBlongToHostRule;
 use App\Rules\CheckIfPropertyReservaionBelongToUser;
 use App\Rules\CheckIfPropertyReservationBlongToHostRule;
-use App\Rules\CheckIfReservationIdBelongToUser;
 use App\UseCases\Api\User\PropertyReservationApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -31,8 +30,8 @@ class PropertyReservationApiController extends Controller
     {
         $data = $request->validated();
         try {
-            $services = $this->propertyReservationApiUseCase->checkAvailable($data);
-            return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->checkAvailable($data);
+            return ApiResponse::sendResponse(200, __('app.api.available-dates-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -43,8 +42,8 @@ class PropertyReservationApiController extends Controller
     {
         $data = $request->validated();
         try {
-            $services = $this->propertyReservationApiUseCase->checkAvailableMonth($data);
-            return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->checkAvailableMonth($data);
+            return ApiResponse::sendResponse(200, __('app.api.available-dates-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -55,8 +54,8 @@ class PropertyReservationApiController extends Controller
     {
         $data = $request->validated();
         try {
-            $services = $this->propertyReservationApiUseCase->CheckPrice($data);
-            return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->CheckPrice($data);
+            return ApiResponse::sendResponse(200, __('app.api.price-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -67,15 +66,15 @@ class PropertyReservationApiController extends Controller
     {
         $data = $request->validated();
         try {
-            $services = $this->propertyReservationApiUseCase->makeReservation($data);
-            return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->makeReservation($data);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-created-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
 
-    public function updateReservation(UpdateReservationRequest $request,$id)
+    public function updateReservation(UpdateReservationRequest $request, $id)
     {
         $validator = Validator::make(['id' => $id], [
             'id' => ['bail', 'required', 'exists:property_reservations,id', new CheckIfPropertyReservaionBelongToUser()],
@@ -91,14 +90,13 @@ class PropertyReservationApiController extends Controller
 
         $data = array_merge($request->validated(), ['id' => $id]);
         try {
-            $services = $this->propertyReservationApiUseCase->updateReservation($data);
-            return ApiResponse::sendResponse(200, __('app.api.sessions-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->updateReservation($data);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-updated-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
-
 
     public function deleteReservation($id)
     {
@@ -115,8 +113,8 @@ class PropertyReservationApiController extends Controller
         }
 
         try {
-            $services = $this->propertyReservationApiUseCase->deleteReservation($validator->validated()['id']);
-            return ApiResponse::sendResponse(200, __('app.api.reservation-deleted-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->deleteReservation($validator->validated()['id']);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-deleted-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -128,8 +126,8 @@ class PropertyReservationApiController extends Controller
         $validator = Validator::make(['property_slug' => $property_slug], [
             'property_slug' => ['bail', 'required', 'exists:properties,slug'],
         ], [
-            'property_slug.required' => __('validation.api.property-id-required'),
-            'property_slug.exists' => __('validation.api.property-id-does-not-exists'),
+            'property_slug.required' => __('validation.api.the-property-id-required'),
+            'property_slug.exists' => __('validation.api.the-selected-property-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -138,8 +136,8 @@ class PropertyReservationApiController extends Controller
         }
 
         try {
-            $services = $this->propertyReservationApiUseCase->allPropertyReservations($validator->validated()['property_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.reservation-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->allPropertyReservations($validator->validated()['property_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.all-property-reservations-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -149,14 +147,13 @@ class PropertyReservationApiController extends Controller
     public function allReservations()
     {
         try {
-            $services = $this->propertyReservationApiUseCase->allReservations();
-            return ApiResponse::sendResponse(200, __('app.api.reservation-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->allReservations();
+            return ApiResponse::sendResponse(200, __('app.api.all-reservation-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
         }
     }
-
 
     public function changeStatusReservation($id, $status)
     {
@@ -175,8 +172,8 @@ class PropertyReservationApiController extends Controller
         $data = $validator->validated();
 
         try {
-            $services = $this->propertyReservationApiUseCase->changeStatusReservation($data);
-            return ApiResponse::sendResponse(200, __('app.api.reservation-status-updated-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->changeStatusReservation($data);
+            return ApiResponse::sendResponse(200, __('app.api.reservation-status-updated-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -197,8 +194,8 @@ class PropertyReservationApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $services = $this->propertyReservationApiUseCase->RequestReservations($validator->validated()['property_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.reservations-request-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->RequestReservations($validator->validated()['property_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.reservations-request-retrieved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
@@ -219,8 +216,8 @@ class PropertyReservationApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
         try {
-            $services = $this->propertyReservationApiUseCase->approvedRequestReservations($validator->validated()['property_slug']);
-            return ApiResponse::sendResponse(200, __('app.api.reservations-retrieved-successfully'), $services);
+            $property = $this->propertyReservationApiUseCase->approvedRequestReservations($validator->validated()['property_slug']);
+            return ApiResponse::sendResponse(200, __('app.api.reservations-approved-successfully'), $property);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

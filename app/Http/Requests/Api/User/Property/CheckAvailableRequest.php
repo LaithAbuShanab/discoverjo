@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\User\Property;
 
 use App\Rules\CheckIfPeriodExistsInPropertyRule;
-use App\Rules\CheckIfPeriodMonthYearExistsInPropertyRule;
 use App\Rules\CheckIfPropertyActiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -33,8 +32,8 @@ class CheckAvailableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'property_slug'=>['required','string','exists:properties,slug',new CheckIfPropertyActiveRule()],
-            'period_type'=>['required','string',Rule::in(['morning', 'evening','day']), new CheckIfPeriodExistsInPropertyRule()],
+            'property_slug' => ['bail', 'required', 'string', 'exists:properties,slug', new CheckIfPropertyActiveRule()],
+            'period_type' => ['bail', 'required', 'string', Rule::in(['morning', 'evening', 'day']), new CheckIfPeriodExistsInPropertyRule()],
         ];
     }
 }

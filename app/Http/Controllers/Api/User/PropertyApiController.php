@@ -29,12 +29,12 @@ class PropertyApiController extends Controller
         }
     }
 
-    public function singleProperty(Request $request,$property_slug)
+    public function singleProperty(Request $request, $property_slug)
     {
         $slug = $property_slug;
 
         $validator = Validator::make(['property_slug' => $slug], [
-            'property_slug' => ['bail', 'required', 'exists:properties,slug',new CheckIfHostIsActiveRule()],
+            'property_slug' => ['bail', 'required', 'exists:properties,slug', new CheckIfHostIsActiveRule()],
         ], [
             'property_slug.exists' => __('validation.api.the-selected-property-id-does-not-exists'),
             'property_slug.required' => __('validation.api.the-property-id-required'),
@@ -47,7 +47,7 @@ class PropertyApiController extends Controller
         }
         try {
             $allPlaces = $this->propertyApiUseCase->singleProperty($data['property_slug']);
-            return ApiResponse::sendResponse(200,  __('app.api.service-subcategories-retrieved-successfully'), $allPlaces);
+            return ApiResponse::sendResponse(200,  __('app.api.property-retrieved-by-id-successfully'), $allPlaces);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());

@@ -19,8 +19,8 @@ class Property extends Model implements HasMedia
     use HasFactory, InteractsWithMedia, HasTranslations, HasSlug, LogsActivity;
     protected $guarded = [];
 
-    public $translatable = ['name', 'description','address'];
-    protected static $logAttributes = ['slug', 'name', 'description','status'];
+    public $translatable = ['name', 'description', 'address'];
+    protected static $logAttributes = ['slug', 'name', 'description', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'Property';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -108,4 +108,8 @@ class Property extends Model implements HasMedia
         return $this->morphMany(Reviewable::class, 'reviewable')->latest();
     }
 
+    public function reservations()
+    {
+        return $this->hasMany(PropertyReservation::class, 'property_id');
+    }
 }

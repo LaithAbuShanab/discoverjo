@@ -3,6 +3,7 @@
 namespace App\Filament\Host\Resources;
 
 use App\Filament\Host\Resources\PropertyResource\Pages;
+use App\Filament\Host\Resources\PropertyResource\RelationManagers\ReservationsRelationManager;
 use App\Models\Property;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -64,8 +65,7 @@ class PropertyResource extends Resource
                     return count($items) <= 1;
                 })
                 ->schema([
-                    Hidden::make('property_period_id')
-                        ->default($periodType),
+                    Hidden::make('property_period_id')->default($periodType),
 
                     Select::make('day_of_week')
                         ->label(__('panel.host.day-of-week'))
@@ -79,6 +79,7 @@ class PropertyResource extends Resource
                             'Saturday'  => __('panel.host.saturday'),
                             'Sunday'    => __('panel.host.sunday'),
                         ])
+
                         ->multiple()
                         ->required()
                         ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
@@ -257,8 +258,14 @@ class PropertyResource extends Resource
                                                 ->required()
                                                 ->native(false)
                                                 ->displayFormat('d/m/Y')
-                                                ->minDate(Carbon::today()->toDateString())
-                                                ->rule('after_or_equal:today')
+                                                ->rules(function ($livewire) {
+                                                    $record = $livewire->getRecord();
+                                                    if ($record) {
+                                                        return [];
+                                                    }
+                                                    $now = Carbon::now()->format('Y-m-d');
+                                                    return ["after_or_equal:$now"];
+                                                })
                                                 ->reactive(),
 
                                             DatePicker::make('availability_end_date')
@@ -400,7 +407,7 @@ class PropertyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ReservationsRelationManager::class,
         ];
     }
 

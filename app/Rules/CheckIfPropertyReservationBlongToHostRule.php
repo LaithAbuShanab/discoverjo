@@ -20,10 +20,10 @@ class CheckIfPropertyReservationBlongToHostRule implements ValidationRule
         $reservation = PropertyReservation::find($value);
         if (!$reservation) return;
         $property = $reservation->property;
-        if(!$property) return;
-        if($property->host_id != $user->id){
-            $fail("this reservation does not belong to this host");
+        if (!$property) return;
+        if ($property->host_id != $user->id) {
+            $fail(__('validation.api.this-reservation-not-belong-to-host'));
+            return;
         };
-
     }
 }

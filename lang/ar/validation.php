@@ -293,6 +293,15 @@ return [
         'reservations.*.quantity'                   => 'عدد الأشخاص',
         'reservations.*.price_age_id'               => 'فئة السعر حسب العمر',
 
+        // المزارع
+        'property_slug'                             => 'المزرعة',
+        'period_type'                               => 'نوع الفترة',
+        'month'                                     => 'الشهر',
+        'year'                                      => 'السنة',
+        'check_in'                                  => 'الدخول',
+        'check_out'                                 => 'الخروج',
+        'contact_info'                              => 'معلومات الاتصال',
+
         'query'                                     => 'البحث',
     ],
 
@@ -779,6 +788,28 @@ return [
         'this-service-is-not-belong-to-you'                         => 'هذه الخدمة لا تخصك.',
         'you_have_not_reservation_for_this_service'                 => 'لا يمكنك تقييم هذه الخدمة إذا لم تقم بحجزها مسبقًا.',
         'you_cannot_make_review_for_upcoming_service'               => 'لا يمكنك تقييم هذه الخدمة إلا إذا قمت بإكمال حجزك الأول.',
+
+        // Host Validation
+        'the-selected-property-id-does-not-exists'                  => 'المزارعه المحدد غير موجوده.',
+        'the-property-id-required'                                  => 'معرف المزارعه مطلوب.',
+        'the-host-not-longer-active'                                => 'المزود غير متاح.',
+        'you_have_not_reservation_for_this_property'                => 'لا يمكنك تقييم هذه المزارعه إذا لم تقم بحجزها مسبقًا.',
+        'you_cannot_make_review_for_upcoming_property'              => 'لا يمكنك تقييم هذه المزارعه إلا إذا قمت بإكمال حجزك الأول.',
+        'the-user-owner-this-property-not-longer-active'            => 'المستخدم الذي قام بانشاء المزارعه لم يعد نشطًا.',
+        'this-property-is-inactive'                                 => 'هذه المزارعه غير متاحة.',
+        'invalid_period_type'                                       => 'نوع الفترة غير صالح.',
+        'this_period_type_is_not_available_for_this_property'       => 'نوع الفترة غير متاح لهذه المزارعه.',
+        'missing_parameters'                                        => 'معلمات مفقودة.',
+        'property_not_found'                                        => 'المزارعه غير موجودة.',
+        'invalid_month'                                             => 'شهر غير صالح.',
+        'invalid_year'                                              => 'سنة غير صالحة.',
+        'this_period_is_not_available_for_this_property'            => 'الفترة غير متاحة لهذه المزارعه.',
+        'date_not_available'                                        => 'التاريخ :date غير متاح للفترة المحددة.',
+        'date_conflict_reserved'                                    => 'التاريخ :date محجوز بالفعل لفترة متداخلة.',
+        'reservation-not-found'                                     => 'الحجز غير موجود.',
+        'this-reservation-not-belong-to-user'                       => 'الحجز المحدد لا يخصك.',
+        'this-reservation-not-belong-to-host'                       => 'الحجز المحدد لا يخص المستخدم الحالي.',
+        'this-property-not-belong-to-host'                          => 'المزارعه المحددة لا تخص المستخدم الحالي.',
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

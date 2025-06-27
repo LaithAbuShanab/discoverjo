@@ -136,6 +136,11 @@ return [
         'reservation-status-updated-body'                              => 'Your reservation (ID: #:reservation_id) has been :status.',
         'status-confirmed'                                             => 'confirmed',
         'status-cancelled'                                             => 'cancelled',
+
+        // Host
+        'new-user-review-in-property'                                  => 'User :username wrote a review about your property',
+        'new-property-reservation-title'                               => 'New Reservation Received',
+        'new-property-reservation-body'                                => 'User :username has submitted a new reservation (ID: #:reservation_id).',
     ],
 
     "api" => [
@@ -339,5 +344,16 @@ return [
         'reservation-status-updated-successfully'                      => 'Reservation status updated successfully',
         'reservations-request-retrieved-successfully'                  => 'Reservations request retrieved successfully',
         'reservations-approved-successfully'                           => 'Reservations approved successfully',
+
+        // Host Api
+        'chalets-retrieved-successfully'                               => 'Chalets retrieved successfully',
+        'property-retrieved-by-id-successfully'                        => 'Property retrieved by id successfully',
+        'available-dates-retrieved-successfully'                       => 'Available dates retrieved successfully',
+        'price-retrieved-successfully'                                 => 'Price retrieved successfully',
+        'reservation-created-successfully'                             => 'Reservation created successfully',
+        'reservation-updated-successfully'                             => 'Reservation updated successfully',
+        'reservation-deleted-successfully'                             => 'Reservation deleted successfully',
+        'all-property-reservations-retrieved-successfully'             => 'All property reservations retrieved successfully',
+        'all-reservation-retrieved-successfully'                       => 'All reservation retrieved successfully',
     ],
 ];

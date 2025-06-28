@@ -71,6 +71,13 @@ class SingleServiceResource extends JsonResource
                 'name' => $feature->name,
             ];
         });
+        $openingHours = $bookingDate?->serviceBookingDays->map(function ($openingHours) {
+            return [
+                'day_of_week' => daysTranslation(\Illuminate\Support\Facades\Request::header('Content-Language') ?? 'ar', $openingHours->day_of_week),
+                'opening_time' => $openingHours->opening_time,
+                'closing_time' => $openingHours->closing_time,
+            ];
+        });
         return [
             'id'=>$this->id,
             'slug'=>$this->slug,
@@ -79,6 +86,7 @@ class SingleServiceResource extends JsonResource
             'available_start_date'=>$bookingDate->available_start_date,
             'available_end_date'=>$bookingDate->available_end_date,
             'work_days'=>$days,
+            'opening_hours' => $openingHours,
             'region'=>new RegionResource($this->region),
             'google_map_url' => $this->url_google_map,
             'category' => $categories,

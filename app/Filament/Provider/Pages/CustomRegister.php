@@ -44,6 +44,7 @@ class CustomRegister extends BaseRegister
                                     $this->getUsernameField(),
                                     $this->getBirthdayField(),
                                     $this->getGenderField(),
+                                    $this->getTypeField(),
                                 ]),
 
                             Step::make(__('panel.provider.contact-information'))
@@ -133,6 +134,26 @@ class CustomRegister extends BaseRegister
             ->searchable()
             ->placeholder(__('panel.provider.select-gender'))
             ->rule(Rule::in([1, 2]));
+    }
+
+    protected function getTypeField(): Select
+    {
+        return Select::make('type')
+            ->label(__('panel.provider.user-type'))
+            ->options([
+                2 => __('panel.provider.guide'),
+                3 => __('panel.provider.provider'),
+                4 => __('panel.provider.host'),
+            ])
+            ->multiple()
+            ->required()
+            ->searchable()
+            ->placeholder(__('panel.provider.select-user-type'))
+            ->rules([
+                'required',
+                'array',
+                'min:1',
+            ]);
     }
 
     protected function getEmailField(): TextInput
@@ -238,11 +259,18 @@ class CustomRegister extends BaseRegister
             'description' => $data['description'],
             'password' => Hash::make($data['password']),
             'status' => 4,
-            'type' => 3
         ]);
 
         if (!empty($this->data['tags'])) {
             $user->tags()->sync($this->data['tags']);
+        }
+
+        if (!empty($this->data['type'])) {
+            foreach ($this->data['type'] as $type) {
+                $user->userTypes()->create([
+                    'type' => $type,
+                ]);
+            }
         }
 
         if (isset($this->data['image']) && !empty($this->data['image'])) {

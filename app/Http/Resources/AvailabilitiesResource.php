@@ -15,10 +15,10 @@ class AvailabilitiesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type'=>$this->type,
-            'availability_start_date'=>$this->availability_start_date,
-            'availability_end_date'=>$this->availability_end_date,
-            'days'=>AvailabilityDaysResource::collection($this->availabilityDays)
+            'type' => $this->type,
+            'availability_start_date' => $this->availability_start_date,
+            'availability_end_date' => $this->availability_end_date,
+            'days' => AvailabilityDaysResource::collection($this->availabilityDays)
         ];
     }
 }

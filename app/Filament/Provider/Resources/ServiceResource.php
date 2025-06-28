@@ -2,19 +2,30 @@
 
 namespace App\Filament\Provider\Resources;
 
-use App\Filament\Provider\Resources\ServiceResource\Pages;
-use App\Filament\Provider\Resources\ServiceResource\RelationManagers;
-use App\Models\Service;
+use App\Filament\Provider\Resources\ServiceResource\{Pages, RelationManagers};
+use App\Models\{Service, User};
+use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Forms\Components\{CheckboxList, Grid, Repeater, Select, SpatieMediaLibraryFileUpload, Textarea, TextInput, TimePicker, Toggle, Wizard, Wizard\Step};
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Forms\Components\{
+    CheckboxList,
+    Grid,
+    Repeater,
+    Select,
+    SpatieMediaLibraryFileUpload,
+    Textarea,
+    TextInput,
+    TimePicker,
+    Toggle,
+    Wizard,
+    Wizard\Step
+};
+use Filament\Forms\{Form, Get};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceResource extends Resource
 {
@@ -25,6 +36,15 @@ class ServiceResource extends Resource
     protected static ?string $navigationGroup = 'Services Section';
 
     protected static ?int $navigationSort = 1;
+
+    public static function canAccess(): bool
+    {
+        $user = User::find(Auth::guard('provider')->id());
+        if ($user->userTypes()->where('type', 3)->exists()) {
+            return true;
+        }
+        return false;
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -317,7 +337,7 @@ class ServiceResource extends Resource
                 Tables\Columns\TagsColumn::make('categories.name')
                     ->label(__('panel.provider.categories'))
                     ->badge()
-                    ->getStateUsing(fn ($record) => $record->categories->pluck('name')->toArray()) // get translated names
+                    ->getStateUsing(fn($record) => $record->categories->pluck('name')->toArray()) // get translated names
                     ->color(function (string $state, $record): string {
                         $category = $record->categories->firstWhere('name', $state);
 

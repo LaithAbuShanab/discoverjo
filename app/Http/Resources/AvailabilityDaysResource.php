@@ -15,9 +15,9 @@ class AvailabilityDaysResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type'=>$this->period->type,
-            'day_of_week'=>$this->day_of_week,
-            'price'=>$this->price
+            'type' => $this->period->type,
+            'day_of_week' => $this->day_of_week,
+            'price' => $this->price
         ];
     }
 }

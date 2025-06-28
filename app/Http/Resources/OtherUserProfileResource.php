@@ -4,8 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
 use LevelUp\Experience\Models\Activity;
 
 class OtherUserProfileResource extends JsonResource
@@ -36,21 +34,22 @@ class OtherUserProfileResource extends JsonResource
 
         $reviews = $this->reviews()->paginate($paginationPerPage);
         $activity = Activity::find(1);
-        $fullName= $this->first_name ." ". $this->last_name;
+        $fullName = $this->first_name . " " . $this->last_name;
+
         $isGuide = 0;
-        if($this->type ==2)
-        {
+        if ($this->userTypes()->where('type', 2)->exists()) {
             $isGuide = 1;
         }
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'username' => $this->username,
-            'full_name'=>$fullName,
-            'is_guide'=>$isGuide,
-            'referral_code'=>$this->referral_code,
+            'full_name' => $fullName,
+            'is_guide' => $isGuide,
+            'referral_code' => $this->referral_code,
             'guide_rating' => $isGuide ? $this->guideRatings->avg('rating') : false,
             'gender' => $gender[$this->lang][$this->sex],
             'points' => $this->getPoints(),
@@ -59,12 +58,12 @@ class OtherUserProfileResource extends JsonResource
             'description' => $this->description,
             'following_number' => $this->acceptedFollowing()->count(),
             'follower_number' => $this->acceptedFollowers()->count(),
-            'is_following' =>isFollowing($this->id),
+            'is_following' => isFollowing($this->id),
             'is_follow_me' => isFollower($this->id),
             'tags' => $tags,
             'reviews' =>  ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar' => $this->getFirstMediaUrl('avatar','avatar_app'),
+            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
         ];
     }
 }

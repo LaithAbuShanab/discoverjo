@@ -403,4 +403,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return $this->morphedByMany(Property::class, 'favorable')->withTimestamps();
     }
+
+    public function userTypes()
+    {
+        return $this->hasMany(UserType::class, 'user_id');
+    }
 }

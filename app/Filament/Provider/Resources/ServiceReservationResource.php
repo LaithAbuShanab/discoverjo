@@ -3,18 +3,16 @@
 namespace App\Filament\Provider\Resources;
 
 use App\Filament\Provider\Resources\ServiceReservationResource\Pages;
-use App\Models\ServiceReservation;
+use App\Models\{ServiceReservation, User};
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\{Grid as InfoGrid, RepeatableEntry, Section as InfoSection, TextEntry};
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\Section as InfoSection;
-use Filament\Infolists\Components\Grid as InfoGrid;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceReservationResource extends Resource
 {
@@ -25,6 +23,15 @@ class ServiceReservationResource extends Resource
     protected static ?string $navigationGroup = 'Services Section';
 
     protected static ?int $navigationSort = 2;
+
+    public static function canAccess(): bool
+    {
+        $user = User::find(Auth::guard('provider')->id());
+        if ($user->userTypes()->where('type', 3)->exists()) {
+            return true;
+        }
+        return false;
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -92,8 +99,8 @@ class ServiceReservationResource extends Resource
                                         2 => 'danger',
                                         3 => 'success',
                                     ])
-                                    ->disableOptionWhen(fn (string $value): bool => in_array((int) $value, [0, 3]))
-                                ]),
+                                    ->disableOptionWhen(fn(string $value): bool => in_array((int) $value, [0, 3]))
+                            ]),
 
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -344,7 +351,6 @@ class ServiceReservationResource extends Resource
     {
         return [
             'index' => Pages\ListServiceReservations::route('/'),
-            // 'create' => Pages\CreateServiceReservation::route('/create'),
             'view' => Pages\ViewServiceReservation::route('/{record}'),
             'edit' => Pages\EditServiceReservation::route('/{record}/edit'),
         ];

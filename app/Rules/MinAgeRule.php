@@ -17,6 +17,9 @@ class MinAgeRule implements ValidationRule
         $now = now()->setTimezone('Asia/Riyadh');
         $minAge = $now->subYears(13);
         if (strtotime($value) > strtotime($minAge)) {
+            if ($attribute == 'data.birthday') {
+                $attribute = __('validation.attributes.birthday');
+            }
             $fail(__('validation.api.the-attribute-must-be-at-least-7-years-ago', ['attribute' => $attribute]));
         }
     }

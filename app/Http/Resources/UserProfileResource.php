@@ -2,10 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Follow;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use LevelUp\Experience\Models\Activity;
 
@@ -19,10 +17,10 @@ class UserProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isGuide = 0;
-        if($this->type ==2)
-        {
+        if ($this->userTypes()->where('type', 2)->exists()) {
             $isGuide = 1;
         }
+
         $paginationPerPage = config('app.pagination_per_page');
 
         $tags = $this->tags->map(function ($tag) {
@@ -57,14 +55,14 @@ class UserProfileResource extends JsonResource
             'slug' => $this->slug,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'is_following' =>isFollowing($this->id),
+            'is_following' => isFollowing($this->id),
             'is_follow_me' => isFollower($this->id),
             'username' => $this->username,
             'email' => $this->email,
             'phone_number' => $this->phone_number,
             'lang' => $this->lang,
             'gender' => $gender[$this->lang][$this->sex],
-            'referral_code'=>$this->referral_code,
+            'referral_code' => $this->referral_code,
             'birth_of_day' => $this->birthday,
             'points' => $this->getPoints(),
             'streak' =>  $streak ? $this->getCurrentStreakCount($activity) : 0,
@@ -72,7 +70,7 @@ class UserProfileResource extends JsonResource
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
             'address' => $this->address,
-            'is_guide' =>$isGuide,
+            'is_guide' => $isGuide,
             'guide_rating' => $isGuide ? $this->guideRatings->avg('rating') : false,
             'status' => $this->status,
             'description' => $this->description,
@@ -82,7 +80,7 @@ class UserProfileResource extends JsonResource
             'tags' => $tags,
             'reviews' => ReviewResource::collection($reviews),
             'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar' => $this->getFirstMediaUrl('avatar','avatar_app'),
+            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
 
         ];
     }

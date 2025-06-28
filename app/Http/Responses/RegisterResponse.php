@@ -17,8 +17,6 @@ class RegisterResponse implements RegistrationResponseContract
     {
         if (Filament::getCurrentPanel()->getId() === 'provider') {
             return redirect()->route('filament.provider.auth.login');
-        } elseif (Filament::getCurrentPanel()->getId() === 'host') {
-            return redirect()->route('filament.host.auth.login');
         }
 
         return redirect()->route('filament.guide.auth.login');

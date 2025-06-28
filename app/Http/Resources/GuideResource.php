@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 
 class GuideResource extends JsonResource
 {
@@ -27,9 +26,10 @@ class GuideResource extends JsonResource
         $gender = ['ar' => [1 => 'ذكر', 2 => 'انثى'], 'en' => [1 => 'Male', 2 => 'Female']];
         $isGuide = 0;
 
-        if ($this->type == 2) {
+        if ($this->userTypes()->where('type', 2)->exists()) {
             $isGuide = 1;
         }
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,

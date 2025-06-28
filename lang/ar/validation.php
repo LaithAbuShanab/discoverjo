@@ -302,6 +302,7 @@ return [
         'check_out'                                 => 'الخروج',
         'contact_info'                              => 'معلومات الاتصال',
 
+        'birthday'                                  => 'تاريخ الميلاد',
         'query'                                     => 'البحث',
     ],
 

@@ -49,18 +49,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
-        'guide' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
         'provider' => [
             'driver' => 'session',
             'provider' => 'users',
-        ],
-        'host' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        ]
     ],
 
     /*

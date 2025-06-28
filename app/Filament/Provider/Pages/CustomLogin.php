@@ -54,9 +54,9 @@ class CustomLogin extends BaseLogin
         }
 
         // Check if user is a guide
-        if ($user->type !== 3) {
+        if (! $user->userTypes()->whereIn('type', [2, 3, 4])->exists()) {
             throw ValidationException::withMessages([
-                'data.login' => 'Only provider users can access this panel.',
+                'data.login' => 'Only Host users can access this panel.',
             ]);
         }
 

@@ -302,6 +302,7 @@ return [
         'check_out'                                 => 'Check Out',
         'contact_info'                              => 'Contact Info',
 
+        'birthday'                                  => 'Birthday',
         'query'                                     => 'Search',
     ],
 

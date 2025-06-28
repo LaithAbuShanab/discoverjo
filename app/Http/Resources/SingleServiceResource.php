@@ -85,6 +85,7 @@ class SingleServiceResource extends JsonResource
             "description"=>$this->description,
             'available_start_date'=>$bookingDate->available_start_date,
             'available_end_date'=>$bookingDate->available_end_date,
+            'session_duration'=>$bookingDate->session_duration,
             'work_days'=>$days,
             'opening_hours' => $openingHours,
             'region'=>new RegionResource($this->region),

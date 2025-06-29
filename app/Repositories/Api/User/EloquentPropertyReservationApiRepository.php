@@ -136,10 +136,29 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             return response()->json(['message' => 'No availability found for this period.'], 404);
         }
 
-        $start = \Carbon\Carbon::parse($firstAvailable->availability_start_date)->greaterThanOrEqualTo(now())
-            ? \Carbon\Carbon::parse($firstAvailable->availability_start_date)->startOfDay()
-            : now()->startOfDay();
+//        $start = \Carbon\Carbon::parse($firstAvailable->availability_start_date)->greaterThanOrEqualTo(now())
+//            ? \Carbon\Carbon::parse($firstAvailable->availability_start_date)->startOfDay()
+//            : now()->startOfDay();
 
+        $monthMap = [
+            'january' => 1,
+            'february' => 2,
+            'march' => 3,
+            'april' => 4,
+            'may' => 5,
+            'june' => 6,
+            'july' => 7,
+            'august' => 8,
+            'september' => 9,
+            'october' => 10,
+            'november' => 11,
+            'december' => 12,
+        ];
+
+        $monthName = strtolower($data['month']);
+        $month = $monthMap[$monthName] ?? null;
+        $year = (int) $data['year'];
+        $start = \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth();
         $end = (clone $start)->addDays(29); // Show 30 days
 
         // 👇 Exclude cancelled (status = 2)
@@ -514,17 +533,39 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
 
     public function allPropertyReservations($slug)
     {
+        $perPage = config('app.pagination_per_page');
         $property = Property::findBySlug($slug);
         $user = Auth::guard('api')->user();
-        $reservations = PropertyReservation::where('property_id', $property->id)->where('user_id', $user->id)->get();
-        return AllPropertyReservationResource::collection($reservations);
+        $reservations = PropertyReservation::where('property_id', $property->id)->where('user_id', $user->id)->paginate($perPage);
+        $reservationsArray = $reservations->toArray();
+        $pagination = [
+            'next_page_url' => $reservationsArray['next_page_url'],
+            'prev_page_url' => $reservationsArray['next_page_url'],
+            'total' => $reservationsArray['total'],
+        ];
+        return [
+            'count'=> PropertyReservation::where('property_id', $property->id)->where('user_id', $user->id)->count(),
+            'reservations'=>AllPropertyReservationResource::collection($reservations),
+            'pagination' => $pagination
+        ];
     }
 
     public function allReservations()
     {
+        $perPage = config('app.pagination_per_page');
         $user = Auth::guard('api')->user();
-        $reservations = PropertyReservation::where('user_id', $user->id)->get();
-        return AllPropertyReservationResource::collection($reservations);
+        $reservations = PropertyReservation::where('user_id', $user->id)->paginate($perPage);
+        $reservationsArray = $reservations->toArray();
+        $pagination = [
+            'next_page_url' => $reservationsArray['next_page_url'],
+            'prev_page_url' => $reservationsArray['next_page_url'],
+            'total' => $reservationsArray['total'],
+        ];
+        return [
+            'count'=> PropertyReservation::where('user_id', $user->id)->count(),
+            'reservations'=> AllPropertyReservationResource::collection($reservations),
+            'pagination' => $pagination
+        ];
     }
 
     public function changeStatusReservation($data)
@@ -588,16 +629,39 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
 
     public function RequestReservations($slug)
     {
+        $perPage = config('app.pagination_per_page');
         $property = Property::findBySlug($slug);
-        $reservations = PropertyReservation::where('property_id', $property->id)->where('status', 0)->get();
-        return AllPropertyReservationResource::collection($reservations);
+        $reservations = PropertyReservation::where('property_id', $property->id)->where('status', 0)->paginate($perPage);
+        $reservationsArray = $reservations->toArray();
+        $pagination = [
+            'next_page_url' => $reservationsArray['next_page_url'],
+            'prev_page_url' => $reservationsArray['next_page_url'],
+            'total' => $reservationsArray['total'],
+        ];
+        return [
+            'count'=> PropertyReservation::where('property_id', $property->id)->where('status', 0)->count(),
+            'reservations'=>AllPropertyReservationResource::collection($reservations),
+            'pagination' => $pagination
+        ];
     }
 
     public function approvedRequestReservations($slug)
     {
+        $perPage = config('app.pagination_per_page');
         $property = Property::findBySlug($slug);
-        $reservations = PropertyReservation::where('property_id', $property->id)->where('status', 1)->get();
-        return AllPropertyReservationResource::collection($reservations);
+        $reservations = PropertyReservation::where('property_id', $property->id)->where('status', 1)->paginate($perPage);
+        $reservationsArray = $reservations->toArray();
+        $pagination = [
+            'next_page_url' => $reservationsArray['next_page_url'],
+            'prev_page_url' => $reservationsArray['next_page_url'],
+            'total' => $reservationsArray['total'],
+        ];
+
+        return [
+            'count'=> PropertyReservation::where('property_id', $property->id)->where('status', 1)->count(),
+            'reservations'=>AllPropertyReservationResource::collection($reservations),
+            'pagination' => $pagination
+        ];
     }
 }
 

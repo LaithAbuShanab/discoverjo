@@ -14,6 +14,12 @@ class AllPropertyReservationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        if ($this->period?->type != 1) {
+            $this->check_out = date('Y-m-d', strtotime( $this->check_out . ' +1 day'));
+        }
+
+
         return [
             "id" => $this->id,
             "property" => new AllChaletsResource($this->property),

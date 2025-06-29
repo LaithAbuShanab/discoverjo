@@ -219,6 +219,10 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
 
     public function CheckPrice($data)
     {
+
+        if($data['period_type'] !== 'morning') {
+            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
+        }
         $property = Property::where('slug', $data['property_slug'])
             ->with(['availabilities.availabilityDays.period', 'periods'])
             ->firstOrFail();
@@ -302,6 +306,9 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
     {
         $user = Auth::guard('api')->user();
 
+        if($data['period_type'] !== 'morning') {
+            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
+        }
         DB::beginTransaction();
 
         try {
@@ -427,6 +434,9 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
 
     public function updateReservation($data)
     {
+        if($data['period_type'] !== 'morning') {
+            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
+        }
         $reservation = \App\Models\PropertyReservation::with('property.periods', 'property.availabilities.availabilityDays.period')
             ->findOrFail($data['id']);
 

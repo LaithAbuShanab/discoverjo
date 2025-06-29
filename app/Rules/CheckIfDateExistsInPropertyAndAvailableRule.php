@@ -32,6 +32,10 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             return;
         }
 
+        if($this->data['period_type'] !== 'morning') {
+            $this->data['check_out'] = date('Y-m-d', strtotime($this->data['check_out'] . ' -1 day'));
+        }
+
         $property = Property::where('slug', $this->data['property_slug'])
             ->with(['availabilities.availabilityDays.period', 'periods'])
             ->first();

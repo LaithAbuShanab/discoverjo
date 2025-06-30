@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class AllServicesResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class AllServicesResource extends JsonResource
             'region'=>new RegionResource($this->region),
             'price'=>$this->price,
             'main_image'=> $this->getFirstMediaUrl('main_service','main_service_app'),
-//            'provider' => new UserResource($this->provider),
+            'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
         ];
     }
 }

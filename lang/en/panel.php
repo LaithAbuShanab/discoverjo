@@ -422,6 +422,10 @@ return [
         'reservations_over_time'        => 'Timeline Statistics Chalets Reservations',
         'host-status-stats'             => 'Host Status Stats',
         'host-revenue-and-cancellation' => 'Host Revenue and Cancellation',
+        't3-1'                          => 'Opening Time for the overnight stay must be after the morning Opening Time',
+        't3-2'                          => 'Opening Time must be after the evening Closing Time.',
+        't2-1'                          => 'Evening Opening Time must be after morning Closing Time.',
+        't1-1'                          => 'The Closing Time must be before the morning shift Opening Time.',
+        'filters'                       => 'Filters',
     ],
 ];
-

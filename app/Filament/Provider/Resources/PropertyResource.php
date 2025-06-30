@@ -23,10 +23,12 @@ use Filament\Forms\Components\{
 use Filament\Forms\{Form, Get};
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\{Carbon, Facades\Auth};
-
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 
 class PropertyResource extends Resource
 {
@@ -117,6 +119,16 @@ class PropertyResource extends Resource
                 ->visible(function (Get $get) use ($periodType) {
                     $periods = $get('../../periods') ?? [];
                     return collect($periods)->values()->contains(fn($p) => (int) $p['type'] === $periodType);
+                })->addable(function (Get $get) use ($periodType) {
+                    $items = $get("availabilityDays_{$periodType}") ?? [];
+
+                    $allDays = collect($items)
+                        ->pluck('day_of_week')
+                        ->flatten()
+                        ->unique()
+                        ->values();
+
+                    return $allDays->count() < 7;
                 });
         };
 
@@ -235,13 +247,83 @@ class PropertyResource extends Resource
                                         ->schema([
                                             TimePicker::make('start_time')
                                                 ->label(__('panel.host.opening-time'))
-                                                ->placeholder(__('panel.host.enter-opening-time'))
-                                                ->required(),
+                                                ->required()
+                                                ->rules(function (Get $get) {
+                                                    $type = $get('type');
+                                                    $start = $get('start_time');
+                                                    $all = $get('../../periods');
+
+                                                    if (! $type || ! $start || ! is_array($all)) return [];
+
+                                                    $startTime = Carbon::createFromTimeString($start);
+                                                    $rules = [];
+
+                                                    if ($type == 3) {
+                                                        foreach ($all as $item) {
+                                                            if (($item['type'] ?? null) == 1 && isset($item['start_time'])) {
+                                                                $morningStart = Carbon::createFromTimeString($item['start_time']);
+                                                                if ($startTime->lt($morningStart)) {
+                                                                    $rules[] = function ($attribute, $value, $fail) {
+                                                                        $fail(__('panel.host.t3-1'));
+                                                                    };
+                                                                }
+                                                            }
+
+                                                            if (($item['type'] ?? null) == 2 && isset($item['end_time'])) {
+                                                                $eveningEnd = Carbon::createFromTimeString($item['end_time']);
+                                                                if ($startTime->lt($eveningEnd)) {
+                                                                    $rules[] = function ($attribute, $value, $fail) {
+                                                                        $fail(__('panel.host.t3-2'));
+                                                                    };
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if ($type == 2) {
+                                                        foreach ($all as $item) {
+                                                            if (($item['type'] ?? null) == 1 && isset($item['end_time'])) {
+                                                                $morningEnd = Carbon::createFromTimeString($item['end_time']);
+                                                                if ($startTime->lt($morningEnd)) {
+                                                                    $rules[] = function ($attribute, $value, $fail) {
+                                                                        $fail(__('panel.host.t2-1'));
+                                                                    };
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    return $rules;
+                                                }),
 
                                             TimePicker::make('end_time')
                                                 ->label(__('panel.host.closing-time'))
-                                                ->placeholder(__('panel.host.enter-closing-time'))
-                                                ->required(),
+                                                ->required()
+                                                ->rules(function (Get $get) {
+                                                    $type = $get('type');
+                                                    $end = $get('end_time');
+                                                    $all = $get('../../periods');
+
+                                                    if (! $type || ! $end || ! is_array($all)) return [];
+
+                                                    $endTime = Carbon::createFromTimeString($end);
+                                                    $rules = [];
+
+                                                    if ($type == 3) {
+                                                        foreach ($all as $item) {
+                                                            if (($item['type'] ?? null) == 1 && isset($item['start_time'])) {
+                                                                $morningStart = Carbon::createFromTimeString($item['start_time']);
+                                                                if ($endTime->gt($morningStart)) {
+                                                                    $rules[] = function ($attribute, $value, $fail) {
+                                                                        $fail('panel.host.t1-1');
+                                                                    };
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    return $rules;
+                                                }),
                                         ])
                                 ]),
                         ]),
@@ -381,11 +463,6 @@ class PropertyResource extends Resource
                     ->label(__('panel.host.address'))
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('max_guests')
-                    ->label(__('panel.host.max-guests'))
-                    ->numeric()
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('panel.host.status'))
                     ->formatStateUsing(fn($state) => match ($state) {
@@ -411,10 +488,44 @@ class PropertyResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])->filters([
+                Filter::make('name')
+                    ->form([
+                        TextInput::make('value')
+                            ->label(__('panel.host.name'))
+                            ->placeholder(__('panel.host.enter-name'))
+                    ])
+                    ->query(function ($query, array $data): \Illuminate\Database\Eloquent\Builder {
+                        return $query->when(
+                            filled($data['value'] ?? null),
+                            function ($query) use ($data) {
+                                $value = mb_strtolower($data['value'], 'UTF-8');
+
+                                return $query->where(function ($query) use ($value) {
+                                    $query
+                                        ->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.en'))) LIKE ?", ["%{$value}%"])
+                                        ->orWhereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar'))) LIKE ?", ["%{$value}%"]);
+                                });
+                            }
+                        );
+                    }),
+                SelectFilter::make('region_id')
+                    ->label(__('panel.host.region'))
+                    ->relationship('region', 'name')
+                    ->placeholder(__('panel.host.select-region')),
+
+                SelectFilter::make('status')
+                    ->label(__('panel.host.status'))
+                    ->options([
+                        0 => __('panel.host.inactive'),
+                        1 => __('panel.host.active'),
+                    ])
             ])
-            ->filters([
-                //
-            ])
+            ->filtersTriggerAction(
+                fn(Action $action) => $action
+                    ->button()
+                    ->label(__('panel.host.filters')),
+            )
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

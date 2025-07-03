@@ -17,12 +17,12 @@ class AllServicesResource extends JsonResource
     {
 
         return [
-            'id'=>$this->id,
-            'slug'=>$this->slug,
-            'name'=>$this->name,
-            'region'=>new RegionResource($this->region),
-            'price'=>$this->price,
-            'main_image'=> $this->getFirstMediaUrl('main_service','main_service_app'),
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'name' => $this->name,
+            'region' => new RegionResource($this->region),
+            'price' => $this->price,
+            'main_image' => $this->getFirstMediaUrl('main_service', 'main_service_app'),
             'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
         ];
     }

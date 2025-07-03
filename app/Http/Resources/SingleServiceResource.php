@@ -100,11 +100,10 @@ class SingleServiceResource extends JsonResource
             'notes'=>$notes,
             'features' => $features,
             'provider'=>new ProviderResource($this->provider),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
+            'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
             'rating' =>$total_ratings,
             'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
-//            'is_joined' => $joined,
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,
         ];
     }

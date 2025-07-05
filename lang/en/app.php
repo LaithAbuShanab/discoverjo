@@ -48,6 +48,7 @@ return [
     'male'                                                             => 'Male',
     'female'                                                           => 'Female',
     'both'                                                             => 'Both',
+    'seen'                                                             => 'Seen',
 
     "notifications" => [
 
@@ -355,5 +356,10 @@ return [
         'reservation-deleted-successfully'                             => 'Reservation deleted successfully',
         'all-property-reservations-retrieved-successfully'             => 'All property reservations retrieved successfully',
         'all-reservation-retrieved-successfully'                       => 'All reservation retrieved successfully',
+
+        // Single Chat
+        'single-chat-created-successfully'                             => 'Single chat created successfully',
+        'list-of-conversations-retrieved-successfully'                 => 'List of conversations retrieved successfully',
+        'conversation-retrieved-successfully'                          => 'Conversation retrieved successfully',
     ],
 ];

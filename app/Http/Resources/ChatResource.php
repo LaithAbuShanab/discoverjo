@@ -27,6 +27,7 @@ class ChatResource extends JsonResource
             'sent_datetime'     => $this->sent_datetime
                 ? Carbon::parse($this->sent_datetime)->setTimezone('Asia/Amman')->format('g:i A')
                 : null,
+            'is_read'           => $this->is_read ? true : false
         ];
     }
 }

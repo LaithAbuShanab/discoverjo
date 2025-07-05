@@ -30,6 +30,7 @@ use App\Interfaces\Gateways\Api\User\ReservationApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ReviewApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ServiceCategoryApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\SingleChatRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SliderApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SubCategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\SuggestionPlaceApiRepositoryInterface;
@@ -64,6 +65,7 @@ use App\Repositories\Api\User\EloquentReservationApiRepository;
 use App\Repositories\Api\User\EloquentReviewApiRepository;
 use App\Repositories\Api\User\EloquentServiceApiRepository;
 use App\Repositories\Api\User\EloquentServiceCategoryApiRepository;
+use App\Repositories\Api\User\EloquentSingleChatRepository;
 use App\Repositories\Api\User\EloquentSliderApiRepository;
 use App\Repositories\Api\User\EloquentSubCategoryApiRepository;
 use App\Repositories\Api\User\EloquentSuggestionPlaceApiRepository;
@@ -143,13 +145,22 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(GroupChatRepositoryInterface::class, EloquentGroupChatRepository::class);
 
+        $this->app->bind(SingleChatRepositoryInterface::class, EloquentSingleChatRepository::class);
+
         $this->app->bind(FavoriteApiRepositoryInterface::class, EloquentFavoriteApiRepository::class);
+
         $this->app->bind(ReviewApiRepositoryInterface::class, EloquentReviewApiRepository::class);
+
         $this->app->bind(ServiceApiRepositoryInterface::class, EloquentServiceApiRepository::class);
+
         $this->app->bind(ServiceCategoryApiRepositoryInterface::class, EloquentServiceCategoryApiRepository::class);
+
         $this->app->bind(RegistrationResponseContract::class, RegisterResponse::class);
+
         $this->app->bind(ReservationApiRepositoryInterface::class, EloquentReservationApiRepository::class);
+
         $this->app->bind(PropertyApiRepositoryInterface::class, EloquentPropertyApiRepository::class);
+
         $this->app->bind(PropertyReservationApiRepositoryInterface::class, EloquentPropertyReservationApiRepository::class);
     }
 
@@ -177,7 +188,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Notification::configureUsing(function (Notification $notification): void {
-            if(Filament::getCurrentPanel()->getId() == 'provider') {
+            if (Filament::getCurrentPanel()->getId() == 'provider') {
                 $notification->view('filament.notifications.provider-notification');
             }
         });

@@ -48,6 +48,7 @@ return [
     'both'                                                             => 'كلا الحنسن',
     'male'                                                             => 'ذكر',
     'female'                                                           => 'انثي',
+    'seen'                                                             => 'تمت المشاهدة',
 
     "notifications" => [
 
@@ -355,5 +356,10 @@ return [
         'reservation-deleted-successfully'                             => 'تم حذف الحجز بنجاح',
         'all-property-reservations-retrieved-successfully'             => 'تم استرجاع جميع حجوزات المزارعه بنجاح',
         'all-reservation-retrieved-successfully'                       => 'تم استرجاع جميع الحجوزات بنجاح',
+
+        // Single Chat
+        'single-chat-created-successfully'                             => 'تم انشاء محادثة مستقلة بنجاح',
+        'list-of-conversations-retrieved-successfully'                 => 'تم استرجاع قائمة المحادثات بنجاح',
+        'conversation-retrieved-successfully'                          => 'تم استرجاع المحادثة بنجاح',
     ],
 ];

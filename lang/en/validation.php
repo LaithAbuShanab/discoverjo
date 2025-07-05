@@ -187,6 +187,8 @@ return [
         'last_name'                                 => 'Last Name',
         'age'                                       => 'Age',
         'status'                                    => 'Status',
+        'user_slug'                                 => 'User Slug',
+        'conversation_id'                           => 'Conversation ID',
 
         // Contact & Address
         'phone-number'                              => 'Phone Number',
@@ -813,6 +815,14 @@ return [
         'this-reservation-not-belong-to-user'                      => 'This reservation does not belong to you.',
         'this-reservation-not-belong-to-host'                      => 'This reservation does not belong to the host.',
         'this-property-not-belong-to-host'                         => 'This property does not belong to the host.',
+
+        // Single Chat
+        'user_is_not_host_user'                                    => 'You cannot create a chat with regular users.',
+        'you_cant_create_your_own_chat'                            => 'You cannot create a chat with yourself.',
+        'host_cannot_start_a_chat'                                 => 'Host cannot start a chat.',
+        'conversation_id_required'                                 => 'The conversation id is required.',
+        'conversation_id_exists'                                   => 'The conversation id does not exist.',
+        'you-are-not-a-member-of-this-conversation'                => 'You are not a member of this conversation.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

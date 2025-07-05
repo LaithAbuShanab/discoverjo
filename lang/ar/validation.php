@@ -187,6 +187,8 @@ return [
         'last_name'                                 => 'اسم العائلة',
         'age'                                       => 'العمر',
         'status'                                    => 'الحالة',
+        'user_slug'                                 => 'اسم المستخدم',
+        'conversation_id'                           => 'معرف المحادثة',
 
         // التواصل والعنوان
         'phone-number'                              => 'رقم الهاتف',
@@ -811,6 +813,14 @@ return [
         'this-reservation-not-belong-to-user'                       => 'الحجز المحدد لا يخصك.',
         'this-reservation-not-belong-to-host'                       => 'الحجز المحدد لا يخص المستخدم الحالي.',
         'this-property-not-belong-to-host'                          => 'المزارعه المحددة لا تخص المستخدم الحالي.',
+
+        // Single Chat
+        'user_is_not_host_user'                                     => 'لا يمكنك إنشاء محادثة مع المستخدمين العاديين.',
+        'you_cant_create_your_own_chat'                             => 'لا يمكنك إنشاء محادثة مع نفسك.',
+        'host_cannot_start_a_chat'                                  => 'المزود لا يمكنه بدء محادثة.',
+        'conversation_id_required'                                  => 'معرف المحادثة مطلوب.',
+        'conversation_id_exists'                                    => 'معرف المحادثة غير صالح.',
+        'you-are-not-a-member-of-this-conversation'                 => 'أنت لست عضوا في هذه المحادثة.',
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

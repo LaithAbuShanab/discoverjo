@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\User\VolunteeringApiController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\PropertyReservationApiController;
+use App\Http\Controllers\Api\User\SingleChatController;
 
 Route::middleware(['firstLogin'])->group(function () {
 
@@ -140,11 +141,27 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::put('/unaccepted/following-request/{follower_slug}', [FollowApiController::class, 'UnacceptedFollowerRequest']); // DONE ✅
     });
 
-    // ALL ROUTES FOR GROUP CHAT
+    // ✅ ALL ROUTES FOR CHAT (Group + Single)
     Route::group(['prefix' => 'chat'], function () {
-        Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']); // DONE ✅
-        Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']); // DONE ✅
-        Route::post('/store', [GroupChatController::class, 'store']); // DONE ✅
+
+        /*
+        |--------------------------------------------------------------------------
+        | GROUP CHAT ROUTES
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/{conversation_id?}', [GroupChatController::class, 'messages']); // ✅ Get group chat messages
+        Route::get('members/{conversation_id?}', [GroupChatController::class, 'members']); // ✅ Get group chat members
+        Route::post('/store', [GroupChatController::class, 'store']); // ✅ Send group chat message
+
+        /*
+        |--------------------------------------------------------------------------
+        | SINGLE CHAT ROUTES
+        |--------------------------------------------------------------------------
+        */
+        Route::post('/conversations/{user_slug}', [SingleChatController::class, 'createSingleChat']); // ✅ Create or get single chat
+        Route::get('/list/conversations', [SingleChatController::class, 'listConversations']); // ✅ List user conversations
+        Route::get('/conversation/{conversation_id}/messages', [SingleChatController::class, 'singleConversation']); // ✅ Get single conversation messages
+        Route::post('/messages', [SingleChatController::class, 'store']); // ✅ Send message (single chat)
     });
 
     // ALL ROUTES FOR TRIP

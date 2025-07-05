@@ -34,3 +34,17 @@ Broadcast::channel('group-channel.{id}', function ($user, $conversationId) {
 
     return true;
 }, ['guards' => ['api']]);
+
+
+Broadcast::channel('single-channel.{id}', function ($user, $conversationId) {
+    $isAuthorized = GroupMember::where([
+        'conversation_id' => $conversationId,
+        'user_id' => $user->id,
+    ])->exists();
+
+    if (!$isAuthorized) {
+        return ApiResponse::sendResponseError(Response::HTTP_UNAUTHORIZED, 'you cannot start chat because your are not a member in this trip');
+    }
+
+    return true;
+}, ['guards' => ['api']]);

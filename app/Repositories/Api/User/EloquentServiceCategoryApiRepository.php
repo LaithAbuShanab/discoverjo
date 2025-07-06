@@ -70,7 +70,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
 
     public function allSubcategories($data)
     {
-        $subcategories = ServiceCategory::whereIn('slug', $data)->with('children')->get();
+        $subcategories = ServiceCategory::whereIn('slug', $data)->with('children')->whereHas('services')->get();
         $allChildren = $subcategories->pluck('children')->flatten();
         $stringData = implode(", ", $data);
         activityLog('view specific services categories ',$subcategories->first(), 'the user view these categories','view',[

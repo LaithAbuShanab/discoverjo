@@ -19,6 +19,7 @@ class UserSingleServiceReservationResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'user'=>new UserResource($this->user),
             'service'=>new AllServicesResource($this->service), // optional, if you load the relation
             'date' => $this->date,
             'start_time' => $this->start_time,

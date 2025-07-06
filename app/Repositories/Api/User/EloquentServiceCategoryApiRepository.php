@@ -81,29 +81,29 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
     public function serviceSearch($query)
     {
         $perPage = config('app.pagination_per_page');
-        $services = Service::where(function ($queryBuilder) use ($query) {
-            $queryBuilder->where('name->en', 'like', '%' . $query . '%')
-                ->orWhere('name->ar', 'like', '%' . $query . '%');
+        $lowerQuery = strtolower($query);
+
+        $services = Service::where(function ($q) use ($lowerQuery) {
+            $q->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.en'))) LIKE ?", ["%{$lowerQuery}%"])
+                ->orWhereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar'))) LIKE ?", ["%{$lowerQuery}%"]);
         })->paginate($perPage);
 
-        $servicesArray = $services->toArray();
-        $parameterNext = $servicesArray['next_page_url'] ;
-        $parameterPrevious = $servicesArray['prev_page_url'];
-
-
         $pagination = [
-            'next_page_url' => $parameterNext,
-            'prev_page_url' => $parameterPrevious,
-            'total' => $servicesArray['total'],
+            'next_page_url' => $services->nextPageUrl(),
+            'prev_page_url' => $services->previousPageUrl(),
+            'total'         => $services->total(),
         ];
-        if($query){
-            activityLog('search for service  ',$services->first(), $query,'search');
+
+        if (!empty($query) && $services->isNotEmpty()) {
+            activityLog('Searched for service', $services->first(), $query, 'search');
         }
+
         return [
-            'services' => AllServicesResource::collection($services),
-            'pagination' => $pagination
+            'services'   => AllServicesResource::collection($services),
+            'pagination' => $pagination,
         ];
     }
+
 
     //transfer to service controller
     public function dateServices($date)

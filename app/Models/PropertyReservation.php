@@ -22,9 +22,10 @@ class PropertyReservation extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function period()
+    public function details()
     {
-        return $this->belongsTo(PropertyPeriod::class, 'property_period_id');
+        return $this->hasMany(PropertyReservationDetail::class);
     }
+
 
 }

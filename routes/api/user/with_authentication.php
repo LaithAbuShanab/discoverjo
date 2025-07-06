@@ -239,9 +239,9 @@ Route::middleware(['firstLogin'])->group(function () {
     // ALL ROUTES FOR PROPERTY
     Route::prefix('property')->group(function () {
         // First widget for reservation
-        Route::get('check/available/{property_slug}/{period_type}', [PropertyReservationApiController::class, 'checkAvailable']); // DONE ✅
+        Route::get('check/available/{property_slug}', [PropertyReservationApiController::class, 'checkAvailable']); // DONE ✅
         // Check availability for custom month and year
-        Route::get('available/{property_slug}/{period_type}/{month}/{year}', [PropertyReservationApiController::class, 'checkAvailableMonth']); // DONE ✅
+        Route::get('available/{property_slug}/{month}/{year}', [PropertyReservationApiController::class, 'checkAvailableMonth']); // DONE ✅
         // Check reservation price
         Route::get('check/price', [PropertyReservationApiController::class, 'checkPrice']); // DONE ✅
         // Make reservation of property

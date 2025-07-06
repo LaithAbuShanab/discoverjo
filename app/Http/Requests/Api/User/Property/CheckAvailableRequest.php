@@ -21,7 +21,6 @@ class CheckAvailableRequest extends FormRequest
     {
         $this->merge([
             'property_slug' => $this->route('property_slug'),
-            'period_type' => $this->route('period_type'),
         ]);
     }
     /**
@@ -33,7 +32,6 @@ class CheckAvailableRequest extends FormRequest
     {
         return [
             'property_slug' => ['bail', 'required', 'string', 'exists:properties,slug', new CheckIfPropertyActiveRule()],
-            'period_type' => ['bail', 'required', 'string', Rule::in(['morning', 'evening', 'day']), new CheckIfPeriodExistsInPropertyRule()],
         ];
     }
 }

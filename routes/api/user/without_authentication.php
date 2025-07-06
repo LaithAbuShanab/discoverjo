@@ -127,9 +127,11 @@ Route::get('all/services', [ServiceApiController::class, 'index']); // DONE ✅
 Route::get('service/date', [ServiceCategoryApiController::class, 'dateServices']); // DONE ✅
 Route::get('service/show/{service_slug}', [ServiceCategoryApiController::class, 'singleService']); // DONE ✅
 Route::get('services/subcategories/{subcategory_slug}', [ServiceCategoryApiController::class, 'servicesBySubcategory']);
+Route::get('all/services/search', [ServiceCategoryApiController::class, 'serviceSearch']);
 
 Route::get('all/properties',[PropertyApiController::class,'getAllChalets']);
 Route::get('property/show/{property_slug}', [PropertyApiController::class, 'singleProperty']);
+
 
 require __DIR__ . '/auth_user.php';
 

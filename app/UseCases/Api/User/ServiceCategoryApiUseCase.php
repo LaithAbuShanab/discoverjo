@@ -35,6 +35,10 @@ class ServiceCategoryApiUseCase
     {
         return $this->serviceCategoryApiRepository->search($query);
     }
+    public function serviceSearch($query)
+    {
+        return $this->serviceCategoryApiRepository->serviceSearch($query);
+    }
     public function dateServices($date)
     {
         return $this->serviceCategoryApiRepository->dateServices($date);

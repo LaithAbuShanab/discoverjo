@@ -8,6 +8,7 @@ interface ServiceCategoryApiRepositoryInterface
     public function allServiceByCategory($data);
     public function allSubcategories($data);
     public function search($query);
+    public function serviceSearch($query);
     public function dateServices($date);
     public function singleService($slug);
     public function servicesBySubcategory($slug);

@@ -16,43 +16,57 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
 {
     public function allServiceCategories()
     {
-        $eloquentCategories = ServiceCategory::whereNull('parent_id')->orderBy('priority')->get();
+        $eloquentCategories = ServiceCategory::whereNull('parent_id')
+            ->whereHas('children', function ($query) {
+                $query->whereHas('services');
+            })
+            ->with('children') // Optional: eager load if needed in resource
+            ->orderBy('priority')
+            ->get();
         return AllServiceCategoriesResource::collection($eloquentCategories);
     }
 
     public function allServiceByCategory($data)
     {
         $perPage = config('app.pagination_per_page');
-        $category = ServiceCategory::with('children')->where('slug', $data['category_slug'])->first();
 
-        $allSubcategories = $category->children()->whereHas('services')->get();
+        // Get the parent category by slug
+        $category = ServiceCategory::where('slug', $data['category_slug'])->firstOrFail();
 
+        // Get children (subcategories) that have at least one service
+        $subCategoriesWithServices = $category->children()
+            ->whereHas('services')
+            ->get();
+
+        $subCategoryIds = $subCategoriesWithServices->pluck('id')->toArray();
+
+        // Get services under the category or any of its subcategories that have services
         $services = Service::where('status', 1)
-            ->whereHas('categories', function ($query) use ($category) {
+            ->whereHas('categories', function ($query) use ($category, $subCategoryIds) {
                 $query->where('service_category_id', $category->id)
-                    ->orWhereIn('service_category_id', $category->children->pluck('id'));
+                    ->orWhereIn('service_category_id', $subCategoryIds);
             })
             ->paginate($perPage);
 
-        $servicesArray = $services->toArray();
-        $parameterNext = $servicesArray['next_page_url'] ;
-        $parameterPrevious = $servicesArray['prev_page_url'];
-
-
+        // Build pagination metadata
         $pagination = [
-            'next_page_url' => $parameterNext,
-            'prev_page_url' => $parameterPrevious,
-            'total' => $servicesArray['total'],
+            'next_page_url' => $services->nextPageUrl(),
+            'prev_page_url' => $services->previousPageUrl(),
+            'total'         => $services->total(),
         ];
-        activityLog('service category',$category, 'the user view this service category ','view');
 
+        // Log activity
+        activityLog('service category', $category, 'the user viewed this service category', 'view');
+
+        // Return structured response
         return [
-            'category' => new AllCategoriesResource($category),
-            'sub_categories' => AllServiceSubCategoriesResource::collection($allSubcategories),
-            'services' => AllServicesResource::collection($services),
-            'pagination' => $pagination
+            'category'       => new AllCategoriesResource($category),
+            'sub_categories' => AllServiceSubCategoriesResource::collection($subCategoriesWithServices),
+            'services'       => AllServicesResource::collection($services),
+            'pagination'     => $pagination,
         ];
     }
+
 
     public function allSubcategories($data)
     {

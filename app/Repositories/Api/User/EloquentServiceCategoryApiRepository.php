@@ -70,14 +70,35 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
 
     public function allSubcategories($data)
     {
-        $subcategories = ServiceCategory::whereIn('slug', $data)->with('children')->get();
+        // Fetch parent categories and only load children that have services
+        $subcategories = ServiceCategory::whereIn('slug', $data)
+            ->whereHas('children.services') // ensure parent has at least one child with services
+            ->with(['children' => function ($query) {
+                $query->whereHas('services'); // only load children that have services
+            }])
+            ->get();
+
+        // Flatten all filtered children
         $allChildren = $subcategories->pluck('children')->flatten();
-        $stringData = implode(", ", $data);
-        activityLog('view specific services categories ',$subcategories->first(), 'the user view these categories','view',[
-            'categories'     => $stringData,
-        ]);
+
+        // Convert slugs to comma-separated string for activity log
+        $stringData = implode(', ', $data);
+
+        // Log activity if any categories are found
+        if ($subcategories->isNotEmpty()) {
+            activityLog(
+                'view specific services categories',
+                $subcategories->first(),
+                'The user viewed these categories',
+                'view',
+                ['categories' => $stringData]
+            );
+        }
+
+        // Return only subcategories (children) that have services
         return AllServiceSubCategoriesResource::collection($allChildren);
     }
+
 
     public function search($query)
     {

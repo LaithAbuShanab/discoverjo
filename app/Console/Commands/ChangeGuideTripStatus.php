@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\GuideTrip;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,19 +29,23 @@ class ChangeGuideTripStatus extends Command
     {
         $now = now();
 
-        // نحسب عدد الرحلات التي ستتغير حالتها
+        // Count how many trips will be updated
         $count = DB::table('guide_trips')
             ->where('status', 1)
             ->where('end_datetime', '<', $now)
             ->count();
 
-        // ننفذ التحديث بدون استخدام prepared statement لتجنب الخطأ
-        DB::unprepared("UPDATE guide_trips SET status = 0, updated_at = NOW() WHERE status = 1 AND end_datetime < NOW()");
+        // Use DB::statement to execute the update without using prepared statements
+        DB::statement("
+            UPDATE guide_trips
+            SET status = 0, updated_at = NOW()
+            WHERE status = 1 AND end_datetime < NOW()
+        ");
 
-        // نسجل الحدث في السجل
+        // Log the update
         Log::info("Guide trip statuses updated: {$count}");
 
-        // نعرض النتيجة في الـ CLI
+        // Output the result in CLI
         $this->info("Updated {$count} guide trips.");
     }
 }

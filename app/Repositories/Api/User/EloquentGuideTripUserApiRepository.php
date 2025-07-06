@@ -231,8 +231,8 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         $authUser = Auth::guard('api')->user();
 
-        $notificationTitle = Lang::get('app.notifications.delete-request-title', [], $receiverLanguage);
-        $notificationBody = Lang::get('app.notifications.delete-request-body', ['username' => $authUser->username, 'trip' => $guideTrip->name], $receiverLanguage);
+        $notificationTitle = Lang::get('app.notifications.new-request', [], $receiverLanguage);
+        $notificationBody = Lang::get('app.notifications.new-user-request-from-trip', ['username' => $authUser->username, 'trip' => $guideTrip->name], $receiverLanguage);
 
         $notificationData = [
             'notification' => [
@@ -261,42 +261,51 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return $guideTripUser;
     }
 
-    public function deleteSingleSubscription($id)
+    public function deleteSingleSubscription($data)
     {
-        $guideTripUser = GuideTripUser::where('id', $id)->first();
+        DB::transaction(function () use ($data) {
+            $id = $data['subscription_id'];
+            $guideTripUser = GuideTripUser::findOrFail($id);
 
-        $guideTrip = GuideTrip::where('id', $guideTripUser->guide_trip_id)->first();
-        $guideUser = $guideTrip->user;
-        $receiverLanguage = $guideUser->lang;
-        $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
+            $guideTrip = GuideTrip::findOrFail($guideTripUser->guide_trip_id);
+            $guideUser = $guideTrip->user;
+            $receiverLanguage = $guideUser->lang;
+            $tokens = $guideUser->DeviceTokenMany->pluck('token')->toArray();
 
-        // Save notification in DB
-        Notification::send($guideUser, new DeleteRequestNotification($guideTrip, $guideTripUser));
+            // Save notification in DB
+            Notification::send($guideUser, new DeleteRequestNotification($guideTrip, $guideTripUser));
 
-        // Get translated trip name
-        $tripName = method_exists($guideTrip, 'getTranslation')
-            ? $guideTrip->getTranslation('name', $receiverLanguage)
-            : ($receiverLanguage === 'ar' ? $guideTrip->name_ar : $guideTrip->name);
+            // Get translated trip name
+            $tripName = method_exists($guideTrip, 'getTranslation')
+                ? $guideTrip->getTranslation('name', $receiverLanguage)
+                : ($receiverLanguage === 'ar' ? $guideTrip->name_ar : $guideTrip->name);
 
-        // Send push notification
-        $notificationData = [
-            'notification' => [
-                'title' => Lang::get('app.notifications.delete-request-title', [], $receiverLanguage),
-                'body'  => Lang::get('app.notifications.delete-request-body', ['guide_user' =>  $guideTripUser->first_name . ' ' . $guideTripUser->last_name, 'trip' => $tripName,], $receiverLanguage),
-                'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
-                'sound' => 'default',
-            ],
-            "data" => [
-                'type'    => 'guide_trip',
-                'slug'    => $guideTrip->slug,
-                'trip_id' => $guideTrip->id,
-            ]
-        ];
+            // Send push notification
+            $notificationData = [
+                'notification' => [
+                    'title' => Lang::get('app.notifications.delete-request-title', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.delete-request-body', [
+                        'guide_user' => $guideTripUser->first_name . ' ' . $guideTripUser->last_name,
+                        'trip'       => $tripName,
+                    ], $receiverLanguage),
+                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                    'sound' => 'default',
+                ],
+                "data" => [
+                    'type'    => 'guide_trip',
+                    'slug'    => $guideTrip->slug,
+                    'trip_id' => $guideTrip->id,
+                ]
+            ];
 
-        if (!empty($tokens))
-            sendNotification($tokens, $notificationData);
+            if (!empty($tokens)) {
+                sendNotification($tokens, $notificationData);
+            }
 
-        $guideTripUser->delete();
+            // Delete user trip subscription
+            $guideTripUser->delete();
+        });
+
         return;
     }
 

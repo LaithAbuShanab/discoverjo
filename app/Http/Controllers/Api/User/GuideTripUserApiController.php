@@ -177,9 +177,9 @@ class GuideTripUserApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
-        $id = $validator->validated();
+        $data = $validator->validated();
         try {
-            $sendRequest = $this->guideTripUserApiUseCase->deleteSingleSubscription($id);
+            $sendRequest = $this->guideTripUserApiUseCase->deleteSingleSubscription($data['subscription_id']);
             return ApiResponse::sendResponse(200, __('app.api.guide-trips-subscription-deleted-successfully'), $sendRequest);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);

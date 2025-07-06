@@ -261,10 +261,9 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         return $guideTripUser;
     }
 
-    public function deleteSingleSubscription($data)
+    public function deleteSingleSubscription($id)
     {
-        DB::transaction(function () use ($data) {
-            $id = $data['subscription_id'];
+        DB::transaction(function () use ($id) {
             $guideTripUser = GuideTripUser::findOrFail($id);
 
             $guideTrip = GuideTrip::findOrFail($guideTripUser->guide_trip_id);

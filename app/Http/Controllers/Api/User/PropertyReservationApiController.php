@@ -76,11 +76,11 @@ class PropertyReservationApiController extends Controller
 
     public function updateReservation(UpdateReservationRequest $request, $id)
     {
-        $validator = Validator::make(['id' => $id], [
-            'id' => ['bail', 'required', 'exists:property_reservations,id', new CheckIfPropertyReservaionBelongToUser()],
+        $validator = Validator::make(['reservation_id' => $id], [
+            'reservation_id' => ['bail', 'required', 'exists:property_reservations,id', new CheckIfPropertyReservaionBelongToUser()],
         ], [
-            'id.required' => __('validation.api.reservation-id-required'),
-            'id.exists' => __('validation.api.reservation-id-does-not-exists'),
+            'reservation_id.required' => __('validation.api.reservation-id-required'),
+            'reservation_idreservation_id.exists' => __('validation.api.reservation-id-does-not-exists'),
         ]);
 
         if ($validator->fails()) {
@@ -88,7 +88,7 @@ class PropertyReservationApiController extends Controller
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
         }
 
-        $data = array_merge($request->validated(), ['id' => $id]);
+        $data = array_merge($request->validated(), ['reservation_id' => $id]);
         try {
             $property = $this->propertyReservationApiUseCase->updateReservation($data);
             return ApiResponse::sendResponse(200, __('app.api.reservation-updated-successfully'), $property);

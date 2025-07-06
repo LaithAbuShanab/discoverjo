@@ -27,7 +27,6 @@ class CheckPriceRequest extends FormRequest
     {
         return [
             'property_slug' => ['bail', 'required', 'string', 'exists:properties,slug', new CheckIfPropertyActiveRule()],
-            'period_type' => ['bail', 'required', 'string', Rule::in(['morning', 'evening', 'day']), new CheckIfPeriodExistsInPropertyRule()],
             'check_in' => ['bail', 'required', 'date', 'after_or_equal:today', 'before_or_equal:check_out', new CheckIfDateExistsInPropertyAndAvailableRule()],
             'check_out' => ['bail', 'required', 'date', 'after_or_equal:check_in'],
         ];

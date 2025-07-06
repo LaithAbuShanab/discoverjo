@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Notifications\DatabaseNotification;
+use App\Models\PropertyReservationDetail;
 
 class EloquentPropertyReservationApiRepository implements PropertyReservationApiRepositoryInterface
 {
@@ -28,70 +29,97 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             return response()->json(['message' => 'No availability found for this property'], 404);
         }
 
-        $periodType = $this->resolvePeriodType($data['period_type']);
+        $firstAvailable = $property->availabilities->sortBy('availability_start_date')->first();
+        $availabilityStart = \Carbon\Carbon::parse($firstAvailable->availability_start_date)->startOfDay();
+        $today = now()->startOfDay();
 
-        $firstAvailability = $property->availabilities
-            ->filter(fn($a) => $a->availabilityDays->where('period.type', $periodType)->isNotEmpty())
-            ->sortBy('availability_start_date')
-            ->first();
+        $start = $today->greaterThan($availabilityStart) ? $today : $availabilityStart;
+        $end = (clone $start)->addDays(29);
 
-        if (!$firstAvailability) {
-            return response()->json(['message' => 'No availability found for this period.'], 404);
+        $responseMonth = $start->format('F');
+        $responseYear = $start->year;
+
+        $supportedTypes = [
+            1 => 'morning',
+            2 => 'evening',
+            3 => 'day',
+        ];
+
+        $availableTypes = $property->periods->pluck('type')->unique();
+
+        $periodTimeMap = [];
+        foreach ($property->periods as $period) {
+            $periodTimeMap[$period->type] = [
+                'start' => $period->start_time,
+                'end' => $period->end_time,
+            ];
         }
 
-        $start = \Carbon\Carbon::parse($firstAvailability->availability_start_date)->startOfMonth();
-        $end = (clone $start)->addMonthNoOverflow()->endOfMonth();
 
-        // Handle conflict logic
-        $conflictTypes = match ($periodType) {
-            1, 2 => [3, $periodType],  // morning/evening => also conflict with day
-            3     => [1, 2, 3],        // day => conflict with all types
-            default => [$periodType],
-        };
-
-        $periodIds = $property->periods
-            ->whereIn('type', $conflictTypes)
-            ->pluck('id');
-
-        if ($periodIds->isEmpty()) {
-            return response()->json(['message' => 'This period is not supported for this property.'], 422);
-        }
-
-        // Exclude cancelled (status = 2) reservations
-        $reservations = \App\Models\PropertyReservation::where('property_id', $property->id)
-            ->whereIn('property_period_id', $periodIds)
-            ->where('status', '!=', 2)
+        $reservationDetails = \App\Models\PropertyReservationDetail::whereHas('reservation', function ($q) use ($property) {
+            $q->where('property_id', $property->id)
+                ->where('status', '!=', 2);
+        })
             ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('check_in', [$start, $end])
-                    ->orWhereBetween('check_out', [$start, $end])
+                $query->whereBetween('from_datetime', [$start, $end])
+                    ->orWhereBetween('to_datetime', [$start, $end])
                     ->orWhere(function ($q) use ($start, $end) {
-                        $q->where('check_in', '<=', $start)->where('check_out', '>=', $end);
+                        $q->where('from_datetime', '<=', $start)->where('to_datetime', '>=', $end);
                     });
             })
+            ->with('period')
             ->get();
+
 
         $days = [];
         $cursor = $start->copy();
-        while ($cursor->lte($end)) {
-            if ($cursor->gte(now()->startOfDay())) {
-                $day = $cursor->toDateString();
 
-                $isReserved = $reservations->contains(function ($reservation) use ($cursor) {
-                    return $cursor->between($reservation->check_in, $reservation->check_out);
+        while ($cursor->lte($end)) {
+            $dayInfo = [
+                'date' => $cursor->toDateString(),
+                'periods' => [],
+            ];
+
+            foreach ($availableTypes as $type) {
+                $label = $supportedTypes[$type];
+
+                if (!isset($periodTimeMap[$type])) {
+                    $dayInfo['periods'][$label] = false;
+                    continue;
+                }
+
+                $startTime = $periodTimeMap[$type]['start'];
+                $endTime = $periodTimeMap[$type]['end'];
+
+                $periodStart = \Carbon\Carbon::parse($cursor->toDateString() . ' ' . $startTime);
+                $periodEnd = \Carbon\Carbon::parse($cursor->toDateString() . ' ' . $endTime);
+
+                if ($periodEnd <= $periodStart) {
+                    $periodEnd->addDay();
+                }
+
+                $conflictTypes = match ($type) {
+                    1, 2 => [3, $type],
+                    3 => [1, 2, 3],
+                    default => [$type],
+                };
+
+                $isReserved = $reservationDetails->contains(function ($detail) use ($periodStart, $periodEnd, $conflictTypes) {
+                    return in_array($detail->period->type, $conflictTypes) &&
+                        $periodStart < $detail->to_datetime &&
+                        $periodEnd > $detail->from_datetime;
                 });
 
-                $days[] = [
-                    'date' => $day,
-                    'reserved' => $isReserved,
-                ];
+                $dayInfo['periods'][$label] = $isReserved;
             }
 
+            $days[] = $dayInfo;
             $cursor->addDay();
         }
 
         return [
-            'month' => $start->format('F'),
-            'year' => $start->year,
+            'month' => $responseMonth,
+            'year' => $responseYear,
             'days' => $days,
         ];
     }
@@ -104,94 +132,115 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
             'day'     => 3,
         };
     }
-
     public function checkAvailableMonth($data)
     {
-        $requestedType = $this->resolvePeriodType($data['period_type']);
-
         $property = Property::where('slug', $data['property_slug'])
             ->with(['availabilities.availabilityDays.period', 'periods'])
             ->firstOrFail();
 
-        // 🟡 Conflict logic: if "day", conflict with both "morning" and "evening" too
-        $conflictTypes = in_array($requestedType, [1, 2]) ? [$requestedType, 3] : [1, 2, 3];
-
-        $periodIds = $property->periods
-            ->whereIn('type', $conflictTypes)
-            ->pluck('id');
-
-        if ($periodIds->isEmpty()) {
-            return response()->json(['message' => 'This period is not supported for this property.'], 422);
+        if ($property->availabilities->isEmpty()) {
+            return response()->json(['message' => 'No availability found for this property'], 404);
         }
-
-        // ✅ Only fetch availability matching the *requested* type (not all conflict types)
-        $firstAvailable = $property->availabilities
-            ->filter(function ($availability) use ($requestedType) {
-                return $availability->availabilityDays->contains(fn($day) => $day->period->type === $requestedType);
-            })
-            ->sortBy('availability_start_date')
-            ->first();
-
-        if (! $firstAvailable) {
-            return response()->json(['message' => 'No availability found for this period.'], 404);
-        }
-
-//        $start = \Carbon\Carbon::parse($firstAvailable->availability_start_date)->greaterThanOrEqualTo(now())
-//            ? \Carbon\Carbon::parse($firstAvailable->availability_start_date)->startOfDay()
-//            : now()->startOfDay();
 
         $monthMap = [
-            'january' => 1,
-            'february' => 2,
-            'march' => 3,
-            'april' => 4,
-            'may' => 5,
-            'june' => 6,
-            'july' => 7,
-            'august' => 8,
-            'september' => 9,
-            'october' => 10,
-            'november' => 11,
-            'december' => 12,
+            'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
+            'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
+            'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12,
         ];
 
-        $monthName = strtolower($data['month']);
-        $month = $monthMap[$monthName] ?? null;
+        $month = $monthMap[strtolower($data['month'])] ?? null;
         $year = (int) $data['year'];
-        $start = \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth();
-        $end = (clone $start)->addDays(29); // Show 30 days
 
-        // 👇 Exclude cancelled (status = 2)
-        $reservations = \App\Models\PropertyReservation::where('property_id', $property->id)
-            ->whereIn('property_period_id', $periodIds)
-            ->where('status', '!=', 2)
+        if (!$month || !$year) {
+            return response()->json(['message' => 'Invalid month or year'], 400);
+        }
+
+        $monthStart = \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth();
+        $today = now()->startOfDay();
+        $start = $today->greaterThan($monthStart) ? $today : $monthStart;
+        $end = (clone $start)->addDays(29); // 30-day window
+
+        $supportedTypes = [
+            1 => 'morning',
+            2 => 'evening',
+            3 => 'day',
+        ];
+
+        $availableTypes = $property->periods->pluck('type')->unique();
+
+        // Dynamic period time map from DB
+        $periodTimeMap = [];
+        foreach ($property->periods as $period) {
+            $periodTimeMap[$period->type] = [
+                'start' => $period->start_time,
+                'end' => $period->end_time,
+            ];
+        }
+
+        $reservationDetails = PropertyReservationDetail::whereHas('reservation', function ($q) use ($property) {
+            $q->where('property_id', $property->id)
+                ->where('status', '!=', 2);
+        })
             ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('check_in', [$start, $end])
-                    ->orWhereBetween('check_out', [$start, $end])
+                $query->whereBetween('from_datetime', [$start, $end])
+                    ->orWhereBetween('to_datetime', [$start, $end])
                     ->orWhere(function ($q) use ($start, $end) {
-                        $q->where('check_in', '<=', $start)->where('check_out', '>=', $end);
+                        $q->where('from_datetime', '<=', $start)->where('to_datetime', '>=', $end);
                     });
             })
+            ->with('period')
             ->get();
 
         $days = [];
         $cursor = $start->copy();
+
         while ($cursor->lte($end)) {
-            $date = $cursor->toDateString();
-
-            $isReserved = $reservations->contains(function ($reservation) use ($cursor) {
-                return $cursor->between($reservation->check_in, $reservation->check_out);
-            });
-
-            $days[] = [
-                'date' => $date,
-                'reserved' => $isReserved,
+            $dayInfo = [
+                'date' => $cursor->toDateString(),
+                'periods' => [],
             ];
 
+            foreach ($availableTypes as $type) {
+                $label = $supportedTypes[$type];
+
+                if (!isset($periodTimeMap[$type])) {
+                    $dayInfo['periods'][$label] = false;
+                    continue;
+                }
+
+                $startTime = $periodTimeMap[$type]['start'];
+                $endTime = $periodTimeMap[$type]['end'];
+
+                $periodStart = \Carbon\Carbon::parse($cursor->toDateString() . ' ' . $startTime);
+
+                if ($endTime <= $startTime) {
+                    $periodEnd = \Carbon\Carbon::parse($cursor->copy()->addDay()->toDateString() . ' ' . $endTime);
+                } else {
+                    $periodEnd = \Carbon\Carbon::parse($cursor->toDateString() . ' ' . $endTime);
+                }
+
+                $conflictTypes = match ($type) {
+                    1, 2 => [3, $type],
+                    3 => [1, 2, 3],
+                    default => [$type],
+                };
+
+                $isReserved = $reservationDetails->contains(function ($detail) use ($periodStart, $periodEnd, $conflictTypes) {
+                    return in_array($detail->period->type, $conflictTypes) &&
+                        $periodStart < $detail->to_datetime &&
+                        $periodEnd > $detail->from_datetime;
+                });
+
+                $dayInfo['periods'][$label] = $isReserved;
+            }
+
+            $days[] = $dayInfo;
             $cursor->addDay();
         }
 
         return [
+            'month' => ucfirst($data['month']),
+            'year' => $year,
             'days' => $days,
         ];
     }
@@ -216,207 +265,192 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
 
         return $map[$month] ?? null;
     }
-
-    public function CheckPrice($data)
+    public function CheckPrice($data): array
     {
-
-        if($data['period_type'] !== 'morning') {
-            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
-        }
         $property = Property::where('slug', $data['property_slug'])
             ->with(['availabilities.availabilityDays.period', 'periods'])
             ->firstOrFail();
 
-        $periodMap = [
-            'morning' => 1,
-            'evening' => 2,
-            'day'     => 3,
-        ];
+        $checkIn = Carbon::parse($data['check_in']);
+        $checkOut = Carbon::parse($data['check_out']);
 
-        $periodType = $periodMap[$data['period_type']] ?? null;
-        if (!$periodType) {
-            return response()->json(['message' => 'Invalid period type.'], 422);
-        }
+        $pattern = (new \App\Rules\CheckIfDateExistsInPropertyAndAvailableRule())
+            ->setData($data)
+            ->analyzeBookingPattern($checkIn, $checkOut, $property);
 
-        $periodIds = $property->periods->where('type', $periodType)->pluck('id');
-        if ($periodIds->isEmpty()) {
-            return response()->json(['message' => 'Period not available for this property.'], 422);
-        }
-
-        $checkIn = \Carbon\Carbon::parse($data['check_in']);
-        $checkOut = \Carbon\Carbon::parse($data['check_out']);
-        $cursor = $checkIn->copy();
         $totalPrice = 0;
+        $details = [];
 
-        while ($cursor->lte($checkOut)) {
-            $dayOfWeek = $cursor->format('l');
-            $date = $cursor->toDateString();
+        foreach ($pattern as $item) {
+            $date = $item['date'];
+            $periodId = $item['period_id'];
+            $periodType = $item['period_type'];
+            $dayOfWeek = Carbon::parse($date)->format('l');
 
             $price = null;
             $source = null;
 
-            // Check child availability first
-            $childAvailability = $property->availabilities
-                ->whereNotNull('parent_id')
-                ->first(function ($availability) use ($cursor, $periodIds, $dayOfWeek) {
-                    return $cursor->between($availability->availability_start_date, $availability->availability_end_date) &&
-                        $availability->availabilityDays->contains(function ($day) use ($periodIds, $dayOfWeek) {
-                            return $periodIds->contains($day->property_period_id) && $day->day_of_week === $dayOfWeek;
-                        });
+            $matchingAvailabilities = $property->availabilities->filter(function ($availability) use ($date) {
+                $cursor = Carbon::parse($date);
+                return $cursor->between($availability->availability_start_date, $availability->availability_end_date);
+            });
+
+            // Prioritize child overrides (availability with parent_id set), fallback to parent
+            $sortedAvailabilities = $matchingAvailabilities->sortBy(function ($a) {
+                return $a->parent_id ? 0 : 1; // child (override) first
+            });
+
+            foreach ($sortedAvailabilities as $availability) {
+                $day = $availability->availabilityDays->first(function ($day) use ($dayOfWeek, $periodId) {
+                    return $day->day_of_week === $dayOfWeek && $day->property_period_id == $periodId;
                 });
 
-            if ($childAvailability) {
-                $day = $childAvailability->availabilityDays->first(function ($d) use ($periodIds, $dayOfWeek) {
-                    return $periodIds->contains($d->property_period_id) && $d->day_of_week === $dayOfWeek;
-                });
-                $price = $day?->price;
-                $source = 'child';
-            }
-
-            // If not found, check parent
-            if ($price === null) {
-                $parentAvailability = $property->availabilities
-                    ->whereNull('parent_id')
-                    ->first(function ($availability) use ($cursor, $periodIds, $dayOfWeek) {
-                        return $cursor->between($availability->availability_start_date, $availability->availability_end_date) &&
-                            $availability->availabilityDays->contains(function ($day) use ($periodIds, $dayOfWeek) {
-                                return $periodIds->contains($day->property_period_id) && $day->day_of_week === $dayOfWeek;
-                            });
-                    });
-
-                if ($parentAvailability) {
-                    $day = $parentAvailability->availabilityDays->first(function ($d) use ($periodIds, $dayOfWeek) {
-                        return $periodIds->contains($d->property_period_id) && $d->day_of_week === $dayOfWeek;
-                    });
-                    $price = $day?->price;
-                    $source = 'parent';
+                if ($day) {
+                    $price = (float) $day->price;
+                    $source = $availability->parent_id ? 'override' : 'default';
+                    break;
                 }
             }
 
-            $totalPrice += $price ?? 0;
-            $cursor->addDay();
+            if ($price === null) {
+                throw new \Exception("No price found for date {$date} and period type {$periodType}");
+            }
+
+            $totalPrice += $price;
+
+            $details[] = [
+                'date' => $date,
+                'period_type' => $periodType,
+                'price' => number_format($price, 2, '.', ''),
+                'source' => $source
+            ];
         }
 
         return [
             'total_price' => round($totalPrice, 2),
+            'details' => $details
         ];
     }
-
     public function makeReservation($data)
     {
         $user = Auth::guard('api')->user();
 
-        if($data['period_type'] !== 'morning') {
-            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
-        }
+        $property = Property::where('slug', $data['property_slug'])
+            ->with(['availabilities.availabilityDays.period', 'periods'])
+            ->firstOrFail();
+
+        $checkIn = Carbon::parse($data['check_in']);
+        $checkOut = Carbon::parse($data['check_out']);
+
+        $pattern = (new \App\Rules\CheckIfDateExistsInPropertyAndAvailableRule())
+            ->setData($data)
+            ->analyzeBookingPattern($checkIn, $checkOut, $property);
+
         DB::beginTransaction();
 
         try {
-            $property = Property::where('slug', $data['property_slug'])
-                ->with(['availabilities.availabilityDays.period', 'periods'])
-                ->firstOrFail();
-
-            $periodMap = [
-                'morning' => 1,
-                'evening' => 2,
-                'day'     => 3,
-            ];
-
-            $periodType = $periodMap[$data['period_type']] ?? null;
-            if (!$periodType) {
-                throw new \Exception('Invalid period type.');
-            }
-
-            $period = $property->periods->firstWhere('type', $periodType);
-            if (!$period) {
-                throw new \Exception('Period not available for this property.');
-            }
-
-            $checkIn = Carbon::parse($data['check_in']);
-            $checkOut = Carbon::parse($data['check_out']);
-            $cursor = $checkIn->copy();
             $totalPrice = 0;
+            $reservationDetails = [];
 
-            while ($cursor->lte($checkOut)) {
-                $dayOfWeek = $cursor->format('l');
-
-                $childAvailability = $property->availabilities
-                    ->whereNotNull('parent_id')
-                    ->first(function ($availability) use ($cursor, $period, $dayOfWeek) {
-                        return $cursor->between($availability->availability_start_date, $availability->availability_end_date) &&
-                            $availability->availabilityDays->contains(
-                                fn($day) =>
-                                $day->property_period_id === $period->id && $day->day_of_week === $dayOfWeek
-                            );
-                    });
-
-                if ($childAvailability) {
-                    $day = $childAvailability->availabilityDays->first(
-                        fn($d) =>
-                        $d->property_period_id === $period->id && $d->day_of_week === $dayOfWeek
-                    );
-                    $totalPrice += $day?->price ?? 0;
-                } else {
-                    $parentAvailability = $property->availabilities
-                        ->whereNull('parent_id')
-                        ->first(function ($availability) use ($cursor, $period, $dayOfWeek) {
-                            return $cursor->between($availability->availability_start_date, $availability->availability_end_date) &&
-                                $availability->availabilityDays->contains(
-                                    fn($day) =>
-                                    $day->property_period_id === $period->id && $day->day_of_week === $dayOfWeek
-                                );
-                        });
-
-                    if ($parentAvailability) {
-                        $day = $parentAvailability->availabilityDays->first(
-                            fn($d) =>
-                            $d->property_period_id === $period->id && $d->day_of_week === $dayOfWeek
-                        );
-                        $totalPrice += $day?->price ?? 0;
-                    }
+            foreach ($pattern as $item) {
+                $date = $item['date'];
+                $periodType = $item['period_type'];
+                $periodId = $item['period_id'];
+                $dateEnd = $date;
+                if($periodType == 'evening'|| $periodType == 'day'){
+                    $dateEnd = Carbon::parse($date)->addDay()->format('Y-m-d');
                 }
 
-                $cursor->addDay();
+                $period = $property->periods->firstWhere('id', $periodId);
+                if (!$period) {
+                    throw new \Exception("Invalid period in booking pattern.");
+                }
+
+                $dayOfWeek = Carbon::parse($date)->format('l');
+
+                // Check for child availability (override)
+                $availability = $property->availabilities
+                    ->filter(fn($a) => Carbon::parse($date)->between($a->availability_start_date, $a->availability_end_date))
+                    ->sortBy(fn($a) => $a->parent_id ? 0 : 1) // prioritize child (override)
+                    ->first(fn($a) =>
+                    $a->availabilityDays->contains(fn($d) =>
+                        $d->property_period_id == $periodId && $d->day_of_week === $dayOfWeek
+                    )
+                    );
+
+                if (!$availability) {
+                    throw new \Exception("No availability found for {$date} ({$periodType})");
+                }
+
+                $day = $availability->availabilityDays->first(fn($d) =>
+                    $d->property_period_id == $periodId && $d->day_of_week === $dayOfWeek
+                );
+
+                if (!$day) {
+                    throw new \Exception("No price found for {$date} and period {$periodType}");
+                }
+
+                $price = (float) $day->price;
+                $totalPrice += $price;
+
+                // Build reservation detail
+                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
+                $toDateTime = Carbon::parse($dateEnd . ' ' . $period->end_time);
+                if ($toDateTime->lessThan($fromDateTime)) {
+                    $toDateTime->addDay(); // overnight
+                }
+
+                $reservationDetails[] = [
+                    'property_period_id' => $periodId,
+                    'from_datetime' => $fromDateTime,
+                    'to_datetime' => $toDateTime,
+                    'price' => $price,
+                ];
             }
 
+            // Create main reservation
             $reservation = PropertyReservation::create([
                 'user_id' => $user->id,
                 'property_id' => $property->id,
-                'property_period_id' => $period->id,
                 'contact_info' => $data['contact_info'],
-                'check_in' => $checkIn->toDateString(),
-                'check_out' => $checkOut->toDateString(),
+                'check_in' => $checkIn->toDateTimeString(),
+                'check_out' => $checkOut->toDateTimeString(),
                 'total_price' => round($totalPrice, 2),
                 'status' => 0,
             ]);
 
-            // Optionally notify provider
-            $host = $property->host;
-            Notification::send($host, new propertyReservationCreated($reservation));
+            // Create details
+            foreach ($reservationDetails as $detail) {
+                $reservation->details()->create($detail);
+            }
 
-            $providerLang = $host->lang;
-            $notificationData = [
-                'notification' => [
-                    'title' => Lang::get('app.notifications.new-property-reservation-title', [], $providerLang),
-                    'body'  => Lang::get('app.notifications.new-property-reservation-body', [
-                        'username'        => $reservation->user->username,
-                        'reservation_id'  => $reservation->id,
-                    ], $providerLang),
-                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
-                    'sound' => 'default'
-                ],
-                'data' => [
-                    'type'           => 'property_reservation',
-                    'slug'           => $property->slug,
-                    'property_id'     => $property->id,
-                    'reservation_id' => $reservation->id
-                ]
-            ];
-
-            $tokens = $host->DeviceTokenMany->pluck('token')->toArray();
-
-            if (!empty($tokens))
-                sendNotification($tokens, $notificationData);
+//            // Notify the host
+//            $host = $property->host;
+//            Notification::send($host, new propertyReservationCreated($reservation));
+//
+//            $providerLang = $host->lang;
+//            $notificationData = [
+//                'notification' => [
+//                    'title' => Lang::get('app.notifications.new-property-reservation-title', [], $providerLang),
+//                    'body' => Lang::get('app.notifications.new-property-reservation-body', [
+//                        'username' => $reservation->user->username,
+//                        'reservation_id' => $reservation->id,
+//                    ], $providerLang),
+//                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+//                    'sound' => 'default',
+//                ],
+//                'data' => [
+//                    'type' => 'property_reservation',
+//                    'slug' => $property->slug,
+//                    'property_id' => $property->id,
+//                    'reservation_id' => $reservation->id,
+//                ],
+//            ];
+//
+//            $tokens = $host->DeviceTokenMany->pluck('token')->toArray();
+//            if (!empty($tokens)) {
+//                sendNotification($tokens, $notificationData);
+//            }
 
             DB::commit();
 
@@ -428,96 +462,111 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
-            throw $e; // or return ['error' => 'Reservation failed.']
+            throw $e;
         }
     }
-
-    public function updateReservation($data)
+    public function updateReservation( $data)
     {
-        if($data['period_type'] !== 'morning') {
-            $data['check_out'] = date('Y-m-d', strtotime($data['check_out'] . ' -1 day'));
-        }
-        $reservation = \App\Models\PropertyReservation::with('property.periods', 'property.availabilities.availabilityDays.period')
-            ->findOrFail($data['id']);
+        $user = Auth::guard('api')->user();
+
+        $reservation = PropertyReservation::where('id', $data['reservation_id'])
+            ->where('user_id', $user->id)
+            ->with(['property.availabilities.availabilityDays.period', 'property.periods'])
+            ->firstOrFail();
 
         $property = $reservation->property;
 
-        $periodMap = [
-            'morning' => 1,
-            'evening' => 2,
-            'day'     => 3,
-        ];
+        $checkIn = Carbon::parse($data['check_in']);
+        $checkOut = Carbon::parse($data['check_out']);
 
-        $periodType = $periodMap[$data['period_type']] ?? null;
-        if (!$periodType) {
-            throw new \Exception('Invalid period type.');
-        }
+        $pattern = (new \App\Rules\CheckIfDateExistsInPropertyAndAvailableRule())
+            ->setData($data)
+            ->analyzeBookingPattern($checkIn, $checkOut, $property);
 
-        $period = $property->periods->firstWhere('type', $periodType);
-        if (!$period) {
-            throw new \Exception('Period not available for this property.');
-        }
+        DB::beginTransaction();
+        try {
+            $totalPrice = 0;
+            $details = [];
 
-        $checkIn = \Carbon\Carbon::parse($data['check_in']);
-        $checkOut = \Carbon\Carbon::parse($data['check_out']);
-        $cursor = $checkIn->copy();
-        $totalPrice = 0;
+            foreach ($pattern as $item) {
+                $date = $item['date'];
+                $periodId = $item['period_id'];
 
-        while ($cursor->lte($checkOut)) {
-            $dayOfWeek = $cursor->format('l');
-
-            // Prefer child availability
-            $childAvailability = $property->availabilities
-                ->whereNotNull('parent_id')
-                ->first(function ($availability) use ($cursor, $period, $dayOfWeek) {
-                    return $cursor->between($availability->availability_start_date, $availability->availability_end_date)
-                        && $availability->availabilityDays->contains(function ($day) use ($period, $dayOfWeek) {
-                            return $day->property_period_id === $period->id && $day->day_of_week === $dayOfWeek;
-                        });
-                });
-
-            if ($childAvailability) {
-                $day = $childAvailability->availabilityDays
-                    ->first(fn($d) => $d->property_period_id === $period->id && $d->day_of_week === $dayOfWeek);
-                $totalPrice += $day?->price ?? 0;
-            } else {
-                // Fallback to parent availability
-                $parentAvailability = $property->availabilities
-                    ->whereNull('parent_id')
-                    ->first(function ($availability) use ($cursor, $period, $dayOfWeek) {
-                        return $cursor->between($availability->availability_start_date, $availability->availability_end_date)
-                            && $availability->availabilityDays->contains(function ($day) use ($period, $dayOfWeek) {
-                                return $day->property_period_id === $period->id && $day->day_of_week === $dayOfWeek;
-                            });
-                    });
-
-                if ($parentAvailability) {
-                    $day = $parentAvailability->availabilityDays
-                        ->first(fn($d) => $d->property_period_id === $period->id && $d->day_of_week === $dayOfWeek);
-                    $totalPrice += $day?->price ?? 0;
+                $period = $property->periods->firstWhere('id', $periodId);
+                if (!$period) {
+                    throw new \Exception("Invalid period ID: $periodId");
                 }
+
+                $dayOfWeek = Carbon::parse($date)->format('l');
+
+                // Get the right availability (child first, fallback to parent)
+                $availability = $property->availabilities
+                    ->filter(fn($a) => Carbon::parse($date)->between($a->availability_start_date, $a->availability_end_date))
+                    ->sortBy(fn($a) => $a->parent_id ? 0 : 1)
+                    ->first(fn($a) =>
+                    $a->availabilityDays->contains(fn($d) =>
+                        $d->property_period_id == $periodId && $d->day_of_week === $dayOfWeek
+                    )
+                    );
+
+                if (!$availability) {
+                    throw new \Exception("No availability found for $date");
+                }
+
+                $day = $availability->availabilityDays->first(fn($d) =>
+                    $d->property_period_id == $periodId && $d->day_of_week === $dayOfWeek
+                );
+
+                if (!$day) {
+                    throw new \Exception("No price found for $date");
+                }
+
+                $price = (float) $day->price;
+                $totalPrice += $price;
+
+                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
+                $toDateTime = Carbon::parse($date . ' ' . $period->end_time);
+                if ($toDateTime->lessThan($fromDateTime)) {
+                    $toDateTime->addDay();
+                }
+
+                $details[] = [
+                    'property_period_id' => $period->id,
+                    'from_datetime' => $fromDateTime,
+                    'to_datetime' => $toDateTime,
+                    'price' => $price,
+                ];
             }
 
-            $cursor->addDay();
+            // Update main reservation
+            $reservation->update([
+                'check_in' => $checkIn->toDateTimeString(),
+                'check_out' => $checkOut->toDateTimeString(),
+                'contact_info' => $data['contact_info'],
+                'total_price' => round($totalPrice, 2),
+            ]);
+
+            // Delete old details and recreate
+            $reservation->details()->delete();
+            foreach ($details as $detail) {
+                $reservation->details()->create($detail);
+            }
+
+            DB::commit();
+
+            return [
+                'reservation_id' => $reservation->id,
+                'total_price' => $reservation->total_price,
+                'check_in' => $reservation->check_in,
+                'check_out' => $reservation->check_out,
+                'status' => 'updated',
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            throw $e;
         }
-
-        // ✅ Update reservation
-        $reservation->update([
-            'property_period_id' => $period->id,
-            'check_in' => $checkIn->toDateString(),
-            'check_out' => $checkOut->toDateString(),
-            'contact_info' => $data['contact_info'],
-            'total_price' => round($totalPrice, 2),
-            'status' => 0, // still pending
-        ]);
-
-        return [
-            'reservation_id' => $reservation->id,
-            'total_price' => $reservation->total_price,
-            'status' => 'pending (updated)',
-        ];
     }
-
     public function deleteReservation($id)
     {
         DB::beginTransaction();
@@ -674,4 +723,5 @@ class EloquentPropertyReservationApiRepository implements PropertyReservationApi
         ];
     }
 }
+
 

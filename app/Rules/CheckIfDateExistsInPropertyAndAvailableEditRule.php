@@ -51,8 +51,14 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
             return;
         }
 
-        // Validate availability and reservations for the booking pattern will give date period type period id
-        $bookingPattern = $this->analyzeBookingPattern($checkIn, $checkOut, $property);
+        $onePeriod = $this->checkIfHasOnePeriod($property, $checkIn, $checkOut, $fail);
+
+        if($onePeriod) {
+            $bookingPattern =$onePeriod;
+        }else{
+            // Validate availability and reservations for the booking pattern will give date period type period id
+            $bookingPattern = $this->analyzeBookingPattern($checkIn, $checkOut, $property);
+        }
 
         foreach ($bookingPattern as $item) {
             $date = $item['date'];
@@ -213,6 +219,19 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
                         'period_id' => $dayPeriod->id,
                     ];
                 }
+                elseif ($morningPeriod && $eveningPeriod) {
+                    // Add both morning and evening on each middle day
+                    $bookingItems[] = [
+                        'date' => $currentDate->toDateString(),
+                        'period_type' => 'morning',
+                        'period_id' => $morningPeriod->id,
+                    ];
+                    $bookingItems[] = [
+                        'date' => $currentDate->toDateString(),
+                        'period_type' => 'evening',
+                        'period_id' => $eveningPeriod->id,
+                    ];
+                }
             }
 
             $currentDate->addDay();
@@ -315,5 +334,36 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
             3 => 'day',
             default => 'unknown'
         };
+    }
+    private function checkIfHasOnePeriod($property,Carbon $checkIn, Carbon $checkOut, Closure $fail)
+    {
+        $periods = $property->periods->keyBy('type');
+        $dayPeriod = $periods->get(3);     // full day
+        $morningPeriod = $periods->get(1); // morning
+        $eveningPeriod = $periods->get(2); // evening
+        if($morningPeriod && !$eveningPeriod && !$dayPeriod) {
+            if($checkIn->toDateString() != $checkOut->toDateString()) {
+                $fail(__('the checkin day should the same day because this property accept morning only'));
+            }
+            return [[
+                'date' => $checkIn->toDateString(),
+                'period_type' => 'morning',
+                'period_id' => $morningPeriod->id,
+            ]];
+        }
+
+        if($eveningPeriod && !$morningPeriod && !$dayPeriod) {
+            $nextDay = $checkIn->copy()->addDay()->toDateString();
+            if($checkIn->toDateString() == $nextDay) {
+                $fail(__('the checkout day should the next day because this property accept evening only'));
+            }
+            return [[
+                'date' => $checkIn->toDateString(),
+                'period_type' => 'morning',
+                'period_id' => $eveningPeriod->id,
+            ]];
+        }
+
+
     }
 }

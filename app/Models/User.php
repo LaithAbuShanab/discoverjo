@@ -71,7 +71,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number','latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'lang', 'longitude', 'latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -365,8 +365,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         });
 
         static::updating(function (self $model) {
-            Log::info('FULL DIRTY:', $model->getDirty());
-            Log::info('WATCHED DIRTY:', collect($model->getDirty())->only([
+            $watchedFields = [
                 'first_name',
                 'last_name',
                 'username',
@@ -375,28 +374,22 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
                 'email',
                 'description',
                 'phone_number',
+                'longitude',
                 'latitude',
                 'status',
-            ])->toArray());
+                'lang',
+            ];
 
-            $dirty = collect($model->getDirty())->only([
-                'first_name',
-                'last_name',
-                'username',
-                'birthday',
-                'sex',
-                'email',
-                'description',
-                'phone_number',
-                'latitude',
-                'status',
-            ]);
+            $dirty = collect($watchedFields)->filter(function ($field) use ($model) {
+                return $model->{$field} !== $model->getOriginal($field);
+            });
+
+            Log::info('FIELDS THAT TRULY CHANGED:', $dirty->toArray());
 
             if ($dirty->isEmpty()) {
                 return false;
             }
         });
-
     }
     public function getFilamentName(): string
     {

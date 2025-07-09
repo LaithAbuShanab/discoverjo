@@ -384,8 +384,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
                 return $model->{$field} !== $model->getOriginal($field);
             });
 
-            Log::info('FIELDS THAT TRULY CHANGED:', $dirty->toArray());
-
             if ($dirty->isEmpty()) {
                 return false;
             }

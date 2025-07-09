@@ -254,6 +254,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
             'start_time' => $data['start_time'],
             'contact_info' => $data['contact_info'],
             'total_price' => $totalPrice,
+            'status'=>0
         ]);
 
         // Remove old details

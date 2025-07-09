@@ -70,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -351,20 +351,40 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         return $this->hasOne(Referral::class, 'referred_id');
     }
 
-    // Generate referral code after creation
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::created(function ($user) {
+        static::created(function (self $user) {
             $prefix = substr(Str::slug($user->username), 0, 4);
+
             do {
                 $code = strtoupper($prefix . rand(1000, 9999));
-            } while (User::where('referral_code', $code)->exists());
+            } while (self::where('referral_code', $code)->exists());
 
-            $user->referral_code = $code;
-            $user->save();
+            $user->forceFill(['referral_code' => $code])->saveQuietly();
+        });
+
+        static::updating(function (self $model) {
+            $watchedFields = [
+                'first_name',
+                'last_name',
+                'username',
+                'birthday',
+                'sex',
+                'email',
+                'description',
+                'phone_number',
+                'longitude',
+                'latitude',
+                'status',
+            ];
+
+            $dirty = collect($model->getDirty())->only($watchedFields);
+
+            if ($dirty->isEmpty()) {
+                return false; // إلغاء عملية update بالكامل
+            }
         });
     }
-
     public function getFilamentName(): string
     {
         return "{$this->first_name} {$this->last_name}";

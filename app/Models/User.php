@@ -71,7 +71,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number','latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -363,8 +363,41 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
 
             $user->forceFill(['referral_code' => $code])->saveQuietly();
         });
-    }
 
+        static::updating(function (self $model) {
+            Log::info('FULL DIRTY:', $model->getDirty());
+            Log::info('WATCHED DIRTY:', collect($model->getDirty())->only([
+                'first_name',
+                'last_name',
+                'username',
+                'birthday',
+                'sex',
+                'email',
+                'description',
+                'phone_number',
+                'latitude',
+                'status',
+            ])->toArray());
+
+            $dirty = collect($model->getDirty())->only([
+                'first_name',
+                'last_name',
+                'username',
+                'birthday',
+                'sex',
+                'email',
+                'description',
+                'phone_number',
+                'latitude',
+                'status',
+            ]);
+
+            if ($dirty->isEmpty()) {
+                return false;
+            }
+        });
+
+    }
     public function getFilamentName(): string
     {
         return "{$this->first_name} {$this->last_name}";

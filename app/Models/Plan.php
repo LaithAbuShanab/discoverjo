@@ -12,7 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Plan extends Model
 {
-    use HasFactory, HasTranslations, HasSlug ,LogsActivity;
+    use HasFactory, HasTranslations, HasSlug, LogsActivity;
 
     public $translatable = ['name', 'description'];
     public $guarded = [];
@@ -21,7 +21,7 @@ class Plan extends Model
         'activity_name' => 'array',
         'notes' => 'array',
     ];
-    protected static $logAttributes = ['slug','name','description'];
+    protected static $logAttributes = ['slug', 'name', 'description'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'plan';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -35,7 +35,7 @@ class Plan extends Model
     {
         return LogOptions::defaults()
             ->useLogName('plan')
-            ->logOnly( ['slug','name','description'])
+            ->logOnly(['slug', 'name', 'description'])
             ->logOnlyDirty();
     }
 
@@ -69,5 +69,4 @@ class Plan extends Model
     {
         return $this->morphMany(Post::class, 'visitable');
     }
-
 }

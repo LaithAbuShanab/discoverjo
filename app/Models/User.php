@@ -23,13 +23,15 @@ use Spatie\Translatable\HasTranslations;
 use Illuminate\Support\Str;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia, FilamentUser, HasName
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
+
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
+
     public $translatable = ['address'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -85,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return LogOptions::defaults()
             ->useLogName('user')
-            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'])
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'])
             ->logOnlyDirty();
     }
 

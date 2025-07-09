@@ -23,10 +23,6 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check() && $guard == 'admin') {
                 return to_route('admin.dashboard');
             }
-
-//            if (Auth::guard($guard)->check()) {
-//                return to_route('api.success');
-//            }
         }
 
         return $next($request);

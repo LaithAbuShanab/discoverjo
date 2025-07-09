@@ -21,15 +21,14 @@ class languageApi
      */
     public function handle(Request $request, Closure $next)
     {
-        $lang = $request->header('Content-Language')?$request->header('Content-Language'):'ar';
+        $lang = $request->header('Content-Language') ? $request->header('Content-Language') : 'ar';
 
-//        $lang = request()->lang;
         $availableLocales = array_keys(Config::get('app.available_locales', []));
-        if (in_array($lang,$availableLocales)) {
+        if (in_array($lang, $availableLocales)) {
             App::setLocale($lang);
-            if(Auth::guard('api')->user()){
+            if (Auth::guard('api')->user()) {
                 Auth::guard('api')->user()->update([
-                    'lang'=>$lang
+                    'lang' => $lang
                 ]);
             }
 
@@ -38,7 +37,7 @@ class languageApi
             return $next($request);
         } else {
             return response()->json([
-                'status'=>Response::HTTP_BAD_REQUEST,
+                'status' => Response::HTTP_BAD_REQUEST,
                 'msg' => 'This language is not supported.'
             ], Response::HTTP_BAD_REQUEST);
         }

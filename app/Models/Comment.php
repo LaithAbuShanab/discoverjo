@@ -30,6 +30,7 @@ class Comment extends Model
             ->logOnly(['content'])
             ->logOnlyDirty();
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);

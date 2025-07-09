@@ -545,7 +545,7 @@ function cleanQuery($query)
     }
 }
 
- function resolvePeriodType($type)
+function resolvePeriodType($type)
 {
     return match ($type) {
         'morning' => 1,

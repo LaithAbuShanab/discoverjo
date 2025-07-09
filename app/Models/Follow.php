@@ -9,7 +9,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Follow extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
     protected $guarded = [];
     protected static $logAttributes = ['following_id'];
     protected static $logOnlyDirty = true;
@@ -28,6 +28,7 @@ class Follow extends Model
             ->logOnly(['following_id'])
             ->logOnlyDirty();
     }
+
     public function followingUser()
     {
         return $this->belongsTo(User::class, 'following_id');

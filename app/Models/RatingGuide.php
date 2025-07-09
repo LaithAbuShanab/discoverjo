@@ -9,10 +9,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class RatingGuide extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
     protected $guarded = [];
 
-    protected static $logAttributes = ['guide_id','rating'];
+    protected static $logAttributes = ['guide_id', 'rating'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'guide rating';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -21,6 +21,7 @@ class RatingGuide extends Model
     {
         return "A user has been {$eventName}";
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -28,6 +29,7 @@ class RatingGuide extends Model
             ->logOnlyDirty()
             ->useLogName('guide rating');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

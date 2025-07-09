@@ -105,7 +105,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                 $user->status = 1;
                 $user->save();
                 $userTrips = Trip::where('user_id', $user->id)->latest()->get();
-                if($userTrips){
+                if ($userTrips) {
                     foreach ($userTrips as $userTrip) {
                         if ($userTrip->date_time > $now && $userTrip->status == 4) {
                             $userTrip->status = 1;
@@ -125,24 +125,23 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                             GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 5)->update(['status' => 1]);
                         }
                     }
-
                 }
                 GuideTripUser::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
 
                 //check the services of the user while deactivation and after activation still in the time of active
-                $services = Service::where('provider_type','App\Models\User')->where('provider_id',$user->id)->latest()->get();
+                $services = Service::where('provider_type', 'App\Models\User')->where('provider_id', $user->id)->latest()->get();
                 if ($services) {
                     foreach ($services as $service) {
                         if ($service->serviceBookings->available_end_date > $now && $service->status == 4) {
                             $service->status = 1;
                             $service->save();
                             //update the user who booked the service to 1
-//                            ServiceReservation::where('service_id', $service->id)->where('status', 5)->update(['status' => 1]);
+                            //                            ServiceReservation::where('service_id', $service->id)->where('status', 5)->update(['status' => 1]);
                         }
                     }
                 }
                 //update his booking
-//                ServiceReservation::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
+                //                ServiceReservation::where('user_id', $user->id)->where('status', 5)->update(['status' => 1]);
             }
 
             //$user->tokens()->where('name', 'mobile')->delete();
@@ -163,7 +162,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
             $user->token_website = $tokenWebsite;
             $user->verified_email = true;
 
-            if($userData['device_token']){
+            if ($userData['device_token']) {
                 $deviceToken = $userData['device_token'];
 
                 $existing = DeviceToken::where('user_id', $user->id)
@@ -180,6 +179,7 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
 
 
             $this->trackUserLoginVisit($user);
+
             activityLog('User', $user, 'the user logged in', 'login');
 
             return new UserLoginResource($user);
@@ -276,17 +276,16 @@ class EloquentAuthApiRepository implements AuthApiRepositoryInterface
                     GuideTripUser::where('guide_trip_id', $guideTrip->id)->where('status', 1)->update(['status' => 5]);
                 }
             }
-
         }
         GuideTripUser::where('user_id', $userId)->where('status', 1)->update(['status' => 5]);
-        $services = Service::where('provider_type','App\Models\User')->where('provider_id',$user->id)->latest()->get();
+        $services = Service::where('provider_type', 'App\Models\User')->where('provider_id', $user->id)->latest()->get();
         if ($services) {
             foreach ($services as $service) {
                 if ($service->serviceBookings->available_end_date > $now && $service->status == 1) {
                     $service->status = 4;
                     $service->save();
                     //update the user who booked the service to 1
-//                   ServiceReservation::where('service_id', $service->id)->where('status', 1)->update(['status' => 5]);
+                    //                   ServiceReservation::where('service_id', $service->id)->where('status', 1)->update(['status' => 5]);
                 }
             }
         }

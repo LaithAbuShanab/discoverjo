@@ -10,9 +10,9 @@ use Spatie\Sluggable\HasSlug;
 
 class GuideTripUser extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
     protected $guarded = [];
-    protected static $logAttributes = ['guide_trip_id','first_name','last_name','phone_number','age','status'];
+    protected static $logAttributes = ['guide_trip_id', 'first_name', 'last_name', 'phone_number', 'age', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'guide trip';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -25,9 +25,10 @@ class GuideTripUser extends Model
     {
         return LogOptions::defaults()
             ->useLogName('guide trip')
-            ->logOnly(['guide_trip_id','first_name','last_name','phone_number','age','status'])
+            ->logOnly(['guide_trip_id', 'first_name', 'last_name', 'phone_number', 'age', 'status'])
             ->logOnlyDirty();
     }
+
     // Define the relationship with the User model
     public function user()
     {
@@ -46,5 +47,4 @@ class GuideTripUser extends Model
             $guideTripUser->user_id = $guideTripUser->user_id ?? auth()->id();
         });
     }
-
 }

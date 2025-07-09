@@ -12,9 +12,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Post extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia,LogsActivity;
+    use HasFactory, InteractsWithMedia, LogsActivity;
     protected $guarded = [];
-    protected static $logAttributes = ['visitable_type','visitable_id','content','privacy'];
+    protected static $logAttributes = ['visitable_type', 'visitable_id', 'content', 'privacy'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'post';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -26,10 +26,11 @@ class Post extends Model implements HasMedia
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['visitable_type','visitable_id','content','privacy'])
+            ->logOnly(['visitable_type', 'visitable_id', 'content', 'privacy'])
             ->logOnlyDirty()
             ->useLogName('post');
     }
+
     public function place()
     {
         return $this->belongsTo(Place::class);

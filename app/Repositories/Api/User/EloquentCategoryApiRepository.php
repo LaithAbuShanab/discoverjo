@@ -23,9 +23,11 @@ class EloquentCategoryApiRepository implements CategoryApiRepositoryInterface
         $subcategories = Category::whereIn('slug', $data)->with('children')->get();
         $allChildren = $subcategories->pluck('children')->flatten();
         $stringData = implode(", ", $data);
+
         activityLog('view specific categories ',$subcategories->first(), 'the user view these categories','view',[
             'categories'     => $stringData,
         ]);
+
         return CategoryResource::collection($allChildren);
     }
 

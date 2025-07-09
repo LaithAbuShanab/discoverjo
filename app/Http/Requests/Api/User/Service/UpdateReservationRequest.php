@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\User\Service;
 
 use App\Rules\CheckIfAgePriceBelongToService;
+use App\Rules\CheckIfServiceReservationInThePast;
 use App\Rules\CheckIfValidDateReservationUpdateRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,7 +26,7 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => ['bail', 'required', 'date', 'date_format:Y-m-d', new CheckIfValidDateReservationUpdateRule()],
+            'date' => ['bail', 'required', 'date', 'date_format:Y-m-d', new CheckIfValidDateReservationUpdateRule(),new CheckIfServiceReservationInThePast()],
             'start_time' => ['required', 'date_format:H:i'],
             'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
             'reservations' => ['required', 'array', 'min:1'],

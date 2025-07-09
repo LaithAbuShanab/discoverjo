@@ -353,15 +353,15 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
 
     protected static function booted(): void
     {
-        static::created(function (self $user) {
-            $prefix = substr(Str::slug($user->username), 0, 4);
+        // static::created(function (self $user) {
+        //     $prefix = substr(Str::slug($user->username), 0, 4);
 
-            do {
-                $code = strtoupper($prefix . rand(1000, 9999));
-            } while (self::where('referral_code', $code)->exists());
+        //     do {
+        //         $code = strtoupper($prefix . rand(1000, 9999));
+        //     } while (self::where('referral_code', $code)->exists());
 
-            $user->forceFill(['referral_code' => $code])->saveQuietly();
-        });
+        //     $user->forceFill(['referral_code' => $code])->saveQuietly();
+        // });
 
         static::updating(function (self $model) {
             $watchedFields = [

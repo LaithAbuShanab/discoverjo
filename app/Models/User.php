@@ -27,11 +27,8 @@ use Filament\Models\Contracts\HasName;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia, FilamentUser, HasName
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
-
     public $translatable = ['address'];
-
     /**
      * The attributes that are mass assignable.
      *
@@ -74,11 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     ];
 
     protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'];
-
     protected static $logOnlyDirty = true;
-
     protected static $logName = 'user';
-
     protected static $recordEvents = ['created', 'updated', 'deleted'];
 
     public function getDescriptionForEvent(string $eventName): string
@@ -90,7 +84,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return LogOptions::defaults()
             ->useLogName('user')
-            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status']);
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'])
+            ->logOnlyDirty();
     }
 
     public function getSlugOptions(): SlugOptions

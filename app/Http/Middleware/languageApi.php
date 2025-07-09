@@ -26,13 +26,10 @@ class languageApi
         $availableLocales = array_keys(Config::get('app.available_locales', []));
         if (in_array($lang, $availableLocales)) {
             App::setLocale($lang);
-            if (Auth::guard('api')->user()) {
-                Auth::guard('api')->user()->update([
-                    'lang' => $lang
-                ]);
-            }
 
-
+            Auth::guard('api')->check() && Auth::guard('api')->user()->lang !== $lang
+                ? Auth::guard('api')->user()->update(['lang' => $lang])
+                : null;
 
             return $next($request);
         } else {

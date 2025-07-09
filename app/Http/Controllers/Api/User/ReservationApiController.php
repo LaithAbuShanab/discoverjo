@@ -12,6 +12,7 @@ use App\Rules\CheckIfReservationBelongToProvider;
 use App\Rules\CheckIfReservationIdBelongToUser;
 use App\Rules\CheckIfServiceActiveRuel;
 use App\Rules\CheckIfServiceBelongToProvider;
+use App\Rules\CheckIfServiceReservationInThePastByIdRule;
 use App\UseCases\Api\User\ReservationApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -109,7 +110,7 @@ class ReservationApiController extends Controller
     public function updateReservation(UpdateReservationRequest $request, $id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['bail', 'required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser()],
+            'id' => ['bail', 'required', 'exists:service_reservations,id', new CheckIfReservationIdBelongToUser(), new CheckIfServiceReservationInThePastByIdRule()],
         ], [
             'id.required' => __('validation.api.reservation-id-required'),
             'id.exists' => __('validation.api.reservation-id-does-not-exists'),

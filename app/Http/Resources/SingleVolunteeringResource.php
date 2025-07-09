@@ -58,7 +58,7 @@ class SingleVolunteeringResource extends JsonResource
             'status' => intval($this->status),
             'link' => $this->link,
             'hours_worked' => $this->hours_worked,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'organizers' => $organizers,
             'interested_users' => UserResource::collection($this->interestedUsers),

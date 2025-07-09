@@ -95,7 +95,7 @@ class GuideTripResource extends JsonResource
 //            "join_request"=>GuideTripUserResource::collection($this->guideTripUsers),
             'gallery'=>$gallery,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteGuideTrips->contains('id', $this->id) : false,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
             'is_joined' => $joined,

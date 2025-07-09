@@ -57,7 +57,7 @@ class SingleEventResource extends JsonResource
             'status' => intval($this->status),
             'link' => $this->link,
             'price' => $this->price,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'attendance_number' => $this->attendance_number,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,

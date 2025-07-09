@@ -116,7 +116,7 @@ class SinglePlaceResource extends JsonResource
             'address' => $this->address,
 //            'rating' => $this->rating,
 //            'total_user_rating' => $this->total_user_rating,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,

@@ -48,7 +48,7 @@ class SingleServiceResource extends JsonResource
         foreach ($this->getMedia('service_gallery') as $image) {
             $gallery[] = [
                 'id' => $image->id,
-                'url' => $image->getUrl(),
+                'url' => $image->getUrl('service_gallery_app'),
             ];
         }
         $filteredReviews = $this->reviews->filter(function ($review) {
@@ -101,7 +101,7 @@ class SingleServiceResource extends JsonResource
             'features' => $features,
             'provider'=>new ProviderResource($this->provider),
             'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,

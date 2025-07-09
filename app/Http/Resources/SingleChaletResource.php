@@ -60,7 +60,7 @@ class SingleChaletResource extends JsonResource
             'notes'=>$notes,
             'amenities' => $this->groupAmenitiesByParent(),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
-            'rating' =>$total_ratings,
+            'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'reviews' => ReviewResource::collection($filteredReviews),
             'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->host_id,

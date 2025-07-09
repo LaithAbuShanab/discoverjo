@@ -70,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         'password' => 'hashed',
     ];
 
-    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'];
+    protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude','latitude', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'user';
     protected static $recordEvents = ['created', 'updated', 'deleted'];

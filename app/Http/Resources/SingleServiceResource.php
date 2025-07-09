@@ -48,7 +48,7 @@ class SingleServiceResource extends JsonResource
         foreach ($this->getMedia('service_gallery') as $image) {
             $gallery[] = [
                 'id' => $image->id,
-                'url' => $image->getUrl('service_gallery_app'),
+                'url' => $image->getUrl(),
             ];
         }
         $filteredReviews = $this->reviews->filter(function ($review) {

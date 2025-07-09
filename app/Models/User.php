@@ -74,8 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     ];
 
     protected static $logAttributes = ['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'lang', 'latitude', 'status'];
+
     protected static $logOnlyDirty = true;
+
     protected static $logName = 'user';
+
     protected static $recordEvents = ['created', 'updated', 'deleted'];
 
     public function getDescriptionForEvent(string $eventName): string
@@ -87,8 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return LogOptions::defaults()
             ->useLogName('user')
-            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status'])
-            ->logOnlyDirty();
+            ->logOnly(['first_name', 'last_name', 'username', 'birthday', 'sex', 'email', 'description', 'phone_number', 'longitude', 'latitude', 'status']);
     }
 
     public function getSlugOptions(): SlugOptions

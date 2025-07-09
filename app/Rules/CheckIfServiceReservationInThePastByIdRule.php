@@ -5,6 +5,8 @@ namespace App\Rules;
 use App\Models\ServiceReservation;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Carbon\Carbon;
+
 
 class CheckIfServiceReservationInThePastByIdRule implements ValidationRule
 {
@@ -26,10 +28,10 @@ class CheckIfServiceReservationInThePastByIdRule implements ValidationRule
             return;
         }
 
-        $reservationDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date $startTime");
+        $reservationDateTime = Carbon::parse("$date $startTime");
 
         if ($reservationDateTime->lt(now())) {
-            $fail('you can not update reservation in the past');
+            $fail('You cannot update a reservation that is in the past.');
         }
     }
 }

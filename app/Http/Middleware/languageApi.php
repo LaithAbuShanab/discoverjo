@@ -27,9 +27,9 @@ class languageApi
         if (in_array($lang, $availableLocales)) {
             App::setLocale($lang);
 
-            Auth::guard('api')->check() && Auth::guard('api')->user()->lang !== $lang
-                ? Auth::guard('api')->user()->update(['lang' => $lang])
-                : null;
+            // Auth::guard('api')->check() && Auth::guard('api')->user()->lang !== $lang
+            //     ? Auth::guard('api')->user()->update(['lang' => $lang])
+            //     : null;
 
             return $next($request);
         } else {

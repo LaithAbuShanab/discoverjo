@@ -27,7 +27,7 @@ use Filament\Models\Contracts\HasName;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia, FilamentUser, HasName
 {
     use \Spatie\MediaLibrary\InteractsWithMedia;
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, GiveExperience, HasStreaks;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasTranslations, HasSlug, LogsActivity, GiveExperience, HasStreaks;
     public $translatable = ['address'];
     /**
      * The attributes that are mass assignable.
@@ -80,13 +80,13 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         return "A user has been {$eventName}";
     }
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults()
-    //         ->useLogName('user')
-    //         ->logOnly(self::$logAttributes)
-    //         ->logOnlyDirty();
-    // }
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('user')
+            ->logOnly(self::$logAttributes)
+            ->logOnlyDirty();
+    }
 
     public function getSlugOptions(): SlugOptions
     {

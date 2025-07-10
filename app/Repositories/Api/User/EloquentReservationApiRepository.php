@@ -250,8 +250,8 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Update reservation fields
         $reservation->update([
-            'date' => $data['date'],
-            'start_time' => $data['start_time'],
+//            'date' => $data['date'],
+//            'start_time' => $data['start_time'],
             'contact_info' => $data['contact_info'],
             'total_price' => $totalPrice,
             'status'=>0

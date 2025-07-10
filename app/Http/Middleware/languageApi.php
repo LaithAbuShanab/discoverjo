@@ -21,7 +21,7 @@ class languageApi
      */
     public function handle(Request $request, Closure $next)
     {
-        $lang = $request->header('Content-Language');
+        $lang = $request->header('Content-Language') ?? Auth::guard('api')->user()->lang ?? 'en';
 
         $availableLocales = array_keys(Config::get('app.available_locales', []));
 

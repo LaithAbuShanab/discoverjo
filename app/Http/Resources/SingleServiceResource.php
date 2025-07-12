@@ -15,11 +15,11 @@ class SingleServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $bookingDate =$this->serviceBookings?->first();
+        $bookingDate = $this->serviceBookings?->first();
         $categories = $this->categories->map(function ($category) {
             return $category->parent ? [
                 'name' => $category->parent->name,
-                'main_image' => $category->parent->getFirstMediaUrl('service_main_category','service_main_category_app'),
+                'main_image' => $category->parent->getFirstMediaUrl('service_main_category', 'service_main_category_app'),
             ] : null;
         })->filter()->unique();
 
@@ -56,13 +56,13 @@ class SingleServiceResource extends JsonResource
         });
 
         $total_ratings = 0;
-        $total_user_total= 0;
-        if ( $this->reviews->count() > 0) {
+        $total_user_total = 0;
+        if ($this->reviews->count() > 0) {
             $total_ratings =  $filteredReviews->avg('rating');
             $total_user_total = $filteredReviews->count();
         }
 
-        $days=[];
+        $days = [];
         foreach ($bookingDate->serviceBookingDays as $day) {
             $days[] = $day->day_of_week;
         }
@@ -79,32 +79,33 @@ class SingleServiceResource extends JsonResource
             ];
         });
         return [
-            'id'=>$this->id,
-            'slug'=>$this->slug,
-            "name"=>$this->name,
-            "description"=>$this->description,
-            'available_start_date'=>$bookingDate->available_start_date,
-            'available_end_date'=>$bookingDate->available_end_date,
-            'session_duration'=>$bookingDate->session_duration,
-            'work_days'=>$days,
-            'opening_hours' => $openingHours,
-            'region'=>new RegionResource($this->region),
-            'google_map_url' => $this->url_google_map,
-            'category' => $categories,
-            'subcategory' => $subCategories,
-            'main_price' => $this->price,
-            "age_price"=>GuideTripPriceAgeResource::collection($this->priceAges),
-            "requirements"=>$requirements,
-            "activities"=>$activities,
-            'gallery'=>$gallery,
-            'notes'=>$notes,
-            'features' => $features,
-            'provider'=>new ProviderResource($this->provider),
-            'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
-            'rating' => round($total_ratings, 2),
-            'total_user_rating' => $total_user_total,
-            'reviews' => ReviewResource::collection($filteredReviews),
-            'is_creator' => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,
+            'id'                   => $this->id,
+            'slug'                 => $this->slug,
+            "name"                 => $this->name,
+            'address'              => $this->address ?? null,
+            "description"          => $this->description,
+            'available_start_date' => $bookingDate->available_start_date,
+            'available_end_date'   => $bookingDate->available_end_date,
+            'session_duration'     => $bookingDate->session_duration,
+            'work_days'            => $days,
+            'opening_hours'        => $openingHours,
+            'region'               => new RegionResource($this->region),
+            'google_map_url'       => $this->url_google_map,
+            'category'             => $categories,
+            'subcategory'          => $subCategories,
+            'main_price'           => $this->price,
+            "age_price"            => GuideTripPriceAgeResource::collection($this->priceAges),
+            "requirements"         => $requirements,
+            "activities"           => $activities,
+            'gallery'              => $gallery,
+            'notes'                => $notes,
+            'features'             => $features,
+            'provider'             => new ProviderResource($this->provider),
+            'is_favorite'          => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
+            'rating'               => round($total_ratings, 2),
+            'total_user_rating'    => $total_user_total,
+            'reviews'              => ReviewResource::collection($filteredReviews),
+            'is_creator'           => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,
         ];
     }
 }

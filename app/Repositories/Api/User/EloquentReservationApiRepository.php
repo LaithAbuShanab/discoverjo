@@ -43,27 +43,31 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $duration = $booking->session_duration;
         $capacity = $booking->session_capacity;
 
-        // dd($startTime, $endTime, $duration, $capacity);
         $slots = [];
 
         while ($startTime->copy()->addMinutes($duration)->lte($endTime)) {
             $slotStart = $startTime->format('H:i');
             $slotEnd = $startTime->copy()->addMinutes($duration)->format('H:i');
 
-            // Sum quantity from reservation details via reservations on this date and slot
+            // Skip past slots only if the reservation date is today
+            if ($dateCarbon->isToday() && $startTime->lt(Carbon::now())) {
+                $startTime->addMinutes($duration);
+                continue;
+            }
+
+            // Sum quantity from reservation details for this date and slot
             $reservedQuantity = ServiceReservationDetail::whereHas('reservation', function ($query) use ($service, $date, $slotStart) {
                 $query->where('service_id', $service->id)
                     ->where('date', $date)
                     ->where('start_time', $slotStart)
-                    ->whereNot('status', 2); // Optional: only confirmed reservations
+                    ->whereNot('status', 2); // Skip cancelled (status = 2)
             })->sum('quantity');
-
 
             $available = max($capacity - $reservedQuantity, 0);
 
             $slots[] = [
-                'start' => $slotStart,
-                'end' => $slotEnd,
+                'start'     => $slotStart,
+                'end'       => $slotEnd,
                 'capacity'  => (int) $capacity,
                 'reserved'  => (int) $reservedQuantity,
                 'available' => (int) $available,
@@ -181,8 +185,8 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
         $user = Auth::guard('api')->user();
         $reservations = ServiceReservation::where('service_id', $service->id)->where('user_id', $user->id)->get();
         return [
-            "count"=> count($reservations),
-            "reservations"=>UserSingleServiceReservationResource::collection($reservations)
+            "count" => count($reservations),
+            "reservations" => UserSingleServiceReservationResource::collection($reservations)
         ];
     }
 
@@ -201,7 +205,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'count'=>  ServiceReservation::where('user_id', $user->id)->count(),
+            'count' =>  ServiceReservation::where('user_id', $user->id)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($reservations),
             'pagination' => $pagination
         ];
@@ -250,11 +254,11 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Update reservation fields
         $reservation->update([
-//            'date' => $data['date'],
-//            'start_time' => $data['start_time'],
+            //            'date' => $data['date'],
+            //            'start_time' => $data['start_time'],
             'contact_info' => $data['contact_info'],
             'total_price' => $totalPrice,
-            'status'=>0
+            'status' => 0
         ]);
 
         // Remove old details
@@ -337,7 +341,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'count'=>ServiceReservation::where('service_id', $service->id)->where('status', 0)->count(),
+            'count' => ServiceReservation::where('service_id', $service->id)->where('status', 0)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($requests),
             'pagination' => $pagination
         ];
@@ -360,7 +364,7 @@ class EloquentReservationApiRepository implements ReservationApiRepositoryInterf
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'count'=>ServiceReservation::where('service_id', $service->id)->where('status', 1)->count(),
+            'count' => ServiceReservation::where('service_id', $service->id)->where('status', 1)->count(),
             'reservations' => UserSingleServiceReservationResource::collection($requests),
             'pagination' => $pagination
         ];

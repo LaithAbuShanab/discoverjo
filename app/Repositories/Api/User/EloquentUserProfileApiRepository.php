@@ -71,7 +71,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-//        $quotedQuery= DB::getPdo()->quote($query);
+        //        $quotedQuery= DB::getPdo()->quote($query);
         $users = User::where('status', 1)
             ->where(function ($q) use ($query) {
                 $q->where('first_name', 'like', "%{$query}%")
@@ -184,7 +184,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
         $userLat = isset($request['lat']) ? floatval($request['lat']) : ($user?->latitude !== null ? floatval($user?->latitude) : null);
         $userLng = isset($request['lng']) ? floatval($request['lng']) : ($user?->longitude !== null ? floatval($user?->longitude) : null);
-        $distanceKm = $request['area'] ? floatval($request['area']): 2;
+        $distanceKm = $request['area'] ? floatval($request['area']) : 2;
 
         $categoriesSlugs = isset($request['categories']) ? explode(',', $request['categories']) : [];
         $subcategoriesSlugs = isset($request['subcategories']) ? explode(',', $request['subcategories']) : [];
@@ -242,7 +242,10 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     public function allNotifications()
     {
         $user = Auth::guard('api')->user();
-        $notifications = DatabaseNotification::where('notifiable_type', 'App\Models\User')->where('notifiable_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $notifications = DatabaseNotification::where('type', '!=', 'Filament\Notifications\DatabaseNotification')
+            ->where('notifiable_type', 'App\Models\User')
+            ->where('notifiable_id', $user->id)
+            ->orderBy('created_at', 'desc')->get();
         return  UserNotificationResource::collection($notifications);
     }
 
@@ -269,7 +272,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     }
     public function warning($data)
     {
-        $gallery= $data['images'];
+        $gallery = $data['images'];
         $user = User::findBySlug($data['user_slug']);
         $userId = $user->id;
         $warning = new Warning();

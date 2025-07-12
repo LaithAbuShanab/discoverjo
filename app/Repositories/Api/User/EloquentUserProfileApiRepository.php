@@ -260,7 +260,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     public function unreadNotifications()
     {
         $user = Auth::guard('api')->user();
-        $notifications = $user->notifications()->where('read_at', null)->count();
+        $notifications = $user->notifications()->where('type', '!=', 'Filament\Notifications\DatabaseNotification')->where('read_at', null)->count();
         return ['count' => $notifications];
     }
 
@@ -270,6 +270,7 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
         $notification = $user->notifications()->where('id', $id)->first();
         $notification->delete();
     }
+
     public function warning($data)
     {
         $gallery = $data['images'];

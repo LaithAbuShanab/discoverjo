@@ -236,7 +236,9 @@ class GuideTripUserApiController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => ['bail','nullable','string','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u','max:255',new CheckIfHasInjectionBasedTimeRule()],
+            'query' => ['bail','nullable','string','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u','max:255'
+//                ,new CheckIfHasInjectionBasedTimeRule()
+            ],
         ]);
         if ($validator->fails()) {
             return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $validator->errors()->messages()['query']);

@@ -27,7 +27,9 @@ class DayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => ['bail', 'required', 'date_format:Y-m-d', new CheckIfHasInjectionBasedTimeRule()],
+            'date' => ['bail', 'required', 'date_format:Y-m-d'
+//                , new CheckIfHasInjectionBasedTimeRule()
+            ],
         ];
     }
     public function messages()

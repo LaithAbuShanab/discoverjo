@@ -54,6 +54,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         'latitude',
         'status',
         'type',
+        'address',
     ];
 
     protected $hidden = [
@@ -370,14 +371,21 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
                 'last_name',
                 'username',
                 'birthday',
+                'facebook_id',
+                'google_id',
                 'sex',
                 'email',
                 'description',
+                'email_verified_at',
+                'password',
+                'lang',
                 'phone_number',
+                'points',
                 'longitude',
                 'latitude',
                 'status',
-                'lang',
+                'type',
+                'address',
             ];
 
             $dirty = collect($watchedFields)->filter(function ($field) use ($model) {
@@ -389,6 +397,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
             }
         });
     }
+
     public function getFilamentName(): string
     {
         return "{$this->first_name} {$this->last_name}";

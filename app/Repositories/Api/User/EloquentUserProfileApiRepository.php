@@ -50,16 +50,34 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
     public function setLocation($request)
     {
-        $userId = Auth::guard('api')->user()->id;
-        $eloquentUser = User::find($userId);
-        $eloquentUser->update([
-            'latitude' => $request['latitude'],
-            'longitude' => $request['longitude'],
+        DB::beginTransaction();
 
-        ]);
-        $translator = ['en' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "en"), 'ar' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "ar")];
-        $eloquentUser->setTranslations('address', $translator);
-        $eloquentUser->save();
+        try {
+            $userId = Auth::guard('api')->user()->id;
+            $eloquentUser = User::find($userId);
+
+            $eloquentUser->update([
+                'latitude' => $request['latitude'],
+                'longitude' => $request['longitude'],
+            ]);
+
+            $translator = [
+                'en' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "en"),
+                'ar' => getAddressFromCoordinates($request['latitude'], $request['longitude'], "ar"),
+            ];
+
+            $eloquentUser->setTranslations('address', $translator);
+
+            $eloquentUser->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Location updated successfully', 'user' => $eloquentUser]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to update location', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function allFavorite()

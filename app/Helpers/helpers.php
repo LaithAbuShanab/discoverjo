@@ -252,7 +252,7 @@ function handleWarning(object $record): void
 function getAddressFromCoordinates(float $lat, float $lng, string $language): string
 {
     $user = Auth::guard('api')->user();
-    if ($user->latitude && $user->longitude) {
+    if ($user->latitude && $user->longitude && $user->address != null) {
         if (isWithinRadius($user->latitude, $user->longitude, $lat, $lng)) {
             return "{$user->getTranslation('address',$language)}";
         }

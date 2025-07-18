@@ -21,7 +21,7 @@ class PopularPlaceResource extends JsonResource
                 'place_slug'=>$this->place->slug,
                 'name' => $this->place->name,
                 'description'=>$this->place->description,
-                'image' => $this->place->getFirstMediaUrl('main_place','main_place_app'),
+                'image' => $this->place->getFirstMediaUrl('main_place'),
                 'region' => $this->place->region->name,
                 'address' => $this->place->address,
                 'rating' => $this->place->rating,

@@ -29,7 +29,7 @@ class UpdateReservationRequest extends FormRequest
             $this->merge([
                 'date' => $reservation->date, // Now date is coming from DB
                 'reservation_id' => $reservationId, // Optional if needed elsewhere
-                'start_time'=>$reservation->start_time,
+                'start_time' => \Carbon\Carbon::createFromFormat('H:i:s', $reservation->start_time)->format('H:i'),
             ]);
         }
     }

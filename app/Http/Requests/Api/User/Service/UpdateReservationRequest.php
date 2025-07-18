@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\User\Service;
 
+use App\Models\ServiceReservation;
 use App\Rules\CheckIfAgePriceBelongToService;
 use App\Rules\CheckIfServiceReservationInThePast;
 use App\Rules\CheckIfValidDateReservationUpdateRule;
@@ -18,6 +19,21 @@ class UpdateReservationRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $reservationId = $this->route('id'); // or $this->route('reservation') if route name differs
+
+        $reservation = ServiceReservation::find($reservationId);
+
+        if ($reservation) {
+            $this->merge([
+                'date' => $reservation->date, // Now date is coming from DB
+                'reservation_id' => $reservationId, // Optional if needed elsewhere
+                'start_time'=>$reservation->start_time,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,8 +42,8 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'date' => ['bail', 'required', 'date', 'date_format:Y-m-d', new CheckIfValidDateReservationUpdateRule(),new CheckIfServiceReservationInThePast()],
-//            'start_time' => ['required', 'date_format:H:i'],
+            'date' => ['bail', 'required', 'date', 'date_format:Y-m-d', new CheckIfValidDateReservationUpdateRule(),new CheckIfServiceReservationInThePast()],
+            'start_time' => ['required', 'date_format:H:i'],
             'contact_info' => ['required', 'string', 'regex:/^\+?[0-9\s\-]{7,15}$/'],
             'reservations' => ['required', 'array', 'min:1'],
             'reservations.*.reservation_detail' => ['required', 'integer', Rule::in([1, 2])],

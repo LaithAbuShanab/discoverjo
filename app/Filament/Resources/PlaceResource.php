@@ -27,6 +27,7 @@ use Rmsramos\Activitylog\Actions\ActivityLogTimelineTableAction;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms\Set;
+use Filament\Tables\Filters\SelectFilter;
 
 class PlaceResource extends Resource
 {
@@ -154,7 +155,7 @@ class PlaceResource extends Resource
                     ->columns(1),
 
 
-                    Section::make('Map Location')
+                Section::make('Map Location')
                     ->description('Displays the current location and allows editing.')
                     ->schema([
                         Grid::make(1)->schema([
@@ -175,7 +176,7 @@ class PlaceResource extends Resource
                     ])
                     ->columns(1)
                     ->collapsible()
-                    ->visible(fn ($livewire) => $livewire->getRecord() !== null),
+                    ->visible(fn($livewire) => $livewire->getRecord() !== null),
 
             ])
             ->columns(1);
@@ -189,13 +190,13 @@ class PlaceResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-//                Tables\Columns\TextColumn::make('phone_number')->searchable(),
                 Tables\Columns\TextColumn::make('total_user_rating')->sortable(),
                 RatingColumn::make('rating')->theme(RatingTheme::HalfStars)->sortable()->color('warning')->default(0.0),
                 Tables\Columns\TextColumn::make('region.name')->searchable()->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('region')->relationship('region', 'name')->multiple()->searchable()->preload(),
+                SelectFilter::make('categories')->relationship('categories', 'name')->multiple()->searchable()->preload(),
             ])
             ->actions(ActionGroup::make([
                 Tables\Actions\EditAction::make(),

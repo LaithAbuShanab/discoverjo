@@ -196,7 +196,7 @@ class PlaceResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('region')->relationship('region', 'name')->multiple()->searchable()->preload(),
-                SelectFilter::make('categories')->relationship('categories', 'name')->multiple()->searchable()->preload(),
+                SelectFilter::make('categories')->relationship('categories.parent', 'name')->multiple()->searchable()->preload(),
             ])
             ->actions(ActionGroup::make([
                 Tables\Actions\EditAction::make(),

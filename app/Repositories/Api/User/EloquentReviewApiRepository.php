@@ -205,32 +205,27 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
             $tokens = $userReview->DeviceTokenMany->pluck('token')->toArray();
 
             $existingLike = $review->like()->where('user_id', $authUser->id)->first();
-            $firebaseNotification = false;
+            $shouldSendFirebaseNotification = false;
 
             if ($existingLike) {
                 $previousStatus = $existingLike->pivot->status;
 
                 if ($previousStatus == $status) {
-                    // Case 1 or 3 - Removing existing like/dislike
                     $review->like()->detach($authUser->id);
-
-                    // Delete old notification
                     $this->deleteReviewNotification($userReview->id, $review->id, $previousStatus);
 
                     DB::commit();
                     return;
                 }
 
-                // Case 2 - Switch between like and dislike
                 $review->like()->updateExistingPivot($authUser->id, ['status' => $status]);
                 $this->deleteReviewNotification($userReview->id, $review->id, $previousStatus);
-                $firebaseNotification = true;
+                $shouldSendFirebaseNotification = true;
             } else {
-                // First-time like or dislike
                 $review->like()->attach($authUser->id, ['status' => $status]);
                 $authUser->addPoints(10);
                 $authUser->recordStreak(Activity::find(1));
-                $firebaseNotification = true;
+                $shouldSendFirebaseNotification = true;
             }
 
             if (!$isSelfReview) {
@@ -239,27 +234,27 @@ class EloquentReviewApiRepository implements ReviewApiRepositoryInterface
                 } else {
                     Notification::send($userReview, new NewReviewDisLikeNotification($authUser, $review));
                 }
-            }
 
-            if (!empty($tokens) && $firebaseNotification) {
-                $notificationData = [
-                    'notification' => [
-                        'title' => Lang::get("app.notifications.new-review-{$data['status']}", [], $receiverLang),
-                        'body'  => Lang::get("app.notifications.new-user-{$data['status']}-in-review", ['username' => $authUser->username], $receiverLang),
-                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
-                        'sound' => 'default'
-                    ],
-                    'data' => [
-                        'type' => 'review_' . lcfirst(class_basename($review->reviewable_type)),
-                        'slug' =>  $review->reviewable->slug,
-                        'review_id' => $review->id
-                    ]
-                ];
-                sendNotification($tokens, $notificationData);
+                if ($shouldSendFirebaseNotification && !empty($tokens)) {
+                    $notificationData = [
+                        'notification' => [
+                            'title' => Lang::get("app.notifications.new-review-{$data['status']}", [], $receiverLang),
+                            'body'  => Lang::get("app.notifications.new-user-{$data['status']}-in-review", ['username' => $authUser->username], $receiverLang),
+                            'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                            'sound' => 'default'
+                        ],
+                        'data' => [
+                            'type' => 'review_' . lcfirst(class_basename($review->reviewable_type)),
+                            'slug' =>  $review->reviewable->slug,
+                            'review_id' => $review->id
+                        ]
+                    ];
+
+                    sendNotification($tokens, $notificationData);
+                }
             }
 
             activityLog($data['status'], $review, 'the user ' . $data['status'] . ' review', $data['status']);
-
 
             DB::commit();
         } catch (\Throwable $e) {

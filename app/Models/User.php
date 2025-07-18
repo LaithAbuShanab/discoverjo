@@ -402,10 +402,12 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return "{$this->first_name} {$this->last_name}";
     }
+
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return true;
     }
+
     public function reportsMade()
     {
         return $this->hasMany(Warning::class, 'reporter_id');

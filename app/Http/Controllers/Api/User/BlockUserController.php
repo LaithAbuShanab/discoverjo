@@ -37,6 +37,11 @@ class BlockUserController extends Controller
                             return; // already handled by `exists`
                         }
 
+                        if ($targetUser->id == 1) {
+                            $fail(__('validation.api.cannot-block-discoverjo'));
+                            return;
+                        }
+
                         if ($targetUser->id === $authUser->id) {
                             $fail(__('validation.api.cannot-block-yourself'));
                             return;

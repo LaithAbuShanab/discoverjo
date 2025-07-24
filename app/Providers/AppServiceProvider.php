@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Responses\RegisterResponse;
 use App\Interfaces\Gateways\Api\User\AuthApiRepositoryInterface;
+use App\Interfaces\Gateways\Api\User\BlockUserApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\CategoryApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\CommentApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\ContactUsApiRepositoryInterface;
@@ -39,6 +40,7 @@ use App\Interfaces\Gateways\Api\User\TripApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\UserProfileApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\VolunteeringApiRepositoryInterface;
 use App\Repositories\Api\User\EloquentAuthApiRepository;
+use App\Repositories\Api\User\EloquentBlockUserApiRepository;
 use App\Repositories\Api\User\EloquentCategoryApiRepository;
 use App\Repositories\Api\User\EloquentCommentApiRepository;
 use App\Repositories\Api\User\EloquentContactUsApiRepository;
@@ -162,6 +164,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PropertyApiRepositoryInterface::class, EloquentPropertyApiRepository::class);
 
         $this->app->bind(PropertyReservationApiRepositoryInterface::class, EloquentPropertyReservationApiRepository::class);
+
+        $this->app->bind(BlockUserApiRepositoryInterface::class, EloquentBlockUserApiRepository::class);
     }
 
     /**

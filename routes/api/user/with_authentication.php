@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\PropertyReservationApiController;
 use App\Http\Controllers\Api\User\SingleChatController;
+use App\Http\Controllers\Api\User\BlockUserController;
 
 Route::middleware(['firstLogin'])->group(function () {
 
@@ -259,6 +260,12 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('host/request/reservations/list/{property_slug}', [PropertyReservationApiController::class, 'RequestReservations']); // DONE ✅
         Route::get('host/approved/reservations/list/{property_slug}', [PropertyReservationApiController::class, 'approvedRequestReservations']); // DONE ✅
     });
+
+
+    Route::post('block/{user_slug}', [BlockUserController::class, 'block']);
+    Route::delete('unblock/{user_slug}', [BlockUserController::class, 'unblock']);
+
+
 });
 
 // ALL ROUTES FOR PROFILE

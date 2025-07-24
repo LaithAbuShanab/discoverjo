@@ -695,8 +695,6 @@ return [
         'the-status-invalid'                                       => 'The status is invalid',
         'post-id-must-be-integer'                                  => 'Post id must be integer',
         'the-user-post-creator-not-longer-active'                  => 'The user who created the post is no longer active.',
-        'the-user-id-is-required'                                  => 'The user id is required',
-        'the-user-id-does-not-exists'                              => 'The user id does not exists',
 
         // Comment Validation
         'post-id-exists'                                           => 'The selected post does not exist.',
@@ -829,6 +827,9 @@ return [
         'the-user-id-does-not-exists'                              => 'The user ID does not exist.',
         'cannot-block-yourself'                                    => 'You cannot block or unblock yourself.',
         'cannot-block-discoverjo'                                  => 'You cannot block the DiscoverJo account.',
+        'user-already-blocked'                                     => 'The user is already blocked.',
+        'cannot-unblock-yourself'                                  => 'You cannot unblock yourself.',
+        'user-not-blocked'                                         => 'The user is not blocked.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

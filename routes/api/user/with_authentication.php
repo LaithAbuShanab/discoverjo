@@ -261,7 +261,8 @@ Route::middleware(['firstLogin'])->group(function () {
         Route::get('host/approved/reservations/list/{property_slug}', [PropertyReservationApiController::class, 'approvedRequestReservations']); // DONE ✅
     });
 
-    Route::post('/block/{user_slug}/block-toggle', [BlockUserController::class, 'toggleBlock']);
+    Route::post('block/{user_slug}', [BlockUserController::class, 'block']);
+    Route::delete('unblock/{user_slug}', [BlockUserController::class, 'unblock']);
 });
 
 // ALL ROUTES FOR PROFILE

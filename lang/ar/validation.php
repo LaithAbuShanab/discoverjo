@@ -693,8 +693,6 @@ return [
         'the-status-invalid'                                        => 'حالة غير صالحة',
         'post-id-must-be-integer'                                   => 'يجب ان يكون معرف المنشور عدد صحيح.',
         'the-user-post-creator-not-longer-active'                   => 'المستخدم الذي أنشأ المنشور لم يعد نشطًا.',
-        'the-user-id-is-required'                                   => 'المستخدم مطلوب.',
-        'the-user-id-does-not-exists'                                => 'المستخدم غير موجود.',
 
         // Comment Validation
         'post-id-exists'                                            => 'المنشور المحدد غير موجود.',
@@ -827,6 +825,9 @@ return [
         'the-user-id-does-not-exists'                               => 'المستخدم غير موجود.',
         'cannot-block-yourself'                                     => 'لا يمكنك حظر أو إلغاء حظر نفسك.',
         'cannot-block-discoverjo'                                   => 'لا يمكنك حظر حساب DiscoverJo.',
+        'user-already-blocked'                                      => 'المستخدم محظور بالفعل.',
+        'cannot-unblock-yourself'                                   => 'لا يمكنك إلغاء حظر نفسك.',
+        'user-not-blocked'                                          => 'المستخدم غير محظور.',
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

@@ -15,6 +15,7 @@ class EloquentBlockUserApiRepository implements BlockUserApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $blockedUser = User::findBySlug($slug);
         $user->blockedUsers()->attach($blockedUser->id);
+        return true;
     }
 
     public function unblock($slug)
@@ -22,5 +23,6 @@ class EloquentBlockUserApiRepository implements BlockUserApiRepositoryInterface
         $user = Auth::guard('api')->user();
         $blockedUser = User::findBySlug($slug);
         $user->blockedUsers()->detach($blockedUser->id);
+        return false;
     }
 }

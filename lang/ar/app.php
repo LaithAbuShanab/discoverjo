@@ -361,5 +361,9 @@ return [
         'single-chat-created-successfully'                             => 'تم انشاء محادثة مستقلة بنجاح',
         'list-of-conversations-retrieved-successfully'                 => 'تم استرجاع قائمة المحادثات بنجاح',
         'conversation-retrieved-successfully'                          => 'تم استرجاع المحادثة بنجاح',
+
+        // Block
+        'the-user-blocked-successfully'                                => 'تم حظر المستخدم بنجاح.',
+        'the-user-unblocked-successfully'                              => 'تم إلغاء حظر المستخدم بنجاح.',
     ],
 ];

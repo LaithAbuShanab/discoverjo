@@ -361,5 +361,9 @@ return [
         'single-chat-created-successfully'                             => 'Single chat created successfully',
         'list-of-conversations-retrieved-successfully'                 => 'List of conversations retrieved successfully',
         'conversation-retrieved-successfully'                          => 'Conversation retrieved successfully',
+
+        // Block
+        'the-user-blocked-successfully'                                => 'User has been blocked successfully.',
+        'the-user-unblocked-successfully'                              => 'User has been unblocked successfully.',
     ],
 ];

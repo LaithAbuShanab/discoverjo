@@ -310,7 +310,7 @@ return [
 
     'api' => [
         // General Errors
-        'something-went-wrong'                                     => 'Something went wrong',
+        'something-went-wrong'                                      => 'Something went wrong. Please try again.',
 
         // Auth Validation
         'device-token-is-required'                                  => 'Device token is required.',
@@ -823,6 +823,12 @@ return [
         'conversation_id_required'                                 => 'The conversation id is required.',
         'conversation_id_exists'                                   => 'The conversation id does not exist.',
         'you-are-not-a-member-of-this-conversation'                => 'You are not a member of this conversation.',
+
+        // Block
+        'the-user-id-is-required'                                  => 'The user ID is required.',
+        'the-user-id-does-not-exists'                              => 'The user ID does not exist.',
+        'cannot-block-yourself'                                    => 'You cannot block or unblock yourself.',
+        'cannot-block-discoverjo'                                  => 'You cannot block the DiscoverJo account.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

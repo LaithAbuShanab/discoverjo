@@ -449,22 +449,21 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         return $this->belongsToMany(User::class, 'user_blocks', 'blocker_id', 'blocked_id')->withTimestamps();
     }
 
-// Users who have blocked this user
+    // Users who have blocked this user
     public function blockedByUsers()
     {
         return $this->belongsToMany(User::class, 'user_blocks', 'blocked_id', 'blocker_id')->withTimestamps();
     }
 
-// Check if current user has blocked a user
+    // Check if current user has blocked a user
     public function hasBlocked(User $user)
     {
         return $this->blockedUsers()->where('blocked_id', $user->id)->exists();
     }
 
-// Check if this user is blocked by another
+    // Check if this user is blocked by another
     public function isBlockedBy(User $user)
     {
         return $this->blockedByUsers()->where('blocker_id', $user->id)->exists();
     }
-
 }

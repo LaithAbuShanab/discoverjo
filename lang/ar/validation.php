@@ -310,7 +310,7 @@ return [
 
     'api' => [
         // General Errors
-        'something-went-wrong'                                      => 'هناك خطأ قد حدث.',
+        'something-went-wrong'                                      => 'حدث خطأ ما، يرجى المحاولة مرة أخرى.',
 
         // Auth Validation
         "username-or-email-is-required"                             => "الاسم المستخدم او البريد الالكتروني مطلوب.",
@@ -821,6 +821,12 @@ return [
         'conversation_id_required'                                  => 'معرف المحادثة مطلوب.',
         'conversation_id_exists'                                    => 'معرف المحادثة غير صالح.',
         'you-are-not-a-member-of-this-conversation'                 => 'أنت لست عضوا في هذه المحادثة.',
+
+        // Block
+        'the-user-id-is-required'                                   => 'معرّف المستخدم مطلوب.',
+        'the-user-id-does-not-exists'                               => 'المستخدم غير موجود.',
+        'cannot-block-yourself'                                     => 'لا يمكنك حظر أو إلغاء حظر نفسك.',
+        'cannot-block-discoverjo'                                   => 'لا يمكنك حظر حساب DiscoverJo.',
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

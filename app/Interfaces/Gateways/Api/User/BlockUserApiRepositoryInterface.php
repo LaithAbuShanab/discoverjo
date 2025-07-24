@@ -7,5 +7,4 @@ interface BlockUserApiRepositoryInterface
 {
     public function block($slug);
     public function unblock($slug);
-
 }

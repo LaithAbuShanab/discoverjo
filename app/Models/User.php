@@ -292,7 +292,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
             });
     }
 
-
     public function guideTrips()
     {
         return $this->hasMany(GuideTrip::class, 'guide_id');
@@ -302,8 +301,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
     {
         return $this->hasMany(GuideTripUser::class);
     }
-
-
 
     // Define a relationship with the GuideTrip model through the GuideTripUser model
     public function TripsOfGuide()
@@ -443,27 +440,44 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
         return $this->hasMany(UserType::class, 'user_id');
     }
 
-    // Users this user has blocked
     public function blockedUsers()
     {
-        return $this->belongsToMany(User::class, 'user_blocks', 'blocker_id', 'blocked_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_blocks', 'blocker_id', 'blocked_id')
+            ->withTimestamps();
     }
 
-    // Users who have blocked this user
-    public function blockedByUsers()
+    public function blockers()
     {
-        return $this->belongsToMany(User::class, 'user_blocks', 'blocked_id', 'blocker_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_blocks', 'blocked_id', 'blocker_id')
+            ->withTimestamps();
     }
 
-    // Check if current user has blocked a user
     public function hasBlocked(User $user)
     {
         return $this->blockedUsers()->where('blocked_id', $user->id)->exists();
     }
 
-    // Check if this user is blocked by another
-    public function isBlockedBy(User $user)
+    public function acceptedFollowersCountExcludingBlocked()
     {
-        return $this->blockedByUsers()->where('blocker_id', $user->id)->exists();
+        $currentUser = auth('api')->user();
+
+        return $this->acceptedFollowers()
+            ->get()
+            ->filter(function ($user) use ($currentUser) {
+                return ! $currentUser->hasBlocked($user) && ! $user->hasBlocked($currentUser);
+            })
+            ->count();
+    }
+
+    public function acceptedFollowingCountExcludingBlocked()
+    {
+        $currentUser = auth('api')->user();
+
+        return $this->acceptedFollowing()
+            ->get()
+            ->filter(function ($user) use ($currentUser) {
+                return ! $currentUser->hasBlocked($user) && ! $user->hasBlocked($currentUser);
+            })
+            ->count();
     }
 }

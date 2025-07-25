@@ -13,6 +13,7 @@ use App\Rules\CheckIfUserMadeRatingRule;
 use App\Rules\CheckIfUserMakeRatingOnGuideRule;
 use App\Rules\CheckIfUserMakeUpdateToUpdateRule;
 use App\Rules\CheckIfUserNotGuideForRatingRule;
+use App\Rules\CurrentBlockUserRule;
 use App\UseCases\Api\User\GuideRatingApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,18 +22,14 @@ use Illuminate\Support\Facades\Validator;
 
 class GuideRatingController extends Controller
 {
-    public function __construct(protected GuideRatingApiUseCase $guideRatingApiUseCase)
-    {
-
-        $this->guideRatingApiUseCase = $guideRatingApiUseCase;
-    }
+    public function __construct(protected GuideRatingApiUseCase $guideRatingApiUseCase) {}
 
     public function create(CreateGuideRatingRequest $request, $guide_slug)
     {
         $validator = Validator::make(
             ['guide_slug' => $guide_slug],
             [
-                'guide_slug' => ['bail', 'required', 'exists:users,slug', new CheckIfTheIdIsGuideRule(), new CheckIfUserNotGuideForRatingRule(), new CheckIfUserJoinedGuidPreviouslyRule(), new CheckIfUserMakeRatingOnGuideRule(), new CheckIfUserActiveRule()],
+                'guide_slug' => ['bail', 'required', 'exists:users,slug', new CurrentBlockUserRule(), new CheckIfTheIdIsGuideRule(), new CheckIfUserNotGuideForRatingRule(), new CheckIfUserJoinedGuidPreviouslyRule(), new CheckIfUserMakeRatingOnGuideRule(), new CheckIfUserActiveRule()],
             ],
             [
                 'guide_slug.required' => __('validation.api.guide-id-required'),
@@ -60,7 +57,7 @@ class GuideRatingController extends Controller
         $validator = Validator::make(
             ['guide_slug' => $guide_slug],
             [
-                'guide_slug' => ['bail', 'required', 'exists:users,slug', new CheckIfTheIdIsGuideRule(), new CheckIfUserNotGuideForRatingRule(), new CheckIfUserMakeUpdateToUpdateRule(), new CheckIfUserActiveRule()],
+                'guide_slug' => ['bail', 'required', 'exists:users,slug', new CurrentBlockUserRule(), new CheckIfTheIdIsGuideRule(), new CheckIfUserNotGuideForRatingRule(), new CheckIfUserMakeUpdateToUpdateRule(), new CheckIfUserActiveRule()],
             ],
             [
                 'guide_slug.required' => __('validation.api.guide-id-required'),

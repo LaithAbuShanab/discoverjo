@@ -830,6 +830,7 @@ return [
         'user-already-blocked'                                     => 'The user is already blocked.',
         'cannot-unblock-yourself'                                  => 'You cannot unblock yourself.',
         'user-not-blocked'                                         => 'The user is not blocked.',
+        'generic-action-denied'                                    => 'This action is currently unavailable.',
 
         'injection_based_time'                                     => 'Invalid value.',
     ]

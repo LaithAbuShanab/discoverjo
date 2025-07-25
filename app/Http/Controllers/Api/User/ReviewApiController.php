@@ -15,6 +15,7 @@ use App\Rules\CheckIfReviewOwnerActiveRule;
 use App\Rules\CheckIfTypeAndSlugRule;
 use App\Rules\CheckIfTypeIsInThePastRule;
 use App\Rules\CheckIfUserTypeActiveRule;
+use App\Rules\NotBlockedUserRule;
 use App\UseCases\Api\User\ReviewApiUseCase;
 
 class ReviewApiController extends Controller
@@ -144,7 +145,14 @@ class ReviewApiController extends Controller
             ],
             [
                 'status' => ['required', Rule::in(['like', 'dislike'])],
-                'review_id' => ['bail', 'required', 'integer', 'exists:reviewables,id', new CheckIfReviewOwnerActiveRule()],
+                'review_id' => [
+                    'bail',
+                    'required',
+                    'integer',
+                    'exists:reviewables,id',
+                    new CheckIfReviewOwnerActiveRule(),
+                    new NotBlockedUserRule(\App\Models\Reviewable::class),
+                ],
             ],
             [
                 'review_id.exists' => __('validation.api.the-selected-review-id-does-not-exists'),

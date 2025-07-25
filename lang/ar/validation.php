@@ -828,6 +828,8 @@ return [
         'user-already-blocked'                                      => 'المستخدم محظور بالفعل.',
         'cannot-unblock-yourself'                                   => 'لا يمكنك إلغاء حظر نفسك.',
         'user-not-blocked'                                          => 'المستخدم غير محظور.',
+        'generic-action-denied'                                     => 'هذا الإجراء غير متاح حالياً.',
+
 
         'injection_based_time'                                      => 'قيمة غير صالحة.',
     ],

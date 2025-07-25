@@ -446,10 +446,12 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
             'total' => $tripsArray['total'],
         ];
 
+        $currentUser = Auth::guard('api')->user();
+        $hasBlocked = $currentUser && $currentUser->hasBlocked($guide);
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' => AllGuideTripResource::collection($guideTrips),
+            'trips' => $hasBlocked ? [] : AllGuideTripResource::collection($guideTrips),
             'pagination' => $pagination
         ];
     }

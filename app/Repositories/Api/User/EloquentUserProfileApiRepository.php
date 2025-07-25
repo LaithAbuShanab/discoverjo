@@ -73,7 +73,6 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             DB::commit();
 
             return response()->json(['message' => 'Location updated successfully', 'user' => $eloquentUser]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Failed to update location', 'message' => $e->getMessage()], 500);
@@ -89,7 +88,8 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
-        //        $quotedQuery= DB::getPdo()->quote($query);
+        $currentUser = auth('api')->user();
+
         $users = User::where('status', 1)
             ->where(function ($q) use ($query) {
                 $q->where('first_name', 'like', "%{$query}%")
@@ -98,17 +98,23 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
             })
             ->paginate($perPage);
 
-        $usersArray = $users->toArray();
+        $filtered = $users->getCollection()->filter(function ($user) use ($currentUser) {
+            if (! $currentUser) return true;
+            return ! $currentUser->hasBlocked($user) && ! $user->hasBlocked($currentUser);
+        });
+
+        $users->setCollection($filtered);
 
         $pagination = [
-            'next_page_url' => $usersArray['next_page_url'],
-            'prev_page_url' => $usersArray['next_page_url'],
-            'total' => $usersArray['total'],
+            'next_page_url' => $users->nextPageUrl(),
+            'prev_page_url' => $users->previousPageUrl(),
+            'total' => $users->total(),
         ];
+
         if ($query) {
             activityLog('user', $users->first(), $query, 'search');
         }
-        // Pass user coordinates to the PlaceResource collection
+
         return [
             'users' => UserResource::collection($users),
             'pagination' => $pagination

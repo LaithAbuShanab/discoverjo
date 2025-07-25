@@ -356,8 +356,11 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $posts = $user->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
         $postsArray = $posts->toArray();
 
+        $currentUser = auth('api')->user();
+
+        $hasBlocked = $currentUser && $currentUser->hasBlocked($user);
         return [
-            'posts' => UserPostResource::collection($posts),
+            'posts' => $hasBlocked ? [] : UserPostResource::collection($posts),
             'pagination' => [
                 'next_page_url' => $posts->nextPageUrl(),
                 'prev_page_url' => $posts->previousPageUrl(),

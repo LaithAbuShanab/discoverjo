@@ -15,7 +15,6 @@ class SinglePlaceResource extends JsonResource
      */
     public function toArray($request)
     {
-//        dd($this->reviews);
         $userLat = $request->lat ? $request->lat : null;
         $userLng = $request->lng ? $request->lng : null;
         $placeLat = $this->latitude;
@@ -41,7 +40,7 @@ class SinglePlaceResource extends JsonResource
         $categories = $this->categories->map(function ($category) {
             return $category->parent ? [
                 'name' => $category->parent->name,
-                'main_image' => $category->parent->getFirstMediaUrl('main_category','main_category_app'),
+                'main_image' => $category->parent->getFirstMediaUrl('main_category', 'main_category_app'),
             ] : null;
         })->filter()->unique();
 
@@ -70,11 +69,9 @@ class SinglePlaceResource extends JsonResource
         }
 
         $posts = $this->posts->filter(function ($post) {
-            if($post->privacy == 0)
-            {
+            if ($post->privacy == 0) {
                 $userId = Auth::guard('api')->user()->id;
                 return $post->user_id == $userId;
-
             }
             if ($post->privacy == 1) {
                 return true;
@@ -101,26 +98,25 @@ class SinglePlaceResource extends JsonResource
         $distance = $userLat && $userLng ? haversineDistance($userLat, $userLng, $placeLat, $placeLng) : null;
 
         $total_ratings = 0;
-        $total_user_total= 0;
+        $total_user_total = 0;
         if ($this->total_user_rating > 0 || $this->reviews->count() > 0) {
             $total_ratings = (($this->total_user_rating * $this->rating) + ($this->reviews->count() * $this->reviews->avg('rating'))) / ($this->total_user_rating + $this->reviews->count());
             $total_user_total = $this->total_user_rating  + $this->reviews->count();
         }
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('main_place','main_place_app'),
+            'image' => $this->getFirstMediaUrl('main_place', 'main_place_app'),
             'region' => $this->region->name,
             'address' => $this->address,
-//            'rating' => $this->rating,
-//            'total_user_rating' => $this->total_user_rating,
             'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'weather'=>$weather,
+            'weather' => $weather,
             'business_status' => businessStatusTranslation(Request::header('Content-Language') ?? 'ar', $this->business_status),
             'google_map_url' => $this->google_map_url,
             'phone_number' => $this->phone_number,
@@ -135,7 +131,14 @@ class SinglePlaceResource extends JsonResource
             'gallery' => $gallery,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id', $this->id) : false,
             'visited' => Auth::guard('api')->user() ? Auth::guard('api')->user()->visitedPlace->contains('id', $this->id) : false,
-            'reviews' => ReviewResource::collection($this->reviews),
+            'reviews' => ReviewResource::collection(
+                $this->reviews->reject(function ($review) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $review->user_id) ||
+                        $currentUser->blockers->contains('id', $review->user_id);
+                })
+            ),
             'posts' => UserPostResource::collection($posts),
         ];
     }

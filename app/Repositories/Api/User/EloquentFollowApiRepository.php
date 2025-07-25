@@ -149,21 +149,34 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $perPage = config('app.pagination_per_page');
         $followingUser = User::findBySlug($user_slug);
 
-        // Get the paginated result first
         $rawFollowers = Follow::where('following_id', $followingUser->id)
             ->where('status', 1)
-            ->with('followerUser') // eager load to reduce queries
+            ->with('followerUser')
             ->paginate($perPage);
 
-        activityLog('view other users follows', $followingUser, 'the user view followers of this user ', 'view');
+        activityLog('view other users follows', $followingUser, 'the user view followers of this user', 'view');
 
-        // Filter followers with valid followerUser and status
-        $filteredFollowers = $rawFollowers->getCollection()->filter(function ($follow) {
-            return $follow->followerUser && $follow->followerUser->status === 1;
+        $currentUser = auth('api')->user();
+
+        $filteredFollowers = $rawFollowers->getCollection()->filter(function ($follow) use ($currentUser) {
+            $follower = $follow->followerUser;
+
+            if (! $follower || $follower->status !== 1) {
+                return false;
+            }
+
+            if ($currentUser && (
+                $follower->hasBlocked($currentUser) || $currentUser->hasBlocked($follower)
+            )) {
+                return false;
+            }
+
+            return true;
         });
 
-        // Set the filtered collection back to paginator
         $rawFollowers->setCollection($filteredFollowers);
+
+        $hasBlocked = $currentUser && $currentUser->hasBlocked($followingUser);
 
         $pagination = [
             'next_page_url' => $rawFollowers->nextPageUrl(),
@@ -172,7 +185,7 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
 
         return [
-            'followers' => FollowerResource::collection($rawFollowers),
+            'followers' => $hasBlocked ? [] : FollowerResource::collection($rawFollowers),
             'pagination' => $pagination
         ];
     }
@@ -182,21 +195,35 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         $perPage = config('app.pagination_per_page');
         $follower = User::findBySlug($user_slug);
 
-        // Get paginated followings with eager loaded user
         $rawFollowings = Follow::where('follower_id', $follower->id)
             ->where('status', 1)
-            ->with('followingUser') // important to eager load
+            ->with('followingUser')
             ->paginate($perPage);
 
-        activityLog('view other users followings', $follower, 'the user view followings of this user ', 'view');
+        activityLog('view other users followings', $follower, 'the user view followings of this user', 'view');
 
-        // Filter out null or inactive following users
-        $filteredFollowings = $rawFollowings->getCollection()->filter(function ($follow) {
-            return $follow->followingUser && $follow->followingUser->status === 1;
+        $currentUser = auth('api')->user();
+
+        $filteredFollowings = $rawFollowings->getCollection()->filter(function ($follow) use ($currentUser) {
+            $following = $follow->followingUser;
+
+            if (! $following || $following->status !== 1) {
+                return false;
+            }
+
+            if ($currentUser && (
+                $following->hasBlocked($currentUser) || $currentUser->hasBlocked($following)
+            )) {
+                return false;
+            }
+
+            return true;
         });
 
-        // Replace the paginator collection with filtered results
+
         $rawFollowings->setCollection($filteredFollowings);
+
+        $hasBlocked = $currentUser && $currentUser->hasBlocked($follower);
 
         $pagination = [
             'next_page_url' => $rawFollowings->nextPageUrl(),
@@ -205,10 +232,11 @@ class EloquentFollowApiRepository implements FollowApiRepositoryInterface
         ];
 
         return [
-            'followings' => FollowingResource::collection($rawFollowings),
+            'followings' => $hasBlocked ? [] : FollowingResource::collection($rawFollowings),
             'pagination' => $pagination
         ];
     }
+
 
     public function removeFollower($user_slug)
     {

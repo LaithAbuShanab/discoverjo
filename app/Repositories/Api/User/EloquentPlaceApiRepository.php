@@ -244,15 +244,21 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
         $query = $data['query'];
 
         /**
-         * SEARCH PLACES
+         * SEARCH USERS
          */
-        $users = User::where('status', 1)->where(function ($queryBuilder) use ($query) {
-            $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
-                ->orWhere('last_name', 'LIKE', "%{$query}%")
-                ->orWhere('username', 'LIKE', "%{$query}%");
-        })
-            ->paginate($perPage);
+        $users = User::where('status', 1)
+            ->where(function ($queryBuilder) use ($query) {
+                $queryBuilder->where('first_name', 'LIKE', "%{$query}%")
+                    ->orWhere('last_name', 'LIKE', "%{$query}%")
+                    ->orWhere('username', 'LIKE', "%{$query}%");
+            })->paginate($perPage);
 
+        $filtered = $users->getCollection()->filter(function ($search) use ($user) {
+            if (! $user) return true;
+            return ! $user->hasBlocked($search) && ! $search->hasBlocked($user);
+        });
+
+        $users->setCollection($filtered);
 
         $usersArray = $users->toArray();
         $paginationUsers = [
@@ -292,6 +298,9 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
                 });
         }
 
+        /**
+         * SEARCH PLACES
+         */
         $places = $placesQuery->paginate($perPage);
 
         $placesArray = $places->toArray();

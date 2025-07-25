@@ -16,6 +16,7 @@ class OtherUserProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         $paginationPerPage = config('app.pagination_per_page');
+
         $tags = $this->tags->map(function ($tag) {
             return [
                 'name' => $tag->name,
@@ -24,6 +25,7 @@ class OtherUserProfileResource extends JsonResource
                 'image_inactive' => $tag->getFirstMediaUrl('tag_inactive', 'tag_inactive_app'),
             ];
         });
+
         $gender = [
             'ar' => [
                 1 => 'ذكر',
@@ -41,29 +43,33 @@ class OtherUserProfileResource extends JsonResource
             $isGuide = 1;
         }
 
+        $currentUser = auth('api')->user();
+        $hasBlocked = $currentUser && $currentUser->hasBlocked($this->resource);
+
         return [
-            'id' => $this->id,
-            'slug' => $this->slug,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'username' => $this->username,
-            'full_name' => $fullName,
-            'is_guide' => $isGuide,
-            'referral_code' => $this->referral_code,
-            'guide_rating' => $isGuide ? $this->guideRatings->avg('rating') : false,
-            'gender' => $gender[$this->lang][$this->sex],
-            'points' => $this->getPoints(),
-            'streak' => $this->getCurrentStreakCount($activity),
-            'status' => $this->status,
-            'description' => $this->description,
-            'following_number' => $this->acceptedFollowing()->count(),
-            'follower_number' => $this->acceptedFollowers()->count(),
-            'is_following' => isFollowing($this->id),
-            'is_follow_me' => isFollower($this->id),
-            'tags' => $tags,
-            'reviews' =>  ReviewResource::collection($reviews),
-            'visited_places' => UserVisitedPlaceResource::collection($this->visitedPlace),
-            'avatar' => $this->getFirstMediaUrl('avatar', 'avatar_app'),
+            'id'               => $this->id,
+            'slug'             => $this->slug,
+            'first_name'       => $this->first_name,
+            'last_name'        => $this->last_name,
+            'username'         => $this->username,
+            'full_name'        => $fullName,
+            'is_guide'         => $isGuide,
+            'referral_code'    => $this->referral_code,
+            'guide_rating'     => $hasBlocked ? 0 : ($isGuide ? $this->guideRatings->avg('rating') : false),
+            'gender'           => $gender[$this->lang][$this->sex],
+            'points'           =>  $hasBlocked ? 0 : $this->getPoints(),
+            'streak'           =>  $hasBlocked ? 0 : $this->getCurrentStreakCount($activity),
+            'status'           => $this->status,
+            'description'      => $this->description,
+            'following_number' =>  $hasBlocked ? 0 : $this->acceptedFollowingCountExcludingBlocked(),
+            'follower_number'  =>  $hasBlocked ? 0 : $this->acceptedFollowersCountExcludingBlocked(),
+            'is_following'     => isFollowing($this->id),
+            'is_follow_me'     => isFollower($this->id),
+            'tags'             => $tags,
+            'reviews'          =>  $hasBlocked ? [] : ReviewResource::collection($reviews),
+            'visited_places'   =>  $hasBlocked ? [] : UserVisitedPlaceResource::collection($this->visitedPlace),
+            'avatar'           => $this->getFirstMediaUrl('avatar', 'avatar_app'),
+            'has_blocked'      => $hasBlocked
         ];
     }
 }

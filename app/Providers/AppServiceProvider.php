@@ -81,6 +81,8 @@ use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationR
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Notifications\Notification;
 use Filament\Facades\Filament;
+use App\Models\UserBlock;
+use App\Observers\UserBlockObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -186,6 +188,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\App\Models\Comment::class, \App\Policies\CommentPolicy::class);
         Gate::policy(\App\Models\LegalDocument::class, \App\Policies\LegalDocumentPolicy::class);
         Gate::policy(\App\Models\guideTrip::class, \App\Policies\GuideTripPolicy::class);
+
+        UserBlock::observe(UserBlockObserver::class);
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch->locales(['ar', 'en'])->visible(outsidePanels: true);

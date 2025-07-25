@@ -103,22 +103,27 @@ class PlaceApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
-//                    ,new CheckIfHasInjectionBasedTimeRule()
+                'query' => [
+                    'bail',
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
+                    //                    ,new CheckIfHasInjectionBasedTimeRule()
                 ],
                 'lat'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    //                    'numeric',
                     'between:-90,90',
                     new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    //                    'numeric',
                     'between:-180,180',
                     new CheckLatLngRule()
                 ],
@@ -149,16 +154,16 @@ class PlaceApiController extends Controller
                 'lat'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    //                    'numeric',
                     'between:-90,90',
                     new CheckLatLngRule(),
                 ],
                 'lng'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    //                    'numeric',
                     'between:-180,180',
                     new CheckLatLngRule()
                 ],
@@ -193,22 +198,22 @@ class PlaceApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
-//                    ,new CheckIfHasInjectionBasedTimeRule()
+                'query' => [
+                    'bail',
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
                 ],
                 'lat'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-//                    'numeric',
                     'between:-90,90',
                     new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-//                    'numeric',
                     'between:-180,180',
                     new CheckLatLngRule()
                 ],

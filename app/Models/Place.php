@@ -136,9 +136,4 @@ class Place extends Model implements HasMedia
     {
         return $this->belongsToMany(Category::class, 'place_categories');
     }
-
-    //    public function activities()
-    //    {
-    //        return $this->hasMany(PlanActivity::class);
-    //    }
 }

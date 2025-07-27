@@ -16,8 +16,6 @@ class SingleEventResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $now = Carbon::now('Asia/Riyadh');
-
         $organizers = $this->organizers->map(function ($organizer) {
             return [
                 'name' => $organizer->name,
@@ -37,17 +35,23 @@ class SingleEventResource extends JsonResource
         $endDateTime =  dateTime($this->end_datetime);
 
         $total_ratings = 0;
-        $total_user_total= 0;
-        if ( $this->reviews->count() > 0) {
+        $total_user_total = 0;
+        if ($this->reviews->count() > 0) {
             $total_ratings =  $filteredReviews->avg('rating');
             $total_user_total = $filteredReviews->count();
         }
+
+        $authUser = Auth::guard('api')->user();
+        $interestedUsers = $this->interestedUsers
+            ->filter(fn($user) => $user->status == 1)
+            ->reject(fn($user) => $authUser && ($authUser->hasBlocked($user) || $user->hasBlocked($authUser)));
+
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('event','event_app'),
+            'image' => $this->getFirstMediaUrl('event', 'event_app'),
             'start_day' => $startDatetime->format('Y-m-d'),
             'start_time' => $startDatetime->format('H:i:s'),
             'end_day' => $endDateTime->format('Y-m-d'),
@@ -63,11 +67,9 @@ class SingleEventResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteEvents->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->eventInterestables->contains('id', $this->id) : false,
             'organizers' => $organizers,
-            'interested_users' => UserResource::collection(
-                $this->interestedUsers->filter(fn($user) => $user->status == 1)
-            ),
-
+            'interested_users' => UserResource::collection($interestedUsers),
         ];
+
 
         // if ($this->start_datetime < $now) {
         $data['reviews'] = ReviewResource::collection($filteredReviews);

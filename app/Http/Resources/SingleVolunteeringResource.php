@@ -37,18 +37,24 @@ class SingleVolunteeringResource extends JsonResource
         $endDateTime =  dateTime($this->end_datetime);
 
         $total_ratings = 0;
-        $total_user_total= 0;
-        if ( $this->reviews->count() > 0) {
+        $total_user_total = 0;
+        if ($this->reviews->count() > 0) {
             $total_ratings =  $filteredReviews->avg('rating');
             $total_user_total = $filteredReviews->count();
         }
 
+        $authUser = Auth::guard('api')->user();
+        $interestedUsers = $this->interestedUsers
+            ->filter(fn($user) => $user->status == 1)
+            ->reject(fn($user) => $authUser && ($authUser->hasBlocked($user) || $user->hasBlocked($authUser)));
+
+
         $data = [
             'id' => $this->id,
-            'slug'=>$this->slug,
+            'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->getFirstMediaUrl('volunteering','volunteering_app'),
+            'image' => $this->getFirstMediaUrl('volunteering', 'volunteering_app'),
             'start_day' => $startDatetime->format('Y-m-d'),
             'start_time' => $startDatetime->format('H:i:s'),
             'end_day' => $endDateTime->format('Y-m-d'),
@@ -61,7 +67,7 @@ class SingleVolunteeringResource extends JsonResource
             'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
             'organizers' => $organizers,
-            'interested_users' => UserResource::collection($this->interestedUsers),
+            'interested_users' => UserResource::collection($interestedUsers),
             'attendance_number' => $this->attendance_number,
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteVolunteerings->contains('id', $this->id) : false,
             'interested' => Auth::guard('api')->user() ? Auth::guard('api')->user()->volunteeringInterestables->contains('id', $this->id) : false,

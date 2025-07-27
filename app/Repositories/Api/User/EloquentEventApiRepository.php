@@ -16,9 +16,9 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function getAllEvents()
     {
         $perPage = config('app.pagination_per_page');
-        $eloquentEvents = Event::orderBy('status','desc') // status 1 first
-        ->orderBy('start_datetime', 'desc')             // then order by start_datetime
-        ->paginate($perPage);
+        $eloquentEvents = Event::orderBy('status', 'desc') // status 1 first
+            ->orderBy('start_datetime', 'desc')             // then order by start_datetime
+            ->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
 
         $pagination = [
@@ -62,17 +62,17 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function event($slug)
     {
         $eloquentEvents = Event::where('slug', $slug)->first();
-        activityLog('view specific event',$eloquentEvents,'The user viewed event','view');
+        activityLog('view specific event', $eloquentEvents, 'The user viewed event', 'view');
         return new SingleEventResource($eloquentEvents);
     }
 
     public function dateEvents($date)
     {
         $perPage = config('app.pagination_per_page');
-        $query = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
-        ->orderBy('start_datetime', 'desc');
-        $eloquentEvents = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status','desc') // status 1 first
-        ->orderBy('start_datetime', 'desc')->paginate($perPage);
+        $query = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status', 'desc') // status 1 first
+            ->orderBy('start_datetime', 'desc');
+        $eloquentEvents = Event::whereDate('start_datetime', '<=', $date)->whereDate('end_datetime', '>=', $date)->orderBy('status', 'desc') // status 1 first
+            ->orderBy('start_datetime', 'desc')->paginate($perPage);
         $eventsArray = $eloquentEvents->toArray();
         $pagination = [
             'next_page_url' => $eventsArray['next_page_url'],
@@ -80,7 +80,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'total' => $eventsArray['total'],
         ];
 
-        activityLog('view event in specific date',$query->first(),'The user viewed event in specific date '.$date['date'],'view');
+        activityLog('view event in specific date', $query->first(), 'The user viewed event in specific date ' . $date['date'], 'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
@@ -92,10 +92,10 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function createInterestEvent($slug)
     {
         $user = Auth::guard('api')->user();
-        $event= Event::findBySlug($slug);
+        $event = Event::findBySlug($slug);
         $eventId = $event?->id;
         $user->eventInterestables()->attach([$eventId]);
-        ActivityLog('event',$event,'the user interested in the event','interest');
+        ActivityLog('event', $event, 'the user interested in the event', 'interest');
 
         //add points and streak
         $user->addPoints(10);
@@ -106,19 +106,19 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
     public function disinterestEvent($slug)
     {
         $user = Auth::guard('api')->user();
-        $event= Event::findBySlug($slug);
+        $event = Event::findBySlug($slug);
         $eventId = $event?->id;
         $user->eventInterestables()->detach($eventId);
         $user->deductPoints(10);
-        ActivityLog('event',$event,'the user disinterest in the event','disinterest');
+        ActivityLog('event', $event, 'the user disinterest in the event', 'disinterest');
     }
 
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
         $eloquentEvents = Event::where(function ($queryBuilder) use ($query) {
-        $queryBuilder->where('name_en', 'like', '%' . $query . '%')
-            ->orWhere('name_ar', 'like', '%' . $query . '%');
+            $queryBuilder->where('name_en', 'like', '%' . $query . '%')
+                ->orWhere('name_ar', 'like', '%' . $query . '%');
         })->paginate($perPage);
 
         $eventsArray = $eloquentEvents->toArray();
@@ -127,7 +127,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        if($query) {
+        if ($query) {
             activityLog('search for specific event', $eloquentEvents->first(), $query, 'search');
         }
         // Pass user coordinates to the PlaceResource collection
@@ -154,7 +154,7 @@ class EloquentEventApiRepository implements EventApiRepositoryInterface
             'prev_page_url' => $eventsArray['next_page_url'],
             'total' => $eventsArray['total'],
         ];
-        activityLog('show his interested list for events',$query->first(), 'the user view his events interest list','view');
+        activityLog('show his interested list for events', $query->first(), 'the user view his events interest list', 'view');
         // Pass user coordinates to the PlaceResource collection
         return [
             'events' => EventResource::collection($eloquentEvents),

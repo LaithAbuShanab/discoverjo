@@ -13,6 +13,7 @@ class TripFavUserBlockRule implements ValidationRule
     {
         $trip = Trip::where('slug', $value)->first();
         $currentUser = Auth::guard('api')->user();
+        dd($trip);
         $tripOwner = $trip->user;
 
         if ($currentUser && ($currentUser->hasBlocked($tripOwner) || $tripOwner->hasBlocked($currentUser))) {

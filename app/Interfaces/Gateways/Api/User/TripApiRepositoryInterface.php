@@ -50,5 +50,6 @@ interface TripApiRepositoryInterface
     public function search($query);
 
     public function removeUser($request);
+
     public function dateTrips($date);
 }

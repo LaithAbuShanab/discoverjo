@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Rules\CheckIfTheUserIsTripAnotherTrip;
 use App\Rules\CheckIfUserActiveRule;
 use App\Rules\CheckUserTripStatus;
+use App\Rules\TripRequestUserBlockRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -29,7 +30,7 @@ class AcceptCancelUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_slug' => ['bail', 'required', 'string', 'exists:users,slug', new CheckIfTheUserIsTripAnotherTrip,new CheckIfUserActiveRule()],
+            'user_slug' => ['bail', 'required', 'string', 'exists:users,slug', new TripRequestUserBlockRule, new CheckIfTheUserIsTripAnotherTrip, new CheckIfUserActiveRule()],
             'trip_slug' => ['bail', 'required', 'string', 'exists:trips,slug', new CheckUserTripStatus]
         ];
     }

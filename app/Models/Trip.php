@@ -17,7 +17,7 @@ class Trip extends Model
     protected $guarded = [];
     protected $table = 'trips';
     public $translatable = ['name', 'description'];
-    protected static $logAttributes = ['place_id','trip_type','name','description','cost','age_range','sex','date_time','attendance_number','status'];
+    protected static $logAttributes = ['place_id', 'trip_type', 'name', 'description', 'cost', 'age_range', 'sex', 'date_time', 'attendance_number', 'status'];
     protected static $logOnlyDirty = true;
     protected static $logName = 'trip';
     protected static $recordEvents = ['created', 'updated', 'deleted'];
@@ -30,7 +30,7 @@ class Trip extends Model
     {
         return LogOptions::defaults()
             ->useLogName('trip')
-            ->logOnly(['place_id','trip_type','name','description','cost','age_range','sex','date_time','attendance_number','status'])
+            ->logOnly(['place_id', 'trip_type', 'name', 'description', 'cost', 'age_range', 'sex', 'date_time', 'attendance_number', 'status'])
             ->logOnlyDirty();
     }
 
@@ -74,6 +74,13 @@ class Trip extends Model
         return $this->hasMany(UsersTrip::class);
     }
 
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'users_trips', 'trip_id', 'user_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
     public function reviews(): MorphMany
     {
         return $this->morphMany(Reviewable::class, 'reviewable')->latest();
@@ -93,5 +100,4 @@ class Trip extends Model
     {
         return $this->morphToMany(User::class, 'favorable', 'favorables')->withTimestamps();
     }
-
 }

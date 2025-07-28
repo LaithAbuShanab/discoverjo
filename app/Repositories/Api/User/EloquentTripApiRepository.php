@@ -41,51 +41,88 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
     public function trips()
     {
-        $user = Auth::guard('api')->user();
+        $user = User::find(Auth::guard('api')->user()->id);
         $userId = $user->id;
         $userAge = Carbon::parse($user->birthday)->age;
         $userSex = $user->sex;
 
-        // Trips created by the user (should bypass all filters)
         $ownTrips = Trip::where('user_id', $userId)
             ->whereHas('user', fn($q) => $q->where('status', '1'))
-            ->where('status', '1');
+            ->where('status', '1')
+            ->get();
 
-        // Trips not created by the user but pass all filters
         $otherTrips = Trip::where('user_id', '!=', $userId)
             ->whereHas('user', fn($q) => $q->where('status', '1'))
             ->where('status', '1')
             ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
             ->where(fn($q) => $this->applyCapacityCheck($q))
-            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
+            ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
+            ->get();
 
-        // Merge and sort
-        $trips = $ownTrips->union($otherTrips)->orderBy('date_time')->get();
+        $filteredOtherTrips = $otherTrips->filter(function ($trip) use ($user) {
+            if ($user->hasBlocked($trip->user) || $trip->user->hasBlocked($user)) {
+                return false;
+            }
 
-        return TripResource::collection($trips);
+            foreach ($trip->participants as $participant) {
+                if (
+                    $participant->pivot->status == 1 &&
+                    ($user->hasBlocked($participant) || $participant->hasBlocked($user))
+                ) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        $allTrips = $ownTrips->merge($filteredOtherTrips)->sortBy('date_time')->values();
+
+        return TripResource::collection($allTrips);
     }
 
     public function allTrips()
     {
+        $currentUser = Auth::guard('api')->user();
         $perPage = config('app.pagination_per_page');
         $now = now()->setTimezone('Asia/Riyadh');
+
         $trips = Trip::where('status', '1')
             ->where('trip_type', '0')
             ->where('date_time', '>=', $now)
             ->whereHas('user', function ($query) {
                 $query->where('status', '!=', '0');
-            })
-            ->paginate($perPage);
+            });
 
+        if ($currentUser) {
+            $trips = $trips
+                ->whereDoesntHave('user.blockedUsers', function ($query) use ($currentUser) {
+                    $query->where('blocked_id', $currentUser->id);
+                })
+                ->whereDoesntHave('user.blockers', function ($query) use ($currentUser) {
+                    $query->where('blocker_id', $currentUser->id);
+                })
+                ->whereDoesntHave('participants', function ($query) use ($currentUser) {
+                    $query->where('users_trips.status', '1')
+                        ->where(function ($q) use ($currentUser) {
+                            $q->whereHas('blockedUsers', function ($blockQuery) use ($currentUser) {
+                                $blockQuery->where('blocked_id', $currentUser->id);
+                            })->orWhereHas('blockers', function ($blockQuery) use ($currentUser) {
+                                $blockQuery->where('blocker_id', $currentUser->id);
+                            });
+                        });
+                });
+        }
+
+        $trips = $trips->paginate($perPage);
         $tripsArray = $trips->toArray();
 
         $pagination = [
             'next_page_url' => $tripsArray['next_page_url'],
-            'prev_page_url' => $tripsArray['next_page_url'],
+            'prev_page_url' => $tripsArray['prev_page_url'],
             'total' => $tripsArray['total'],
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
             'trips' => TripResource::collection($trips),
             'pagination' => $pagination
@@ -901,7 +938,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         return $query;
     }
 
-
     private function applySexAndAgeFilter($query, $userId, $userSex, $userAge)
     {
         $query->where(function ($q) use ($userId, $userSex, $userAge) {
@@ -929,35 +965,53 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         $perPage = config('app.pagination_per_page');
         $user = Auth::guard('api')->user();
 
+        $query = Trip::query()
+            ->whereDate('date_time', '=', $date)
+            ->whereIn('status', [0, 1])
+            ->whereHas('user', fn($q) => $q->where('status', '1'));
+
         if ($user) {
             $userId = $user->id;
             $userAge = Carbon::parse($user->birthday)->age;
             $userSex = $user->sex;
 
-            $ownTrips = Trip::where('user_id', $userId)
-                ->whereDate('date_time', '=', $date)
-                ->whereIn('status', [0, 1]) // Filter for status 0 or 1
-                ->whereHas('user', fn($q) => $q->where('status', '1'));
+            $query->where(function ($q) use ($userId) {
+                $q->where('user_id', $userId)
+                    ->orWhere('user_id', '!=', $userId);
+            });
 
-            // Other users' trips on the specified date (apply filters, allow any status)
-            $otherTrips = Trip::where('user_id', '!=', $userId)
-                ->whereDate('date_time', '=', $date)
-                ->whereIn('status', [0, 1]) // Filter for status 0 or 1
-                ->whereHas('user', fn($q) => $q->where('status', '1'))
-                ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-                ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
+            $query->where(function ($q) use ($userId, $userSex, $userAge) {
+                $this->applyTripTypeVisibility($q, $userId);
+                $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge);
+            });
 
-            // Combine and sort
-            $allTrips = $ownTrips->union($otherTrips)
-                ->orderBy('status', 'desc')
-                ->orderBy('date_time', 'desc')
-                ->paginate($perPage);
+            $query
+                ->whereDoesntHave('user.blockedUsers', function ($q) use ($user) {
+                    $q->where('blocked_id', $user->id);
+                })
+                ->whereDoesntHave('user.blockers', function ($q) use ($user) {
+                    $q->where('blocker_id', $user->id);
+                })
+                ->whereDoesntHave('participants', function ($q) use ($user) {
+                    $q->where('users_trips.status', 1)
+                        ->where(function ($q2) use ($user) {
+                            $q2->whereHas('blockedUsers', function ($blockQuery) use ($user) {
+                                $blockQuery->where('blocked_id', $user->id);
+                            })->orWhereHas('blockers', function ($blockQuery) use ($user) {
+                                $blockQuery->where('blocker_id', $user->id);
+                            });
+                        });
+                });
         } else {
-            $allTrips = Trip::where('trip_type', 0)
-                ->whereDate('date_time', '=', $date)->paginate($perPage);
+            $query->where('trip_type', 0);
         }
 
-        $tripsArray = $allTrips->toArray();
+        $trips = $query
+            ->orderByDesc('status')
+            ->orderByDesc('date_time')
+            ->paginate($perPage);
+
+        $tripsArray = $trips->toArray();
         $pagination = [
             'next_page_url' => $tripsArray['next_page_url'],
             'prev_page_url' => $tripsArray['prev_page_url'],
@@ -966,13 +1020,13 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
 
         activityLog(
             'view trips in specific date',
-            $allTrips->first(),
+            $trips->first(),
             'The user viewed trips on ' . $date,
             'view'
         );
 
         return [
-            'trips' => TripResource::collection($allTrips),
+            'trips' => TripResource::collection($trips),
             'pagination' => $pagination,
         ];
     }

@@ -2,8 +2,11 @@
 
 namespace App\Observers;
 
+use App\Models\Post;
 use App\Models\Reviewable;
 use App\Models\ReviewLike;
+use App\Models\Trip;
+use App\Models\User;
 use App\Models\UserBlock;
 
 class UserBlockObserver
@@ -32,6 +35,12 @@ class UserBlockObserver
         if ($blockerRating) {
             $blockerRating->delete();
         }
+
+        // FOUR: TRIP BLOCKED PROCESS
+        $this->removeUserFromTrips($blocker, $blocked);
+
+        // FIVE: TRIP BLOCKER PROCESS
+        $this->removeUserFromTrips($blocked, $blocker);
     }
 
     /**
@@ -40,5 +49,14 @@ class UserBlockObserver
     public function deleted(UserBlock $userBlock): void
     {
         //
+    }
+
+    private function removeUserFromTrips(User $tripOwner, User $target)
+    {
+        foreach ($tripOwner->trips()->get() as $trip) {
+            $trip->usersTrip()->where('user_id', $target->id)->delete();
+            $trip->conversation?->members()->where('user_id', $target->id)->delete();
+            $target->favoriteTrips()->detach($trip->id);
+        }
     }
 }

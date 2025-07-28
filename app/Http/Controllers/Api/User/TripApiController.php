@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Event\DayRequest;
 use App\Rules\CheckIfExistsInToUpdateReviewsRule;
-use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfTheOwnerOfTripActiveRule;
 use App\Rules\CheckUserTripExistsRule;
 use App\UseCases\Api\User\TripApiUseCase;
@@ -19,6 +18,7 @@ use App\Rules\CheckAgeGenderExistenceRule;
 use App\Rules\CheckIfCanUpdateTripRule;
 use App\Rules\CheckOwnerTripRule;
 use App\Rules\CheckRemoveUserTripRule;
+use App\Rules\TripJoinUserBlockRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -128,7 +128,7 @@ class TripApiController extends Controller
         $slug = $request->trip_slug;
 
         $validator = Validator::make(['trip_slug' => $slug], [
-            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckAgeGenderExistenceRule(), new CheckIfTheOwnerOfTripActiveRule()],
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new TripJoinUserBlockRule() ,new CheckAgeGenderExistenceRule(), new CheckIfTheOwnerOfTripActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -362,8 +362,13 @@ class TripApiController extends Controller
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [
-            'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
-//                ,new CheckIfHasInjectionBasedTimeRule()
+            'query' => [
+                'bail',
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
+                //                ,new CheckIfHasInjectionBasedTimeRule()
             ],
         ]);
         if ($validator->fails()) {
@@ -411,6 +416,5 @@ class TripApiController extends Controller
 
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
-
     }
 }

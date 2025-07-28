@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\User\Trip;
 
 use App\Helpers\ApiResponse;
 use App\Rules\CheckInvitationTripRule;
+use App\Rules\TripInvitationAcceptCancelUserBlockRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -32,7 +33,8 @@ class AcceptCancelInvitationsRequest extends FormRequest
                 'required',
                 'string',
                 'exists:trips,slug',
-                new CheckInvitationTripRule, // Only runs if 'exists:trips,id' passes
+                new CheckInvitationTripRule,
+                new TripInvitationAcceptCancelUserBlockRule
             ],
         ];
     }

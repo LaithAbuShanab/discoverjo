@@ -16,6 +16,7 @@ use App\Rules\CheckIfTypeAndSlugRule;
 use App\Rules\CheckIfTypeIsInThePastRule;
 use App\Rules\CheckIfUserTypeActiveRule;
 use App\Rules\NotBlockedUserRule;
+use App\Rules\TripReviewUserBlockRule;
 use App\UseCases\Api\User\ReviewApiUseCase;
 
 class ReviewApiController extends Controller
@@ -65,7 +66,7 @@ class ReviewApiController extends Controller
             'comment' => $request->comment
         ], [
             'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'guideTrip', 'service', 'property'])],
-            'slug' => ['bail', 'required', new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(), new CheckIfUserTypeActiveRule()],
+            'slug' => ['bail', 'required', new TripReviewUserBlockRule(), new CheckIfTypeAndSlugRule(), new CheckIfExistsInReviewsRule(), new CheckIfTypeIsInThePastRule(), new CheckIfUserTypeActiveRule()],
             'rating' => ['required', 'numeric', 'min:1', 'max:5', 'integer'],
             'comment' => ['nullable', 'string']
         ]);

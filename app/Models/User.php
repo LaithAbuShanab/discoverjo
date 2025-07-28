@@ -480,4 +480,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia, Filamen
             })
             ->count();
     }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class);
+    }
 }

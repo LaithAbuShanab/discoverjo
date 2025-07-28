@@ -9,6 +9,7 @@ use App\Rules\CheckIfHasInjectionBasedTimeRule;
 use App\Rules\CheckIfNotExistsInFavoratblesRule;
 use App\Rules\CheckIfUserTypeActiveRule;
 use App\Rules\CheckLatLngRule;
+use App\Rules\TripFavUserBlockRule;
 use App\UseCases\Api\User\FavoriteApiUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -31,8 +32,8 @@ class FavoriteApiController extends Controller
                 'slug' => $slug
             ],
             [
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service','property'])],
-                'slug' => ['bail', 'required', new CheckIfExistsInFavoratblesRule(), new CheckIfUserTypeActiveRule()],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service', 'property'])],
+                'slug' => ['bail', 'required', new TripFavUserBlockRule(), new CheckIfExistsInFavoratblesRule(), new CheckIfUserTypeActiveRule()],
             ],
             [
                 'slug.required' => __('validation.api.favorite-id-does-not-exists'),
@@ -63,7 +64,7 @@ class FavoriteApiController extends Controller
                 'slug' => $slug
             ],
             [
-                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip','service','property'])],
+                'type' => ['bail', 'required', Rule::in(['place', 'trip', 'event', 'volunteering', 'plan', 'guideTrip', 'service', 'property'])],
                 'slug' => [
                     'required',
                     new CheckIfNotExistsInFavoratblesRule()
@@ -109,22 +110,27 @@ class FavoriteApiController extends Controller
         $validator = Validator::make(
             ['query' => $query, 'lat' => $lat, 'lng' => $lng],
             [
-                'query' => ['bail','nullable','string','max:255','regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
-//                    ,new CheckIfHasInjectionBasedTimeRule()
+                'query' => [
+                    'bail',
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'regex:/^[\p{Arabic}a-zA-Z0-9\s\-\_\.@]+$/u'
+                    //                    ,new CheckIfHasInjectionBasedTimeRule()
                 ],
                 'lat'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',   // up to 6 decimal places
+                    //                    'numeric',
                     'between:-90,90',
                     new CheckLatLngRule()
                 ],
                 'lng'   => [
                     'bail',
                     'nullable',
-//                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
-//                    'numeric',
+                    //                    'regex:/^-?\d{1,3}(\.\d{1,6})?$/',  // up to 6 decimal places
+                    //                    'numeric',
                     'between:-180,180',
                     new CheckLatLngRule()
                 ],

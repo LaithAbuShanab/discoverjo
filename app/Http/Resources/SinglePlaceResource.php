@@ -104,6 +104,10 @@ class SinglePlaceResource extends JsonResource
             $total_user_total = $this->total_user_rating  + $this->reviews->count();
         }
 
+        $filteredReviews = $this->reviews->filter(function ($review) {
+            return $review->user->status == 1;
+        });
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -132,14 +136,22 @@ class SinglePlaceResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePlaces->contains('id', $this->id) : false,
             'visited' => Auth::guard('api')->user() ? Auth::guard('api')->user()->visitedPlace->contains('id', $this->id) : false,
             'reviews' => ReviewResource::collection(
-                $this->reviews->reject(function ($review) {
+                $filteredReviews->reject(function ($review) {
                     $currentUser = Auth::guard('api')->user();
                     if (!$currentUser) return false;
                     return $currentUser->blockedUsers->contains('id', $review->user_id) ||
                         $currentUser->blockers->contains('id', $review->user_id);
                 })
             ),
-            'posts' => UserPostResource::collection($posts),
+//            'posts' => UserPostResource::collection($posts),
+            'posts' => UserPostResource::collection(
+                $posts->reject(function ($post) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $post->user_id) ||
+                        $currentUser->blockers->contains('id', $post->user_id);
+                })
+            ),
         ];
     }
 }

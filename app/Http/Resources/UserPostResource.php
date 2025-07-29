@@ -50,13 +50,40 @@ class UserPostResource extends JsonResource
 
             'post_likes' => [
                 'total_likes' => $filteredLike->count(),
-                'user_likes_info' => LikeDislikeResource::collection($filteredLike)
+//                'user_likes_info' => LikeDislikeResource::collection($filteredLike),
+                'user_likes_info' => LikeDislikeResource::collection(
+                    $filteredLike->reject(function ($like) {
+                        $currentUser = Auth::guard('api')->user();
+                        if (!$currentUser) return false;
+                        return $currentUser->blockedUsers->contains('id', $like->user_id) ||
+                            $currentUser->blockers->contains('id', $like->user_id);
+                    })
+                )
+
             ],
             'post_dislikes' => [
                 'total_disliked' => $filteredDisLike->count(),
-                'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike)
+//                'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike),
+                'user_dislikes_info' => LikeDislikeResource::collection(
+                    $filteredDisLike->reject(function ($like) {
+                        $currentUser = Auth::guard('api')->user();
+                        if (!$currentUser) return false;
+                        return $currentUser->blockedUsers->contains('id', $like->user_id) ||
+                            $currentUser->blockers->contains('id', $like->user_id);
+                    })
+                )
             ],
-            'comments' => CommentResource::collection($filteredComment)
+//            'comments' => CommentResource::collection($filteredComment),
+            'comments' => CommentResource::collection(
+                $filteredComment->reject(function ($comment) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $comment->user_id) ||
+                        $currentUser->blockers->contains('id', $comment->user_id);
+                })
+                ),
         ];
     }
+
+
 }

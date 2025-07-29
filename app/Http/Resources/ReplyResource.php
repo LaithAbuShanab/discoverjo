@@ -37,11 +37,27 @@ class ReplyResource extends JsonResource
             'content' => $this->content,
             'reply_likes' => [
                 'total_likes' => $filteredLike->count(),
-                'user_likes_info' => LikeDislikeResource::collection($filteredLike)
+//                'user_likes_info' => LikeDislikeResource::collection($filteredLike),
+                'user_likes_info' => LikeDislikeResource::collection(
+                    $filteredLike->reject(function ($like) {
+                        $currentUser = Auth::guard('api')->user();
+                        if (!$currentUser) return false;
+                        return $currentUser->blockedUsers->contains('id', $like->user_id) ||
+                            $currentUser->blockers->contains('id', $like->user_id);
+                    })
+                )
             ],
             'reply_dislikes' => [
                 'total_disliked' => $filteredDisLike->count(),
-                'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike)
+//                'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike),
+                'user_dislikes_info' => LikeDislikeResource::collection(
+                    $filteredDisLike->reject(function ($like) {
+                        $currentUser = Auth::guard('api')->user();
+                        if (!$currentUser) return false;
+                        return $currentUser->blockedUsers->contains('id', $like->user_id) ||
+                            $currentUser->blockers->contains('id', $like->user_id);
+                    })
+                )
             ],
             // 'replies' => ReplyResource::collection($this->replies)
         ];

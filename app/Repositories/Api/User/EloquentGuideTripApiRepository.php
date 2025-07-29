@@ -54,7 +54,15 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' => AllGuideTripResource::collection($guidesTrips),
+//            'trips' => AllGuideTripResource::collection($guidesTrips),
+            'trips' => AllGuideTripResource::collection(
+                $guidesTrips->reject(function ($guidesTrip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $guidesTrip->guide_id) ||
+                        $currentUser->blockers->contains('id', $guidesTrip->guide_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }

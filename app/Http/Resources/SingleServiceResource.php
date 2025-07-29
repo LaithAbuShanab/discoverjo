@@ -104,7 +104,15 @@ class SingleServiceResource extends JsonResource
             'is_favorite'          => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteServices->contains('id', $this->id) : false,
             'rating'               => round($total_ratings, 2),
             'total_user_rating'    => $total_user_total,
-            'reviews'              => ReviewResource::collection($filteredReviews),
+//            'reviews'              => ReviewResource::collection($filteredReviews),
+            'reviews' => ReviewResource::collection(
+                $filteredReviews->reject(function ($review) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $review->user_id) ||
+                        $currentUser->blockers->contains('id', $review->user_id);
+                })
+            ),
             'is_creator'           => Auth::guard('api')->check() && Auth::guard('api')->user()->id == $this->provider_id,
         ];
     }

@@ -52,7 +52,14 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         activityLog('view followings posts', $posts->first(), 'the user view all post belong followings', 'view');
 
         return [
-            'posts' => UserPostResource::collection($posts),
+            'posts' => UserPostResource::collection(
+                $posts->reject(function ($post) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $post->user_id) ||
+                        $currentUser->blockers->contains('id', $post->user_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }

@@ -8,6 +8,7 @@ use App\Interfaces\Gateways\Api\User\ContactUsApiRepositoryInterface;
 use App\Interfaces\Gateways\Api\User\PropertyApiRepositoryInterface;
 use App\Models\ContactUs;
 use App\Models\Property;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
@@ -44,7 +45,15 @@ class EloquentPropertyApiRepository implements PropertyApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'chalets' => AllChaletsResource::collection($chalets),
+//            'chalets' => AllChaletsResource::collection($chalets),
+            'chalets' => AllChaletsResource::collection(
+                $chalets->reject(function ($chalet) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $chalet->host_id) ||
+                        $currentUser->blockers->contains('id', $chalet->host_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }

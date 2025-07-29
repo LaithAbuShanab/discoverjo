@@ -5,6 +5,7 @@ namespace App\Repositories\Api\User;
 use App\Http\Resources\AllServicesResource;
 use App\Interfaces\Gateways\Api\User\ServiceApiRepositoryInterface;
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 
 class EloquentServiceApiRepository implements ServiceApiRepositoryInterface
 {
@@ -35,7 +36,15 @@ class EloquentServiceApiRepository implements ServiceApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'services' => AllServicesResource::collection($services),
+//            'services' => AllServicesResource::collection($services),
+            'services' => AllServicesResource::collection(
+                $services->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }

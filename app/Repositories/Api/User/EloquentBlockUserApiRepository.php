@@ -4,6 +4,7 @@ namespace App\Repositories\Api\User;
 
 use App\Http\Resources\UserResource;
 use App\Interfaces\Gateways\Api\User\BlockUserApiRepositoryInterface;
+use App\Models\Follow;
 use App\Models\User;
 use App\Models\UserBlock;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,13 @@ class EloquentBlockUserApiRepository implements BlockUserApiRepositoryInterface
                 'blocked_id' => $blockedUser->id,
             ]);
         }
+        Follow::where(function ($query) use ($blockedUser, $user) {
+            $query->where('following_id', $blockedUser->id)
+                ->where('follower_id', $user->id);
+        })->orWhere(function ($query) use ($blockedUser, $user) {
+            $query->where('follower_id', $blockedUser->id)
+                ->where('following_id', $user->id);
+        })->delete();
     }
 
     public function unblock($slug)

@@ -4,6 +4,7 @@ namespace App\Repositories\Api\User;
 
 use App\Http\Resources\AllGuideTripResource;
 use App\Http\Resources\SubscriptionResource;
+use App\Http\Resources\UserPostResource;
 use App\Interfaces\Gateways\Api\User\GuideTripUserApiRepositoryInterface;
 use App\Models\GuideTrip;
 use App\Models\GuideTripUser;
@@ -44,7 +45,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' => AllGuideTripResource::collection($guidesTrips),
+//            'trips' => AllGuideTripResource::collection($guidesTrips),
+            'trips' => AllGuideTripResource::collection(
+                $guidesTrips->reject(function ($guidesTrip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $guidesTrip->guide_id) ||
+                        $currentUser->blockers->contains('id', $guidesTrip->guide_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }
@@ -187,7 +196,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         }
 
         return [
-            'trips' => AllGuideTripResource::collection($trips),
+//            'trips' => AllGuideTripResource::collection($trips),
+            'trips' => AllGuideTripResource::collection(
+                $trips->reject(function ($trip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $trip->guide_id) ||
+                        $currentUser->blockers->contains('id', $trip->guide_id);
+                })
+            ),
             'pagination' => $pagination,
         ];
     }
@@ -324,7 +341,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => AllGuideTripResource::collection($eloquentGuideTrips),
+//            'events' => AllGuideTripResource::collection($eloquentGuideTrips),
+            'events' => AllGuideTripResource::collection(
+                $eloquentGuideTrips->reject(function ($eloquentGuideTrip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $eloquentGuideTrip->guide_id) ||
+                        $currentUser->blockers->contains('id', $eloquentGuideTrip->guide_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }
@@ -354,7 +379,15 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'trips' => AllGuideTripResource::collection($trips),
+//            'trips' => AllGuideTripResource::collection($trips),
+            'trips' => AllGuideTripResource::collection(
+                $trips->reject(function ($trip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $trip->guide_id) ||
+                        $currentUser->blockers->contains('id', $trip->guide_id);
+                })
+            ),
             'pagination' => $pagination
         ];
     }

@@ -19,7 +19,7 @@ class OtherUserProfileBlockedRule implements ValidationRule
         $user = User::findBySlug($value);
         $currentUser = Auth::guard('api')->user();
 
-        if ($user->hasBlocked($currentUser)) {
+        if ($user->hasBlocked($currentUser) ||$currentUser->hasBlocked($user)) {
             $fail(__('validation.api.generic-action-denied'));
         }
     }

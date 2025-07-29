@@ -30,7 +30,7 @@ class AllChaletsResource extends JsonResource
             'beds' => $this->beds,
             'status' => $this->status,
             'main_image'=> $this->getFirstMediaUrl('main_property_image','main_property_image_app'),
-            'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
+            'is_favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritepropertys->contains('id', $this->id) : false,
             'host' => new HostResource($this->host),
         ];
     }

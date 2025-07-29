@@ -10,6 +10,7 @@ use App\Http\Resources\SingleServiceResource;
 use App\Interfaces\Gateways\Api\User\ServiceCategoryApiRepositoryInterface;
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use Illuminate\Support\Facades\Auth;
 
 
 class EloquentServiceCategoryApiRepository implements ServiceCategoryApiRepositoryInterface
@@ -62,7 +63,15 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         return [
             'category'       => new AllCategoriesResource($category),
             'sub_categories' => AllServiceSubCategoriesResource::collection($subCategoriesWithServices),
-            'services'       => AllServicesResource::collection($services),
+//            'services'       => AllServicesResource::collection($services),
+            'services' => AllServicesResource::collection(
+                $services->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
             'pagination'     => $pagination,
         ];
     }
@@ -134,7 +143,15 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         }
 
         return [
-            'services'   => AllServicesResource::collection($services),
+//            'services'   => AllServicesResource::collection($services),
+            'services' => AllServicesResource::collection(
+                $services->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
             'pagination' => $pagination,
         ];
     }
@@ -169,7 +186,15 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
 
         // Pass user coordinates to the PlaceResource collection
         return [
-            'events' => AllServicesResource::collection($services),
+//            'events' => AllServicesResource::collection($services),
+            'services' => AllServicesResource::collection(
+                $services->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
             'pagination' => $pagination
         ];
 
@@ -210,7 +235,15 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         return [
             'parent'=> new AllServiceCategoriesResource($parent),
             'subcategory' => new AllServiceSubCategoriesResource($subcategory),
-            'services' => AllServicesResource::collection($services),
+//            'services' => AllServicesResource::collection($services),
+            'services' => AllServicesResource::collection(
+                $services->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
             'pagination' => $pagination
         ];
 

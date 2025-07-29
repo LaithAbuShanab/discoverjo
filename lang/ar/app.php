@@ -365,5 +365,6 @@ return [
         // Block
         'the-user-blocked-successfully'                                => 'تم حظر المستخدم بنجاح.',
         'the-user-unblocked-successfully'                              => 'تم إلغاء حظر المستخدم بنجاح.',
+        'list-of-blocked-users-returned-successfully'                  => 'تم استرجاع قائمة المستخدمين المحظورين بنجاح.',
     ],
 ];

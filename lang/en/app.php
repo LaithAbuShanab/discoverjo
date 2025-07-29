@@ -365,5 +365,6 @@ return [
         // Block
         'the-user-blocked-successfully'                                => 'User has been blocked successfully.',
         'the-user-unblocked-successfully'                              => 'User has been unblocked successfully.',
+        'list-of-blocked-users-returned-successfully'                  => 'List of blocked users returned successfully.',
     ],
 ];

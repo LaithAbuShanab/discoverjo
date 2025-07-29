@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Api\User;
 
-
+use App\Http\Resources\UserResource;
 use App\Interfaces\Gateways\Api\User\BlockUserApiRepositoryInterface;
 use App\Models\User;
 use App\Models\UserBlock;
@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class EloquentBlockUserApiRepository implements BlockUserApiRepositoryInterface
 {
+    public function listOfBlockedUsers(){
+        $user = Auth::guard('api')->user();
+        $blockedUsers = $user->blockedUsers;
+        return UserResource::collection($blockedUsers);
+    }
+
     public function block($slug)
     {
         $user = Auth::guard('api')->user();

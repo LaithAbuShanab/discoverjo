@@ -15,6 +15,17 @@ class BlockUserController extends Controller
 {
     public function __construct(protected BlockUserApiUseCase $blockUserApiUseCase) {}
 
+    public function listOfBlockedUsers()
+    {
+        try {
+            $blockedUsers = $this->blockUserApiUseCase->listOfBlockedUsers();
+            return ApiResponse::sendResponse(200, __('app.api.list-of-blocked-users-returned-successfully'), $blockedUsers);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
     public function block(Request $request, $user_slug)
     {
         $authUser = Auth::guard('api')->user();
@@ -115,4 +126,5 @@ class BlockUserController extends Controller
             return ApiResponse::sendResponse(Response::HTTP_BAD_REQUEST, __("validation.api.something-went-wrong"), $e->getMessage());
         }
     }
+
 }

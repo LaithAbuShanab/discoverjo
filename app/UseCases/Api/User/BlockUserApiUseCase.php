@@ -7,9 +7,11 @@ use App\Interfaces\Gateways\Api\User\BlockUserApiRepositoryInterface;
 
 class BlockUserApiUseCase
 {
-    public function __construct(protected BlockUserApiRepositoryInterface $userBlockRepository)
+    public function __construct(protected BlockUserApiRepositoryInterface $userBlockRepository) {}
+
+    public function listOfBlockedUsers()
     {
-        $this->userBlockRepository = $userBlockRepository;
+        return $this->userBlockRepository->listOfBlockedUsers();
     }
 
     public function block($slug)
@@ -21,6 +23,4 @@ class BlockUserApiUseCase
     {
         return $this->userBlockRepository->unblock($slug);
     }
-
-
 }

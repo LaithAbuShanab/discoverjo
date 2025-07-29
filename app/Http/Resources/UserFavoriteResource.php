@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserFavoriteResource extends JsonResource
 {
@@ -29,6 +30,12 @@ class UserFavoriteResource extends JsonResource
 
 
         $postFav = $this->favoritePosts
+            ->reject(function ($post) {
+                $currentUser = Auth::guard('api')->user();
+                if (!$currentUser) return false;
+                return $currentUser->blockedUsers->contains('id', $post->user_id) ||
+                    $currentUser->blockers->contains('id', $post->user_id);
+            })
             ->filter(fn($post) => $post->user->status == 1)
             ->map(function ($post) {
                 // Get media with fallback if conversion doesn't exist
@@ -78,14 +85,46 @@ class UserFavoriteResource extends JsonResource
 
         return [
             'places'       => $placeFav,
-            'trip'         => TripResource::collection($tripFav),
+//            'trip'         => TripResource::collection($tripFav),
+            'trip' => TripResource::collection(
+                $tripFav->reject(function ($singleTrip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $singleTrip->user_id) ||
+                        $currentUser->blockers->contains('id', $singleTrip->user_id);
+                })
+            ),
             'event'        => EventResource::collection($this->favoriteEvents),
             'volunteering' => VolunteeringResource::collection($this->favoriteVolunteerings),
             'plan'         => PlanResource::collection($planFav),
             'post'         => $postFav,
-            'guide_trip'   => GuideFavoriteResource::collection($guideTripFav),
-            'serviceFav'   => ServiceFavoriteResource::collection($serviceFav),
-            'propertyFav'  =>PropertyFavResource::collection($propertyFav),
+//            'guide_trip'   => GuideFavoriteResource::collection($guideTripFav),
+            'guide_trip' => GuideFavoriteResource::collection(
+                $guideTripFav->reject(function ($singleTrip) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $singleTrip->guide_id) ||
+                        $currentUser->blockers->contains('id', $singleTrip->guide_id);
+                })
+            ),
+//            'serviceFav'   => ServiceFavoriteResource::collection($serviceFav),
+            'serviceFav' => ServiceFavoriteResource::collection(
+                $serviceFav->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->provider_id) ||
+                        $currentUser->blockers->contains('id', $service->provider_id);
+                })
+            ),
+//            'propertyFav'  =>PropertyFavResource::collection($propertyFav),
+            'propertyFav' => PropertyFavResource::collection(
+                $propertyFav->reject(function ($property) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $property->host_id) ||
+                        $currentUser->blockers->contains('id', $property->host_id);
+                })
+            ),
         ];
     }
 }

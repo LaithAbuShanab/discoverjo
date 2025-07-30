@@ -2,6 +2,13 @@
 
 namespace App\Repositories\Api\User;
 
+use Carbon\Carbon;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Notification;
 use App\Events\GroupMemberEvent;
 use App\Http\Resources\PrivateTripResource;
 use App\Http\Resources\TagsResource;
@@ -22,14 +29,7 @@ use App\Notifications\Users\Trip\DeleteTripNotification;
 use App\Notifications\Users\Trip\NewRequestNotification;
 use App\Notifications\Users\Trip\NewTripNotification as TripNewTripNotification;
 use App\Notifications\Users\Trip\RemoveUserTripNotification;
-use Carbon\Carbon;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Notification;
 use App\Pipelines\ContentFilters\ContentFilter;
-use Illuminate\Pipeline\Pipeline;
 
 class EloquentTripApiRepository implements TripApiRepositoryInterface
 {
@@ -63,16 +63,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             if ($user->hasBlocked($trip->user) || $trip->user->hasBlocked($user)) {
                 return false;
             }
-
-            foreach ($trip->participants as $participant) {
-                if (
-                    $participant->pivot->status == 1 &&
-                    ($user->hasBlocked($participant) || $participant->hasBlocked($user))
-                ) {
-                    return false;
-                }
-            }
-
             return true;
         });
 
@@ -101,16 +91,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 })
                 ->whereDoesntHave('user.blockers', function ($query) use ($currentUser) {
                     $query->where('blocker_id', $currentUser->id);
-                })
-                ->whereDoesntHave('participants', function ($query) use ($currentUser) {
-                    $query->where('users_trips.status', '1')
-                        ->where(function ($q) use ($currentUser) {
-                            $q->whereHas('blockedUsers', function ($blockQuery) use ($currentUser) {
-                                $blockQuery->where('blocked_id', $currentUser->id);
-                            })->orWhereHas('blockers', function ($blockQuery) use ($currentUser) {
-                                $blockQuery->where('blocker_id', $currentUser->id);
-                            });
-                        });
                 });
         }
 
@@ -692,6 +672,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
     public function search($query)
     {
         $perPage = config('app.pagination_per_page');
+        $page = request('page', 1);
         $user = Auth::guard('api')->user();
         $allTrips = null;
 
@@ -706,7 +687,8 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
                 })
-                ->whereHas('user', fn($q) => $q->where('status', '1'));
+                ->whereHas('user', fn($q) => $q->where('status', '1'))
+                ->get();
 
             $otherTrips = Trip::where('user_id', '!=', $userId)
                 ->whereIn('status', [0, 1])
@@ -716,12 +698,25 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 })
                 ->whereHas('user', fn($q) => $q->where('status', '1'))
                 ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-                ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
+                ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge))
+                ->get();
 
-            $allTrips = $ownTrips->union($otherTrips)
-                ->orderBy('status', 'desc')
-                ->orderBy('date_time', 'desc')
-                ->paginate($perPage);
+            $filteredOtherTrips = $otherTrips->filter(function ($trip) use ($user) {
+                return !$user->hasBlocked($trip->user) && !$trip->user->hasBlocked($user);
+            });
+
+            $mergedTrips = $ownTrips->merge($filteredOtherTrips)
+                ->sortByDesc('status')
+                ->sortByDesc('date_time')
+                ->values();
+
+            $allTrips = new \Illuminate\Pagination\LengthAwarePaginator(
+                $mergedTrips->forPage($page, $perPage),
+                $mergedTrips->count(),
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
         } else {
             $allTrips = Trip::where('trip_type', 0)
                 ->whereIn('status', [0, 1])
@@ -991,16 +986,6 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 })
                 ->whereDoesntHave('user.blockers', function ($q) use ($user) {
                     $q->where('blocker_id', $user->id);
-                })
-                ->whereDoesntHave('participants', function ($q) use ($user) {
-                    $q->where('users_trips.status', 1)
-                        ->where(function ($q2) use ($user) {
-                            $q2->whereHas('blockedUsers', function ($blockQuery) use ($user) {
-                                $blockQuery->where('blocked_id', $user->id);
-                            })->orWhereHas('blockers', function ($blockQuery) use ($user) {
-                                $blockQuery->where('blocker_id', $user->id);
-                            });
-                        });
                 });
         } else {
             $query->where('trip_type', 0);

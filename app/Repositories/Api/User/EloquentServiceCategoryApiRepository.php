@@ -63,7 +63,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         return [
             'category'       => new AllCategoriesResource($category),
             'sub_categories' => AllServiceSubCategoriesResource::collection($subCategoriesWithServices),
-//            'services'       => AllServicesResource::collection($services),
+            //            'services'       => AllServicesResource::collection($services),
             'services' => AllServicesResource::collection(
                 $services->reject(function ($service) {
                     $currentUser = Auth::guard('api')->user();
@@ -116,8 +116,8 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
                 ->orWhere('name_ar', 'like', '%' . $query . '%');
         })->whereNull('parent_id')->get();
 
-        if($query){
-            activityLog('search for service category ',$categories->first(), $query,'search');
+        if ($query) {
+            activityLog('search for service category ', $categories->first(), $query, 'search');
         }
         return AllServiceCategoriesResource::collection($categories);
     }
@@ -143,7 +143,6 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         }
 
         return [
-//            'services'   => AllServicesResource::collection($services),
             'services' => AllServicesResource::collection(
                 $services->reject(function ($service) {
                     $currentUser = Auth::guard('api')->user();
@@ -163,9 +162,9 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         $perPage = config('app.pagination_per_page');
 
         $services = Service::whereHas('serviceBookings', function ($query) use ($date) {
-                $query->whereDate('available_start_date', '<=', $date)
-                    ->whereDate('available_end_date', '>=', $date);
-            })
+            $query->whereDate('available_start_date', '<=', $date)
+                ->whereDate('available_end_date', '>=', $date);
+        })
             ->whereHas('provider', function ($query) {
                 $query->where('status', 1);
             })
@@ -182,11 +181,11 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
             'total' => $servicesArray['total'],
         ];
 
-        activityLog('view service in specific date',$services->first(),'The user viewed service in specific date '.$date['date'],'view');
+        activityLog('view service in specific date', $services->first(), 'The user viewed service in specific date ' . $date['date'], 'view');
 
         // Pass user coordinates to the PlaceResource collection
         return [
-//            'events' => AllServicesResource::collection($services),
+            //            'events' => AllServicesResource::collection($services),
             'services' => AllServicesResource::collection(
                 $services->reject(function ($service) {
                     $currentUser = Auth::guard('api')->user();
@@ -197,14 +196,12 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
             ),
             'pagination' => $pagination
         ];
-
     }
 
     public function singleService($slug)
     {
         $service = Service::findBySlug($slug);
         return new SingleServiceResource($service);
-
     }
 
     public function servicesBySubcategory($slug)
@@ -221,7 +218,7 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
         $parent = $subcategory?->parent;
 
         $servicesArray = $services->toArray();
-        $parameterNext = $servicesArray['next_page_url'] ;
+        $parameterNext = $servicesArray['next_page_url'];
         $parameterPrevious = $servicesArray['prev_page_url'];
 
 
@@ -230,12 +227,12 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
             'prev_page_url' => $parameterPrevious,
             'total' => $servicesArray['total'],
         ];
-        activityLog('service subcategory',$subcategory, 'the user view this service subcategory ','view');
+        activityLog('service subcategory', $subcategory, 'the user view this service subcategory ', 'view');
 
         return [
-            'parent'=> new AllServiceCategoriesResource($parent),
+            'parent' => new AllServiceCategoriesResource($parent),
             'subcategory' => new AllServiceSubCategoriesResource($subcategory),
-//            'services' => AllServicesResource::collection($services),
+            //            'services' => AllServicesResource::collection($services),
             'services' => AllServicesResource::collection(
                 $services->reject(function ($service) {
                     $currentUser = Auth::guard('api')->user();
@@ -246,8 +243,5 @@ class EloquentServiceCategoryApiRepository implements ServiceCategoryApiReposito
             ),
             'pagination' => $pagination
         ];
-
-
     }
-
 }

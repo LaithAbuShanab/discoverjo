@@ -45,7 +45,6 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-//            'trips' => AllGuideTripResource::collection($guidesTrips),
             'trips' => AllGuideTripResource::collection(
                 $guidesTrips->reject(function ($guidesTrip) {
                     $currentUser = Auth::guard('api')->user();
@@ -196,7 +195,6 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
         }
 
         return [
-//            'trips' => AllGuideTripResource::collection($trips),
             'trips' => AllGuideTripResource::collection(
                 $trips->reject(function ($trip) {
                     $currentUser = Auth::guard('api')->user();
@@ -341,7 +339,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-//            'events' => AllGuideTripResource::collection($eloquentGuideTrips),
+            //            'events' => AllGuideTripResource::collection($eloquentGuideTrips),
             'events' => AllGuideTripResource::collection(
                 $eloquentGuideTrips->reject(function ($eloquentGuideTrip) {
                     $currentUser = Auth::guard('api')->user();
@@ -379,7 +377,7 @@ class EloquentGuideTripUserApiRepository implements GuideTripUserApiRepositoryIn
 
         // Pass user coordinates to the PlaceResource collection
         return [
-//            'trips' => AllGuideTripResource::collection($trips),
+            //            'trips' => AllGuideTripResource::collection($trips),
             'trips' => AllGuideTripResource::collection(
                 $trips->reject(function ($trip) {
                     $currentUser = Auth::guard('api')->user();

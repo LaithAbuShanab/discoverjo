@@ -380,7 +380,7 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
             // User's own trips matching search query
             $ownTrips = Trip::where('user_id', $userId)
-                ->whereIn('status', [0, 1])
+                ->whereIn('status', [1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
@@ -389,14 +389,13 @@ class EloquentPlaceApiRepository implements PlaceApiRepositoryInterface
 
             // Other users' trips matching search query
             $otherTrips = Trip::where('user_id', '!=', $userId)
-                ->whereIn('status', [0, 1])
+                ->whereIn('status', [1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
                 })
                 ->whereHas('user', fn($q) => $q->where('status', '1'))
                 ->where(fn($q) => $this->applyTripTypeVisibility($q, $userId))
-                //->where(fn($q) => $this->applyCapacityCheck($q))
                 ->where(fn($q) => $this->applySexAndAgeFilter($q, $userId, $userSex, $userAge));
 
             // Merge and paginate

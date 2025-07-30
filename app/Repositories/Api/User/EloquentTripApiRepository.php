@@ -682,7 +682,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
             $userSex = $user->sex;
 
             $ownTrips = Trip::where('user_id', $userId)
-                ->whereIn('status', [1])
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");
@@ -691,7 +691,7 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
                 ->get();
 
             $otherTrips = Trip::where('user_id', '!=', $userId)
-                ->whereIn('status', [1])
+                ->whereIn('status', [0, 1])
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%$query%")
                         ->orWhere('description', 'like', "%$query%");

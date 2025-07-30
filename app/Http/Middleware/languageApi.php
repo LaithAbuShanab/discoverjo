@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class languageApi
 {
@@ -32,9 +33,14 @@ class languageApi
                 $user = Auth::guard('api')->user();
                 $user->lang = $lang;
 
-                if ($user->isDirty('lang')) {
-                    $user->save();
-                }
+//                if ($user->isDirty('lang')) {
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update([
+                            'lang' => $lang,
+                            'updated_at' => now(),
+                        ]);
+//                }
             }
 
             return $next($request);

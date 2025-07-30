@@ -11,7 +11,7 @@ class ScheduleServiceProvider extends ServiceProvider
     {
         $schedule->command('app:check-delete-counters')->hourly();
         $schedule->command('app:change-trip-status')->hourly();
-        $schedule->command('app:change-status-event-volunteering')->hourly();
+        $schedule->command('app:change-status-event-volunteering')->daily();
         $schedule->command('app:change-guide-trip-status')->hourly();
     }
 }

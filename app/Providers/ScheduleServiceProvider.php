@@ -9,9 +9,9 @@ class ScheduleServiceProvider extends ServiceProvider
 {
     public function boot(Schedule $schedule): void
     {
-        $schedule->command('app:check-delete-counters')->everyMinute();
-        $schedule->command('app:change-trip-status')->everyMinute();
-        $schedule->command('app:change-status-event-volunteering')->everyMinute();
-        $schedule->command('app:change-guide-trip-status')->everyMinute();
+        $schedule->command('app:check-delete-counters')->hourly();
+        $schedule->command('app:change-trip-status')->hourly();
+        $schedule->command('app:change-status-event-volunteering')->hourly();
+        $schedule->command('app:change-guide-trip-status')->hourly();
     }
 }

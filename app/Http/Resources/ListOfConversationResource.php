@@ -48,7 +48,7 @@ class ListOfConversationResource extends JsonResource
             ],
             'last_message' => $lastMessage?->message_txt ?? __('app.sent-a-file'),
             'sent_at' => $lastMessage?->sent_datetime
-                ? Carbon::parse($lastMessage->sent_datetime)->format('h:i A')
+                ? Carbon::parse($lastMessage->sent_datetime)->setTimezone('Asia/Amman')->format('h:i A')
                 : null,
             'unread_count' => $unreadCount,
         ];

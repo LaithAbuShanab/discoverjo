@@ -224,7 +224,7 @@ class EloquentSingleChatRepository implements SingleChatRepositoryInterface
         $message = new Message();
         $message->user_id = $userId;
         $message->conversation_id = $request->conversation_id;
-        $message->sent_datetime = now();
+        $message->sent_datetime = Carbon::now('Asia/Amman');
         $message->message_txt = $request->message_txt;
 
         $message->save();

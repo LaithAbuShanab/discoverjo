@@ -24,7 +24,9 @@ class ChatResource extends JsonResource
             'user_image'        => $this->user->getFirstMediaUrl('avatar', 'avatar_app'),
             'message'           => $this->message_txt,
             'message_file'      => $this->getFirstMediaUrl('file', 'file_thumb'),
-            'sent_datetime'     => $this->created_at ? Carbon::parse($this->created_at)->format('g:i A') : null,
+            'sent_datetime'     => $this->sent_datetime
+                ? Carbon::parse($this->sent_datetime)->setTimezone('Asia/Amman')->format('g:i A')
+                : null,
             'is_read'           => $this->is_read ? true : false
         ];
     }

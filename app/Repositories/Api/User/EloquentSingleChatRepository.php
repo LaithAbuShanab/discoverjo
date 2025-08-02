@@ -58,6 +58,7 @@ class EloquentSingleChatRepository implements SingleChatRepositoryInterface
         $conversations = Conversation::whereHas('members', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })
+            ->where('trip_id', null)
             ->whereHas('messages')
             ->with([
                 'members.user',

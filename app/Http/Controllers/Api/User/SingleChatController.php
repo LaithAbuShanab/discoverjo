@@ -9,6 +9,7 @@ use App\Http\Requests\Api\User\Chat\CreateMessageRequest;
 use App\Rules\CheckIfUserActiveRule;
 use App\Rules\IsConversationMemberRule;
 use App\Rules\PreventSelfChatRule;
+use App\Rules\SingleChatRule;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,7 @@ class SingleChatController extends Controller
                 'exists:users,slug',
                 new CheckIfUserActiveRule(),
                 new PreventSelfChatRule(),
+                new SingleChatRule(),
             ],
         ], [
             'user_slug.required' => __('validation.api.user_slug_required'),

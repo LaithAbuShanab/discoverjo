@@ -49,6 +49,7 @@ return [
     'female'                                                           => 'Female',
     'both'                                                             => 'Both',
     'seen'                                                             => 'Seen',
+    'sent-a-file'                                                      => 'Sent a file',
 
     "notifications" => [
 

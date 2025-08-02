@@ -15,6 +15,7 @@ use App\Models\Conversation;
 use App\Models\GroupMember;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentSingleChatRepository implements SingleChatRepositoryInterface
 {
@@ -184,10 +185,10 @@ class EloquentSingleChatRepository implements SingleChatRepositoryInterface
 
     private function getOrCreateConversation($userId, $hostId): Conversation
     {
-        $conversationId = $this->findConversationBetween($userId, $hostId);
+        $conversation = $this->findPrivateConversationBetween($userId, $hostId);
 
-        if ($conversationId) {
-            return Conversation::find($conversationId);
+        if ($conversation) {
+            return $conversation;
         }
 
         $conversation = Conversation::create();
@@ -203,13 +204,17 @@ class EloquentSingleChatRepository implements SingleChatRepositoryInterface
         return $conversation;
     }
 
-    private function findConversationBetween($userId1, $userId2): ?int
+    public function findPrivateConversationBetween($userId1, $userId2): ?Conversation
     {
-        return GroupMember::whereIn('user_id', [$userId1, $userId2])
-            ->select('conversation_id')
-            ->groupBy('conversation_id')
-            ->havingRaw('COUNT(DISTINCT user_id) = 2')
-            ->pluck('conversation_id')
+        return Conversation::whereNull('trip_id')
+            ->whereHas('members', function (Builder $query) use ($userId1, $userId2) {
+                $query->whereIn('user_id', [$userId1, $userId2]);
+            }, '=', 2)
+            ->whereHas('members', function (Builder $query) {
+                $query->select('conversation_id')
+                    ->groupBy('conversation_id')
+                    ->havingRaw('COUNT(DISTINCT user_id) = 2');
+            })
             ->first();
     }
 

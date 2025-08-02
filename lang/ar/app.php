@@ -49,6 +49,7 @@ return [
     'male'                                                             => 'ذكر',
     'female'                                                           => 'انثي',
     'seen'                                                             => 'تمت المشاهدة',
+    'sent-a-file'                                                      => 'تم ارسال ملف',
 
     "notifications" => [
 

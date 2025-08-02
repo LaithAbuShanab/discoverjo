@@ -30,15 +30,23 @@ class ListOfConversationResource extends JsonResource
             ->whereNull('is_read')
             ->count();
 
+        $lastMessageUser = $lastMessage?->user;
+
         return [
             'conversation_id' => $this->id,
-            'sender' => [
+            'member' => [
                 'id' => $otherUser->id ?? null,
                 'slug' => $otherUser->slug ?? null,
                 'username' => $otherUser->username ?? null,
                 'avatar' => $otherUser?->getFirstMediaUrl('avatar', 'avatar_app'),
             ],
-            'last_message' => $lastMessage?->message_txt,
+            'last_message_user' => [
+                'id' => $lastMessageUser->id ?? null,
+                'slug' => $lastMessageUser->slug ?? null,
+                'username' => $lastMessageUser->username ?? null,
+                'avatar' => $lastMessageUser?->getFirstMediaUrl('avatar', 'avatar_app'),
+            ],
+            'last_message' => $lastMessage?->message_txt ?? __('app.sent-a-file'),
             'sent_at' => $lastMessage?->sent_datetime
                 ? Carbon::parse($lastMessage->sent_datetime)->format('h:i A')
                 : null,

@@ -54,7 +54,7 @@ class PropertyApiController extends Controller
         }
     }
 
-    public function serviceSearch(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('query');
         $validator = Validator::make(['query' => $query], [

@@ -7,4 +7,5 @@ interface PropertyApiRepositoryInterface
 {
     public function getAllChalets();
     public function singleProperty($slug);
+    public function search($query);
 }

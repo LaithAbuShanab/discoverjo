@@ -23,6 +23,11 @@ class PropertyApiUseCase
         return $this->propertyApiRepository->singleProperty($slug);
     }
 
+    public function search($query)
+    {
+        return $this->propertyApiRepository->search($query);
+    }
+
 
 
 }

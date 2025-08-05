@@ -131,7 +131,7 @@ Route::get('all/services/search', [ServiceCategoryApiController::class, 'service
 
 Route::get('all/properties',[PropertyApiController::class,'getAllChalets']);
 Route::get('property/show/{property_slug}', [PropertyApiController::class, 'singleProperty']);
-
+Route::get('all/properties/search', [PropertyApiController::class, 'search']);
 
 require __DIR__ . '/auth_user.php';
 

@@ -63,4 +63,37 @@ class EloquentPropertyApiRepository implements PropertyApiRepositoryInterface
         $property = Property::findBySlug($slug);
         return new SingleChaletResource($property);
     }
+
+    public function search($query)
+    {
+        $perPage = config('app.pagination_per_page');
+        $lowerQuery = strtolower($query);
+
+        $property = Property::where(function ($q) use ($lowerQuery) {
+            $q->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.en'))) LIKE ?", ["%{$lowerQuery}%"])
+                ->orWhereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(name, '$.ar'))) LIKE ?", ["%{$lowerQuery}%"]);
+        })->paginate($perPage);
+
+        $pagination = [
+            'next_page_url' => $property->nextPageUrl(),
+            'prev_page_url' => $property->previousPageUrl(),
+            'total'         => $property->total(),
+        ];
+
+        if (!empty($query) && $property->isNotEmpty()) {
+            activityLog('Searched for property', $property->first(), $query, 'search');
+        }
+
+        return [
+            'properties' => AllChaletsResource::collection(
+                $property->reject(function ($service) {
+                    $currentUser = Auth::guard('api')->user();
+                    if (!$currentUser) return false;
+                    return $currentUser->blockedUsers->contains('id', $service->host_id) ||
+                        $currentUser->blockers->contains('id', $service->host_id);
+                })
+            ),
+            'pagination' => $pagination,
+        ];
+    }
 }

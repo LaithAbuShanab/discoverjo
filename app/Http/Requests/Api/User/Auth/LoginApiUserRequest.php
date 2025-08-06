@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 use App\Helpers\ApiResponse;
+use App\Rules\CheckUserInBlackListRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
@@ -38,7 +39,7 @@ class LoginApiUserRequest extends FormRequest
     {
 
         return [
-            'usernameOrEmail' => ['required', 'string', 'max:255'],
+            'usernameOrEmail' => ['required', 'string', 'max:255', new CheckUserInBlackListRule()],
             'password' => ['required',  Rules\Password::defaults()],
             "device_token" => ['nullable', 'max:255'],
         ];

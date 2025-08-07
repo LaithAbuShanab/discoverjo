@@ -297,27 +297,46 @@ class EloquentUserProfileApiRepository implements UserProfileApiRepositoryInterf
 
     public function warning($data)
     {
-        $gallery = $data['images'];
-        $user = User::findBySlug($data['user_slug']);
-        $userId = $user->id;
-        $warning = new Warning();
-        $warning->reporter_id = Auth::guard('api')->user()?->id;
-        $warning->reported_id = $userId;
-        $warning->reason = $data['reason'];
-        $warning->save();
+        DB::beginTransaction();
 
-        if ($gallery !== null) {
-            foreach ($gallery as $image) {
-                $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
-                $filename = Str::random(10) . '_' . time() . '.' . $extension;
-                $warning->addMedia($image)->usingFileName($filename)->toMediaCollection('warning_app');
+        try {
+            $gallery = $data['images'] ?? null;
+            $user = User::findBySlug($data['user_slug']);
+            $userId = $user->id;
+
+            $warning = new Warning();
+            $warning->reporter_id = Auth::guard('api')->user()?->id;
+            $warning->reported_id = $userId;
+            $warning->reason = $data['reason'];
+            $warning->save();
+
+            if ($gallery !== null) {
+                foreach ($gallery as $image) {
+                    $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
+                    $filename = Str::random(10) . '_' . time() . '.' . $extension;
+
+                    // This could throw an exception if something goes wrong
+                    $warning->addMedia($image)
+                        ->usingFileName($filename)
+                        ->toMediaCollection('warning_app');
+                }
             }
-        }
 
-        adminNotification(
-            'New Report',
-            'A new report has been create by ' . Auth::guard('api')->user()->username,
-            ['action' => 'view_report', 'action_label' => 'View Report', 'action_url' => route('filament.admin.resources.warnings.view', $warning)]
-        );
+            // Example: If adminNotification throws an exception, rollback will happen
+            adminNotification(
+                'New Report',
+                'A new report has been created by ' . Auth::guard('api')->user()->username,
+                [
+                    'action' => 'view_report',
+                    'action_label' => 'View Report',
+                    'action_url' => route('filament.admin.resources.warnings.view', $warning)
+                ]
+            );
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

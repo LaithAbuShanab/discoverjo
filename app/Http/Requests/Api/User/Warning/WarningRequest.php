@@ -25,9 +25,9 @@ class WarningRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_slug'=>['required','string','exists:users,slug',new CheckIfUserActiveRule(),new CheckIfUserSendWarningRule(),new CheckIfUserSendWarningToHimselfRule()],
-            'reason'=>['required','string'],
-            'images'=>['nullable'],
+            'user_slug' => ['required', 'string', 'exists:users,slug', new CheckIfUserActiveRule(), new CheckIfUserSendWarningRule(), new CheckIfUserSendWarningToHimselfRule()],
+            'reason' => ['required', 'string'],
+            'images' => ['nullable'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp,bmp,tiff,ico,svgz|max:10000'],
         ];
     }

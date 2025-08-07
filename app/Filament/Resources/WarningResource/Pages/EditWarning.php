@@ -3,11 +3,8 @@
 namespace App\Filament\Resources\WarningResource\Pages;
 
 use App\Filament\Resources\WarningResource;
-use App\Models\User;
-use App\Models\Warning;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\DB;
 
 class EditWarning extends EditRecord
 {
@@ -22,25 +19,28 @@ class EditWarning extends EditRecord
 
     protected function afterSave(): void
     {
-        $warning = $this->record;
-        $userId = $warning->reported_id;
-        $recordsCount = Warning::where('reported_id',$userId)->where('status',1)->count();
-        $user = User::find($userId);
-        if ($recordsCount == 4) {
-            $user->status = 3;
-            $user->save();
-            DB::table('blocked_users')->insert([
-                'email' => $user->email,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        if ($this->record->status == 1) {
+            $this->record->user_id = $this->record->reported_id;
+            handleWarning($this->record);
         }
-
-        if($recordsCount == 4){
-            $user->status = 3;
-            $user->save();
-        }
-
     }
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
+
+    protected function getFormActions(): array
+    {
+        if ($this->record->status == 1) {
+            return [
+                $this->getCancelFormAction(),
+            ];
+        } else {
+            return [
+                $this->getCancelFormAction(),
+                $this->getSaveFormAction(),
+            ];
+        }
+    }
 }

@@ -201,9 +201,6 @@ function handleWarning(object $record): void
     $receiverLanguage = in_array($user->lang, ['en', 'ar']) ? $user->lang : 'en';
 
     if ($totalWarnings === 4) {
-        $user->status = 3;
-        $user->save();
-
         // Insert into blocked_users table
         DB::table('blocked_users')->insert([
             'email' => $user->email,
@@ -211,16 +208,7 @@ function handleWarning(object $record): void
             'updated_at' => now(),
         ]);
 
-        FacadesNotification::send($user, new NewWarningUserNotification('blacklisted'));
-
-        if (!empty($tokens)) {
-            $notificationData = [
-                'title' => Lang::get('app.notifications.new-blacklisted-title', [], $receiverLanguage),
-                'body'  => Lang::get('app.notifications.new-blacklisted-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
-            ];
-            sendNotification($tokens, $notificationData);
-        }
+        $user->delete();
     } elseif ($totalWarnings >= 3) {
         $user->status = 3;
         $user->save();
@@ -229,20 +217,25 @@ function handleWarning(object $record): void
 
         if (!empty($tokens)) {
             $notificationData = [
-                'title' => Lang::get('app.notifications.new-blocked-two-weeks-title', [], $receiverLanguage),
-                'body'  => Lang::get('app.notifications.new-blocked-two-weeks-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
+                'notification' => [
+                    'title' => Lang::get('app.notifications.new-blocked-two-weeks-title', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-blocked-two-weeks-body', ['username' => $user->username], $receiverLanguage),
+                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                    'sound' => 'default',
+                ],
             ];
             sendNotification($tokens, $notificationData);
         }
     } else {
         FacadesNotification::send($user, new NewWarningUserNotification('warning'));
-
         if (!empty($tokens)) {
             $notificationData = [
-                'title' => Lang::get('app.notifications.new-warning-title', [], $receiverLanguage),
-                'body'  => Lang::get('app.notifications.new-warning-body', ['username' => $user->username], $receiverLanguage),
-                'sound' => 'default',
+                'notification' => [
+                    'title' => Lang::get('app.notifications.new-warning-title', [], $receiverLanguage),
+                    'body'  => Lang::get('app.notifications.new-warning-body', ['username' => $user->username], $receiverLanguage),
+                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                    'sound' => 'default',
+                ],
             ];
             sendNotification($tokens, $notificationData);
         }

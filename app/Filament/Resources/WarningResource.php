@@ -115,7 +115,6 @@ class WarningResource extends Resource
     {
         return [
             'index' => Pages\ListWarnings::route('/'),
-//            'create' => Pages\CreateWarning::route('/create'),
             'edit' => Pages\EditWarning::route('/{record}/edit'),
             'view'=>Pages\ViewWarning::route('/{record}/view'),
         ];

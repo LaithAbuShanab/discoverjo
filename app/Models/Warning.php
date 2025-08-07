@@ -31,4 +31,9 @@ class Warning extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'reported_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'reported_id');
+    }
 }

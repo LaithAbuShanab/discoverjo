@@ -86,6 +86,7 @@ class TripDetailsResource extends JsonResource
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoriteTrips->contains('id', $this->id) : false,
             'rating' => round($total_ratings, 2),
             'total_user_rating' => $total_user_total,
+            'conversation_id' => $this->conversation->id ?? null,
         ];
 
         if ($this->date_time < $now) {

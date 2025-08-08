@@ -358,20 +358,43 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
     public function otherUserPosts($slug)
     {
-        $paginationPerPage = config('app.pagination_per_page');
-        $user = User::findBySlug($slug);
-        $posts = $user->posts()->orderBy('created_at', 'desc')->paginate($paginationPerPage);
-        $postsArray = $posts->toArray();
+        $perPage = config('app.pagination_per_page');
 
-        $currentUser = auth('api')->user();
+        $owner  = User::findBySlug($slug);
+        $viewer = auth('api')->user();
 
-        $hasBlocked = $currentUser && $currentUser->hasBlocked($user);
+        if ($viewer && ($viewer->hasBlocked($owner) || $owner->hasBlocked($viewer))) {
+            return [
+                'posts' => [],
+                'pagination' => [
+                    'next_page_url' => null,
+                    'prev_page_url' => null,
+                    'total' => 0,
+                ],
+            ];
+        }
+
+        $query = $owner->posts()->latest();
+
+        if (!$viewer) {
+            $query->where('privacy', 2);
+        } elseif ($viewer->id === $owner->id) {
+        } else {
+            $isFollower = $owner->followers()
+                ->where('users.id', $viewer->id)
+                ->wherePivot('status', 1)
+                ->exists();
+            $query->whereIn('privacy', $isFollower ? [1, 2] : [2]);
+        }
+
+        $posts = $query->paginate($perPage);
+
         return [
-            'posts' => $hasBlocked ? [] : UserPostResource::collection($posts),
+            'posts' => UserPostResource::collection($posts),
             'pagination' => [
                 'next_page_url' => $posts->nextPageUrl(),
                 'prev_page_url' => $posts->previousPageUrl(),
-                'total' => $postsArray['total'],
+                'total' => $posts->total(),
             ],
         ];
     }

@@ -318,6 +318,7 @@ return [
         'followings-retrieved-successfully'                            => 'تم استرجاع المتبوعين بنجاح',
         'accept-follow-request-successfully'                           => 'تم قبول طلب المتابعة بنجاح',
         'un-accept-follow-request-successfully'                        => 'تم رفض طلب المتابعة بنجاح',
+        'follower-deleted-successfully'                                => 'تم حذف المتابع بنجاح',
 
         // Conversation Api
         'group-chat-message-retrieved-successfully'                    => 'تم استرجاع الرسائل بنجاح',

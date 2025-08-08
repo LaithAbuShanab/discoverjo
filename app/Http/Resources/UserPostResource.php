@@ -33,14 +33,13 @@ class UserPostResource extends JsonResource
             'user' => new UserResource($this->user),
             'created_at' => $this->created_at->diffForHumans(),
             'favorite' => Auth::guard('api')->user() ? Auth::guard('api')->user()->favoritePosts->contains('id', $this->id) : false,
-            'name' =>$visitable?->name,
-            'slug' =>$visitable?->slug,
+            'name' => $visitable?->name,
+            'slug' => $visitable?->slug,
             'content' => $this->content,
             'images' => $this->getMedia('post')->map(function ($media) {
-                // Check if the conversion exists
                 $url = $media->hasGeneratedConversion('post_app')
                     ? $media->getUrl('post_app')
-                    : $media->getUrl(); // fallback to original
+                    : $media->getUrl();
 
                 return [
                     'id' => $media->id,
@@ -50,7 +49,6 @@ class UserPostResource extends JsonResource
 
             'post_likes' => [
                 'total_likes' => $filteredLike->count(),
-//                'user_likes_info' => LikeDislikeResource::collection($filteredLike),
                 'user_likes_info' => LikeDislikeResource::collection(
                     $filteredLike->reject(function ($like) {
                         $currentUser = Auth::guard('api')->user();
@@ -63,7 +61,6 @@ class UserPostResource extends JsonResource
             ],
             'post_dislikes' => [
                 'total_disliked' => $filteredDisLike->count(),
-//                'user_dislikes_info' => LikeDislikeResource::collection($filteredDisLike),
                 'user_dislikes_info' => LikeDislikeResource::collection(
                     $filteredDisLike->reject(function ($like) {
                         $currentUser = Auth::guard('api')->user();
@@ -73,7 +70,6 @@ class UserPostResource extends JsonResource
                     })
                 )
             ],
-//            'comments' => CommentResource::collection($filteredComment),
             'comments' => CommentResource::collection(
                 $filteredComment->reject(function ($comment) {
                     $currentUser = Auth::guard('api')->user();
@@ -81,9 +77,7 @@ class UserPostResource extends JsonResource
                     return $currentUser->blockedUsers->contains('id', $comment->user_id) ||
                         $currentUser->blockers->contains('id', $comment->user_id);
                 })
-                ),
+            ),
         ];
     }
-
-
 }

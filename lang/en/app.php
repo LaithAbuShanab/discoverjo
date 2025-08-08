@@ -318,6 +318,7 @@ return [
         'followings-retrieved-successfully'                            => 'Followings retrieved successfully',
         'accept-follow-request-successfully'                           => 'Your following request accepted successfully',
         'un-accept-follow-request-successfully'                        => 'Unaccepted follow request successfully',
+        'follower-deleted-successfully'                                => 'Follower deleted successfully',
 
         // Conversation Api
         'group-chat-message-retrieved-successfully'                    => 'Message retrieved successfully',

@@ -118,24 +118,35 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
     public function plans()
     {
         $perPage = 15;
-        $allPlans = Plan::where('creator_type', 'App\Models\Admin')->with('days')->paginate($perPage);
-        //        $plansArray = $plans->toArray();
-        // Convert paginated items to a collection and shuffle
-        $shuffledPlans = $allPlans->getCollection()->shuffle();
+        $user = Auth::guard('api')->user();
 
-        // Replace the collection in the paginator with the shuffled plans
+        $query = Plan::with('days.activities');
+
+        if ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('creator_type', 'App\Models\Admin')
+                    ->orWhere(function ($q) use ($user) {
+                        $q->where('creator_type', 'App\Models\User')
+                            ->where('creator_id', $user->id);
+                    });
+            });
+        } else {
+            $query->where('creator_type', 'App\Models\Admin');
+        }
+
+        $allPlans = $query->paginate($perPage);
+
+        $shuffledPlans = $allPlans->getCollection()->shuffle()->values();
         $allPlans->setCollection($shuffledPlans);
 
-
         $pagination = [
-            'next_page_url' => $allPlans['next_page_url'],
-            'prev_page_url' => $allPlans['next_page_url'],
-            'total' => $allPlans['total'],
+            'next_page_url' => $allPlans->nextPageUrl(),
+            'prev_page_url' => $allPlans->previousPageUrl(),
+            'total'         => $allPlans->total(),
         ];
 
-        // Pass user coordinates to the PlaceResource collection
         return [
-            'plans' => PlanResource::collection($allPlans),
+            'plans'      => PlanResource::collection($allPlans),
             'pagination' => $pagination
         ];
     }
@@ -266,7 +277,6 @@ class EloquentPlanApiRepository implements PlanApiRepositoryInterface
                         $q->where('region_id', $regionId);
                     });
                 }
-
             });
         }
 

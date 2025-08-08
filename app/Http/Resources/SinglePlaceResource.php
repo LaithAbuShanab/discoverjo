@@ -143,7 +143,6 @@ class SinglePlaceResource extends JsonResource
                         $currentUser->blockers->contains('id', $review->user_id);
                 })
             ),
-//            'posts' => UserPostResource::collection($posts),
             'posts' => UserPostResource::collection(
                 $posts->reject(function ($post) {
                     $currentUser = Auth::guard('api')->user();

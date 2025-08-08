@@ -131,7 +131,7 @@ class UserProfileController extends Controller
     {
 
         $validator = Validator::make(['slug' => $slug], [
-            'slug' => ['required', 'exists:users,slug', new OtherUserProfileBlockedRule(), new CheckIfUserActiveRule()],
+            'slug' => ['bail', 'required', 'exists:users,slug', new OtherUserProfileBlockedRule(), new CheckIfUserActiveRule()],
         ], [
             'slug.required' => __('validation.api.user-id-is-required'),
             'slug.exists' => __('validation.api.user-id-does-not-exists'),

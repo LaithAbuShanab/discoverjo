@@ -591,7 +591,8 @@ return [
         'guide-trip-user-id-does-not-exists'                        => 'Guide trip user id does not exists',
         'the-user-not-longer-active'                                => 'The user is no longer active.',
         'you-did-not-join-to-this-trip'                             => 'you did not join to this trip',
-        'search-query-contains-invalid-characters'                  => 'The search query contains invalid characters.',
+        'search-query-contains-invalid-characters'                  => 'The input contains too many special characters (3 or more are not allowed).',
+        'you_must_finish_a_confirmed_trip'                          => 'You must finish a confirmed trip with this guide before rating.',
 
         // User Guide Trip Validation
         'trip_registration_closed'                                  => 'You can no longer register for this trip.',

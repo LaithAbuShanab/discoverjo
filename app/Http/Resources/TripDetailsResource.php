@@ -40,8 +40,8 @@ class TripDetailsResource extends JsonResource
         };
 
         $total_ratings = 0;
-        $total_user_total= 0;
-        if ( $this->reviews->count() > 0) {
+        $total_user_total = 0;
+        if ($this->reviews->count() > 0) {
             $total_ratings =  $filteredReviews->avg('rating');
             $total_user_total = $filteredReviews->count();
         }
@@ -79,7 +79,7 @@ class TripDetailsResource extends JsonResource
             'age_max' => optional(json_decode($this->age_range))->max,
             'gender' => $this->gender(),
             'date' => Carbon::parse($this->date_time)->format('Y-m-d'),
-            'time' => Carbon::parse($this->date_time)->format('H:i:s'),
+            'time' => Carbon::parse($this->date_time)->format('g:i A'),
             'attendance_number' => $this->attendance_number,
             'attendances' => UserResource::collection($this->usersTrip->where('status', '1')->pluck('user')),
             'status' => $this->status,

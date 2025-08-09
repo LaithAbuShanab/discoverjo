@@ -67,7 +67,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
 
         $isReserved = PropertyReservation::where('property_id', $property->id)
             ->where('status', '!=', 2) // exclude cancelled
-            ->where('check_out', '>', now())
+            ->where('check_in', '>', now())
             ->where(function ($query) use ($checkIn, $checkOut) {
                 $query->where(function ($q) use ($checkIn, $checkOut) {
                     // Overlap check: existing starts before new ends AND existing ends after new start

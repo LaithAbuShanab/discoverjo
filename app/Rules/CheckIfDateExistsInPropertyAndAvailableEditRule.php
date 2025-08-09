@@ -45,6 +45,20 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
         $checkIn = Carbon::parse($this->data['check_in']);
         $checkOut = Carbon::parse($this->data['check_out']);
 
+        if ($checkIn->isSameDay(now())) {
+            // Same calendar day as "today"
+            if ($checkIn->lessThanOrEqualTo(now())) {
+                $fail(__('You can’t reserve for an earlier time today.'));
+            }
+            // e.g., now is 10:15 and check-in is 17:00 → OK
+        } elseif ($checkIn->isPast()) {
+            $fail(__('You can’t reserve in the past.'));
+        }
+        // Validate the check in and check out the time match the period of property
+        if (!$this->validateBookingTimes($checkIn, $checkOut, $property)) {
+            $fail(__('validation.api.time_range_does_not_match_any_period'));
+            return;
+        }
         // Validate the check in and check out the time match the period of property
         if (!$this->validateBookingTimes($checkIn, $checkOut, $property)) {
             $fail(__('validation.api.time_range_does_not_match_any_period'));

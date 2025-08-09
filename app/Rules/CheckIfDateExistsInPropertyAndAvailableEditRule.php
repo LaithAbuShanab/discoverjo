@@ -89,7 +89,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
                     $q->where('property_id', $property->id)
                         ->where('status', '!=', 2); // exclude cancelled
                 })
-                    ->where('property_period_id', $periodId)
+//                    ->where('property_period_id', $periodId)
                     ->where(function ($query) use ($fromDateTime, $toDateTime) {
                         $query->whereBetween('from_datetime', [$fromDateTime, $toDateTime])
                             ->orWhereBetween('to_datetime', [$fromDateTime, $toDateTime])

@@ -380,11 +380,16 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
             $query->where('privacy', 2);
         } elseif ($viewer->id === $owner->id) {
         } else {
-            $isFollower = $owner->followers()
-                ->where('users.id', $viewer->id)
+            $isFollowing = $viewer->following()
+                ->where('users.id', $owner->id)
                 ->wherePivot('status', 1)
                 ->exists();
-            $query->whereIn('privacy', $isFollower ? [1, 2] : [2]);
+
+            if ($isFollowing) {
+                $query->whereIn('privacy', [1, 2]);
+            } else {
+                $query->where('privacy', 2);
+            }
         }
 
         $posts = $query->paginate($perPage);

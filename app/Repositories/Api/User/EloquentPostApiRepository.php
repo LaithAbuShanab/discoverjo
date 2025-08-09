@@ -363,6 +363,7 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
         $owner  = User::findBySlug($slug);
         $viewer = auth('api')->user();
 
+        // منع عرض المنشورات إذا كان هناك حظر متبادل
         if ($viewer && ($viewer->hasBlocked($owner) || $owner->hasBlocked($viewer))) {
             return [
                 'posts' => [],
@@ -376,23 +377,21 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
         $query = $owner->posts()->latest();
 
-        if (!$viewer) {
-            $query->where('privacy', 2);
-        } elseif ($viewer->id === $owner->id) {
+        // 0 => Only me, 1 => Public, 2 => Followers
+        if ($viewer->id === $owner->id) {
+            // صاحب الحساب: يرى كل شيء
+            $privacyAllowed = [0, 1, 2];
         } else {
+            // مستخدم آخر: تحقّق هل يتابع المالك
             $isFollowing = $viewer->following()
                 ->where('users.id', $owner->id)
                 ->wherePivot('status', 1)
                 ->exists();
 
-            if ($isFollowing) {
-                $query->whereIn('privacy', [1, 2]);
-            } else {
-                $query->where('privacy', 2);
-            }
+            $privacyAllowed = $isFollowing ? [1, 2] : [1];
         }
 
-        $posts = $query->paginate($perPage);
+        $posts = $query->whereIn('privacy', $privacyAllowed)->paginate($perPage);
 
         return [
             'posts' => UserPostResource::collection($posts),

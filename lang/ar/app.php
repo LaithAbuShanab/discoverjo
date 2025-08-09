@@ -173,6 +173,7 @@ return [
         'the-user-deleted-successfully'                                => 'تم حذف المستخدم بنجاح',
         'trips-retrieved-successfully'                                 => 'تم استرجاع الرحلات بنجاح',
         'the-searched-trip-retrieved-successfully'                     => 'تم استرجاع الرحلة المبحوثة بنجاح',
+        'you-are-deleted-your-request-successfully'                    => 'تم حذف طلبك بنجاح',
 
         // Plan Api
         'plan-created-successfully'                                    => 'تم انشاء الخطة بنجاح',

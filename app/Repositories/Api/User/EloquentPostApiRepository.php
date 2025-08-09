@@ -376,18 +376,19 @@ class EloquentPostApiRepository implements PostApiRepositoryInterface
 
         $query = $owner->posts()->latest();
 
-        if (!$viewer) {
-            $query->where('privacy', 2);
-        } elseif ($viewer->id === $owner->id) {
+        // 0 => Only me, 1 => Public, 2 => Followers
+        if ($viewer->id === $owner->id) {
+            $privacyAllowed = [0, 1, 2];
         } else {
-            $isFollower = $owner->followers()
-                ->where('users.id', $viewer->id)
+            $isFollowing = $viewer->following()
+                ->where('users.id', $owner->id)
                 ->wherePivot('status', 1)
                 ->exists();
-            $query->whereIn('privacy', $isFollower ? [1, 2] : [2]);
+
+            $privacyAllowed = $isFollowing ? [1, 2] : [1];
         }
 
-        $posts = $query->paginate($perPage);
+        $posts = $query->whereIn('privacy', $privacyAllowed)->paginate($perPage);
 
         return [
             'posts' => UserPostResource::collection($posts),

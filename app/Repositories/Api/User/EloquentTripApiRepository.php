@@ -451,6 +451,27 @@ class EloquentTripApiRepository implements TripApiRepositoryInterface
         });
     }
 
+    public function cancelRequestTrip($slug, $request)
+    {
+        $user = Auth::guard('api')->user();
+        $trip = Trip::where('slug', $slug)->first();
+
+        DB::transaction(function () use ($trip, $user) {
+            // delete the pending join request
+            UsersTrip::where('trip_id', $trip->id)
+                ->where('user_id', $user->id)
+                ->delete();
+
+            // delete the related notification sent to the trip owner
+            DatabaseNotification::query()
+                ->where('notifiable_type', User::class)
+                ->where('notifiable_id', $trip->user_id)                 // recipient
+                ->where('type', NewRequestNotification::class)           // notification class
+                ->where('data->options->trip_id', $trip->id)             // JSON match
+                ->delete();
+        });
+    }
+
     public function remove($slug)
     {
         $trip = Trip::with(['usersTrip.user.DeviceTokenMany', 'conversation'])

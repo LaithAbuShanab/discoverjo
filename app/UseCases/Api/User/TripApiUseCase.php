@@ -58,6 +58,11 @@ class TripApiUseCase
         return $this->tripApiRepository->cancelJoinTrip($slug, $request);
     }
 
+    public function cancelRequestTrip($slug, $request)
+    {
+        return $this->tripApiRepository->cancelRequestTrip($slug, $request);
+    }
+
     public function privateTrips()
     {
         return $this->tripApiRepository->privateTrips();

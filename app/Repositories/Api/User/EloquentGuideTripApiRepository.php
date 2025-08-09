@@ -19,6 +19,7 @@ use App\Models\GuideTripTrail;
 use App\Models\GuideTripUser;
 use App\Models\User;
 use App\Notifications\Users\guide\AcceptCancelNotification;
+use App\Notifications\Users\guide\DeleteTripNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -54,7 +55,6 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
         // Pass user coordinates to the PlaceResource collection
         return [
-//            'trips' => AllGuideTripResource::collection($guidesTrips),
             'trips' => AllGuideTripResource::collection(
                 $guidesTrips->reject(function ($guidesTrip) {
                     $currentUser = Auth::guard('api')->user();
@@ -350,11 +350,63 @@ class EloquentGuideTripApiRepository implements GuideTripApiRepositoryInterface
 
     public function deleteGuideTrip($slug)
     {
-        $guideTrip = GuideTrip::findBySlug($slug);
-        $guideTrip->clearMediaCollection('guide_trip_gallery');
-        $guideTrip->delete();
-        $user = Auth::guard('api')->user();
-        $user->deductPoints(10);
+        DB::beginTransaction();
+
+        try {
+            $guideTrip = GuideTrip::findBySlug($slug);
+
+            $userIds = $guideTrip->guideTripUsers()
+                ->select('user_id')
+                ->distinct()
+                ->pluck('user_id');
+
+            foreach ($userIds as $userId) {
+                $user = User::with('deviceTokenMany')->find($userId);
+
+                $receiverLanguage = $user->lang ?: 'en';
+                $tokens = $user->deviceTokenMany->pluck('token')->filter()->values()->all();
+
+                $guideFullName = $guideTrip->user->first_name . ' ' . $guideTrip->user->last_name;
+                $tripNameForUser = method_exists($guideTrip, 'getTranslation')
+                    ? ($guideTrip->getTranslation('name', $receiverLanguage) ?? $guideTrip->name)
+                    : $guideTrip->name;
+
+                $title = __('app.notifications.trip_deleted-title', [], $receiverLanguage);
+                $body  = __('app.notifications.trip_deleted-body', [
+                    'guide_user' => $guideFullName,
+                    'trip'       => $tripNameForUser,
+                ], $receiverLanguage);
+
+                Notification::send($user, new DeleteTripNotification($guideTrip));
+
+                $notification = [
+                    'notification' => [
+                        'title' => $title,
+                        'body'  => $body,
+                        'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                        'sound' => 'default',
+                    ],
+                    'data' => [],
+                ];
+
+                if (!empty($tokens)) {
+                    sendNotification($tokens, $notification);
+                }
+            }
+
+            $guideTrip->clearMediaCollection('guide_trip_gallery');
+            $guideTrip->delete();
+
+            $authUser = Auth::guard('api')->user();
+            $authUser->deductPoints(10);
+
+            DB::commit();
+
+            return response()->json(['ok' => true]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw new \Exception(__('validation.api.something_went_wrong'));
+        }
     }
 
     public function deleteImage($id)

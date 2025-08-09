@@ -4,6 +4,7 @@ namespace App\Filament\provider\Resources;
 
 use App\Filament\Provider\Resources\GuideTripResource\{Pages, RelationManagers\GuideTripUsersRelationManager};
 use App\Models\{GuideTrip, User};
+use App\Notifications\Users\guide\DeleteTripNotification;
 use Carbon\Carbon;
 use Filament\Forms\Components\{
     DateTimePicker,
@@ -24,6 +25,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\DB;
 
 class GuideTripResource extends Resource
 {
@@ -88,10 +91,6 @@ class GuideTripResource extends Resource
                                     ->reactive()
                                     ->afterStateUpdated(fn($state, callable $set) => $set('end_datetime', null))
                                     ->rules(function ($component) {
-                                        $record = $component->getRecord();
-                                        if ($record) {
-                                            return [];
-                                        }
                                         $now = Carbon::now()->format('Y-m-d H:i:s');
                                         return ["after_or_equal:$now"];
                                     }),
@@ -100,7 +99,10 @@ class GuideTripResource extends Resource
                                     ->label(__('panel.guide.end-date'))
                                     ->required()
                                     ->reactive()
-                                    ->rules(['after:start_datetime']),
+                                    ->rules(function ($component, $get) {
+                                        $start_datetime = $get('start_datetime');
+                                        return ["after_or_equal:$start_datetime"];
+                                    }),
                             ]),
                             Grid::make(['default' => 1, 'md' => 2])->schema([
                                 SpatieMediaLibraryFileUpload::make('main_image')
@@ -153,6 +155,7 @@ class GuideTripResource extends Resource
                     Step::make(__('panel.guide.trip-details'))
                         ->schema([
                             Repeater::make('activities')
+                                ->defaultItems(1)
                                 ->label(__('panel.guide.activities'))
                                 ->relationship('activities')
                                 ->schema([
@@ -167,6 +170,7 @@ class GuideTripResource extends Resource
                                 ->required(),
 
                             Repeater::make('assemblies')
+                                ->defaultItems(0)
                                 ->label(__('panel.guide.assemblies'))
                                 ->relationship('assemblies')
                                 ->schema([
@@ -185,6 +189,7 @@ class GuideTripResource extends Resource
                                 ->columns(1),
 
                             Repeater::make('priceAges')
+                                ->defaultItems(0)
                                 ->label(__('panel.guide.price-ages'))
                                 ->relationship('priceAges')
                                 ->schema([
@@ -216,6 +221,7 @@ class GuideTripResource extends Resource
                                 ->columns(1),
 
                             Repeater::make('priceIncludes')
+                                ->defaultItems(0)
                                 ->label(__('panel.guide.price-includes'))
                                 ->relationship('priceIncludes')
                                 ->schema([
@@ -228,6 +234,7 @@ class GuideTripResource extends Resource
                                 ->columns(1),
 
                             Repeater::make('requirements')
+                                ->defaultItems(0)
                                 ->label(__('panel.guide.requirements'))
                                 ->relationship('requirements')
                                 ->schema([
@@ -239,6 +246,7 @@ class GuideTripResource extends Resource
                                 ->columns(1),
 
                             Repeater::make('payment_method')
+                                ->defaultItems(1)
                                 ->label(__('panel.guide.payment-method'))
                                 ->relationship('paymentMethods')
                                 ->schema([
@@ -366,7 +374,61 @@ class GuideTripResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->action(function (GuideTrip $guideTrip) {
+                    DB::beginTransaction();
+
+                    try {
+                        $userIds = $guideTrip->guideTripUsers()
+                            ->select('user_id')
+                            ->distinct()
+                            ->pluck('user_id');
+
+                        foreach ($userIds as $userId) {
+                            $user = User::with('deviceTokenMany')->find($userId);
+
+                            $receiverLanguage = $user->lang ?: 'en';
+                            $tokens = $user->deviceTokenMany->pluck('token')->filter()->values()->all();
+
+                            $guideFullName = $guideTrip->user->first_name . ' ' . $guideTrip->user->last_name;
+                            $tripNameForUser = method_exists($guideTrip, 'getTranslation')
+                                ? ($guideTrip->getTranslation('name', $receiverLanguage) ?? $guideTrip->name)
+                                : $guideTrip->name;
+
+                            $title = __('app.notifications.trip_deleted.title', [], $receiverLanguage);
+                            $body  = __('app.notifications.trip_deleted.body', [
+                                'guide_user' => $guideFullName,
+                                'trip'       => $tripNameForUser,
+                            ], $receiverLanguage);
+
+                            Notification::send($user, new DeleteTripNotification($guideTrip));
+
+                            $notification = [
+                                'notification' => [
+                                    'title' => $title,
+                                    'body'  => $body,
+                                    'image' => asset('assets/images/logo_eyes_yellow.jpeg'),
+                                    'sound' => 'default',
+                                ],
+                                'data' => [],
+                            ];
+
+                            if (!empty($tokens)) {
+                                sendNotification($tokens, $notification);
+                            }
+                        }
+
+                        $authUser = auth()->user();
+                        $authUser->deductPoints(10);
+
+                        $guideTrip->clearMediaCollection('guide_trip_gallery');
+                        $guideTrip->delete();
+
+                        DB::commit();
+                    } catch (\Throwable $e) {
+                        DB::rollBack();
+                        throw $e; // Let Filament handle the error message
+                    }
+                }),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

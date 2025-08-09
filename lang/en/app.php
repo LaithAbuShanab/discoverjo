@@ -129,6 +129,8 @@ return [
         'delete-request-body'                                          => ':guide_user has canceled their request to join your trip :trip.',
         'delete-user-requests-title'                                   => 'User Canceled All Their Requests from the Trip',
         'delete-user-requests-body'                                    => 'User :username has canceled all their requests from the trip :trip.',
+        'trip_deleted-title'                                           => 'Trip cancelled',
+        'trip_deleted-body'                                            => ':guide_user has cancelled the trip ":trip".',
 
         // Service
         'new-user-review-in-service'                                   => 'User :username wrote a review about your service',

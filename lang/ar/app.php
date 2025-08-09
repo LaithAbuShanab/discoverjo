@@ -129,6 +129,8 @@ return [
         'delete-request-body'                                          => 'قام المستخدم :guide_user بإلغاء طلبه للانضمام إلى رحلتك :trip.',
         'delete-user-requests-title'                                   => 'إلغاء جميع طلبات المستخدم من الرحلة',
         'delete-user-requests-body'                                    => 'قام المستخدم :username بإلغاء جميع طلباته من الرحلة :trip.',
+        'trip_deleted-title'                                           => 'تم إلغاء الرحلة',
+        'trip_deleted-body'                                            => 'قام المستخدم :guide_user بإلغاء الرحلة :trip.',
 
         // الخدمات
         'new-user-review-in-service'                                   => 'قام المستخدم :username بكتابة مراجعة حول خدمتك',

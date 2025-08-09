@@ -34,7 +34,10 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
 
         //find the property by slug
         $propertyReservation = PropertyReservation::find($this->data['reservation_id']);
-        $property = $propertyReservation->property;
+        if(!$propertyReservation) {
+            return;
+        }
+        $property = $propertyReservation?->property;
 
         if (!$property) {
             $fail(__('validation.api.property_not_found'));
@@ -68,6 +71,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
         $isReserved = PropertyReservation::where('property_id', $property->id)
             ->where('status', '!=', 2) // exclude cancelled
             ->where('check_in', '>', now())
+            ->where('id','!=', $propertyReservation->id)
             ->where(function ($query) use ($checkIn, $checkOut) {
                 $query->where(function ($q) use ($checkIn, $checkOut) {
                     // Overlap check: existing starts before new ends AND existing ends after new start

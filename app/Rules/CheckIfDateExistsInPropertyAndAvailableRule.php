@@ -92,25 +92,25 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
             }
 
             // Check for conflicts with existing reservations
+
+
             $period = $property->periods->find($periodId);
-
             if ($period) {
-                $fromDateTime = Carbon::parse($date.' '.$period->start_time);
-                $toDateTime   = Carbon::parse($date.' '.$period->end_time);
-
-                // If the period crosses midnight, push end to the next day
-                if ($toDateTime->lessThanOrEqualTo($fromDateTime)) {
-                    $toDateTime->addDay();
-                }
+                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
+                $toDateTime = Carbon::parse($date . ' ' . $period->end_time);
 
                 $isReserved = PropertyReservationDetail::whereHas('reservation', function ($q) use ($property) {
                     $q->where('property_id', $property->id)
                         ->where('status', '!=', 2); // exclude cancelled
                 })
-                    ->where('property_period_id', $periodId)
-                    ->where(function ($q) use ($fromDateTime, $toDateTime) {
-                        $q->where('from_datetime', '<', $toDateTime)
-                            ->where('to_datetime',   '>', $fromDateTime);
+//                    ->where('property_period_id', $periodId)
+                    ->where(function ($query) use ($fromDateTime, $toDateTime) {
+                        $query->whereBetween('from_datetime', [$fromDateTime, $toDateTime])
+                            ->orWhereBetween('to_datetime', [$fromDateTime, $toDateTime])
+                            ->orWhere(function ($q) use ($fromDateTime, $toDateTime) {
+                                $q->where('from_datetime', '<=', $fromDateTime)
+                                    ->where('to_datetime', '>=', $toDateTime);
+                            });
                     })
                     ->exists();
 
@@ -120,7 +120,6 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
                 }
             }
 
-//            $period = $property->periods->find($periodId);
 //            if ($period) {
 //                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
 //                $toDateTime = Carbon::parse($date . ' ' . $period->end_time);
@@ -129,7 +128,7 @@ class CheckIfDateExistsInPropertyAndAvailableRule implements ValidationRule, Dat
 //                    $q->where('property_id', $property->id)
 //                        ->where('status', '!=', 2); // exclude cancelled
 //                })
-//                    ->where('property_period_id', $periodId)
+////                    ->where('property_period_id', $periodId)
 //                    ->where(function ($query) use ($fromDateTime, $toDateTime) {
 //                        $query->whereBetween('from_datetime', [$fromDateTime, $toDateTime])
 //                            ->orWhereBetween('to_datetime', [$fromDateTime, $toDateTime])

@@ -81,7 +81,7 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
             })
             ->exists();
         if ($isReserved) {
-            $fail(__('validation.api.date_conflict_reserved', ['date' => $checkIn]));
+            $fail(__('validation.api.date_conflict_reserved'));
             return;
         }
 

@@ -173,6 +173,7 @@ return [
         'the-user-deleted-successfully'                                => 'The user deleted successfully',
         'trips-retrieved-successfully'                                 => 'Trips retrieved successfully',
         'the-searched-trip-retrieved-successfully'                     => 'The searched trip retrieved successfully',
+        'you-are-deleted-your-request-successfully'                    => 'You are deleted your request successfully',
 
         // Plan Api
         'plan-created-successfully'                                    => 'Plan created successfully',

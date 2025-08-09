@@ -188,6 +188,8 @@ Route::middleware(['firstLogin'])->group(function () {
             Route::post('/join/{trip_slug}', [TripApiController::class, 'join']); // DONE ✅ // NOTIFICATION(12)
             // Canceling Join
             Route::delete('/join/cancel/{trip_slug}', [TripApiController::class, 'cancelJoin']); // DONE ✅
+            // Canceling Request
+            Route::delete('/cancel/{trip_slug}/request', [TripApiController::class, 'cancelRequest']); // DONE ✅
             // Trip Details
             Route::get('/details/{trip_slug}', [TripApiController::class, 'tripDetails']); // DONE ✅
             // Delete Trips

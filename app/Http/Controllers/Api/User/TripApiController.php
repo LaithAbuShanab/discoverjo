@@ -18,6 +18,7 @@ use App\Rules\CheckAgeGenderExistenceRule;
 use App\Rules\CheckIfCanUpdateTripRule;
 use App\Rules\CheckOwnerTripRule;
 use App\Rules\CheckRemoveUserTripRule;
+use App\Rules\CheckUserRequestTripExistsRule;
 use App\Rules\TripJoinUserBlockRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -128,7 +129,7 @@ class TripApiController extends Controller
         $slug = $request->trip_slug;
 
         $validator = Validator::make(['trip_slug' => $slug], [
-            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new TripJoinUserBlockRule() ,new CheckAgeGenderExistenceRule(), new CheckIfTheOwnerOfTripActiveRule()],
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new TripJoinUserBlockRule(), new CheckAgeGenderExistenceRule(), new CheckIfTheOwnerOfTripActiveRule()],
         ]);
 
         if ($validator->fails()) {
@@ -162,6 +163,29 @@ class TripApiController extends Controller
         try {
             $this->tripApiUseCase->cancelJoinTrip($slug, $request);
             return ApiResponse::sendResponse(200, __('app.api.you-are-left-from-the-trip-successfully'), []);
+        } catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $e->getMessage());
+        }
+    }
+
+    public function cancelRequest(Request $request)
+    {
+        $slug = $request->trip_slug;
+
+        $validator = Validator::make(['trip_slug' => $slug], [
+            'trip_slug' => ['bail', 'required', 'exists:trips,slug', new CheckUserRequestTripExistsRule()],
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return ApiResponse::sendResponseError(Response::HTTP_BAD_REQUEST,  $errors);
+        }
+
+        try {
+            $this->tripApiUseCase->cancelRequestTrip($slug, $request);
+            return ApiResponse::sendResponse(200, __('app.api.you-are-deleted-your-request-successfully'), []);
         } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage(), ['exception' => $e]);
 

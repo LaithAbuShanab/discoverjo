@@ -29,6 +29,8 @@ interface TripApiRepositoryInterface
 
     public function cancelJoinTrip($slug, $request);
 
+    public function cancelRequestTrip($slug, $request);
+
     public function favorite($id);
 
     public function deleteFavorite($id);

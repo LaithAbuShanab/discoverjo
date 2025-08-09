@@ -65,6 +65,22 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
             return;
         }
 
+        $isReserved = PropertyReservation::where('property_id', $property->id)
+            ->where('status', '!=', 2) // exclude cancelled
+            ->where('check_out', '>', now())
+            ->where(function ($query) use ($checkIn, $checkOut) {
+                $query->where(function ($q) use ($checkIn, $checkOut) {
+                    // Overlap check: existing starts before new ends AND existing ends after new start
+                    $q->where('check_in', '<', $checkOut)
+                        ->where('check_out', '>', $checkIn);
+                });
+            })
+            ->exists();
+        if ($isReserved) {
+            $fail(__('validation.api.date_conflict_reserved', ['date' => $checkIn]));
+            return;
+        }
+
         $onePeriod = $this->checkIfHasOnePeriod($property, $checkIn, $checkOut, $fail);
 
         if($onePeriod) {
@@ -94,32 +110,32 @@ class CheckIfDateExistsInPropertyAndAvailableEditRule implements ValidationRule,
             }
 
             // Check for conflicts with existing reservations
-            $period = $property->periods->find($periodId);
-            if ($period) {
-                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
-                $toDateTime = Carbon::parse($date . ' ' . $period->end_time);
-
-                $isReserved = PropertyReservationDetail::whereHas('reservation', function ($q) use ($property) {
-                    $q->where('property_id', $property->id)
-                        ->where('status', '!=', 2); // exclude cancelled
-                })
-//                    ->where('property_period_id', $periodId)
-                    ->where(function ($query) use ($fromDateTime, $toDateTime) {
-                        $query->whereBetween('from_datetime', [$fromDateTime, $toDateTime])
-                            ->orWhereBetween('to_datetime', [$fromDateTime, $toDateTime])
-                            ->orWhere(function ($q) use ($fromDateTime, $toDateTime) {
-                                $q->where('from_datetime', '<=', $fromDateTime)
-                                    ->where('to_datetime', '>=', $toDateTime);
-                            });
-                    })
-                    ->where('property_reservation_id', '!=', $this->data['reservation_id'])
-                    ->exists();
-
-                if ($isReserved) {
-                    $fail(__('validation.api.date_conflict_reserved', ['date' => $date]));
-                    return;
-                }
-            }
+//            $period = $property->periods->find($periodId);
+//            if ($period) {
+//                $fromDateTime = Carbon::parse($date . ' ' . $period->start_time);
+//                $toDateTime = Carbon::parse($date . ' ' . $period->end_time);
+//
+//                $isReserved = PropertyReservationDetail::whereHas('reservation', function ($q) use ($property) {
+//                    $q->where('property_id', $property->id)
+//                        ->where('status', '!=', 2); // exclude cancelled
+//                })
+////                    ->where('property_period_id', $periodId)
+//                    ->where(function ($query) use ($fromDateTime, $toDateTime) {
+//                        $query->whereBetween('from_datetime', [$fromDateTime, $toDateTime])
+//                            ->orWhereBetween('to_datetime', [$fromDateTime, $toDateTime])
+//                            ->orWhere(function ($q) use ($fromDateTime, $toDateTime) {
+//                                $q->where('from_datetime', '<=', $fromDateTime)
+//                                    ->where('to_datetime', '>=', $toDateTime);
+//                            });
+//                    })
+//                    ->where('property_reservation_id', '!=', $this->data['reservation_id'])
+//                    ->exists();
+//
+//                if ($isReserved) {
+//                    $fail(__('validation.api.date_conflict_reserved', ['date' => $date]));
+//                    return;
+//                }
+//            }
         }
     }
 
